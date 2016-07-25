@@ -20,7 +20,7 @@ var authController = require('./controllers/auth');
 //  Configuration
 //
 var app = express();
-var port = process.env.PORT || 433242;
+var port = process.env.PORT || 3000;
 mongoose.connect(config.database);
 
 app.set('tokenSecret', config.secret);
