@@ -1,24 +1,35 @@
+//
+//  Required Packages
+//
 var express = require('express');
 var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
-var passport = require('passport');
+var webToken = require('jsonwebtoken');
 
+//
+//  Project Files
+//
+var config = require('./config');
+
+//
+//  Controllers
+//
 var authController = require('./controllers/auth');
 
+//
+//  Configuration
+//
 var app = express();
+var port = process.env.PORT || 433242;
+mongoose.connect(config.database);
 
+app.set('tokenSecret', config.secret);
+
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({
-    extended: true
-}));
-app.use(passport.initialize());
 
-var router = express.Router();
-
-
-
-
-
-
-app.use('/api', router);
-app.listen(433242);
+//
+//  Start Server
+//
+app.use(router);
+app.listen(port);

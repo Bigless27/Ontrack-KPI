@@ -1,13 +1,30 @@
-var passport = require('passport');
-var googleStrategy = require('passport-google-oauth20').Strategy;
+var express = require('express');
+var mongoose = require('mongoose');
+var webToken = require('jsonwebtoken');
 
-// passport.use(new googleStrategy({
-//     clientID: process.env.clientID,
-//     clientSecret: process.env.clientSecret,
-//     callbackURL: 'http://localhost:433242/auth/google/callback'
-// },
-// function(accessToken, refreshToken, profile, cb) {
-//     return cb(null, profile);
-// }))
+var authRouter = require('express').Router;
 
-exports.isAuthenticated = true;
+var User = require('../schemas/user');
+
+
+authRouter.post('/authenticate', function(req, res) {
+    User.findOne({ email: req.body.email },
+        function(err, user) {
+            if(err) throw err;
+            if(!user) {
+                res.json({ success: false, message: 'Authentication failed.  User not found.' });
+            } else if(user) {
+                if(user.password != req.body.password) {
+                    res.json({ success: false, message: 'Authentication failed.  Incorrect password.' });                    
+                } else {
+                    var token = webToken.sign(user, app.get('tokenSecret'), { expiresInMinutes: 1440 });
+
+                    res.json({
+                        success: true,
+                        message: 'Authenticated',
+                        token: token
+                    });
+                }
+            }
+        });
+});
