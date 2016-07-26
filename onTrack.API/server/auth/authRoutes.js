@@ -4,7 +4,7 @@ var controller = require('./controller');
 
 // before we send vack a jwt, lets check
 // the password and username mathch what is in the DB
-router.post('/authenticate', verifyUser(), controller.signin)
+router.post('/signin', verifyUser(), controller.signin)
 
 
 
