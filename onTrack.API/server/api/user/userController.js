@@ -4,7 +4,7 @@ var signToken = require('../../auth/auth').signToken;
 
 exports.params = function(req, res, next, id) {
 	User.findById(id)
-		.select('-password')
+		.select('-password') // doesn't grab it
 		.exec()
 		.then(function(user) {
 			if (!user) {
@@ -17,6 +17,7 @@ exports.params = function(req, res, next, id) {
 			next(err);
 	});
 };
+
 
 exports.get = function(req, res, next) {
 	User.find({})
@@ -35,8 +36,10 @@ exports.get = function(req, res, next) {
 
 exports.getOne = function(req, res, next) {
 	var user = req.user.toJson();
-	res.json(user.toJson());
+	res.json(user);
 };
+
+
 
 exports.put = function(req, res, next) {
   var user = req.user;

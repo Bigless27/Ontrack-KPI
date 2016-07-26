@@ -14,7 +14,7 @@ exports.decodeToken = function() {
 			req.headers.authorization = 'Bearer ' + req.query.access_token;
 		}
 
-		// this will call next if token is calid
+		// this will call next if token is valid
 		// and send error if its not. It will attached 
 		// the decoded token to req.user
 		checkToken(req, res, next)
@@ -86,7 +86,7 @@ exports.signToken = function(id) {
 	return jwt.sign(
 		{_id: id},
 		config.secrets.jwt,
-		{expiresInMinutes: config.expireTime}
+		{expiresIn: config.expireTime}
 	);
 };
 
