@@ -2,7 +2,7 @@ var User = require('./userModel');
 var _ = require('lodash');
 var signToken = require('../../auth/auth').signToken;
 
-exports.parms = function(req, res, next, id) {
+exports.params = function(req, res, next, id) {
 	User.findById(id)
 		.select('-password')
 		.exec()
