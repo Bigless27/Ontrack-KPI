@@ -1,9 +1,12 @@
 var mongoose = require('mongoose');
+var Schema = mongoose.Schema;
 
-var TriggerSchema = new mongoose.Schema({
-    clientId: { type: ObjectId },
-    name: { type: String },
-    kpis: [{ kpiId: { type: ObjectId } }]
+
+var TriggerSchema = new Schema({
+    clientId: { type: Schema.Types.ObjectId },
+    name: { type: String, required: true },
+    kpis: [{ kpiId: { type: Schema.Types.ObjectId } }],
+    description: {type: String}
 });
 
-module.exports = mongoose.model('TriggerInfo', TriggerSchema);
+module.exports = mongoose.model('trigger', TriggerSchema);

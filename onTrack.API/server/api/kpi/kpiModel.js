@@ -1,10 +1,12 @@
 var mongoose = require('mongoose');
+var Schema = mongoose.Schema;
 
-var KpiSchema = new mongoose.Schema({
-    ClientId: { type: ObjectId },
-    Name: { type: String, unique: true, required: true, index: true },
-    Type: { type: String },
-    Value: { type: String }
+var KpiSchema = new Schema({
+    clientId: { type: Schema.Types.ObjectId, ref: 'client'}, // what is this?
+    name: { type: String, unique: true, required: true, index: true },
+    type: { type: String },
+    value: { type: String },
+    basedOn: {type: String}
 });
 
-module.exports = mongoose.model('KpiInfo', KpiSchema);
+module.exports = mongoose.model('kpi', KpiSchema);
