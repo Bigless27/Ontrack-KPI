@@ -8,10 +8,11 @@ var checkUser = [auth.decodeToken(), auth.getFreshUser()];
 router.param('id', controller.params);
 
 router.route('/')
-	.get(controller.get);
+	.get(controller.get)//Tested
+	.post(checkUser, controller.post)// Tested
 
 router.route('/:id')
-	.get(controller.getOne);
+	.get(controller.getOne); //Tested
 
 
 module.exports = router;

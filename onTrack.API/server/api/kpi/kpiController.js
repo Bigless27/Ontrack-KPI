@@ -26,7 +26,18 @@ exports.get = function(req, res, next) {
 
 
 exports.getOne = function(req, res, next) {
-  var kpi = req.kpi.toJson();
+  var kpi = req.kpi;
   res.json(kpi);
 };
+
+exports.post = function(req, res, next) {
+	var newkpi = req.body;
+	KPI.create(newkpi)
+		.then(function(kpi) {
+			res.json(kpi);
+		}, function(err) {
+			logger.error(err);
+			next(err);
+		})
+}
 
