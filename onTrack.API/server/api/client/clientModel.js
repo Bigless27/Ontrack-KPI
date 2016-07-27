@@ -8,8 +8,8 @@ var ContactPhone = new Schema({
     isPrimary: {type: Boolean, default: true}
 });
 
-var ContactEmail: newSchema({
-	clientId: {type: Schema.Types.ObjectId, ref: client},
+var ContactEmail = new Schema({
+	clientId: {type: Schema.Types.ObjectId, ref: 'client'},
 	emailAddress: {type: String, require: true},
 	emailType: {type: String, require: true},
 	isPrimary: {type: Boolean, default: true}

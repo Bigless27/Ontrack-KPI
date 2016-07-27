@@ -5,7 +5,7 @@ exports.params = function(req, res, next, id) {
 	KPI.findById(id)
 		.then(function(kpi) {
 			if (!kpi) {
-				next(new Error('No Category with that id'));
+				next(new Error('No KPI with that id'));
 			} else {
 				req.kpi = kpi;
 				next()
