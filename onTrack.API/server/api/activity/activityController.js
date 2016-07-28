@@ -1,44 +1,42 @@
-var Client = require('./clientModel');
+var Activity = require('./activityModel');
 var _ = require('lodash');
 
-
 exports.params = function(req, res, next, id) {
-	Client.findById(id)
-		.then(function(client) {
-			if (!client) {
-				next(new Error('No Client with that id'));
+	Activity.findById(id)
+		.then(function(activity) {
+			if(!activity) {
+				next(new Error('No Client with that ID'));
 			} else {
-				req.client = client;
+				req.activity = activity;
 				next();
 			}
 		}, function(err) {
 			next(err);
 	});
-};
+}
 
 exports.get = function(req, res, next) {
-	Client.find({})
-		.then(function(client){
-			res.json(client);
+	Activity.find({})
+		.then(function(activity) {
+			res.json(activity);
 		}, function(err) {
 			next(err);
 	})
 }
 
 exports.getOne = function(req, res, next) {
-	var client = req.client;
-	res.json(client)
+	var activity = req.activity;
+	res.json(activity);
 }
 
-
 exports.put = function(req, res, next) {
-  var client = req.client;
+  var activity = req.activity;
 
   var update = req.body;
 
-  _.merge(client, update);
+  _.merge(activity, update);
 
-  client.save(function(err, saved) {
+  activity.save(function(err, saved) {
     if (err) {
       next(err);
     } else {
@@ -48,11 +46,11 @@ exports.put = function(req, res, next) {
 };
 
 exports.post = function(req, res, next) {
-  var newclient = req.body;
+  var newactivity = req.body;
 
-  Client.create(newclient)
-    .then(function(client) {
-      res.json(client);
+  Activity.create(newactivity)
+    .then(function(activity) {
+      res.json(activity);
     }, function(err) {
       next(err);
     });
@@ -60,7 +58,7 @@ exports.post = function(req, res, next) {
 
 
 exports.delete = function(req, res, next) {
-  req.client.remove(function(err, removed) {
+  req.activity.remove(function(err, removed) {
     if (err) {
       next(err);
     } else {
@@ -68,6 +66,4 @@ exports.delete = function(req, res, next) {
     }
   });
 };
-
-
 
