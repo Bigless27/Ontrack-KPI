@@ -1,4 +1,4 @@
-var userActivity = require('./userModel');
+var userActivity = require('../userModel');
 var _ = require('lodash');
 
 exports.params = function(req, res, next, id) {

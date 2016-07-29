@@ -36,6 +36,7 @@ exports.get = function(req, res, next) {
 
 exports.getOne = function(req, res, next) {
 	var user = req.user.toJson();
+	console.log(req.user)
 	res.json(user);
 };
 
