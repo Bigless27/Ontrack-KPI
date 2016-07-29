@@ -1,6 +1,7 @@
 var User = require('./userModel');
 var _ = require('lodash');
 var signToken = require('../../auth/auth').signToken;
+var logger = require('../../util/logger')
 
 exports.params = function(req, res, next, id) {
 	User.findById(id)
@@ -36,7 +37,6 @@ exports.get = function(req, res, next) {
 
 exports.getOne = function(req, res, next) {
 	var user = req.user.toJson();
-	console.log(req.user)
 	res.json(user);
 };
 
