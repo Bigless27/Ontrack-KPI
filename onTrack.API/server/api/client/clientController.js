@@ -34,8 +34,8 @@ exports.getOne = function(req, res, next) {
 
 exports.put = function(req, res, next) {
 
-  if (!req.client.checkOwner(req.user)){
-    next(new Error('Not authorized!'));
+  if (!req.client.checkAdmin(req.user)){
+    next(new Error('Not authorized!!'));
     return;
   }
 
@@ -57,6 +57,8 @@ exports.put = function(req, res, next) {
 exports.post = function(req, res, next) {
   var newclient = req.body;
   newclient.owner = req.user
+  newclient.admins = req.user
+
 
 
   Client.create(newclient)
@@ -71,8 +73,8 @@ exports.post = function(req, res, next) {
 
 
 exports.delete = function(req, res, next) {
-  if (!req.client.checkOwner(req.user)){
-    next(new Error('Not authorized!'));
+  if (!req.client.checkAdmin(req.user)){
+    next(new Error('Not authorized!!'));
     return;
   }
 

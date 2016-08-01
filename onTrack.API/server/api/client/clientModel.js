@@ -17,8 +17,8 @@ var ClientSchema = new Schema({
 
 ClientSchema.methods = {
 
-	checkOwner: function(user) {
-		return  _.includes(this.owner, user._id)
+	checkAdmin: function(user) {
+		return  _.includes(this.admins.toString(), user._id)
  		}
 }
 
