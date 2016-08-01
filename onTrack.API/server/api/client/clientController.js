@@ -1,4 +1,5 @@
 var Client = require('./clientModel');
+var User = require('../user/userModel')
 var _ = require('lodash');
 
 
@@ -32,6 +33,12 @@ exports.getOne = function(req, res, next) {
 
 
 exports.put = function(req, res, next) {
+
+  if (!req.client.checkOwner(req.user)){
+    next(new Error('Not authorized!'));
+    return;
+  }
+
   var client = req.client;
 
   var update = req.body;
@@ -49,17 +56,26 @@ exports.put = function(req, res, next) {
 
 exports.post = function(req, res, next) {
   var newclient = req.body;
+  newclient.owner = req.user
+
 
   Client.create(newclient)
     .then(function(client) {
       res.json(client);
     }, function(err) {
+
       next(err);
     });
+
 };
 
 
 exports.delete = function(req, res, next) {
+  if (!req.client.checkOwner(req.user)){
+    next(new Error('Not authorized!'));
+    return;
+  }
+
   req.client.remove(function(err, removed) {
     if (err) {
       next(err);
@@ -68,6 +84,10 @@ exports.delete = function(req, res, next) {
     }
   });
 };
+
+
+
+//eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1NzlmOTRlZmIyMTU2NDI5ZTljZWRjZGEiLCJpYXQiOjE0NzAwNzYxNDMsImV4cCI6MTQ3MDA5MDU0M30.XpHCxAWs08LkyW3ak9c0aawOjj1NmlCk03ZamPwmaQU
 
 
 

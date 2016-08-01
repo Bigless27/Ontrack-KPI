@@ -15,6 +15,6 @@ router.route('/')
 router.route('/:id')
   .get(controller.getOne)// Tested
   .put(checkUser, controller.put)// Tested
-  .delete(checkUser, controller.delete)// Tested
+  .delete(checkUser,controller.delete)// Tested
 
 module.exports = router;
