@@ -2,15 +2,17 @@ var Trigger = require('./triggerModel');
 var _ = require('lodash');
 
 exports.params = function(req, res, next, id) {
-	var promise = Trigger.findById(id).exec();
-	promise.then(function(trigger) {
-		req.trigger = trigger;
-		next()
-	})
-	.catch(function(err) {
-		logger.error(err);
-		next(new Error('No Trigger with that id'));
-	});
+	Trigger.findById(id)
+		.then(function(Trigger) {
+			if(!trigger) {
+				next(new Error('No Trigger with that ID'));
+			} else {
+				req.trigger = trigger
+				next();
+			}
+		},function(err) {
+			next(err);
+		})
 };
 
 exports.get = function(req, res, next) {

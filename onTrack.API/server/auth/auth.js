@@ -3,6 +3,7 @@ var expressJwt = require('express-jwt');
 var config = require('../config/config');
 var checkToken = expressJwt({ secret: config.secrets.jwt });
 var User = require('../api/user/userModel');
+var Client = require('../api/client/clientModel')
 
 exports.decodeToken = function() {
 	return function(req, res, next) {
@@ -89,6 +90,7 @@ exports.signToken = function(id) {
 		{expiresIn: config.expireTime}
 	);
 };
+
 
 
 

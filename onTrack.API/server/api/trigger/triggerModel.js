@@ -3,9 +3,9 @@ var Schema = mongoose.Schema;
 
 
 var TriggerSchema = new Schema({
-    clientId: { type: Schema.Types.ObjectId },
     name: { type: String, required: true },
-    kpis: [{ kpiId: { type: Schema.Types.ObjectId } }],
+    value: {type: String, required: true},
+    kpis: [{ type: Schema.Types.ObjectId }],
     description: {type: String}
 });
 

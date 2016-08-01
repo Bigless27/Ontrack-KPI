@@ -1,18 +1,21 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema
 var bcrypt = require('bcrypt') 
+var logger = require('../../util/logger')
+
 
 var AddressSchema = new Schema({
     addressType: { type: String },
-    streetAddress1: { type: String, required: true },
+    streetAddress1: { type: String},
     streetAddress2: { type: String },
     city: { type: String },
     state: { type: String },
-    zip: { type: String, required: true }
+    zip: { type: String}
 });
 
 var UserSchema = new Schema({
     email: { type: String, unique: true, required: true, index: true },
+    clientId: [{type: Schema.Types.ObjectId, ref: 'client'}],
     password: { type: String },
     firstName: { type: String },
     lastName: { type: String },
@@ -20,7 +23,7 @@ var UserSchema = new Schema({
     dateJoined: { type: Date, default: Date.now },
     state: { type: String },
     addresses: [AddressSchema],
-    isAdmin: { type: Boolean }  //  This is NOT the user's role within the client.  This is the role within our system.  Only Idea42 or special cases should have this as true.
+    isAdmin: { type: Boolean, default: false }  //  This is NOT the user's role within the client.  This is the role within our system.  Only Idea42 or special cases should have this as true.
 });
 
 UserSchema.pre('save', function(next) {
@@ -50,6 +53,7 @@ UserSchema.methods = {
         delete obj.password;
         return obj;
     }
+
 }
 
 
