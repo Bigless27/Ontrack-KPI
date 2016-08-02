@@ -4,6 +4,8 @@ var config = require('../config/config');
 var checkToken = expressJwt({ secret: config.secrets.jwt });
 var User = require('../api/user/userModel');
 var Client = require('../api/client/clientModel')
+var _ = require('lodash')
+
 
 exports.decodeToken = function() {
 	return function(req, res, next) {
@@ -81,6 +83,7 @@ exports.verifyUser = function() {
     		});
 	};
 };
+
 
 // util method to sign tokens on signup
 exports.signToken = function(id) {

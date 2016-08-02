@@ -12,13 +12,14 @@ var ClientSchema = new Schema({
 	startDate: {type: Date},
 	endDate: {type: Date},
 	owner: [{type: Schema.Types.ObjectId, ref: 'user'}],
-	admins: [{type: Schema.Types.ObjectId, ref: 'user'}]
+	admins: [{type: Schema.Types.ObjectId, ref: 'user'}],
+	settings: [{type: Schema.Types.ObjectId, ref: 'clientSettings'}]
 })
 
 ClientSchema.methods = {
 
-	checkOwner: function(user) {
-		return  _.includes(this.owner, user._id)
+	checkAdmin: function(user) {
+		return  _.includes(this.admins.toString(), user._id)
  		}
 }
 
