@@ -12,7 +12,8 @@ var ClientSchema = new Schema({
 	startDate: {type: Date},
 	endDate: {type: Date},
 	owner: [{type: Schema.Types.ObjectId, ref: 'user'}],
-	admins: [{type: Schema.Types.ObjectId, ref: 'user'}]
+	admins: [{type: Schema.Types.ObjectId, ref: 'user'}],
+	settings: [{type: Schema.Types.ObjectId, ref: 'clientSettings'}]
 })
 
 ClientSchema.methods = {

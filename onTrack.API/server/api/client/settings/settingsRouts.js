@@ -1,1 +1,0 @@
-settingsRouts.js

@@ -1,7 +1,6 @@
-var Client = require('../clientModel');
+var User = require('../userModel');
 var Settings = require('./settingsModel');
 var  _ = require('lodash');
-
 
 exports.params = function(req, res, next, id) {
 	Settings.findById(id)
@@ -33,13 +32,7 @@ exports.getOne = function(req, res, next) {// works
 
 exports.put = function(req, res, next) {// works
 	
-	if(!req.client.checkAdmin(req.user)) {
-		next(new Error('Not Authorized to update!'))
-		return;
-	};
-  
   	var settings = req.settings;
-
 
 	var update = req.body;
 
@@ -56,7 +49,7 @@ exports.put = function(req, res, next) {// works
 
 exports.post = function(req, res, next) { //works
 	var newSetting = req.body;
-	newSetting.clientId = req.params.id;
+	newSetting.userId = req.params.id;
 
 	Settings.create(newSetting)
 		.then(function(setting) {
@@ -67,10 +60,6 @@ exports.post = function(req, res, next) { //works
 }
 
 exports.delete = function(req, res, next) { //works
-	if(!req.client.checkAdmin(req.user)) {
-		next(new Error('Not Authorized to update!'))
-		return;
-	};
 
 	req.settings.remove(function(err, removed) {
 		if (err) {
@@ -80,6 +69,3 @@ exports.delete = function(req, res, next) { //works
 		}
 	})
 }
-
-
-

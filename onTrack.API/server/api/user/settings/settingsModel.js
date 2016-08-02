@@ -1,9 +1,9 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var Client = require('../clientModel');
+var User = require('../userModel');
 
 var SettingsSchema = new Schema({
-	clientId: {type: Schema.Types.ObjectId},
+	userId: {type: Schema.Types.ObjectId},
 	active: {type: Boolean},
 	name: {type: String, required: true, unique: true},
 	description: {type: String, required: true}
@@ -12,4 +12,4 @@ var SettingsSchema = new Schema({
 
 
 
-module.exports = mongoose.model('clientSettings', SettingsSchema);
+module.exports = mongoose.model('userSettings', SettingsSchema);

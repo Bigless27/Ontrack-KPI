@@ -59,8 +59,6 @@ exports.post = function(req, res, next) {
   newclient.owner = req.user
   newclient.admins = req.user
 
-
-
   Client.create(newclient)
     .then(function(client) {
       res.json(client);
@@ -89,7 +87,7 @@ exports.delete = function(req, res, next) {
 
 
 
-//eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1NzlmOTRlZmIyMTU2NDI5ZTljZWRjZGEiLCJpYXQiOjE0NzAwNzYxNDMsImV4cCI6MTQ3MDA5MDU0M30.XpHCxAWs08LkyW3ak9c0aawOjj1NmlCk03ZamPwmaQU
+
 
 
 
