@@ -41,3 +41,31 @@ exports.post = function(req, res, next) {
 		})
 }
 
+exports.put = function(req, res, next) {
+
+	var kpi = req.kpi;
+
+	var update = req.body;
+
+	_.merge(kpi, update);
+
+	kip.save(function(err, saved) {
+		if (err) {
+			next(err);
+		} else {
+			res.json(saved);
+		}
+	})
+}
+
+exports.delete = function(req, res, next) {
+
+	req.kpi.remove(function(err, removed) {
+		if(err) {
+			next(err);
+		} else {
+			res.json(removed);
+		}
+	})
+}
+

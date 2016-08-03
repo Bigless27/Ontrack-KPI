@@ -6,7 +6,6 @@ var auth = require('../../../auth/auth')
 
 var checkUser = [auth.decodeToken(), auth.getFreshUser()];
 
-
 router.param('id', controller.params);
 
 router.route('/')

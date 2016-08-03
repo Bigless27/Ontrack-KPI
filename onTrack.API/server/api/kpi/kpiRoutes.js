@@ -1,6 +1,6 @@
 var router = require('express').Router();
 var controller = require('./kpiController');
-var auth = require('../../auth/auth');
+var auth = require('../../../auth/auth');
 
 var checkUser = [auth.decodeToken(), auth.getFreshUser()];
 
