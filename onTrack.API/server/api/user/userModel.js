@@ -22,6 +22,7 @@ var UserSchema = new Schema({
     avatarUrl: { type: String },
     dateJoined: { type: Date, default: Date.now },
     state: { type: String },
+    activity: [{type: Schema.Types.ObjectId, ref: 'useractivity'}],
     addresses: [AddressSchema],
     isAdmin: { type: Boolean, default: false }  //  This is NOT the user's role within the client.  This is the role within our system.  Only Idea42 or special cases should have this as true.
 });
