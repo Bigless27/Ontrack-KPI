@@ -6,6 +6,6 @@ router.use('/users', require('./user/userRoutes'));
 router.use('/kpi', require('./kpi/kpiRoutes'));
 router.use('/triggers', require('./trigger/triggerRoutes'))
 router.use('/clients', require('./client/clientRoutes'));
-router.use('/user-activity', require('./user/userActivity/userActivityRoutes'))
+// router.use('/user-activity', require('./user/userActivity/userActivityRoutes'))
 
 module.exports = router;

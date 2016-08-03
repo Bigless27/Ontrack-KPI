@@ -6,7 +6,11 @@ var auth = require('../../auth/auth');
 var checkUser = [auth.decodeToken(), auth.getFreshUser()];
 // setup boilerplate route just to satisfy a request
 // for building
+
+//nested routes
 router.use('/:id/settings', require('./settings/settingsRoutes'));
+router.use('/:id/promotions', require('./promotions/promotionRoutes'));
+//
 
 router.param('id', controller.params);
 
