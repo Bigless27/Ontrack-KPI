@@ -4,8 +4,8 @@ var _ = require('lodash');
 exports.params = function(req, res, next, id) {
 	Activity.findById(id)
 		.then(function(activity) {
-			if(!activity) {
-				next(new Error('No Client with that ID'));
+			if (!activity) {
+				next(new Error('No userActivity with that id'));
 			} else {
 				req.activity = activity;
 				next();
@@ -15,9 +15,10 @@ exports.params = function(req, res, next, id) {
 	});
 }
 
+
 exports.get = function(req, res, next) {
 	Activity.find({})
-		.then(function(activity) {
+		.then(function(activity){
 			res.json(activity);
 		}, function(err) {
 			next(err);
@@ -26,7 +27,7 @@ exports.get = function(req, res, next) {
 
 exports.getOne = function(req, res, next) {
 	var activity = req.activity;
-	res.json(activity);
+	res.json(activity)
 }
 
 exports.put = function(req, res, next) {
@@ -45,10 +46,12 @@ exports.put = function(req, res, next) {
   })
 };
 
-exports.post = function(req, res, next) {
-  var newactivity = req.body;
+exports.post = function(req, res, next) {//check
+  var newActivity = req.body;
+  newActivity.userId = req.params.id
 
-  Activity.create(newactivity)
+
+  Activity.create(newActivity)
     .then(function(activity) {
       res.json(activity);
     }, function(err) {
@@ -66,4 +69,10 @@ exports.delete = function(req, res, next) {
     }
   });
 };
+
+
+
+
+
+
 

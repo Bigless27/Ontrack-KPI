@@ -1,5 +1,5 @@
-var router = require('express').Router();
-var controller = require('./userActivityController');
+var router = require('express').Router({mergeParams: true});
+var controller = require('./activityController');
 var auth = require('../../../auth/auth');
 
 var checkUser = [auth.decodeToken(), auth.getFreshUser()];

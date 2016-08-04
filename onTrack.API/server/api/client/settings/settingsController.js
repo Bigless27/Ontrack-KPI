@@ -1,4 +1,3 @@
-var Client = require('../clientModel');
 var Settings = require('./settingsModel');
 var  _ = require('lodash');
 
@@ -68,7 +67,7 @@ exports.post = function(req, res, next) { //works
 
 exports.delete = function(req, res, next) { //works
 	if(!req.client.checkAdmin(req.user)) {
-		next(new Error('Not Authorized to update!'))
+		next(new Error('Not Authorized to delete!'))
 		return;
 	};
 
