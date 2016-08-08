@@ -48,8 +48,6 @@ exports.put = function(req, res, next) {
 
 exports.post = function(req, res, next) {//check
   var newActivity = req.body;
-  newActivity.userId = req.params.id
-
 
   Activity.create(newActivity)
     .then(function(activity) {

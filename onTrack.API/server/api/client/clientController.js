@@ -1,5 +1,4 @@
 var Client = require('./clientModel');
-var User = require('../user/userModel')
 var _ = require('lodash');
 
 
@@ -71,6 +70,10 @@ exports.post = function(req, res, next) {
 
 
 exports.delete = function(req, res, next) {
+  
+
+  // input user id here: the use of this application would 
+  // need to know to attach the current users id to req.user
   if (!req.client.checkAdmin(req.user)){
     next(new Error('Not authorized!!'));
     return;

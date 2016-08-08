@@ -1,6 +1,5 @@
 var router = require('express').Router();
-var controller = require('./kpiController');
-
+var controller = require('./activityController');
 
 router.param('id', controller.params);
 
@@ -11,7 +10,7 @@ router.route('/')
 router.route('/:id')
 	.get(controller.getOne)
 	.put(controller.put)
-	.delete(controller.delete);
+	.delete(controller.delete)
 
 
 module.exports = router;
