@@ -17,3 +17,4 @@ router.route('/:triggerId')
 	.delete(checkUser, client.getClient(),controller.delete) 
  
 module.exports = router
+
