@@ -1,8 +1,7 @@
 var router = require('express').Router({mergeParams: true});
-var logger = require('../../../util/logger');
-var controller = require('./promotionController');\
+var controller = require('./activityController');
 
-router.param('id', controller.params);
+router.param('id', controler.params);
 
 router.route('/')
 	.get(controller.get)
@@ -12,5 +11,6 @@ router.route('/:id')
 	.get(controller.getOne)
 	.put(controller.put)
 	.delete(controller.delete)
+
 
 module.exports = router;

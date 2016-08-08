@@ -71,6 +71,7 @@ exports.post = function(req, res, next) {
 
 
 exports.delete = function(req, res, next) {
+  // input user id here
   if (!req.client.checkAdmin(req.user)){
     next(new Error('Not authorized!!'));
     return;

@@ -1,17 +1,17 @@
 var router = require('express').Router();
 var controller = require('./kpiController');
-var auth = require('../../../auth/auth');
 
-var checkUser = [auth.decodeToken(), auth.getFreshUser()];
 
 router.param('id', controller.params);
 
 router.route('/')
-	.get(controller.get)//Tested
-	.post(checkUser, controller.post)// Tested
+	.get(controller.get)
+	.post(controller.post)
 
 router.route('/:id')
-	.get(controller.getOne); //Tested
+	.get(controller.getOne)
+	.put(controller.put)
+	.delete(controller.delete);
 
 
 module.exports = router;

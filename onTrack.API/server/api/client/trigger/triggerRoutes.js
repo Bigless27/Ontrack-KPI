@@ -1,9 +1,6 @@
 var router = require('express').Router({mergeParams: true});
 var controller = require('./triggerController');
-var auth = require('../../../auth/auth');
 var client = require('../../../middleware/customMiddleware')
-
-var checkUser = [auth.decodeToken(), auth.getFreshUser()];
 
 router.param('id', controller.params);
 
