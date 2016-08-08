@@ -1,6 +1,6 @@
 var router = require('express').Router({mergeParams: true});
 var logger = require('../../../util/logger');
-var controller = require('./promotionController');\
+var controller = require('./promotionController');
 
 router.param('id', controller.params);
 

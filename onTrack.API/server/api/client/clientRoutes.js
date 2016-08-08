@@ -1,10 +1,7 @@
 var router = require('express').Router();
 var controller = require('./clientController');
+var logger = ('../../util/logger');
 
-// setup boilerplate route just to satisfy a request
-// for building
-
-//nested routes
 router.use('/:id/settings', require('./settings/settingsRoutes'));
 router.use('/:id/promotions', require('./promotions/promotionRoutes'));
 router.use('/:id/triggers', require('./trigger/triggerRoutes'));

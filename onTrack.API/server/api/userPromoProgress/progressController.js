@@ -1,13 +1,13 @@
-var Activity = require('./activityModel');
+var Progress = require('./progressModel');
 var _ = require('lodash');
 
 exports.params = function(req, res, next, id) {
-	Activity.findById(id)
-		.then(function(activity) {
-			if (!activity) {
-				next(new Error('No userActivity with that id'));
+	Progress.findById(id)
+		.then(function(progress) {
+			if (!progress) {
+				next(new Error('no promoProgress with that id'));
 			} else {
-				req.activity = activity;
+				req.progress = progress;
 				next();
 			}
 		}, function(err) {
@@ -15,29 +15,28 @@ exports.params = function(req, res, next, id) {
 	});
 }
 
-
 exports.get = function(req, res, next) {
-	Activity.find({})
-		.then(function(activity){
-			res.json(activity);
+	Progress.find({})
+		.then(function(progress) {
+			res.json(progress);
 		}, function(err) {
 			next(err);
-	})
+		})
 }
 
 exports.getOne = function(req, res, next) {
-	var activity = req.activity;
-	res.json(activity)
+	var progress = req.progress;
+	res.json(progress)
 }
 
 exports.put = function(req, res, next) {
-  var activity = req.activity;
+  var progress = req.progress;
 
   var update = req.body;
 
-  _.merge(activity, update);
+  _.merge(progress, update);
 
-  activity.save(function(err, saved) {
+  progress.save(function(err, saved) {
     if (err) {
       next(err);
     } else {
@@ -47,11 +46,11 @@ exports.put = function(req, res, next) {
 };
 
 exports.post = function(req, res, next) {//check
-  var newActivity = req.body;
+  var newProgress = req.body;
 
-  Activity.create(newActivity)
-    .then(function(activity) {
-      res.json(activity);
+  Progress.create(newProgress)
+    .then(function(progress) {
+      res.json(progress);
     }, function(err) {
       next(err);
     });
@@ -67,10 +66,5 @@ exports.delete = function(req, res, next) {
     }
   });
 };
-
-
-
-
-
 
 
