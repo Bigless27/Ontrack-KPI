@@ -1,7 +1,7 @@
 var router = require('express').Router();
 
 router.use('/clients', require('./client/clientRoutes'));
-router.use('/userActivity', require('./userActivity/activityRoutes'));
-router.use('/userPromoProgress', require('./userPromoProgress/progressRoutes'));
+router.use('/activity', require('./userActivity/activityRoutes'));
+router.use('/progress', require('./userPromoProgress/progressRoutes'));
 
 module.exports = router;
