@@ -11,7 +11,7 @@ var UserActivitySchema = new Schema({
 					}]
 			}],
 	userId: {type: Schema.Types.ObjectId, ref: 'user', required: true},
-	date: {type: Date, required: true},
+	date: {type: Date, default: Date.now},
 });
 
 module.exports = mongoose.model('useractivity', UserActivitySchema);
