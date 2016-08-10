@@ -4,7 +4,7 @@ var logger = ('../../util/logger');
 
 router.use('/:id/settings', require('./settings/settingsRoutes'));
 router.use('/:id/promotions', require('./promotions/promotionRoutes'));
-router.use('/:id/triggers', require('./trigger/triggerRoutes'));
+// router.use('/:id/triggers', require('./trigger/triggerRoutes'));
 //
 
 router.param('id', controller.params);
