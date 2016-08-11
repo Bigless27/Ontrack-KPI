@@ -1,5 +1,6 @@
 var Activity = require('./activityModel');
 var _ = require('lodash');
+var algorithm = require('../algorithm')
 
 exports.params = function(req, res, next, id) {
 	Activity.findById(id)
@@ -49,10 +50,14 @@ exports.put = function(req, res, next) {
 exports.post = function(req, res, next) {//check
   var newActivity = req.body;
 
+  res.json(algorithm.saySomething())// route works
+
   Activity.create(newActivity)
     .then(function(activity) {
+      //this is where the logic needs to start
       res.json(activity);
     }, function(err) {
+      res.json('hi')
       next(err);
     });
 };
