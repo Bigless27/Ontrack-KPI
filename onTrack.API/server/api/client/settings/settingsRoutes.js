@@ -1,17 +1,18 @@
 var router = require('express').Router({mergeParams: true});
-var logger = require('../../../util/logger');
 var controller = require('./settingsController');
+var client = require('../../../middleware/customMiddleware')
+
 
 
 router.param('id', controller.params);
 
 router.route('/')
 	.get(controller.get)
-	.post(controller.post)
+	.post(client.getClient(),controller.post)
 
-router.route('/:id')
+router.route('/:settingsId')
 	.get(controller.getOne)
-	.put(controller.put)
-	.delete(controller.delete)
+	.put(client.getClient(), controller.put)
+	.delete(client.getClient(), controller.delete)
 
 module.exports = router;

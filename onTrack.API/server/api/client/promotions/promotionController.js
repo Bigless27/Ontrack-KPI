@@ -32,18 +32,22 @@ exports.getOne = function(req, res, next) {
 
 exports.post = function(req, res, next) { //yup
 
-	if(!req.client.checkAdmin(req.user)) {
-		next(new Error('Not Authorized to post!'))
-		return;
-	};
-
 	var newpromotion = req.body;
-	newpromotion.owner = req.user;
+	// newpromotion.owner = req.user; Talk to todd about this, no user
 	newpromotion.clientId = req.client._id
 
 	Promotion.create(newpromotion)
-	.then(function(client) {
-	  res.json(client);
+		.then(function(promotion) {
+			var updatedClient = req.client
+			updatedClient.promotions.push(promotion._id);
+
+			updatedClient.save(function(err, saved) {
+				if(err) {
+					next(err)
+				} else {
+					res.json(promotion)
+				}
+			})
 	}, function(err) {
 	  next(err);
 	});
@@ -52,10 +56,6 @@ exports.post = function(req, res, next) { //yup
 
 exports.put = function(req, res, next) {// works
 	
-	if(!req.client.checkAdmin(req.user)) {
-		next(new Error('Not Authorized to update!'))
-		return;
-	};
   
   	var promotion = req.promotion;
 
@@ -75,11 +75,6 @@ exports.put = function(req, res, next) {// works
 
 exports.delete = function(req, res, next) { //works
 	
-	if(!req.client.checkAdmin(req.user)) {
-		next(new Error('Not Authorized to delete!'))
-		return;
-	};
-
 	req.promotion.remove(function(err, removed) {
 		if (err) {
 			next(err);

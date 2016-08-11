@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 
+
 var TriggerSchema = new Schema({
     name: { type: String, required: true },
     type: {type: String, required: true},

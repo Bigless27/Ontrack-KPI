@@ -5,16 +5,15 @@ var _ = require('lodash')
 
 var ClientSchema = new Schema({
 	name: {type: String, required: true},
-	// KPIS: [{type: Schema.Types.ObjectId, ref: 'kpi'}],
 	users: [{type: Schema.Types.ObjectId, ref: 'user'}],
-	// promotions: {type: Schema.Types.ObjectId, ref 'promotion'} need to define this
 	startDate: {type: Date},
 	endDate: {type: Date},
+	promotions: [{type: Schema.Types.ObjectId, ref: 'promotion'}],
+	triggers: [{type: Schema.Types.ObjectId, ref: 'trigger'}],
 	owner: [{type: Schema.Types.ObjectId, ref: 'user'}],
 	admins: [{type: Schema.Types.ObjectId, ref: 'user'}],
 	settings: [{type: Schema.Types.ObjectId, ref: 'clientSettings'}]
 })
-
 ClientSchema.methods = {
 
 	checkAdmin: function(user) {

@@ -2,10 +2,16 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var UserActivitySchema = new Schema({
+	items : [{
+			type: {type: String, required: true},
+			value: [{
+						srv: {type: Number, required: true},
+						retail: {type: Number},
+						quantity: {type: Number, required: true}
+					}]
+			}],
 	userId: {type: Schema.Types.ObjectId, ref: 'user', required: true},
-	value: {type: Number},
-	type: {type: String},
-	name: {type: String, required: true}
+	date: {type: Date, default: Date.now},
 });
 
 module.exports = mongoose.model('useractivity', UserActivitySchema);

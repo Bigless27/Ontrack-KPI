@@ -2,16 +2,18 @@ var router = require('express').Router({mergeParams: true});
 var controller = require('./triggerController');
 var client = require('../../../middleware/customMiddleware')
 
+
 router.param('id', controller.params);
 
+
 router.route('/')
-	.get(controller.get) //Tested
-	.post(client.getClient(),controller.post) //Tested
+	.get(controller.get) 
+	.post(client.getClient(),controller.post) 
 
 router.route('/:triggerId')
-	.get(controller.getOne) // Tested
-	.put(client.getClient(), controller.put) //Tested
-	.delete(client.getClient(),controller.delete) 
+	.get(controller.getOne) 
+	.put(client.getClient(),controller.put) 
+	.delete(client.getClient(), controller.delete) 
  
 module.exports = router
 
