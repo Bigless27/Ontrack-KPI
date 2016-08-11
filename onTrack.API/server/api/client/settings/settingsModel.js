@@ -4,7 +4,7 @@ var Client = require('../clientModel');
 
 var SettingsSchema = new Schema({
 	clientId: {type: Schema.Types.ObjectId},
-	active: {type: Boolean},
+	active: {type: Boolean, default: false},
 	name: {type: String, required: true, unique: true},
 	description: {type: String, required: true}
 });
