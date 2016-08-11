@@ -33,15 +33,20 @@ exports.getOne = function(req, res, next) {
 
 exports.post = function(req, res, next) {
 
-	if(!req.client.checkAdmin(req.user)) {
-		next(new Error('Not Authorized to post!'))
-		return;
-	};
-
 	var newTrigger = req.body;
+
 	Trigger.create(newTrigger)
 		.then(function(trigger) {
-			res.json(trigger)
+			var updatedClient = req.client
+			updatedClient.triggers.push(trigger._id);
+
+			updatedClient.save(function(err, saved) {
+				if(err) {
+					next(err)
+				} else {
+					res.json(trigger)
+				}
+			})
 		}, function(err) {
 			logger.error(err);
 			next(err)
@@ -49,11 +54,6 @@ exports.post = function(req, res, next) {
 }
 
 exports.put = function(req, res, next) {
-
-	if(!req.client.checkAdmin(req.user)) {
-		next(new Error('Not Authorized to update!'))
-		return;
-	};
 
 	var trigger = req.trigger;
 	
@@ -71,10 +71,6 @@ exports.put = function(req, res, next) {
 };
 
 exports.delete = function(req, res, next) {
-	if (!req.client.checkAdmin(req.user)) {
-		next(new Error('Not Authorized to delete!'))
-		return;
-	};
 
 	req.trigger.remove(function(err, removed) {
 		if(err) {

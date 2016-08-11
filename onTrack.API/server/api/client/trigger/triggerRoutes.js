@@ -2,11 +2,9 @@ var router = require('express').Router({mergeParams: true});
 var controller = require('./triggerController');
 var client = require('../../../middleware/customMiddleware')
 
+
 router.param('id', controller.params);
 
-// nested routes
-router.use('/:id/kpis', require('./kpi/kpiRoutes'))
-//
 
 router.route('/')
 	.get(controller.get) 
@@ -14,8 +12,8 @@ router.route('/')
 
 router.route('/:triggerId')
 	.get(controller.getOne) 
-	.put(client.getClient(), controller.put) 
-	.delete(client.getClient(),controller.delete) 
+	.put(client.getClient(),controller.put) 
+	.delete(client.getClient(), controller.delete) 
  
 module.exports = router
 
