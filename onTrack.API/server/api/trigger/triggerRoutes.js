@@ -4,13 +4,17 @@ var client = require('../../../middleware/customMiddleware')
 
 router.param('id', controller.params);
 
+// nested routes
+router.use('/:id/kpis', require('./kpi/kpiRoutes'))
+//
+
 router.route('/')
-	.get(controller.get) //Tested
-	.post(client.getClient(),controller.post) //Tested
+	.get(controller.get) 
+	.post(client.getClient(),controller.post) 
 
 router.route('/:triggerId')
-	.get(controller.getOne) // Tested
-	.put(client.getClient(), controller.put) //Tested
+	.get(controller.getOne) 
+	.put(client.getClient(), controller.put) 
 	.delete(client.getClient(),controller.delete) 
  
 module.exports = router
