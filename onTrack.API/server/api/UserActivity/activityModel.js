@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var UserActivitySchema = new Schema({
-	items : [{
+	items: [{
 			type: {type: String, required: true},
 			value: [{
 						srv: {type: Number, required: true},

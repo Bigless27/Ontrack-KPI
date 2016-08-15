@@ -5,7 +5,7 @@ var config = require('./config/config');
 var logger = require('./util/logger');
 var mongoose = require('mongoose');
 // db.url is different depending on NODE_ENV
-mongoose.Promise = global.Promise
+mongoose.Promise = global.Promise 
 mongoose.connect(config.db.url);
 
 if (config.seed) {

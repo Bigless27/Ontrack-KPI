@@ -49,15 +49,13 @@ exports.put = function(req, res, next) {
 
 exports.post = function(req, res, next) {//check
   var newActivity = req.body;
-
-  res.json(algorithm.saySomething())// route works
-
+  newActivity.userId = req.user._id
   Activity.create(newActivity)
     .then(function(activity) {
       //this is where the logic needs to start
-      res.json(activity);
+      // res.json(activity);
+      res.json(activity)
     }, function(err) {
-      res.json('hi')
       next(err);
     });
 };
