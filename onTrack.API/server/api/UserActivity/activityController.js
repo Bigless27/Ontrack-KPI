@@ -53,7 +53,6 @@ exports.post = function(req, res, next) {//check
   Activity.create(newActivity)
     .then(function(activity) {
       //this is where the logic needs to start
-      // res.json(activity);
       res.json(activity)
     }, function(err) {
       next(err);
