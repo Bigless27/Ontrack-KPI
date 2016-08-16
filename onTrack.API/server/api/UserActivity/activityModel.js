@@ -12,11 +12,12 @@ var UserActivitySchema = new Schema({
 					}]
 			}],
 	userId: {type: Schema.Types.ObjectId, ref: 'user'},
-	date: {type: Date, default: Date.now},
+	date: {type: Date, default: Date.now}
 });
 
 UserActivitySchema.post('save', function(doc) {
-	console.log(algorithm.saySomething())
+	console.log('Looking up promotions.');
+	algorithm.lookUpPromotions(doc.userId)
 })
 
 module.exports = mongoose.model('useractivity', UserActivitySchema);

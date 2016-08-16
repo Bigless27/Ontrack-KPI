@@ -83,6 +83,18 @@ exports.me = function(req, res) {
   res.json(req.user.toJson());
 };
 
+exports.FindUser = function(id) {
+	User.findById(id)
+		.then(function(user) {
+			if(!user) {
+				return('fail');
+			} else {
+				console.log(user);
+			}
+		}, function(err) {
+			return(err);
+		})
+}
 
 
 

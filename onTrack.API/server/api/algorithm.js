@@ -1,9 +1,11 @@
-module.exports = {
-	saySomething: function() {
-		return 'this works bitch'
-	},
+var Client = require('./client/clientModel');
+var UserCtrl = require('./user/userController');
+var User = require('./user/userModel');
 
-	lookUpPromotions: function() {
-		return 'sup'
-	}
+exports.lookUpPromotions = function(id) {
+	return UserCtrl.FindUser(id);
+}
+
+exports.testLog = function() {
+	return 'boom';
 }

@@ -57,6 +57,7 @@ exports.post = function(req, res, next) {
   var newclient = req.body;
   newclient.owner = req.user
   newclient.admins = req.user
+  newclient.users = req.user
 
   Client.create(newclient)
     .then(function(client) {

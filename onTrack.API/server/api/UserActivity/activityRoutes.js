@@ -1,6 +1,7 @@
 var router = require('express').Router();
 var controller = require('./activityController');
 var mock = require('../../middleware/customMiddleware');
+var algorithm = require('../algorithm')
 
 
 
