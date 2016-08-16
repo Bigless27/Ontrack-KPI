@@ -24,7 +24,7 @@ exports.getClient = function() {
 exports.mockUser = function() {
 	return function(req, res, next) {
 		
-		User.findById('57b1e942d043814d391fb926')
+		User.findById('57b363696b04083455cb7120')
 			.then(function(user) {
 				if(!user) {
 					res.status(401).send('Unauthorized');

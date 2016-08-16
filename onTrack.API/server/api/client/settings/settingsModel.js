@@ -9,7 +9,7 @@ var SettingsSchema = new Schema({
 	description: {type: String, required: true}
 });
 
-SettingSchema.pre('remove', function(next) {
+SettingsSchema.pre('remove', function(next) {
 	console.log('deleting association');
 	this.model('client').remove({settings: this.id}, next)
 })

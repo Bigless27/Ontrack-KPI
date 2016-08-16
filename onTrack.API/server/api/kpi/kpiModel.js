@@ -7,7 +7,7 @@ var KpiSchema = new Schema({
     value: { type: String }
 });
 
-KPISchema.pre('remove', function(next) {
+KpiSchema.pre('remove', function(next) {
 	console.log('deleting associations')
 	this.model('trigger').remove({kpis: this.id}, next)
 })

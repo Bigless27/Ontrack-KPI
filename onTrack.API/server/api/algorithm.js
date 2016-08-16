@@ -7,11 +7,11 @@ exports.lookUpPromotions = function(id) {
 		if(err) {
 			return console.log(err);
 		} else {
-			console.log(user)
-			
+
 			user.clientId.forEach(function(id) {
+			
 				query = ClientCtrl.FindClient(id);
-				// query.populate('promotions')
+				query.populate('promotions')
 				query.exec(function(err, client) {
 					if(err){
 						return console.log(err);

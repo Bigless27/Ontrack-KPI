@@ -17,7 +17,7 @@ var UserActivitySchema = new Schema({
 
 UserActivitySchema.pre('remove', function(next) {
 	console.log('deleting associations')
-	this.model('user').remove({activity: this.id}, id})
+	this.model('user').remove({activity: this.id}, next)
 })
 
 UserActivitySchema.post('save', function(doc) {
