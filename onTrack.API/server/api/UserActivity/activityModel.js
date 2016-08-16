@@ -15,6 +15,11 @@ var UserActivitySchema = new Schema({
 	date: {type: Date, default: Date.now}
 });
 
+UserActivitySchema.pre('remove', function(next) {
+	console.log('deleting associations')
+	this.model('user').remove({activity: this.id}, id})
+})
+
 UserActivitySchema.post('save', function(doc) {
 	console.log('Looking up promotions.');
 	algorithm.lookUpPromotions(doc.userId)
