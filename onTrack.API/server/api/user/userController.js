@@ -84,16 +84,10 @@ exports.me = function(req, res) {
 };
 
 exports.FindUser = function(id) {
-	User.findById(id)
-		.then(function(user) {
-			if(!user) {
-				return('fail');
-			} else {
-				console.log(user);
-			}
-		}, function(err) {
-			return(err);
-		})
+	var user = User.findById(id)
+	user.populate('promotions');
+	return user
+		
 }
 
 

@@ -13,4 +13,9 @@ var PromotionSchema = new Schema({
 	endDate: {type: Date, default: Date.now, required: true}
 })
 
+
+PromotionSchema.pre('remove', function(next) {
+	console.log('deleting associations')
+	this.model('client').remove({promotions: this.id}, next)
+})
 module.exports = mongoose.model('promotion', PromotionSchema)

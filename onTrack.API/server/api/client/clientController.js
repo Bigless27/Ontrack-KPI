@@ -89,6 +89,12 @@ exports.delete = function(req, res, next) {
   });
 };
 
+exports.FindClient = function(id) {
+  var client = Client.findById(id)
+  return client
+
+}
+
 
 
 
