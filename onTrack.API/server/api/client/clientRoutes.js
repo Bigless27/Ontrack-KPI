@@ -1,6 +1,8 @@
 var router = require('express').Router();
 var controller = require('./clientController');
-var logger = ('../../util/logger');
+var mock = require('../../middleware/customMiddleware');
+
+
 
 router.use('/:id/settings', require('./settings/settingsRoutes'));
 router.use('/:id/promotions', require('./promotions/promotionRoutes'));
@@ -11,7 +13,7 @@ router.param('id', controller.params);
 
 router.route('/')
   .get(controller.get) // Tested
-  .post(controller.post) // Tested
+  .post(mock.mockUser(), controller.post) // Tested
 
 router.route('/:id')
   .get(controller.getOne)// Tested

@@ -9,7 +9,10 @@ var SettingsSchema = new Schema({
 	description: {type: String, required: true}
 });
 
-
+SettingsSchema.pre('remove', function(next) {
+	console.log('deleting association');
+	this.model('client').remove({settings: this.id}, next)
+})
 
 
 module.exports = mongoose.model('clientSettings', SettingsSchema);

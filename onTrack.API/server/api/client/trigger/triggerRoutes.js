@@ -3,7 +3,7 @@ var controller = require('./triggerController');
 var client = require('../../../middleware/customMiddleware')
 
 
-router.param('id', controller.params);
+router.param('triggerID', controller.params);
 
 
 router.route('/')

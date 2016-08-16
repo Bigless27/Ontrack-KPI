@@ -10,4 +10,9 @@ var TriggerSchema = new Schema({
     description: {type: String}
 });
 
+TriggerSchema.pre('remove', function(next) {
+	console.log('deleting associations')
+	this.model('client').remove({triggers: this.id}, next)
+})
+
 module.exports = mongoose.model('trigger', TriggerSchema);

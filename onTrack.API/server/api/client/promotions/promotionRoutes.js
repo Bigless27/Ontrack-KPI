@@ -2,7 +2,7 @@ var router = require('express').Router({mergeParams: true});
 var controller = require('./promotionController');
 var client = require('../../../middleware/customMiddleware')
 
-router.param('id', controller.params);
+router.param('promotionId', controller.params);
 
 router.route('/')
 	.get(controller.get)

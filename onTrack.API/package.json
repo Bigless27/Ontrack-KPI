@@ -6,6 +6,7 @@
     "test": ""
   },
   "dependencies": {
+    "angular": "^1.5.8",
     "bcrypt": "^0.8.7",
     "body-parser": "^1.15.2",
     "colors": "^1.1.2",

@@ -4,7 +4,7 @@ var client = require('../../../middleware/customMiddleware')
 
 
 
-router.param('id', controller.params);
+router.param('settingId', controller.params);
 
 router.route('/')
 	.get(controller.get)

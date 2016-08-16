@@ -7,4 +7,11 @@ var KpiSchema = new Schema({
     value: { type: String }
 });
 
+KpiSchema.pre('remove', function(next) {
+	console.log('deleting associations')
+	this.model('trigger').remove({kpis: this.id}, next)
+})
+
+
+
 module.exports = mongoose.model('kpi', KpiSchema);
