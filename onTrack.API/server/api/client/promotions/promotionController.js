@@ -1,4 +1,5 @@
 var Promotion = require('./promotionModel');
+var Client = require('../clientModel')
 var _ = require('lodash');
 
 exports.params = function(req, res, next, id) {
@@ -16,12 +17,16 @@ exports.params = function(req, res, next, id) {
 };
 
 exports.get = function(req, res, next) {
-	Promotion.find({})
-		.then(function(promotion) {
-			res.json(promotion);
-		}, function(err) {
-			next(err);
-	});
+	
+	Client.findById(req.params.id)
+			.populate('promotions')
+			.exec(function(err, client) {
+				if (err) {
+					res.status(401).send('Error finding client')
+				} else {
+					res.json(client.promotions)
+			}
+		})
 };
 
 
