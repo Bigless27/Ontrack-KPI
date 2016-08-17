@@ -1,6 +1,5 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var _ = require('lodash');
 
 var PromotionSchema = new Schema({
 	name: {type: String, required: true, index: true},
@@ -21,10 +20,7 @@ PromotionSchema.post('remove', function(doc) {
 			if(!client) {
 				console.log('association not deleted')
 			} else {
-				update = client
-				
-				update.promotions.splice(update.promotions.indexOf(doc._id),1);
-				_.merge(client, update)
+				client.promotions.splice(client.promotions.indexOf(doc._id),1);
 
 				client.save(function(err, saved) {
 					if (err) {
