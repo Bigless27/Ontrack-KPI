@@ -10,9 +10,26 @@ var TriggerSchema = new Schema({
     description: {type: String}
 });
 
-TriggerSchema.pre('remove', function(next) {
-	console.log('deleting associations')
-	this.model('client').remove({triggers: this.id}, next)
+TriggerSchema.post('remove', function(doc) {
+	Client.findById(doc.clientId)
+		.then(function(client) {
+			if(!client) {
+				console.log('association not deleted')
+			} else {
+				update = client
+				
+				update.triggers.splice(update.triggers.indexOf(doc._id),1);
+				_.merge(client, update)
+
+				client.save(function(err, saved) {
+					if (err) {
+						console.log('not saved')
+					} else {
+						console.log('association deleted and saved')
+					}
+				})
+			}
+		})
 })
 
 module.exports = mongoose.model('trigger', TriggerSchema);
