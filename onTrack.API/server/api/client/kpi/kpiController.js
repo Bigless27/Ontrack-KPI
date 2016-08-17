@@ -32,11 +32,21 @@ exports.getOne = function(req, res, next) {
 
 exports.post = function(req, res, next) {
 	var newkpi = req.body;
+	newkpi.clientId = req.client._id
+
 	KPI.create(newkpi)
 		.then(function(kpi) {
-			res.json(kpi);
+			var updatedClient = req.client
+			updatedClient.kpis.push(kpi._id)
+
+			updatedClient.save(function(err, saved) {
+				if(err) {
+					next(err);
+				} else {
+					res.json(kpi)
+				}
+			})	
 		}, function(err) {
-			logger.error(err);
 			next(err);
 		})
 }
@@ -68,4 +78,5 @@ exports.delete = function(req, res, next) {
 		}
 	})
 }
+
 

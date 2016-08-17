@@ -14,7 +14,7 @@ exports.lookUpPromotions = function(doc) {
 			
 				query = ClientCtrl.FindClient(id);
 				query.populate('promotions')
-				query.populate('triggers')
+				query.populate('client')
 				query.exec(function(err, client) {
 					if(err){
 						return console.log(err);
@@ -28,7 +28,7 @@ exports.lookUpPromotions = function(doc) {
 						// //
 
 
-						getMatchingTriggers(doc.items[0], client.triggers)
+						getKPIS(client.kpis)
 
 
 					}
@@ -52,17 +52,7 @@ function getActivePromotions(current, promotions) {
 	return activeArray;
 }
 
-function getMatchingTriggers(item, triggers) {
-
-	triggers.forEach(function(trigger) {
-		if (trigger.type === item.type) {
-			getKPIS(trigger)
-		}
-	})
-}
-
-function getKPIS(trigger) {
-	console.log('made it to KPI')
-	console.log(trigger.kpis)
+function getKPIS(kpis) {
+	console.log(kpis)
 }
 
