@@ -19,19 +19,22 @@ var ClientSchema = new Schema({
 ClientSchema.post('save', function(doc) {
 	User.findById(doc.owner[0])
 		.then(function(user) {
-
 			if(!user) {
 				console.log('err')
 			}
+			else if(user.clientId.indexOf(doc._id) !== -1) {
+				console.log('id already associated with user')
+			} else{
+				user.clientId.push(doc._id)
+				user.save(function(err){
+					if(err) {
+						console.log(err)
+					} else {
+						console.log('saved')
+					}
+				})
+			}
 
-			user.clientId.push(doc._id)
-			user.save(function(err){
-				if(err) {
-					console.log(err)
-				} else {
-					console.log('saved')
-				}
-			})
 		}, function(err) {
 			return err
 		})
