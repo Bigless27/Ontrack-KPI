@@ -1,6 +1,5 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var Client = require('../clientModel')
 var _ = require('lodash');
 
 var PromotionSchema = new Schema({
@@ -36,30 +35,10 @@ PromotionSchema.post('remove', function(doc) {
 				})
 			}
 		})
-
 })
 
-PromotionSchema.post('save', function(doc) {
-	Client.findById(doc.clientId)
-		.then(function(client) {
-
-			if(!client) {
-				console.log('err')
-			}
-
-			user.clientId.push(doc._id)
-			client.promotions.push(doc._id)
-			user.save(function(err){
-				if(err) {
-					console.log(err)
-				} else {
-					console.log('saved')
-				}
-			})
-		}, function(err) {
-			return err
-	})
-})
+// PromotionSchema.post('save', function(doc) {
+// })
 
 
 

@@ -38,7 +38,7 @@ exports.getOne = function(req, res, next) {
 exports.post = function(req, res, next) { //yup
 
 	var newpromotion = req.body;
-	// newpromotion.owner = req.user; Talk to todd about this, no user
+	
 	newpromotion.clientId = req.client._id
 
 	Promotion.create(newpromotion)

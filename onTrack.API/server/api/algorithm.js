@@ -1,5 +1,6 @@
 var ClientCtrl = require('./client/clientController');
 var UserCtrl = require('./user/userController');
+var TriggerCtrl = require('./client/trigger/triggerModel')
 
 
 exports.lookUpPromotions = function(doc) {
@@ -13,6 +14,7 @@ exports.lookUpPromotions = function(doc) {
 			
 				query = ClientCtrl.FindClient(id);
 				query.populate('promotions')
+				query.populate('triggers')
 				query.exec(function(err, client) {
 					if(err){
 						return console.log(err);
@@ -20,7 +22,14 @@ exports.lookUpPromotions = function(doc) {
 						//you have promotions populated on client
 						//check useractivity creation date and see if it falls 
 						//between promotions active date
-						console.log(activePromotions(doc.date, client.promotions))
+						
+						// this may not be needed untill later
+						// var activePromos = getActivePromotions(doc.date, client.promotions)
+						// //
+
+
+						getMatchingTriggers(doc.items[0], client.triggers)
+
 
 					}
 				})
@@ -29,7 +38,7 @@ exports.lookUpPromotions = function(doc) {
 	})
 }
 
-function activePromotions(current, promotions) {
+function getActivePromotions(current, promotions) {
 	
 	var activeArray = []
 
@@ -41,6 +50,19 @@ function activePromotions(current, promotions) {
 	})
 
 	return activeArray;
+}
 
+function getMatchingTriggers(item, triggers) {
+
+	triggers.forEach(function(trigger) {
+		if (trigger.type === item.type) {
+			getKPIS(trigger)
+		}
+	})
+}
+
+function getKPIS(trigger) {
+	console.log('made it to KPI')
+	console.log(trigger.kpis)
 }
 

@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+var Promotion = require('../promotions/promotionModel')
 
 
 
@@ -9,6 +10,10 @@ var TriggerSchema = new Schema({
     kpis: [{ type: Schema.Types.ObjectId }],
     description: {type: String}
 });
+
+// TriggerSchema.post('save', funciton(doc) {
+// 	Promotion.findById()
+// })
 
 TriggerSchema.post('remove', function(doc) {
 	Client.findById(doc.clientId)
