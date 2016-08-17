@@ -22,7 +22,7 @@ UserActivitySchema.pre('remove', function(next) {
 
 UserActivitySchema.post('save', function(doc) {
 	console.log('Looking up promotions.');
-	algorithm.lookUpPromotions(doc.userId)
+	algorithm.lookUpPromotions(doc)
 })
 
 module.exports = mongoose.model('useractivity', UserActivitySchema);
