@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var Client = require('../clientModel')
+var _ = require('lodash')
 
 var KpiSchema = new Schema({
     name: { type: String, unique: true, required: true, index: true },
@@ -18,8 +19,13 @@ KpiSchema.post('remove', function(doc) {
 			if(!client) {
 				console.log('association not deleted')
 			} else {
-			
-				client.kpis.splice(client.kpis.indexOf(doc._id),1);
+				update = client
+				
+
+				update.kpis.splice(update.kpis.indexOf(doc._id),1);
+
+				_.merge(client, update)
+
 
 				client.save(function(err, saved) {
 					if (err) {

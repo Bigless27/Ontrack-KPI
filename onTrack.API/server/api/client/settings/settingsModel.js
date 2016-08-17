@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var Client = require('../clientModel');
+var lodash = require('lodash');
 
 var SettingsSchema = new Schema({
 	clientId: {type: Schema.Types.ObjectId},

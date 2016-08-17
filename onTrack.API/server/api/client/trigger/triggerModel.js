@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var Promotion = require('../promotions/promotionModel')
+var _ = require('lodash')
 
 
 

@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+var _ = require('lodash')
 
 var UserPromoProgressSchema = new Schema({
 	userId: {type: Schema.Types.ObjectId, ref: 'user', required: true},
