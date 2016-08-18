@@ -4,10 +4,12 @@ var TriggerCtrl = require('./client/trigger/triggerModel');
 var math = require('mathjs');
 var _ = require('lodash');
 var parser = math.parser();
+var Progress = require('./userPromoProgress/progressModel')
 
 
 exports.lookUpPromotions = function(doc) {
 	query = UserCtrl.FindUser(doc.userId);
+	query.populate('progress')
 	query.exec(function(err, user) {
 		if(err) {
 			return console.log(err);
@@ -36,7 +38,9 @@ exports.lookUpPromotions = function(doc) {
 
 						var evaluatedValue = parseKpisValue(matchingKpis, doc)
 
-						updatePromoProgress(evaluatedValue, user);
+						var activePromos = getActivePromotions(doc.date, client.promotions)
+
+						updatePromoProgress(evaluatedValue, user, activePromos);
 
 
 					}
@@ -91,11 +95,20 @@ function parseKpisValue(kpis, activity) {
 	return solution
 }
 
-function updatePromoProgress(value, user) {
+function updatePromoProgress(value, user, activePromos) {
 
-	console.log(value + ' ' + user)
 
-	
+	activePromos.forEach(function(promo) {
+
+		user.progress.forEach(function(prog) {
+			
+			if(promo._id.toString() === prog['promotionId'].toString()){
+				console.log('hit');
+			} else {
+				console.log('miss');
+			}
+		})
+	})
 
 
 }
