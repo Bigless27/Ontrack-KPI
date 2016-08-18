@@ -85,7 +85,6 @@ exports.me = function(req, res) {
 
 exports.FindUser = function(id) {
 	var user = User.findById(id)
-	user.populate('promotions');
 	return user
 		
 }

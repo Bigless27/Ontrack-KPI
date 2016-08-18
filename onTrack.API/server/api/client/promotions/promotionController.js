@@ -1,4 +1,5 @@
 var Promotion = require('./promotionModel');
+var Progress = require('../../userPromoProgress/progressModel')
 var Client = require('../clientModel')
 var _ = require('lodash');
 
@@ -50,7 +51,15 @@ exports.post = function(req, res, next) { //yup
 				if(err) {
 					next(err)
 				} else {
-					res.json(promotion)
+					user = req.user
+					console.log(user)
+					console.log('here');
+					Progress.create({userId: user._id, promotionId: promotion._id})
+						.then(function(progress) {
+							res.json(promotion)
+						}, function(err) {
+							console.log(err);
+						})
 				}
 			})
 	}, function(err) {

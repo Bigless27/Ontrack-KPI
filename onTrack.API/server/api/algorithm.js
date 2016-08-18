@@ -1,6 +1,9 @@
 var ClientCtrl = require('./client/clientController');
 var UserCtrl = require('./user/userController');
-var TriggerCtrl = require('./client/trigger/triggerModel')
+var TriggerCtrl = require('./client/trigger/triggerModel');
+var math = require('mathjs');
+var _ = require('lodash');
+var parser = math.parser();
 
 
 exports.lookUpPromotions = function(doc) {
@@ -9,12 +12,13 @@ exports.lookUpPromotions = function(doc) {
 		if(err) {
 			return console.log(err);
 		} else {
-
+			//evaluate for each client
 			user.clientId.forEach(function(id) {
 			
 				query = ClientCtrl.FindClient(id);
 				query.populate('promotions')
-				query.populate('client')
+				// query.populate('client')
+				query.populate('kpis')
 				query.exec(function(err, client) {
 					if(err){
 						return console.log(err);
@@ -28,7 +32,11 @@ exports.lookUpPromotions = function(doc) {
 						// //
 
 
-						getKPIS(client.kpis)
+						var matchingKpis = getKpis(client.kpis, doc.items[0].type)
+
+						var evaluatedValue = parseKpisValue(matchingKpis, doc)
+
+						updatePromoProgress(evaluatedValue, user);
 
 
 					}
@@ -52,7 +60,52 @@ function getActivePromotions(current, promotions) {
 	return activeArray;
 }
 
-function getKPIS(kpis) {
-	console.log(kpis)
+function getKpis(kpis, activityType) {
+	var kpiArray = [];
+
+	kpis.forEach(function(kpi) {
+		if(kpi.type === activityType) {
+			kpiArray.push(kpi)
+		}
+	})
+
+	return kpiArray;
 }
+
+function parseKpisValue(kpis, activity) {
+	var solution = 0
+	kpis.forEach(function(kpi) {
+
+		var formulas = activity.items[0].value[0].toObject()
+		//set all variables
+		_.forIn(formulas, function(value, key) {
+			parser.set(key + '', value)
+
+
+		})
+
+		solution += parser.eval(kpi.value);
+
+	})
+
+	return solution
+}
+
+function updatePromoProgress(value, user) {
+
+	console.log(value + ' ' + user)
+
+	
+
+
+}
+
+
+// no activity ID in users!!!!!
+
+
+
+
+
+
 

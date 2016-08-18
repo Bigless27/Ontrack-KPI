@@ -5,8 +5,8 @@ var client = require('../../../middleware/customMiddleware')
 router.param('promotionId', controller.params);
 
 router.route('/')
-	.get(client.getClientPromo(), controller.get)
-	.post(client.getClient(),controller.post)
+	.get(client.getClientPromo(),  controller.get)
+	.post(client.getClient(), client.mockUser(),controller.post)
 
 router.route('/:promotionId')
 	.get(controller.getOne)
