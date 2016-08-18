@@ -40,7 +40,7 @@ exports.getClientPromo = function() {
 exports.mockUser = function() {
 	return function(req, res, next) {
 		
-		User.findById('57b363696b04083455cb7120')
+		User.findById('57b621f8aeae67b49af4c397')
 			.then(function(user) {
 				if(!user) {
 					res.status(401).send('Unauthorized');

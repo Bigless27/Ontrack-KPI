@@ -12,15 +12,24 @@ var UserPromoProgressSchema = new Schema({
 UserPromoProgressSchema.post('save', function(doc) {
 	User.findById(doc.userId)
 		.then(function(user) {
-			user.progress.push(doc._id)
-			user.save(function(err, saved) {
-				if(err) {
-					console.log(err);
-				} else {
-					console.log('progress set up')
+			if(!user) {
+				console.log('err')
+			}
+			else if(user.progress.indexOf(doc._id) !== -1){
+				console.log('ID already associated with user')
+			}
+			else{
+				user.progress.push(doc._id)
+				user.save(function(err, saved) {
+					if(err) {
+						console.log(err);
+					}
+					else {
+						console.log('progress set up')
 				}
 			})
-		})
+		}
+	})
 })
 
 module.exports = mongoose.model('userpromoprogress', UserPromoProgressSchema)

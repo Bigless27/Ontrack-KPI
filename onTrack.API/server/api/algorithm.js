@@ -33,7 +33,6 @@ exports.lookUpPromotions = function(doc) {
 						// var activePromos = getActivePromotions(doc.date, client.promotions)
 						// //
 
-
 						var matchingKpis = getKpis(client.kpis, doc.items[0].type)
 
 						var evaluatedValue = parseKpisValue(matchingKpis, doc)
@@ -95,13 +94,14 @@ function parseKpisValue(kpis, activity) {
 
 function updatePromoProgress(value, user, activePromos) {
 
-
 	activePromos.forEach(function(promo) {
 
 		user.progress.forEach(function(prog) {
 			
 			if(promo._id.toString() === prog['promotionId'].toString()){
+				console.log(value)
 				prog['value'] += value
+				console.log(prog);
 				prog.save(function(err){
 					if(err){
 						console.log(err);
@@ -113,7 +113,7 @@ function updatePromoProgress(value, user, activePromos) {
 	})
 
 }
-// no activity ID in users!!!!!
+
 
 
 

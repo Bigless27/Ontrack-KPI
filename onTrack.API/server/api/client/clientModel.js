@@ -23,7 +23,7 @@ ClientSchema.post('save', function(doc) {
 				console.log('err')
 			}
 			else if(user.clientId.indexOf(doc._id) !== -1) {
-				console.log('id already associated with user')
+				console.log('id already associated with user') //don't push id in twice
 			} else{
 				user.clientId.push(doc._id)
 				user.save(function(err){
