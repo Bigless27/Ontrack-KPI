@@ -17,7 +17,6 @@ UserPromoProgressSchema.post('save', function(doc) {
 				if(err) {
 					console.log(err);
 				} else {
-					console.log(saved)
 					console.log('progress set up')
 				}
 			})

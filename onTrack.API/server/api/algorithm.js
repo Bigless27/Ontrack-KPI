@@ -41,8 +41,6 @@ exports.lookUpPromotions = function(doc) {
 						var activePromos = getActivePromotions(doc.date, client.promotions)
 
 						updatePromoProgress(evaluatedValue, user, activePromos);
-
-
 					}
 				})
 			})
@@ -103,17 +101,18 @@ function updatePromoProgress(value, user, activePromos) {
 		user.progress.forEach(function(prog) {
 			
 			if(promo._id.toString() === prog['promotionId'].toString()){
-				console.log('hit');
-			} else {
-				console.log('miss');
-			}
+				prog['value'] += value
+				prog.save(function(err){
+					if(err){
+						console.log(err);
+					} 
+				})
+			} 
 		})
+	return 
 	})
 
-
 }
-
-
 // no activity ID in users!!!!!
 
 
