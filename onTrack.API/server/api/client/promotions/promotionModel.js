@@ -1,6 +1,8 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+var _ = require('lodash');
 var Client = require('../clientModel')
+
 
 var PromotionSchema = new Schema({
 	name: {type: String, required: true, index: true},
@@ -15,31 +17,50 @@ var PromotionSchema = new Schema({
 })
 
 
-PromotionSchema.pre('remove', function(next) {
-	console.log('deleting associations')
-	this.model('client').remove({promotions: this.id}, next)
+PromotionSchema.post('remove', function(doc) {
+	Client.findById(doc.clientId)
+		.then(function(client) {
+			if(!client) {
+				console.log('association not deleted')
+			} else {
+				var update = client
+				
+				update.promotions.splice(update.promotions.indexOf(doc._id),1);
+				_.merge(client, update)
+
+				client.save(function(err, saved) {
+					if (err) {
+						console.log('not saved')
+					} else {
+						console.log('association deleted and saved')
+					}
+				})
+			}
+		})
+
 })
 
 PromotionSchema.post('save', function(doc) {
-	Client.findById(doc.clientId)
-		.then(function(client) {
+	
 
-			if(!client) {
-				console.log('err')
-			}
 
-			user.clientId.push(doc._id)
-			client.promotions.push(doc._id)
-			user.save(function(err){
-				if(err) {
-					console.log(err)
-				} else {
-					console.log('saved')
-				}
-			})
-		}, function(err) {
-			return err
-	})
+	// Client.findById(doc.clientId)
+	// 	.then(function(client) {
+
+	// 		if(!client) {
+	// 			console.log('err')
+	// 		}
+	// 		client.promotions.push(doc._id)
+	// 		user.save(function(err){
+	// 			if(err) {
+	// 				console.log(err)
+	// 			} else {
+	// 				console.log('saved')
+	// 			}
+	// 		})
+	// 	}, function(err) {
+	// 		return err
+	// })
 })
 
 

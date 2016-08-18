@@ -1,4 +1,6 @@
 var Promotion = require('./promotionModel');
+var Progress = require('../../userPromoProgress/progressModel')
+var Client = require('../clientModel')
 var _ = require('lodash');
 
 exports.params = function(req, res, next, id) {
@@ -16,12 +18,16 @@ exports.params = function(req, res, next, id) {
 };
 
 exports.get = function(req, res, next) {
-	Promotion.find({})
-		.then(function(promotion) {
-			res.json(promotion);
-		}, function(err) {
-			next(err);
-	});
+	
+	Client.findById(req.params.id)
+			.populate('promotions')
+			.exec(function(err, client) {
+				if (err) {
+					res.status(401).send('Error finding client')
+				} else {
+					res.json(client.promotions)
+			}
+		})
 };
 
 
@@ -33,7 +39,7 @@ exports.getOne = function(req, res, next) {
 exports.post = function(req, res, next) { //yup
 
 	var newpromotion = req.body;
-	// newpromotion.owner = req.user; Talk to todd about this, no user
+	
 	newpromotion.clientId = req.client._id
 
 	Promotion.create(newpromotion)
@@ -45,7 +51,15 @@ exports.post = function(req, res, next) { //yup
 				if(err) {
 					next(err)
 				} else {
-					res.json(promotion)
+					user = req.user
+					console.log(user)
+					console.log('here');
+					Progress.create({userId: user._id, promotionId: promotion._id})
+						.then(function(progress) {
+							res.json(promotion)
+						}, function(err) {
+							console.log(err);
+						})
 				}
 			})
 	}, function(err) {

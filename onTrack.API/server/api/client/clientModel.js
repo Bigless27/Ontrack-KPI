@@ -10,7 +10,7 @@ var ClientSchema = new Schema({
 	startDate: {type: Date},
 	endDate: {type: Date},
 	promotions: [{type: Schema.Types.ObjectId, ref: 'promotion'}],
-	triggers: [{type: Schema.Types.ObjectId, ref: 'trigger'}],
+	kpis: [{type: Schema.Types.ObjectId, ref: 'kpi'}],
 	owner: [{type: Schema.Types.ObjectId, ref: 'user'}],
 	admins: [{type: Schema.Types.ObjectId, ref: 'user'}],
 	settings: [{type: Schema.Types.ObjectId, ref: 'clientSettings'}]
@@ -19,19 +19,22 @@ var ClientSchema = new Schema({
 ClientSchema.post('save', function(doc) {
 	User.findById(doc.owner[0])
 		.then(function(user) {
-
 			if(!user) {
 				console.log('err')
 			}
+			else if(user.clientId.indexOf(doc._id) !== -1) {
+				console.log('id already associated with user') //don't push id in twice
+			} else{
+				user.clientId.push(doc._id)
+				user.save(function(err){
+					if(err) {
+						console.log(err)
+					} else {
+						console.log('saved')
+					}
+				})
+			}
 
-			user.clientId.push(doc._id)
-			user.save(function(err){
-				if(err) {
-					console.log(err)
-				} else {
-					console.log('saved')
-				}
-			})
 		}, function(err) {
 			return err
 		})
