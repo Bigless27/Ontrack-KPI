@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var Client = require('../clientModel');
-var lodash = require('lodash');
+var _ = require('lodash');
 
 var SettingsSchema = new Schema({
 	clientId: {type: Schema.Types.ObjectId},
@@ -10,7 +10,7 @@ var SettingsSchema = new Schema({
 	description: {type: String, required: true}
 });
 
-SettingsSchema.post('remove', function(next) {
+SettingsSchema.post('remove', function(doc) {
 	Client.findById(doc.clientId)
 		.then(function(client) {
 			if(!client) {
@@ -19,6 +19,8 @@ SettingsSchema.post('remove', function(next) {
 				update = client
 				
 				update.settings.splice(update.settings.indexOf(doc._id),1);
+
+
 				_.merge(client, update)
 
 				client.save(function(err, saved) {
@@ -29,6 +31,8 @@ SettingsSchema.post('remove', function(next) {
 					}
 				})
 			}
+		}, function(err) {
+			console.log(err);
 		})
 })
 

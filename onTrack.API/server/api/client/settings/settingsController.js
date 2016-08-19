@@ -32,10 +32,6 @@ exports.getOne = function(req, res, next) {// works
 
 exports.put = function(req, res, next) {// works
 	
-	if(!req.client.checkAdmin(req.user)) {
-		next(new Error('Not Authorized to update!'))
-		return;
-	};
   
   	var settings = req.settings;
 
@@ -75,10 +71,7 @@ exports.post = function(req, res, next) { //works
 }
 
 exports.delete = function(req, res, next) { //works
-	if(!req.client.checkAdmin(req.user)) {
-		next(new Error('Not Authorized to delete!'))
-		return;
-	};
+
 
 	req.settings.remove(function(err, removed) {
 		if (err) {
