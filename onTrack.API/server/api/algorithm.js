@@ -19,19 +19,11 @@ exports.lookUpPromotions = function(doc) {
 			
 				query = ClientCtrl.FindClient(id);
 				query.populate('promotions')
-				// query.populate('client')
 				query.populate('kpis')
 				query.exec(function(err, client) {
 					if(err){
 						return console.log(err);
 					} else {
-						//you have promotions populated on client
-						//check useractivity creation date and see if it falls 
-						//between promotions active date
-						
-						// this may not be needed untill later
-						// var activePromos = getActivePromotions(doc.date, client.promotions)
-						// //
 
 						var matchingKpis = getKpis(client.kpis, doc.items[0].type)
 
