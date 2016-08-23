@@ -1,7 +1,8 @@
 var expect  = require("chai").expect;
 var request = require("request");
 var server = require('../server-test')
-describe('Update Process', function() {
+
+describe('create user', function() {
 
 
 	var app;
@@ -18,9 +19,11 @@ describe('Update Process', function() {
 	})
 
 
-	it('should update the user', function(done) {
-		request('http://localhost:3000/api/users', function(response, body) {
-			expect(3).to.eq(10);
+	it('post and get routes work for user', function(done) {
+		request.post('http://localhost:3000/api/users',{form:{email:'test', password:'test'}})
+		request('http://localhost:3000/api/users', function(error,response, body) {
+			console.log(body)
+			expect(body).to.not.be.empty
 			done()
 			}
 		)
