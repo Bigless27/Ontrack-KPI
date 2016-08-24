@@ -55,6 +55,7 @@ exports.post = function(req, res, next) {//check
       //this is where the logic needs to start
       res.json(activity)
     }, function(err) {
+      console.log(err)
       next(err);
     });
 };

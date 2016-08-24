@@ -9,6 +9,7 @@ var ClientSchema = new Schema({
 	users: [{type: Schema.Types.ObjectId, ref: 'user'}],
 	startDate: {type: Date},
 	endDate: {type: Date},
+	type: {type: String},
 	promotions: [{type: Schema.Types.ObjectId, ref: 'promotion'}],
 	kpis: [{type: Schema.Types.ObjectId, ref: 'kpi'}],
 	owner: [{type: Schema.Types.ObjectId, ref: 'user'}],

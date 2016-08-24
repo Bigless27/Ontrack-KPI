@@ -40,28 +40,6 @@ PromotionSchema.post('remove', function(doc) {
 
 })
 
-PromotionSchema.post('save', function(doc) {
-	
-
-
-	// Client.findById(doc.clientId)
-	// 	.then(function(client) {
-
-	// 		if(!client) {
-	// 			console.log('err')
-	// 		}
-	// 		client.promotions.push(doc._id)
-	// 		user.save(function(err){
-	// 			if(err) {
-	// 				console.log(err)
-	// 			} else {
-	// 				console.log('saved')
-	// 			}
-	// 		})
-	// 	}, function(err) {
-	// 		return err
-	// })
-})
 
 
 

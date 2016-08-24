@@ -9,7 +9,7 @@ var UserActivitySchema = new Schema({
 			type: {type: String, required: true},
 			value: [{
 						srv: {type: Number, required: true},
-						retail: {type: Number},
+						retail: {type: Number, required: true},
 						quantity: {type: Number, required: true}
 					}]
 			}],

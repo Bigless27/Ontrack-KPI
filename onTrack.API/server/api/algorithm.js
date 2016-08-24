@@ -31,12 +31,26 @@ exports.lookUpPromotions = function(doc) {
 
 						var activePromos = getActivePromotions(doc.date, client.promotions)
 
-						updatePromoProgress(evaluatedValue, user, activePromos);
+						var promos = getMatchingPromotions(activePromos, doc.items[0].type)
+
+						updatePromoProgress(evaluatedValue, user.progress, promos);
 					}
 				})
 			})
 		}
 	})
+}
+
+function getKpis(kpis, activityType) {
+	var kpiArray = [];
+
+	kpis.forEach(function(kpi) {
+		if(kpi.type === activityType) {
+			kpiArray.push(kpi)
+		}
+	})
+
+	return kpiArray;
 }
 
 function getActivePromotions(current, promotions) {
@@ -53,16 +67,15 @@ function getActivePromotions(current, promotions) {
 	return activeArray;
 }
 
-function getKpis(kpis, activityType) {
-	var kpiArray = [];
+function getMatchingPromotions(promotions, type) {
+	var solution = [];
 
-	kpis.forEach(function(kpi) {
-		if(kpi.type === activityType) {
-			kpiArray.push(kpi)
+	promotions.forEach(function(promos) {
+		if (promos.type === type){
+			solution.push(promos)
 		}
 	})
-
-	return kpiArray;
+	return solution
 }
 
 function parseKpisValue(kpis, activity) {
@@ -80,30 +93,30 @@ function parseKpisValue(kpis, activity) {
 		solution += parser.eval(kpi.value);
 
 	})
-
+	console.log(solution + ' ' + 'hello')
 	return solution
 }
 
-function updatePromoProgress(value, user, activePromos) {
+function updatePromoProgress(value, progress, promos) {
+	promos.forEach(function(promo) {
 
-	activePromos.forEach(function(promo) {
-
-		user.progress.forEach(function(prog) {
+		progress.forEach(function(prog) {
 			
 			if(promo._id.toString() === prog['promotionId'].toString()){
-				console.log(value)
 				prog['value'] += value
-				console.log(prog);
-				prog.save(function(err){
+				console.log(prog)
+				prog.save(function(err, saved){
 					if(err){
 						console.log(err);
 					} 
+					else{
+						console.log(saved + 'hellooo')
+					}
 				})
 			} 
 		})
-	return 
 	})
-
+	return
 }
 
 
