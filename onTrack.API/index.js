@@ -6,12 +6,13 @@
 
 // setup config first before anything by requiring it
 var config = require('./server/config/config');
-var app = require('./server/server');
+var connection = require('./server/server');
 var logger = require('./server/util/logger');
 var cluster = require('cluster');
 var http = require('http');
 
-var server = app.listen(config.port, function() {
+var server = connection.app.listen(config.port, function() {
     logger.log('listening on http://localhost:' + config.port);
 })
+
 

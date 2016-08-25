@@ -1,8 +1,8 @@
 var config = require('../server/config/config');
-var app = require('../server/server');
+var express = require('express');
+var app = express();
 var logger = require('../server/util/logger');
 var cluster = require('cluster');
-var http = require('http');
+var mongoose = require('mongoose');
 
-
-module.exports = [app, config]
+module.exports = {app: app, config: config}

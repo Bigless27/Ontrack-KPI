@@ -1,22 +1,17 @@
 var expect  = require("chai").expect;
 var request = require("request");
-var server = require('../server-test')
+var server = require('../../server/server')
 var algoritm = require('../../server/api/algorithm')
-var User = require('../../server/api/user/userModel')
-var Client = require('../../server/api/client/clientModel')
-var Promotion = require('../../server/api/client/promotions/promotionModel');
-var Kpi = require('../../server/api/client/kpi/kpiModel')
-var Activity = require('../../server/api/UserActivity/activityModel')
-var Progress = require('../../server/api/userPromoProgress/progressModel')
+
 
 describe('Algorithm', function() {
-
 	var app;
+	var db;
 	var token;
 
 	before(function(done) {
 
-		app = server[0].listen(server[1], function() {
+		app = server.app.listen(server.config, function() {
 		})
 
 
@@ -55,38 +50,27 @@ describe('Algorithm', function() {
 		}).auth(null, null, true, token);
 	})
 
-	after(function(){
-		User.remove({}, function(err) {
-			if(err) {
-				console.log(err);
+	after(function(done){
+		
+
+		server.mongoose.connection.db.dropDatabase(function(err){
+			if (err){
+				console.log(err)
 			}
-		})
-		Client.remove({}, function(err) {
-			if(err) {
-				console.log(err);
+			else{
+				console.log('db dropped')
 			}
-		})
-		Progress.remove({}, function(err){
-			if(err) {
-				console.log(err);
-			}
-		})
-		Kpi.remove({}, function(err){
-			if(err) {
-				console.log(err);
-			}
-		})
-		Promotion.remove({}, function(err) {
-			if(err) {
-				console.log(err);
-			}
-		})
-		Activity.remove({}, function(err){
-			if(err) {
-				console.log(err);
-			}
-		})
-		app.close();
+			app.close(function(err) {
+				if(err) {
+					console.log(err)
+					done()
+				}
+				else{
+					console.log('closed connection')
+					done()
+				}
+			});
+		}) 
 
 	})
 
