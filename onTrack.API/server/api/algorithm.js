@@ -93,7 +93,6 @@ function parseKpisValue(kpis, activity) {
 		solution += parser.eval(kpi.value);
 
 	})
-	console.log(solution + ' ' + 'hello')
 	return solution
 }
 
@@ -104,14 +103,10 @@ function updatePromoProgress(value, progress, promos) {
 			
 			if(promo._id.toString() === prog['promotionId'].toString()){
 				prog['value'] += value
-				console.log(prog)
 				prog.save(function(err, saved){
 					if(err){
 						console.log(err);
 					} 
-					else{
-						console.log(saved + 'hellooo')
-					}
 				})
 			} 
 		})

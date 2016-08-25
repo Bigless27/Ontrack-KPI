@@ -45,6 +45,16 @@ describe('Algorithm', function() {
 		})
 	});
 
+	before(function(done) {
+			var activity = request.post('http://localhost:3000/api/activity', 
+			{form: {items: [{type: 'sale', value: [{srv: 2, retail: 69, quantity: 7}]}]}},
+				function(err, reponseActivity, bodyActivity) {
+					
+					done()
+					
+		}).auth(null, null, true, token);
+	})
+
 	after(function(){
 		User.remove({}, function(err) {
 			if(err) {
@@ -83,19 +93,12 @@ describe('Algorithm', function() {
 
 	it('should update API value', function(done){
 
-		var activity = request.post('http://localhost:3000/api/activity', 
-			{form: {items: [{type: 'sale', value: [{srv: 2, retail: 69, quantity: 7}]}]}},
-				function(err, reponseActivity, bodyActivity) {
-					console.log(bodyActivity);
-					done();
-					
-		}).auth(null, null, true, token);
+		request.get('http://localhost:3000/api/progress', 
+			function(err, response, body) {
 
-		Progress.find({})
-			.then(function(prog) {
-				console.log(prog);
-			})
-
+				expect(JSON.parse(body)[0].value).to.eq(5)
+				done();
+		})
 	})
 })
 
