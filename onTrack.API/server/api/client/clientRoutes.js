@@ -1,6 +1,7 @@
 var router = require('express').Router();
 var controller = require('./clientController');
-var mock = require('../../middleware/customMiddleware');
+var auth = require('../../auth/auth')
+var checkUser = [auth.decodeToken(), auth.getFreshUser()];
 
 
 //nested
@@ -14,7 +15,7 @@ router.param('id', controller.params);
 
 router.route('/')
   .get(controller.get) // Tested
-  .post(mock.mockUser(), controller.post) // Tested
+  .post(checkUser, controller.post) // Tested
 
 router.route('/:id')
   .get(controller.getOne)// Tested

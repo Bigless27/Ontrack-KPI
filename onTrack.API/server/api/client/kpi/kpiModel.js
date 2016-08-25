@@ -13,7 +13,6 @@ var KpiSchema = new Schema({
 
 
 KpiSchema.post('remove', function(doc) {
-	console.log(doc)
 	Client.findById(doc.clientId)
 		.then(function(client) {
 			if(!client) {
@@ -39,6 +38,9 @@ KpiSchema.post('remove', function(doc) {
 			console.log(err)
 		})
 })
+
+
+
 
 
 

@@ -51,9 +51,8 @@ exports.post = function(req, res, next) { //yup
 				if(err) {
 					next(err)
 				} else {
+
 					user = req.user
-					console.log(user)
-					console.log('here');
 					Progress.create({userId: user._id, promotionId: promotion._id})
 						.then(function(progress) {
 							res.json(promotion)

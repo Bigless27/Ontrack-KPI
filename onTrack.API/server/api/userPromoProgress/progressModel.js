@@ -29,6 +29,8 @@ UserPromoProgressSchema.post('save', function(doc) {
 				}
 			})
 		}
+	}, function(err) {
+		console.log(err);
 	})
 })
 
