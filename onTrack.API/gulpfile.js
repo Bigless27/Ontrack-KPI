@@ -57,9 +57,9 @@ gulp.task('dev', ['browserSync', 'sass', 'scripts', 'minify-css'], function() {
 	gulp.watch('client/**/*.js', ['scripts'])
 
 	gulp.watch('*.html', browserSync.reload);
-	gulp.watch('client/**/*.html')
-	gulp.watch('build/*.js', browserSync.reload)
-	gulp.watch('build/.css', browserSync.reload)
+	gulp.watch('client/**/*.html', browserSync.reload)
+	gulp.watch('build/js/*.js', browserSync.reload)
+	gulp.watch('build/css/*.css', browserSync.reload)
 })
 
 

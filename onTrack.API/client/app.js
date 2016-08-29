@@ -11,5 +11,11 @@
 					templateUrl: 'client/login/login-partial.html',
 					controller: 'LoginController'
 				})
+				
+				.state('signUp', {
+					url: '/signup',
+					templateUrl: 'client/signup/signup-partial.html',
+					controller: 'SignupController'
+				})
 		}])
 }());
