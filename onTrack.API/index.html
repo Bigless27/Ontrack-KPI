@@ -1,14 +1,19 @@
-<html>
+<html ng-app = 'onTrack'>
 <head>
 	<title>Wowbaggers</title>
+	<script type="text/javascript" src = "node_modules/jquery/dist/jquery.min.js"></script>
 	<script type="text/javascript" src = "node_modules/angular/angular.min.js"></script>
-	<script type="text/javascript" src = "node/modules/angualr-ui-router/release/angular-ui-router.js"></script>
+	<script type="text/javascript" src = "node_modules/angular-ui-router/release/angular-ui-router.js"></script>
 	<script type="text/javascript" src = 'node_modules/bootstrap/dist/js/bootstrap.min.js'></script>
 	<link rel="stylesheet" type="text/css" href= 'node_modules/bootstrap/dist/css/bootstrap.min.css'>
+	
+	<!--include build scripts-->
+	<script type="text/javascript" src = 'build/js/appAll.js'></script>
+	<link rel="stylesheet" type="text/css" href="build/css/main.css">
 
 </head>
 <body>
-
+	<h1>Bigless</h1>
 	<div ui-view></div>
 
 </body>
