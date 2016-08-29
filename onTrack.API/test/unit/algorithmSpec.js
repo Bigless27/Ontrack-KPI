@@ -1,42 +1,29 @@
-var expect  = require("chai").expect;
-var request = require("request");
+var expect = require('chai').expect;
+var request = require('request');
 var server = require('../../server/server')
-var algoritm = require('../../server/api/algorithm')
-
 
 describe('Algorithm', function() {
 	var app;
-	var db;
 	var token;
 
 	before(function(done) {
-
-		app = server.app.listen(server.config, function() {
+		app = server.app.listen(server.config, function(err) {
+			console.log(err)
 		})
-
-
-		var user = request.post('http://localhost:3000/api/users',{form:{email:'test', password:'test'}},
-			function(err, response, body){
+		request.post('http://localhost:3000/api/users', {form:{email:'test', password:'test'}},
+			function userCreatedResponse(err, response, body){
 					token = JSON.parse(body).token;
-			var client = request.post('http://localhost:3000/api/clients', {form: {name: 'ryan'}},
-				function(err, response, body) {
-
-				
-		
-				var promotion = request.post("http://localhost:3000/api/clients/" + JSON.parse(body)._id + '/promotions',
-					{form:{name: 'test', type: 'sale', completionValue: 10, type: 'sale', startDate: '5/10/2012', endDate: '5/10/2018'}},
-					function(err, responsePromo, bodyPromo) {
-
-
-					var kpi = request.post('http://localhost:3000/api/clients/' + JSON.parse(body)._id + '/kpis', {form: {name: 'test', type: 'sale', value: 'srv + 3'}},
-						function(err, resonseKpi, bodyKpi ){
-							done()
-					})
-						
-				}).auth(null, null, true, token)
-				
-
-			}).auth(null, null, true, token )
+					request.post('http://localhost:3000/api/clients', {form: {name: 'ryan'}},
+						function clientCreatedResponse(err, response, body) {
+							request.post("http://localhost:3000/api/clients/" + JSON.parse(body)._id + '/promotions',
+								{form:{name: 'test', type: 'sale', completionValue: 10, type: 'sale', startDate: '5/10/2012', endDate: '5/10/2018'}},
+									function promotionCreatedResponse(err, responsePromo, bodyPromo) {
+										request.post('http://localhost:3000/api/clients/' + JSON.parse(body)._id + '/kpis', {form: {name: 'test', type: 'sale', value: 'srv + 3'}},
+											function kpiCreatedResponse(err, resonseKpi, bodyKpi ){
+												done()
+										})
+							}).auth(null, null, true, token)
+					}).auth(null, null, true, token )
 		})
 	});
 
@@ -51,8 +38,6 @@ describe('Algorithm', function() {
 	})
 
 	after(function(done){
-		
-
 		server.mongoose.connection.db.dropDatabase(function(err){
 			if (err){
 				console.log(err)
@@ -64,25 +49,26 @@ describe('Algorithm', function() {
 				if(err) {
 					console.log(err)
 					done()
-				}
-				else{
+				} else{
 					console.log('closed connection')
 					done()
 				}
 			});
 		}) 
-
 	})
 
-
 	it('should update API value', function(done){
-
 		request.get('http://localhost:3000/api/progress', 
 			function(err, response, body) {
-
 				expect(JSON.parse(body)[0].value).to.eq(5)
 				done();
 		})
+	})
+
+	it('test of cb', function() {
+
+
+
 	})
 })
 
