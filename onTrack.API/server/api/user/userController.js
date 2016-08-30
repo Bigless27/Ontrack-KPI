@@ -80,7 +80,7 @@ exports.delete = function(req, res, next) {
 
 exports.me = function(req, res) {
 	//common node route :)
-  res.json(req.user.toJson());
+   res.json(req.user.toJson());
 };
 
 exports.FindUser = function(id) {
@@ -88,6 +88,7 @@ exports.FindUser = function(id) {
 	return user
 		
 }
+
 
 
 

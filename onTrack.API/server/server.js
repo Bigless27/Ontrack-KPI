@@ -1,6 +1,7 @@
 var express = require('express');
 var app = express();
 var api = require('./api/api');
+var auth = require('./auth/authRoutes')
 var config = require('./config/config');
 var logger = require('./util/logger');
 var mongoose = require('mongoose');
@@ -18,8 +19,8 @@ if (config.seed) {
 require('./middleware/appMiddleware')(app);
 
 // setup the api
-app.use('/api', api);
-
+app.use('/api', api)
+app.use('/auth', auth)
 
 // set up global error handling
 app.use(function(err, req, res, next) {
