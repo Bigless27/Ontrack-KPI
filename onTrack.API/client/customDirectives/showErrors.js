@@ -1,27 +1,4 @@
 (function() {
-	angular.module('onTrack', ['ui.router', 'ui.bootstrap.showErrors'])
-	.config(['$stateProvider', '$urlRouterProvider', 'showErrorsConfigProvider',
-		function($stateProvider, $urlRouterProvider, showErrorsConfigProvider) {
-
-			showErrorsConfigProvider.showSuccess(true)
-			
-			// States
-			$urlRouterProvider.otherwise('login');
-			$stateProvider
-				.state('login', {
-					url: '/login',
-					templateUrl: 'client/login/login-partial.html',
-					controller: 'LoginController'
-				})
-				
-				.state('signUp', {
-					url: '/signup',
-					templateUrl: 'client/signup/signup-partial.html',
-					controller: 'SignupController'
-				})
-		}])
-}());
-(function() {
   var showErrorsModule;
 
   showErrorsModule = angular.module('ui.bootstrap.showErrors', []);
@@ -120,57 +97,3 @@
   });
 
 }).call(this);
-
-(function() {
-	angular.module('onTrack')
-	.directive('showErrors', function() {
-		return{
-			restrict: 'A',
-			require: '^form',
-			link: function(scope, el, attrs, formCtrl) {
-				var inputEl = el[0].querySelector("[name]");
-				//find text box element that has the name
-				var inputNgEl = angular.element(inputEl);
-				var inputName = inputNgEl.attr('name')
-				// all that to get the name of input field
-
-				inputNgEl.bind('blur', function() {
-					el.toggleClass('has-error', 
-						formCtrl[inputName].$invalid)
-				})
-
-				scope.$on('show-errors-check-validity', function() {
-					el.toggleClass('has-error', formCtrl[inputName].$invalid)
-				})
-			}
-		}
-	})
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('LoginController', ['$scope', '$state', '$http',
-	 function($scope, $state, $http) {
-
-			$scope.logUserIn = function(data) {
-				$scope.$broadcast('show-errors-check-validity');
-
-				if($scope.userForm.$invalid){return;}
-
-				$http.post('auth/signin', data)
-					.success(function(data) {
-						console.log(data)
-					})
-					.error(function(error) {
-						console.log(error)
-					})
-			}
-
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('SignupController', ['$scope', '$state', function($scope, $state) {
-
-		
-	}])
-}());

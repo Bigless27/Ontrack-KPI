@@ -7,7 +7,7 @@ var rename = require('gulp-rename');
 var concat = require('gulp-concat');
 var pkg = require('./package.json');
 var plumber = require('gulp-plumber');
-var gutil = require('gulp-util')
+var gutil = require('gulp-util');
 
 var onError = function(err) {
 	gutil.beep();

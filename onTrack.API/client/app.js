@@ -1,8 +1,10 @@
 (function() {
-	angular.module('onTrack', ['ui.router'])
-	.config(['$stateProvider', '$urlRouterProvider', 
-		function($stateProvider, $urlRouterProvider) {
+	angular.module('onTrack', ['ui.router', 'ui.bootstrap.showErrors'])
+	.config(['$stateProvider', '$urlRouterProvider', 'showErrorsConfigProvider',
+		function($stateProvider, $urlRouterProvider, showErrorsConfigProvider) {
 
+			showErrorsConfigProvider.showSuccess(true)
+			
 			// States
 			$urlRouterProvider.otherwise('login');
 			$stateProvider
