@@ -24,6 +24,7 @@ exports.lookUpPromotions = function(doc) {
 					if(err){
 						return console.log(err);
 					} else {
+						
 
 						var matchingKpis = getKpis(client.kpis, doc.items[0].type)
 

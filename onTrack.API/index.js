@@ -15,4 +15,6 @@ var server = connection.app.listen(config.port, function() {
     logger.log('listening on http://localhost:' + config.port);
 })
 
-
+server.on('error', function(err) {
+	console.log(err.stack)
+})

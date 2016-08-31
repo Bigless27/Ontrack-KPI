@@ -58,13 +58,18 @@ exports.put = function(req, res, next) {
 };
 
 exports.post = function(req, res, next) {
+  if (!req.body.email || !req.body.password) {
+	    return res.sendStatus(400).send("You must send the email and the password");
+	 }
+
   var newUser = new User(req.body);
 
   newUser.save(function(err, user) {
     if(err) { return next(err);}
-
     var token = signToken(user._id);
     res.json({token: token});
+  }, function(err) {
+  	console.log(err)
   });
 };
 

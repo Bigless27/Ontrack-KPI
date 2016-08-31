@@ -19,7 +19,60 @@
 					templateUrl: 'client/signup/signup-partial.html',
 					controller: 'SignupController'
 				})
+				.state('main', {
+					url: '/main',
+					templateUrl: 'client/main/main-partial.html',
+					controller: 'MainController'
+				})
 		}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('LoginController', ['$scope', '$state', '$http',
+	 function($scope, $state, $http) {
+
+			$scope.logUserIn = function(user) {
+				$scope.$broadcast('show-errors-check-validity');
+
+				if($scope.userForm.$invalid){return;}
+
+				$http.post('auth/signin', user)
+					.success(function(data) {
+						$state.go('main')
+					})
+					.error(function(error) {
+						console.log(error)
+					})
+			}
+
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('MainController', ['$scope', '$state', '$http', 
+		function($scope, $state, $http) {
+		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('SignupController', ['$scope', '$state', '$http', 
+		function($scope, $state, $http) {
+		$scope.signUp = function(user) {
+			$scope.$broadcast('show-errors-check-validity')
+
+			if ($scope.userForm.$invalid){return;}
+
+			$http.post('api/users', user)
+				.success(function(data) {
+					$state.go('main')
+				})
+				.error(function(error) {
+					console.log(error)
+				})
+		}
+		
+	}])
 }());
 (function() {
   var showErrorsModule;
@@ -145,32 +198,4 @@
 			}
 		}
 	})
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('LoginController', ['$scope', '$state', '$http',
-	 function($scope, $state, $http) {
-
-			$scope.logUserIn = function(data) {
-				$scope.$broadcast('show-errors-check-validity');
-
-				if($scope.userForm.$invalid){return;}
-
-				$http.post('auth/signin', data)
-					.success(function(data) {
-						console.log(data)
-					})
-					.error(function(error) {
-						console.log(error)
-					})
-			}
-
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('SignupController', ['$scope', '$state', function($scope, $state) {
-
-		
-	}])
 }());

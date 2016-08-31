@@ -1,6 +1,5 @@
 var User = require('../api/user/userModel');
 var signToken = require('./auth').signToken;
-var passport = require("passport")
 
 exports.signin = function(req, res, next) {
     // req.user will be there from the middleware
