@@ -6,8 +6,11 @@ var config = require('./config/config');
 var logger = require('./util/logger');
 var mongoose = require('mongoose');
 var path = require('path');
+var passport = require('passport')
 
 
+
+require('./auth/passport')(passport)
 // db.url is different depending on NODE_ENV
 mongoose.Promise = global.Promise 
 mongoose.connect(config.db.url, function(err) {
@@ -25,6 +28,12 @@ if (config.seed) {
 }
 // setup the app middlware
 require('./middleware/appMiddleware')(app);
+
+// passport
+app.use(passport.initialize());
+app.use(passport.session()); // persistent login sessions
+// app.use(flash()); // use connect-flash for flash messages stored in session
+
 
 // setup the api
 app.use('/api', api)

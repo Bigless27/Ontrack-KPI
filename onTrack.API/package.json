@@ -24,6 +24,7 @@
     "morgan": "^1.7.0",
     "passport": "^0.3.2",
     "passport-google-oauth": "^1.0.0",
+    "passport-oauth2-jwt-bearer": "^0.1.1",
     "request": "^2.74.0"
   },
   "devDependencies": {
