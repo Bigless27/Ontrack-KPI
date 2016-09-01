@@ -25,12 +25,22 @@ router.get('/google/callback', function(req, res, next) {
 	})(req, res, next);
 })
 
-// router.get('/google/callback', 
-//   passport.authenticate('google', { failureRedirect: '/login' }),
-//   function(req, res) {
-//   	console.log(req)
-//     res.redirect('/#/main');
-//   });
+router.get('/facebook', passport.authenticate('facebook', {scope: ['email']}));
+
+router.get('/facebook/callback', function(req, res, next) {
+	passport.authenticate('facebook', function(err, user, info) {
+		if (err) {return next(err)}
+
+		if(user) {
+			var token = createToken(user._id)
+			return res.redirect('/#/main?access_token=' + token)
+		}
+		else{
+			return res.redirect('/#/login')
+		}
+	})(req, res, next);
+})
+
 
 
 router.get('logout', function(req, res) {
