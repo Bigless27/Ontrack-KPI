@@ -20,6 +20,12 @@
 					console.log(err)
 				})
 			}
+
+
+			$scope.logout = function() {
+				$window.sessionStorage.clear()
+				$state.go('login')
+			}
 		
 	}])
 }());

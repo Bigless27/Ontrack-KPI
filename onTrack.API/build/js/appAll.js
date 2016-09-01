@@ -38,7 +38,6 @@
 
 				$http.post('auth/signin', user)
 					.success(function(data) {
-						console.log(data)
 						$window.sessionStorage.jwt = data['token']
 						$state.go('main')
 					})
@@ -71,13 +70,19 @@
 					console.log(err)
 				})
 			}
+
+
+			$scope.logout = function() {
+				$window.sessionStorage.clear()
+				$state.go('login')
+			}
 		
 	}])
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('SignupController', ['$scope', '$state', '$http', 
-		function($scope, $state, $http) {
+	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
 		$scope.signUp = function(user) {
 			$scope.$broadcast('show-errors-check-validity')
 
@@ -85,6 +90,7 @@
 
 			$http.post('api/users', user)
 				.success(function(data) {
+					$window.sessionStorage.jwt = data['token']
 					$state.go('main')
 				})
 				.error(function(error) {

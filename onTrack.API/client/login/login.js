@@ -10,7 +10,6 @@
 
 				$http.post('auth/signin', user)
 					.success(function(data) {
-						console.log(data)
 						$window.sessionStorage.jwt = data['token']
 						$state.go('main')
 					})
