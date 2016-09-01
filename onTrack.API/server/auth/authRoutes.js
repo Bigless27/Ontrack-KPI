@@ -2,6 +2,7 @@ var router = require('express').Router();
 var verifyUser = require('./auth').verifyUser;
 var controller = require('./authController');
 var passport = require('passport')
+var createToken = require('./auth').signToken;
 
 // before we send vack a jwt, lets check
 // the password and username mathch what is in the DB
@@ -10,11 +11,26 @@ router.post('/signin', verifyUser(), controller.signin);
 
 router.get('/google', passport.authenticate('google', {scope: ['profile', 'email']}));
 
-router.get('/google/callback', 
-  passport.authenticate('google', { failureRedirect: '/login' }),
-  function(req, res) {
-    res.redirect('/#/main');
-  });
+router.get('/google/callback', function(req, res, next) {
+	passport.authenticate('google', function(err, user, info) {
+		if (err) {return next(err)}
+
+		if(user) {
+			var token = createToken(user._id)
+			return res.redirect('/#/main?access_token=' + token)
+		}
+		else{
+			return res.redirect('/#/login')
+		}
+	})(req, res, next);
+})
+
+// router.get('/google/callback', 
+//   passport.authenticate('google', { failureRedirect: '/login' }),
+//   function(req, res) {
+//   	console.log(req)
+//     res.redirect('/#/main');
+//   });
 
 
 router.get('logout', function(req, res) {

@@ -85,7 +85,6 @@ exports.verifyUser = function() {
 	};
 };
 
-
 // util method to sign tokens on signup
 exports.signToken = function(id) {
 	return jwt.sign(

@@ -22,7 +22,13 @@
 					.state('main', {
 						url: '/main',
 						templateUrl: 'client/main/main-partial.html',
-						controller: 'MainController'
+						controller: 'MainController',
+						onEnter: ['$state', '$stateParams', '$location', '$window', function( $state, $stateParams, $location, $window){
+							if($location.search().access_token){
+								$window.sessionStorage.jwt = $location.search().access_token
+								$location.url($location.path())
+							}
+						}]
 					})
 			}])
 }());
