@@ -64,8 +64,6 @@ exports.verifyUser = function() {
 		        } else {
 		          // checking the passowords here
 		          user.authenticate(password, function(err,data) {
-		          	console.log(err)
-		          	console.log(data)
 		          	if(err) res.status(401).send('Wrong Password')
 		          	req.user = user;
 		          	next()
@@ -90,7 +88,6 @@ exports.verifyUser = function() {
 
 // util method to sign tokens on signup
 exports.signToken = function(id) {
-	console.log('hello')
 	return jwt.sign(
 		{_id: id},
 		config.secrets.jwt,

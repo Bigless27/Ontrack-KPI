@@ -1,35 +1,35 @@
 (function() {
 	angular.module('onTrack', ['ui.router', 'ui.bootstrap.showErrors'])
 	.config(['$stateProvider', '$urlRouterProvider', 'showErrorsConfigProvider',
-		function($stateProvider, $urlRouterProvider, showErrorsConfigProvider) {
+			function($stateProvider, $urlRouterProvider, showErrorsConfigProvider) {
 
-			showErrorsConfigProvider.showSuccess(true)
-			
-			// States
-			$urlRouterProvider.otherwise('login');
-			$stateProvider
-				.state('login', {
-					url: '/login',
-					templateUrl: 'client/login/login-partial.html',
-					controller: 'LoginController'
-				})
+				showErrorsConfigProvider.showSuccess(true)
 				
-				.state('signUp', {
-					url: '/signup',
-					templateUrl: 'client/signup/signup-partial.html',
-					controller: 'SignupController'
-				})
-				.state('main', {
-					url: '/main',
-					templateUrl: 'client/main/main-partial.html',
-					controller: 'MainController'
-				})
-		}])
+				// States
+				$urlRouterProvider.otherwise('login');
+				$stateProvider
+					.state('login', {
+						url: '/login',
+						templateUrl: 'client/login/login-partial.html',
+						controller: 'LoginController'
+					})
+					
+					.state('signUp', {
+						url: '/signup',
+						templateUrl: 'client/signup/signup-partial.html',
+						controller: 'SignupController'
+					})
+					.state('main', {
+						url: '/main',
+						templateUrl: 'client/main/main-partial.html',
+						controller: 'MainController'
+					})
+			}])
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('LoginController', ['$scope', '$state', '$http',
-	 function($scope, $state, $http) {
+	.controller('LoginController', ['$scope', '$state', '$window', '$http',
+	 function($scope, $state, $window, $http) {
 
 			$scope.logUserIn = function(user) {
 				$scope.$broadcast('show-errors-check-validity');
@@ -38,6 +38,8 @@
 
 				$http.post('auth/signin', user)
 					.success(function(data) {
+						console.log(data)
+						$window.sessionStorage.jwt = data['token']
 						$state.go('main')
 					})
 					.error(function(error) {
@@ -49,8 +51,26 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('MainController', ['$scope', '$state', '$http', 
-		function($scope, $state, $http) {
+	.controller('MainController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+
+			$scope.me = function() {
+				
+
+				var token = $window.sessionStorage['jwt']
+				
+				$http.get('api/users/me', {
+					headers: {
+						"Authorization": `Bearer ${token}`
+					}
+				})
+				.success(function(data){
+						console.log(data)
+				})
+				.error(function(err){
+					console.log(err)
+				})
+			}
 		
 	}])
 }());

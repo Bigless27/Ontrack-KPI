@@ -74,24 +74,30 @@ exports.post = function(req, res, next) {
 };
 
 exports.delete = function(req, res, next) {
-  req.user.remove(function(err, removed) {
-    if (err) {
-      next(err);
-    } else {
-      res.json(removed.toJson());
-    }
-  });
+	res.send('deleted!!')	
+
+  // req.user.remove(function(err, removed) {
+  //   if (err) {
+  //     next(err);
+  //   } else {
+  //     res.json(removed.toJson());
+  //   }
+  // });
 };
 
 exports.me = function(req, res) {
 	//common node route :)
+	console.log('hello');
    res.json(req.user.toJson());
 };
 
 exports.FindUser = function(id) {
 	var user = User.findById(id)
 	return user
-		
+}
+
+exports.less = function(req, res, next) {
+	res.send('hellooooooooooooooooooo')
 }
 
 
