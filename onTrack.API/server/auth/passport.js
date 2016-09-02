@@ -1,20 +1,9 @@
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy
-var ClientJWTBearerStrategy = require("passport-oauth2-jwt-bearer").Strategy
 var FacebookStrategy = require('passport-facebook').Strategy;
 var User = require('../api/user/userModel')
 var configAuth = require('./oauth');
 
 module.exports = function(passport) {
-
-	passport.use(new ClientJWTBearerStrategy(
-		  function(claimSetIss, done) {
-		    Clients.findOne({ clientId: claimSetIss }, function (err, client) {
-		      if (err) { return done(err); }
-		      if (!client) { return done(null, false); }
-		      return done(null, client);
-		    });
-		  }
-	));
 
 	passport.serializeUser(function(user, done){
 		done(null, user.id);
