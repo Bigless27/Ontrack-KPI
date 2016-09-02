@@ -58,36 +58,48 @@ exports.put = function(req, res, next) {
 };
 
 exports.post = function(req, res, next) {
+  if (!req.body.email || !req.body.password) {
+	    return res.sendStatus(400).send("You must send the email and the password");
+	 }
+
   var newUser = new User(req.body);
 
   newUser.save(function(err, user) {
     if(err) { return next(err);}
-
     var token = signToken(user._id);
     res.json({token: token});
+  }, function(err) {
+  	console.log(err)
   });
 };
 
 exports.delete = function(req, res, next) {
-  req.user.remove(function(err, removed) {
-    if (err) {
-      next(err);
-    } else {
-      res.json(removed.toJson());
-    }
-  });
+	res.send('deleted!!')	
+
+  // req.user.remove(function(err, removed) {
+  //   if (err) {
+  //     next(err);
+  //   } else {
+  //     res.json(removed.toJson());
+  //   }
+  // });
 };
 
 exports.me = function(req, res) {
 	//common node route :)
-  res.json(req.user.toJson());
+	console.log('hello');
+   res.json(req.user.toJson());
 };
 
 exports.FindUser = function(id) {
 	var user = User.findById(id)
 	return user
-		
 }
+
+exports.less = function(req, res, next) {
+	res.send('hellooooooooooooooooooo')
+}
+
 
 
 
