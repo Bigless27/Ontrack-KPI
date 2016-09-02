@@ -18,6 +18,7 @@ module.exports = function(passport) {
 	passport.use(new FacebookStrategy({
 	    clientID: configAuth.facebookAuth.clientID,
 	    clientSecret: configAuth.facebookAuth.clientSecret,
+	    profileFields: ['id', 'displayName', 'email'],
 	    callbackURL: configAuth.facebookAuth.callbackURL
 	  },
 	  function(accessToken, refreshToken, profile, done) {
@@ -29,7 +30,6 @@ module.exports = function(passport) {
 	    				return done(null, user);
 	    			else {
 	    				var newUser = new User();
-	    				console.log(profile)
 	    				newUser.facebook.id = profile.id;
 	    				newUser.facebook.token = accessToken;
 	    				newUser.facebook.name = profile.name.givenName + ' ' + profile.name.familyName;
