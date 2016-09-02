@@ -1,6 +1,6 @@
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy
 var FacebookStrategy = require('passport-facebook').Strategy;
-var User = require('../api/user/userModel')
+var User = require('../../api/user/userModel')
 var configAuth = require('./oauth');
 
 module.exports = function(passport) {

@@ -8,6 +8,7 @@
 
 				if($scope.userForm.$invalid){return;}
 
+
 				$http.post('auth/signin', user)
 					.success(function(data) {
 						$window.sessionStorage.jwt = data['token']

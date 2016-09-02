@@ -10,7 +10,6 @@
 				var inputNgEl = angular.element(inputEl);
 				var inputName = inputNgEl.attr('name')
 				// all that to get the name of input field
-
 				inputNgEl.bind('blur', function() {
 					el.toggleClass('has-error', 
 						formCtrl[inputName].$invalid)

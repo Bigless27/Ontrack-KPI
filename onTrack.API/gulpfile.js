@@ -95,10 +95,10 @@ gulp.task('browserSync', function() {
 
 gulp.task('dev', ['browserSync', 'sass', 'scripts', 'minify-css'], function() {
 	gulp.watch('client/sass/*.scss', ['sass', 'minify-css'])
-	gulp.watch('client/**/*.js', ['scripts'])
 
+	gulp.watch('client/**/*.js', ['scripts'], browserSync.reload)
 	gulp.watch('*.html', browserSync.reload);
-	gulp.watch('client/**/*.html', browserSync.reload)
+	gulp.watch('client/api/**/*.html', browserSync.reload)
 	gulp.watch('build/js/*.js', browserSync.reload)
 	gulp.watch('build/css/*.css', browserSync.reload)
 })

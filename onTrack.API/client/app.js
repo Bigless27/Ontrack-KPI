@@ -10,18 +10,18 @@
 				$stateProvider
 					.state('login', {
 						url: '/login',
-						templateUrl: 'client/login/login-partial.html',
+						templateUrl: 'client/api/login/login-partial.html',
 						controller: 'LoginController'
 					})
 					
 					.state('signUp', {
 						url: '/signup',
-						templateUrl: 'client/signup/signup-partial.html',
+						templateUrl: 'client/api/signup/signup-partial.html',
 						controller: 'SignupController'
 					})
 					.state('main', {
 						url: '/main',
-						templateUrl: 'client/main/main-partial.html',
+						templateUrl: 'client/api/main/main-partial.html',
 						controller: 'MainController',
 						onEnter: ['$state', '$stateParams', '$location', '$window', function( $state, $stateParams, $location, $window){
 							if($location.search().access_token){

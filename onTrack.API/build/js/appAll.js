@@ -10,18 +10,18 @@
 				$stateProvider
 					.state('login', {
 						url: '/login',
-						templateUrl: 'client/login/login-partial.html',
+						templateUrl: 'client/api/login/login-partial.html',
 						controller: 'LoginController'
 					})
 					
 					.state('signUp', {
 						url: '/signup',
-						templateUrl: 'client/signup/signup-partial.html',
+						templateUrl: 'client/api/signup/signup-partial.html',
 						controller: 'SignupController'
 					})
 					.state('main', {
 						url: '/main',
-						templateUrl: 'client/main/main-partial.html',
+						templateUrl: 'client/api/main/main-partial.html',
 						controller: 'MainController',
 						onEnter: ['$state', '$stateParams', '$location', '$window', function( $state, $stateParams, $location, $window){
 							if($location.search().access_token){
@@ -31,80 +31,6 @@
 						}]
 					})
 			}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('LoginController', ['$scope', '$state', '$window', '$http',
-	 function($scope, $state, $window, $http) {
-
-			$scope.logUserIn = function(user) {
-				$scope.$broadcast('show-errors-check-validity');
-
-				if($scope.userForm.$invalid){return;}
-
-				$http.post('auth/signin', user)
-					.success(function(data) {
-						$window.sessionStorage.jwt = data['token']
-						$state.go('main')
-					})
-					.error(function(error) {
-						console.log(error)
-					})
-			}
-
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('MainController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
-
-			$scope.me = function() {
-				
-
-				var token = $window.sessionStorage['jwt']
-				
-				$http.get('api/users/me', {
-					headers: {
-						"Authorization": `Bearer ${token}`
-					}
-				})
-				.success(function(data){
-						console.log(data)
-				})
-				.error(function(err){
-					console.log(err)
-				})
-			}
-
-
-			$scope.logout = function() {
-				$window.sessionStorage.clear()
-				$state.go('login')
-			}
-		
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
-		$scope.signUp = function(user) {
-			$scope.$broadcast('show-errors-check-validity')
-
-			if ($scope.userForm.$invalid){return;}
-
-			$http.post('api/users', user)
-				.success(function(data) {
-					$window.sessionStorage.jwt = data['token']
-					$state.go('main')
-				})
-				.error(function(error) {
-					console.log(error)
-				})
-		}
-		
-	}])
 }());
 (function() {
   var showErrorsModule;
@@ -218,7 +144,6 @@
 				var inputNgEl = angular.element(inputEl);
 				var inputName = inputNgEl.attr('name')
 				// all that to get the name of input field
-
 				inputNgEl.bind('blur', function() {
 					el.toggleClass('has-error', 
 						formCtrl[inputName].$invalid)
@@ -230,4 +155,79 @@
 			}
 		}
 	})
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('LoginController', ['$scope', '$state', '$window', '$http',
+	 function($scope, $state, $window, $http) {
+
+			$scope.logUserIn = function(user) {
+				$scope.$broadcast('show-errors-check-validity');
+
+				if($scope.userForm.$invalid){return;}
+
+
+				$http.post('auth/signin', user)
+					.success(function(data) {
+						$window.sessionStorage.jwt = data['token']
+						$state.go('main')
+					})
+					.error(function(error) {
+						console.log(error)
+					})
+			}
+
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+		$scope.signUp = function(user) {
+			$scope.$broadcast('show-errors-check-validity')
+
+			if ($scope.userForm.$invalid){return;}
+
+			$http.post('api/users', user)
+				.success(function(data) {
+					$window.sessionStorage.jwt = data['token']
+					$state.go('main')
+				})
+				.error(function(error) {
+					console.log(error)
+				})
+		}
+		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('MainController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+
+			$scope.me = function() {
+				
+
+				var token = $window.sessionStorage['jwt']
+				
+				$http.get('api/users/me', {
+					headers: {
+						"Authorization": `Bearer ${token}`
+					}
+				})
+				.success(function(data){
+						console.log(data)
+				})
+				.error(function(err){
+					console.log(err)
+				})
+			}
+
+
+			$scope.logout = function() {
+				$window.sessionStorage.clear()
+				$state.go('login')
+			}
+		
+	}])
 }());

@@ -1,8 +1,8 @@
 var router = require('express').Router();
 var verifyUser = require('./auth').verifyUser;
+var createToken = require('./auth').signToken;
 var controller = require('./authController');
 var passport = require('passport')
-var createToken = require('./auth').signToken;
 
 // before we send vack a jwt, lets check
 // the password and username mathch what is in the DB
@@ -40,8 +40,6 @@ router.get('/facebook/callback', function(req, res, next) {
 		}
 	})(req, res, next);
 })
-
-
 
 router.get('logout', function(req, res) {
 	req.logout();
