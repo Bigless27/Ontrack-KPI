@@ -30,5 +30,30 @@
 							}
 						}]
 					})
+					.state('client', {
+						url: '/client/:id',
+						templateUrl: 'client/api/client/client-partial.html',
+						controller: 'ClientController'
+					})
+					.state('kpi', {
+						url: '/client/:clientid/kpis/:kpiid',
+						templateUrl: 'client/api/kpi/kpi-partial.html',
+						controller: 'KPIController'
+					})
+					.state('promotion', {
+						url: '/client/:clientid/promotions/:promoid',
+						templateUrl: 'client/api/promotions/promotions-partial.html',
+						controller: 'PromotionController'
+					})
+					.state('setting', {
+						url: '/client/:clientid/settings/:settingid',
+						templateUrl: 'client/api/settings/settings-partial.html',
+						controller: 'SettingController'
+					})
+					.state('user', {
+						url: '/user/:id',
+						templateUrl: 'client/api/users/user-partial.html',
+						controller: 'UsersController'
+					})
 			}])
 }());

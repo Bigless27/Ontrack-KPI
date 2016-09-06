@@ -30,6 +30,31 @@
 							}
 						}]
 					})
+					.state('client', {
+						url: '/client/:id',
+						templateUrl: 'client/api/client/client-partial.html',
+						controller: 'ClientController'
+					})
+					.state('kpi', {
+						url: '/client/:clientid/kpis/:kpiid',
+						templateUrl: 'client/api/kpi/kpi-partial.html',
+						controller: 'KPIController'
+					})
+					.state('promotion', {
+						url: '/client/:clientid/promotions/:promoid',
+						templateUrl: 'client/api/promotions/promotions-partial.html',
+						controller: 'PromotionController'
+					})
+					.state('setting', {
+						url: '/client/:clientid/settings/:settingid',
+						templateUrl: 'client/api/settings/settings-partial.html',
+						controller: 'SettingController'
+					})
+					.state('user', {
+						url: '/user/:id',
+						templateUrl: 'client/api/users/user-partial.html',
+						controller: 'UsersController'
+					})
 			}])
 }());
 (function() {
@@ -158,6 +183,27 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('ClientController', ['$scope', '$state', '$http', '$window', '$stateParams',
+		function($scope, $state, $http, $window, $stateParams) {
+		
+
+			function getClient(){
+				$http.get('/api/clients/' + $stateParams['id'])
+					.success(function(data) {
+						$scope.client = data
+					})
+					.error(function(err) {
+						console.log(err);
+					})
+			}
+
+			getClient()
+
+		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('LoginController', ['$scope', '$state', '$window', '$http',
 	 function($scope, $state, $window, $http) {
 
@@ -177,6 +223,114 @@
 					})
 			}
 
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('KPIController', ['$scope', '$state', '$http', '$window', '$stateParams',
+		function($scope, $state, $http, $window, $stateParams) {
+
+			function getKPI(){
+				$http.get('/api/clients/' + $stateParams['clientid'] 
+						+ '/kpis/' + $stateParams['kpiid'])
+							.success(function(data) {
+								console.log(data)
+								$scope.kpi = data;
+							})
+							.error(function(err) {
+								console.log(err);
+							})
+			}
+
+			getKPI()
+
+		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('MainController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+
+			// $scope.me = function() {
+				
+
+			// 	var token = $window.sessionStorage['jwt']
+				
+			// 	$http.get('api/users/me', {
+			// 		headers: {
+			// 			"Authorization": `Bearer ${token}`
+			// 		}
+			// 	})
+			// 	.success(function(data){
+			// 			console.log(data)
+			// 	})
+			// 	.error(function(err){
+			// 		console.log(err)
+			// 	})
+			// }
+			function getClients() {
+				$http.get('api/clients')
+					.success(function(data) {
+						$scope.clients = data
+					})
+					.error(function(err) {
+						console.log(err);
+					})
+			}
+
+			getClients()
+
+
+
+
+			$scope.logout = function() {
+				$window.sessionStorage.clear()
+				$state.go('login')
+			}
+		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('PromotionController', ['$scope', '$state', '$http', '$window', '$stateParams',
+		function($scope, $state, $http, $window, $stateParams) {
+
+			function getPromotions(){
+				$http.get('/api/clients/' + $stateParams['clientid'] 
+						+ '/promotions/' + $stateParams['promoid'])
+							.success(function(data) {
+								$scope.promotion = data;
+							})
+							.error(function(err) {
+								console.log(err);
+							})
+			}
+
+			getPromotions()
+
+		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('SettingController', ['$scope', '$state', '$http', '$window', '$stateParams',
+		function($scope, $state, $http, $window, $stateParams) {
+
+			function getSettings(){
+				$http.get('/api/clients/' + $stateParams['clientid'] 
+						+ '/settings/' + $stateParams['settingid'])
+							.success(function(data) {
+								$scope.setting = data;
+							})
+							.error(function(err) {
+								console.log(err);
+							})
+			}
+
+			getSettings()
+
+		
 	}])
 }());
 (function() {
@@ -202,32 +356,21 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('MainController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
+	.controller('UsersController', ['$scope', '$state', '$http', '$window', '$stateParams',
+		function($scope, $state, $http, $window, $stateParams) {
 
-			$scope.me = function() {
-				
-
-				var token = $window.sessionStorage['jwt']
-				
-				$http.get('api/users/me', {
-					headers: {
-						"Authorization": `Bearer ${token}`
-					}
-				})
-				.success(function(data){
-						console.log(data)
-				})
-				.error(function(err){
-					console.log(err)
-				})
+			function getUser(){
+				$http.get('/api/users/' + $stateParams['id'])
+							.success(function(data) {
+								$scope.user = data;
+							})
+							.error(function(err) {
+								console.log(err);
+							})
 			}
 
+			getUser()
 
-			$scope.logout = function() {
-				$window.sessionStorage.clear()
-				$state.go('login')
-			}
 		
 	}])
 }());

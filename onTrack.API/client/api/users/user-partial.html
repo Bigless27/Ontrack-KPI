@@ -1,0 +1,22 @@
+<table class = 'table table-striped'>
+  <thead>
+    <tr>
+      <th>Email</th>
+      <th>First Name</th>
+      <th>Last Name</th>
+      <th>Date Joined</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>{{user.email}}</td>
+      <td>{{user.firstName}}</td>
+      <td>{{user.lastName}}</td>
+      <td>{{user.dateJoined | date: 'medium'}}</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class = "btn btn-danger" ui-sref = 'client({id: user.clientId})'>Back</div>
+<div class = "btn btn-default">Edit</div>
+<div class = "btn btn-default">Delete</div>

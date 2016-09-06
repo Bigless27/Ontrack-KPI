@@ -3,17 +3,31 @@ var _ = require('lodash');
 
 
 exports.params = function(req, res, next, id) {
-	Client.findById(id)
-		.then(function(client) {
-			if (!client) {
-				next(new Error('No Client with that id'));
-			} else {
-				req.client = client;
-				next();
-			}
-		}, function(err) {
-			next(err);
-	});
+	
+  Client.findById(id)
+    .populate('admins')
+    .populate('users')
+    .populate('owner')
+    .populate('kpis')
+    .populate('promotions')
+    .populate('settings')
+    .exec(function(err, client) {
+      if(err) return next(err);
+      req.client = client;
+      next()
+    })
+
+  // Client.findById(id)
+	// 	.then(function(client) {
+	// 		if (!client) {
+	// 			next(new Error('No Client with that id'));
+	// 		} else {
+	// 			req.client = client;
+	// 			next();
+	// 		}
+	// 	}, function(err) {
+	// 		next(err);
+	// });
 };
 
 exports.get = function(req, res, next) {
@@ -92,8 +106,9 @@ exports.delete = function(req, res, next) {
 exports.FindClient = function(id) {
   var client = Client.findById(id)
   return client
-
 }
+
+
 
 
 
