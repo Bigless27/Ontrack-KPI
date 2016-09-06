@@ -40,5 +40,10 @@
 						templateUrl: 'client/api/kpi/kpi-partial.html',
 						controller: 'KPIController'
 					})
+					.state('promotion', {
+						url: '/client/:clientid/promotions/:promoid',
+						templateUrl: 'client/api/promotions/promotions-partial.html',
+						controller: 'PromotionController'
+					})
 			}])
 }());

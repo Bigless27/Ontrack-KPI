@@ -34,7 +34,7 @@
  			<tr class ='active'><th>Promotions</th></tr>
  		</thead>
  		<tbody ng-repeat = 'promotion in client.promotions'>
- 			<tr class = 'info'><td><a href = ''>{{promotion.name}}</a></td></tr>
+ 			<tr class = 'info'><td><a ui-sref = 'promotion({clientid:client._id, promoid: promotion._id})'>{{promotion.name}}</a></td></tr>
  		</tbody>
  	</table>
 
