@@ -45,5 +45,15 @@
 						templateUrl: 'client/api/promotions/promotions-partial.html',
 						controller: 'PromotionController'
 					})
+					.state('setting', {
+						url: '/client/:clientid/settings/:settingid',
+						templateUrl: 'client/api/settings/settings-partial.html',
+						controller: 'SettingController'
+					})
+					.state('user', {
+						url: '/user/:id',
+						templateUrl: 'client/api/users/user-partial.html',
+						controller: 'UsersController'
+					})
 			}])
 }());

@@ -43,7 +43,7 @@
  			<tr class ='active'><th>Settings</th></tr>
  		</thead>
  		<tbody ng-repeat = 'setting in client.settings'>
- 			<tr class = 'info'><td><a href = ''>{{setting.name}}</a></td></tr>
+ 			<tr class = 'info'><td><a ui-sref = 'setting({clientid:client._id, settingid: setting._id})'>{{setting.name}}</a></td></tr>
  		</tbody>
  	</table>
 
@@ -52,7 +52,7 @@
  			<tr class ='active'><th>Users</th></tr>
  		</thead>
  		<tbody ng-repeat = 'user in client.users'>
- 			<tr class = 'info'><td><a href = ''>{{user.email}}</a></td></tr>
+ 			<tr class = 'info'><td><a ui-sref = 'user({id: user._id})'>{{user.email}}</a></td></tr>
  		</tbody>
  	</table>
 

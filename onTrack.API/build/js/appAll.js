@@ -45,6 +45,16 @@
 						templateUrl: 'client/api/promotions/promotions-partial.html',
 						controller: 'PromotionController'
 					})
+					.state('setting', {
+						url: '/client/:clientid/settings/:settingid',
+						templateUrl: 'client/api/settings/settings-partial.html',
+						controller: 'SettingController'
+					})
+					.state('user', {
+						url: '/user/:id',
+						templateUrl: 'client/api/users/user-partial.html',
+						controller: 'UsersController'
+					})
 			}])
 }());
 (function() {
@@ -173,28 +183,6 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('KPIController', ['$scope', '$state', '$http', '$window', '$stateParams',
-		function($scope, $state, $http, $window, $stateParams) {
-
-			function getKPI(){
-				$http.get('/api/clients/' + $stateParams['clientid'] 
-						+ '/kpis/' + $stateParams['kpiid'])
-							.success(function(data) {
-								console.log(data)
-								$scope.kpi = data;
-							})
-							.error(function(err) {
-								console.log(err);
-							})
-			}
-
-			getKPI()
-
-		
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('ClientController', ['$scope', '$state', '$http', '$window', '$stateParams',
 		function($scope, $state, $http, $window, $stateParams) {
 		
@@ -235,6 +223,28 @@
 					})
 			}
 
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('KPIController', ['$scope', '$state', '$http', '$window', '$stateParams',
+		function($scope, $state, $http, $window, $stateParams) {
+
+			function getKPI(){
+				$http.get('/api/clients/' + $stateParams['clientid'] 
+						+ '/kpis/' + $stateParams['kpiid'])
+							.success(function(data) {
+								console.log(data)
+								$scope.kpi = data;
+							})
+							.error(function(err) {
+								console.log(err);
+							})
+			}
+
+			getKPI()
+
+		
 	}])
 }());
 (function() {
@@ -304,6 +314,27 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('SettingController', ['$scope', '$state', '$http', '$window', '$stateParams',
+		function($scope, $state, $http, $window, $stateParams) {
+
+			function getSettings(){
+				$http.get('/api/clients/' + $stateParams['clientid'] 
+						+ '/settings/' + $stateParams['settingid'])
+							.success(function(data) {
+								$scope.setting = data;
+							})
+							.error(function(err) {
+								console.log(err);
+							})
+			}
+
+			getSettings()
+
+		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
 		function($scope, $state, $http, $window) {
 		$scope.signUp = function(user) {
@@ -320,6 +351,26 @@
 					console.log(error)
 				})
 		}
+		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('UsersController', ['$scope', '$state', '$http', '$window', '$stateParams',
+		function($scope, $state, $http, $window, $stateParams) {
+
+			function getUser(){
+				$http.get('/api/users/' + $stateParams['id'])
+							.success(function(data) {
+								$scope.user = data;
+							})
+							.error(function(err) {
+								console.log(err);
+							})
+			}
+
+			getUser()
+
 		
 	}])
 }());
