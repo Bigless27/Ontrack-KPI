@@ -8,7 +8,7 @@ var concat = require('gulp-concat');
 var pkg = require('./package.json');
 var plumber = require('gulp-plumber');
 var gutil = require('gulp-util');
-// var nodemon = require('gulp-nodemon');
+var nodemon = require('gulp-nodemon');
 
 
 var onError = function(err) {
@@ -85,7 +85,7 @@ gulp.task('minify-js', function() {
 
 gulp.task('default', ['sass', 'minify-css', 'scripts'])
 
-gulp.task('browserSync', function() {
+gulp.task('browserSync', ['nodemon'], function() {
 	browserSync.init({
 		port: 8000,
 		proxy: 'localhost:3000'

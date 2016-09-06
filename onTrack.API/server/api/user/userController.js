@@ -74,15 +74,13 @@ exports.post = function(req, res, next) {
 };
 
 exports.delete = function(req, res, next) {
-	res.send('deleted!!')	
-
-  // req.user.remove(function(err, removed) {
-  //   if (err) {
-  //     next(err);
-  //   } else {
-  //     res.json(removed.toJson());
-  //   }
-  // });
+  req.user.remove(function(err, removed) {
+    if (err) {
+      next(err);
+    } else {
+      res.json(removed.toJson());
+    }
+  });
 };
 
 exports.me = function(req, res) {

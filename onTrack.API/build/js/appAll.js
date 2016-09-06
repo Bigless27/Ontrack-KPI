@@ -30,6 +30,16 @@
 							}
 						}]
 					})
+					.state('client', {
+						url: '/client/:id',
+						templateUrl: 'client/api/client/client-partial.html',
+						controller: 'ClientController'
+					})
+					.state('kpi', {
+						url: '/client/:clientid/kpis/:kpiid',
+						templateUrl: 'client/api/kpi/kpi-partial.html',
+						controller: 'KPIController'
+					})
 			}])
 }());
 (function() {
@@ -158,25 +168,89 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('LoginController', ['$scope', '$state', '$window', '$http',
-	 function($scope, $state, $window, $http) {
+	.controller('ClientController', ['$scope', '$state', '$http', '$window', '$stateParams',
+		function($scope, $state, $http, $window, $stateParams) {
+		
 
-			$scope.logUserIn = function(user) {
-				$scope.$broadcast('show-errors-check-validity');
-
-				if($scope.userForm.$invalid){return;}
-
-
-				$http.post('auth/signin', user)
+			function getClient(){
+				$http.get('/api/clients/' + $stateParams['id'])
 					.success(function(data) {
-						$window.sessionStorage.jwt = data['token']
-						$state.go('main')
+						$scope.client = data
 					})
-					.error(function(error) {
-						console.log(error)
+					.error(function(err) {
+						console.log(err);
 					})
 			}
 
+			getClient()
+
+		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('KPIController', ['$scope', '$state', '$http', '$window', '$stateParams',
+		function($scope, $state, $http, $window, $stateParams) {
+
+			function getKPI(){
+				$http.get('/api/clients/' + $stateParams['clientid'] 
+						+ '/kpis/' + $stateParams['kpiid'])
+							.success(function(data) {
+								console.log(data)
+								$scope.kpi = data;
+							})
+							.error(function(err) {
+								console.log(err);
+							})
+			}
+
+			getKPI()
+
+		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('MainController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+
+			// $scope.me = function() {
+				
+
+			// 	var token = $window.sessionStorage['jwt']
+				
+			// 	$http.get('api/users/me', {
+			// 		headers: {
+			// 			"Authorization": `Bearer ${token}`
+			// 		}
+			// 	})
+			// 	.success(function(data){
+			// 			console.log(data)
+			// 	})
+			// 	.error(function(err){
+			// 		console.log(err)
+			// 	})
+			// }
+			function getClients() {
+				$http.get('api/clients')
+					.success(function(data) {
+						$scope.clients = data
+					})
+					.error(function(err) {
+						console.log(err);
+					})
+			}
+
+			getClients()
+
+
+
+
+			$scope.logout = function() {
+				$window.sessionStorage.clear()
+				$state.go('login')
+			}
+		
 	}])
 }());
 (function() {
@@ -202,32 +276,24 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('MainController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
+	.controller('LoginController', ['$scope', '$state', '$window', '$http',
+	 function($scope, $state, $window, $http) {
 
-			$scope.me = function() {
-				
+			$scope.logUserIn = function(user) {
+				$scope.$broadcast('show-errors-check-validity');
 
-				var token = $window.sessionStorage['jwt']
-				
-				$http.get('api/users/me', {
-					headers: {
-						"Authorization": `Bearer ${token}`
-					}
-				})
-				.success(function(data){
-						console.log(data)
-				})
-				.error(function(err){
-					console.log(err)
-				})
+				if($scope.userForm.$invalid){return;}
+
+
+				$http.post('auth/signin', user)
+					.success(function(data) {
+						$window.sessionStorage.jwt = data['token']
+						$state.go('main')
+					})
+					.error(function(error) {
+						console.log(error)
+					})
 			}
 
-
-			$scope.logout = function() {
-				$window.sessionStorage.clear()
-				$state.go('login')
-			}
-		
 	}])
 }());

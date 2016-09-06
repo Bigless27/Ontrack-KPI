@@ -30,5 +30,15 @@
 							}
 						}]
 					})
+					.state('client', {
+						url: '/client/:id',
+						templateUrl: 'client/api/client/client-partial.html',
+						controller: 'ClientController'
+					})
+					.state('kpi', {
+						url: '/client/:clientid/kpis/:kpiid',
+						templateUrl: 'client/api/kpi/kpi-partial.html',
+						controller: 'KPIController'
+					})
 			}])
 }());
