@@ -2,9 +2,19 @@ h1{
 	color: blue;
 }
 
-#client-mission-control table{
-	float: left;
-	width: 900px;
+.table-holder {
+	margin:auto;
+	padding-top: 20px;
+	width: 1100px;
+	table{
+		float: left;
+		width: 220px;
+	}
+}
+
+.create-view{
+	width: 400px;
+	margin: auto;
 }
 
 .form-group .help-block {
@@ -14,6 +24,31 @@ h1{
 .form-group.has-error .help-block {
   display: block;
 }
+
+@media(max-width: 1100px){
+	.table-holder{
+		width:900px;
+		margin: auto;
+		table{
+			float: left;
+			width: 170px;
+		}	
+	} 
+}
+
+@media(max-width: 850px){
+	.table-holder{
+		width: 600px;
+		margin: auto;
+		table{
+			float: left;
+			width: 100px;
+		}
+	}
+
+}
+
+
 
 
 
