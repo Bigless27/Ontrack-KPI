@@ -26,6 +26,7 @@
  		<tr class = 'active'><td><div class = 'btn btn-primary'>Add Admin</div></td></tr>
  	</table>
 
+
  	<table  class = 'table table-bordered'>
  		<thead>
  			<tr class ='active'><th>KPI(s)</th></tr>
@@ -65,7 +66,11 @@
  		<tbody ng-repeat = 'setting in client.settings'>
  			<tr class = 'info'><td><a ui-sref = 'setting({clientid:client._id, settingid: setting._id})'>{{setting.name}}</a></td></tr>
  		</tbody>
- 		<tr class = 'active'><td><div class = 'btn btn-primary'>Add Setting</div></td></tr>
+ 		<tr class = 'active'>
+ 			<td>
+ 				<div ui-sref = 'client.settingCreate' class = 'btn btn-primary'>Add Setting</div>
+ 			</td>
+ 		</tr>
  	</table>
 
  	<table class = 'table table-bordered'>
