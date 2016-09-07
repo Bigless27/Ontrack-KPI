@@ -1,6 +1,10 @@
 h1 {
   color: blue; }
 
+#client-mission-control table {
+  float: left;
+  width: 900px; }
+
 .form-group .help-block {
   display: none; }
 
