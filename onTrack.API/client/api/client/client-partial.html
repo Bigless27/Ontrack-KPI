@@ -4,50 +4,76 @@
 	<div class = 'btn btn-danger' ng-click = 'logout()'>Logout</div>
 </nav>
 
- <div id = "login-form" class = "container-fluid">
+ <div id = "client-mission-control">
  	<h2>{{client.name}}</h2>
- 	<span>
+ 	<div>
  		Owner: {{client.owner[0].email}}
 
- 	</span>
+	<span class = 'btn btn-default'>Edit Client</span>
+	<span class = 'btn btn-default'>Delete Client</span>
+ 	</div>
 
- 	<table class = 'table table-bordered' style = 'width:150px;'>
+ 	<div ui-view class = 'create-view'></div>
+ </div>
+<div class = 'table-holder'>
+ 	<table class = 'table table-bordered'>
  		<thead>
  			<tr class ='active'><th>Admin(s)</th></tr>
  		</thead>
  		<tbody ng-repeat = 'admin in client.admins'>
  			<tr class = 'info'><td>{{admin.email}}</td></tr>
  		</tbody>
+ 		<tr class = 'active'><td><div class = 'btn btn-primary'>Add Admin</div></td></tr>
  	</table>
 
- 	<table class = 'table table-bordered' style = 'width:250px;'>
+
+ 	<table  class = 'table table-bordered'>
  		<thead>
  			<tr class ='active'><th>KPI(s)</th></tr>
  		</thead>
  		<tbody ng-repeat = 'kpi in client.kpis'>
  			<tr class = 'info'><td><a ui-sref ='kpi({clientid: client._id ,kpiid: kpi._id})'>{{kpi.name}}</a></td></tr>
  		</tbody>
+ 		<tr class = 'active'>
+ 			<td>
+ 				<div ui-sref = 'client.kpiCreate' class = 'btn btn-primary'>Create KPI</div>
+ 			</td>
+ 		</tr>
  	</table>
 
- 	<table class = 'table table-bordered' style = 'width:250px;'>
+ 	<table class = 'table table-bordered'>
  		<thead>
  			<tr class ='active'><th>Promotions</th></tr>
  		</thead>
  		<tbody ng-repeat = 'promotion in client.promotions'>
- 			<tr class = 'info'><td><a ui-sref = 'promotion({clientid:client._id, promoid: promotion._id})'>{{promotion.name}}</a></td></tr>
+ 			<tr class = 'info'>
+ 				<td>
+ 					<a ui-sref = 'promotion({clientid:client._id, promoid: promotion._id})'>{{promotion.name}}</a>
+ 				</td>
+ 			</tr>
  		</tbody>
+ 		<tr class = 'active'>
+ 			<td>
+ 				<div ui-sref = 'client.promotionCreate' class = 'btn btn-primary'>Create Promotion</div>
+ 			</td>
+ 		</tr>
  	</table>
 
- 	<table class = 'table table-bordered' style = 'width:250px;'>
+ 	<table class = 'table table-bordered'>
  		<thead>
  			<tr class ='active'><th>Settings</th></tr>
  		</thead>
  		<tbody ng-repeat = 'setting in client.settings'>
  			<tr class = 'info'><td><a ui-sref = 'setting({clientid:client._id, settingid: setting._id})'>{{setting.name}}</a></td></tr>
  		</tbody>
+ 		<tr class = 'active'>
+ 			<td>
+ 				<div ui-sref = 'client.settingCreate' class = 'btn btn-primary'>Add Setting</div>
+ 			</td>
+ 		</tr>
  	</table>
 
- 	<table class = 'table table-bordered' style = 'width:250px;'>
+ 	<table class = 'table table-bordered'>
  		<thead>
  			<tr class ='active'><th>Users</th></tr>
  		</thead>
@@ -55,9 +81,4 @@
  			<tr class = 'info'><td><a ui-sref = 'user({id: user._id})'>{{user.email}}</a></td></tr>
  		</tbody>
  	</table>
-
-
-
- 	<div class = 'btn btn-default'>Edit Client</div>
- 	<div class = 'btn btn-default'>Delete Client</div>
  </div>

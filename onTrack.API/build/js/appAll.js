@@ -40,15 +40,30 @@
 						templateUrl: 'client/api/kpi/kpi-partial.html',
 						controller: 'KPIController'
 					})
+					.state('client.kpiCreate', {
+						url: '/client/:id',
+						templateUrl: 'client/api/kpi/kpi-create-partial.html',
+						controller: 'ClientController'
+					})
 					.state('promotion', {
 						url: '/client/:clientid/promotions/:promoid',
 						templateUrl: 'client/api/promotions/promotions-partial.html',
 						controller: 'PromotionController'
 					})
+					.state('client.promotionCreate', {
+						url: '/client/:id',
+						templateUrl: 'client/api/promotions/promotions-create-partial.html',
+						controller: 'ClientController'
+					})
 					.state('setting', {
 						url: '/client/:clientid/settings/:settingid',
 						templateUrl: 'client/api/settings/settings-partial.html',
 						controller: 'SettingController'
+					})
+					.state('client.settingCreate',{
+						url: 'client/:id',
+						templateUrl: 'client/api/settings/settings-create-partial.html',
+						controller: 'ClientController'
 					})
 					.state('user', {
 						url: '/user/:id',
@@ -183,6 +198,28 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('KPIController', ['$scope', '$state', '$http', '$window', '$stateParams',
+		function($scope, $state, $http, $window, $stateParams) {
+
+			function getKPI(){
+				$http.get('/api/clients/' + $stateParams['clientid'] 
+						+ '/kpis/' + $stateParams['kpiid'])
+							.success(function(data) {
+								console.log(data)
+								$scope.kpi = data;
+							})
+							.error(function(err) {
+								console.log(err);
+							})
+			}
+
+			getKPI()
+
+		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('ClientController', ['$scope', '$state', '$http', '$window', '$stateParams',
 		function($scope, $state, $http, $window, $stateParams) {
 		
@@ -223,28 +260,6 @@
 					})
 			}
 
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('KPIController', ['$scope', '$state', '$http', '$window', '$stateParams',
-		function($scope, $state, $http, $window, $stateParams) {
-
-			function getKPI(){
-				$http.get('/api/clients/' + $stateParams['clientid'] 
-						+ '/kpis/' + $stateParams['kpiid'])
-							.success(function(data) {
-								console.log(data)
-								$scope.kpi = data;
-							})
-							.error(function(err) {
-								console.log(err);
-							})
-			}
-
-			getKPI()
-
-		
 	}])
 }());
 (function() {
