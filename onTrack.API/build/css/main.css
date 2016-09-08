@@ -6,6 +6,7 @@ h1 {
   padding-top: 20px;
   width: 1100px; }
   .table-holder table {
+    margin-left: 5px;
     float: left;
     width: 220px; }
 
