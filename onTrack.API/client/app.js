@@ -70,5 +70,9 @@
 						templateUrl: 'client/api/users/user-partial.html',
 						controller: 'UsersController'
 					})
+					.state('client.addAdmin', {
+						templateUrl:'client/api/admin/admin-add-partial.html',
+						controller: 'ClientController'
+					})
 			}])
 }());

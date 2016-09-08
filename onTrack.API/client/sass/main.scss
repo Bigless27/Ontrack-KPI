@@ -25,6 +25,12 @@ h1{
   display: block;
 }
 
+.scrollbar {
+    height: auto;
+    max-height: 180px;
+    overflow-x: hidden;
+}
+
 @media(max-width: 1100px){
 	.table-holder{
 		width:900px;

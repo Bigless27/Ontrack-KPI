@@ -23,7 +23,11 @@
  		<tbody ng-repeat = 'admin in client.admins'>
  			<tr class = 'info'><td>{{admin.email}}</td></tr>
  		</tbody>
- 		<tr class = 'active'><td><div class = 'btn btn-primary'>Add Admin</div></td></tr>
+ 		<tr class = 'active'>
+ 			<td>
+ 				<div ui-sref = 'client.addAdmin' class = 'btn btn-primary'>Add Admin</div>
+ 			</td>
+ 		</tr>
  	</table>
 
 

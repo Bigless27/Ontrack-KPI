@@ -32,7 +32,6 @@ router.get('/facebook/callback', function(req, res, next) {
 		if (err) {return next(err)}
 
 		if(user) {
-			req.flash('info', 'success')
 			var token = createToken(user._id)
 			return res.redirect('/#/main?access_token=' + token)
 		}
