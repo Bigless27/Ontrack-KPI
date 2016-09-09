@@ -21,9 +21,18 @@
  			<tr class ='active'><th>Admin(s)</th></tr>
  		</thead>
  		<tbody ng-repeat = 'admin in client.admins'>
- 			<tr class = 'info'><td>{{admin.email}}</td></tr>
+ 			<tr class = 'info'>
+ 				<td>{{admin.email}}
+ 					<span class = 'btn btn-danger' ng-click = "removeAdmin(admin)" style = 'float: right;'>X</span>
+ 				</td>
+
+ 			</tr>
  		</tbody>
- 		<tr class = 'active'><td><div class = 'btn btn-primary'>Add Admin</div></td></tr>
+ 		<tr class = 'active'>
+ 			<td>
+ 				<div ui-sref = 'client.addAdmin' class = 'btn btn-primary'>Add Admin</div>
+ 			</td>
+ 		</tr>
  	</table>
 
 

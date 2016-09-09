@@ -1,4 +1,5 @@
 var Client = require('./clientModel');
+var mongoose = require('mongoose')
 var _ = require('lodash');
 
 
@@ -16,18 +17,6 @@ exports.params = function(req, res, next, id) {
       req.client = client;
       next()
     })
-
-  // Client.findById(id)
-	// 	.then(function(client) {
-	// 		if (!client) {
-	// 			next(new Error('No Client with that id'));
-	// 		} else {
-	// 			req.client = client;
-	// 			next();
-	// 		}
-	// 	}, function(err) {
-	// 		next(err);
-	// });
 };
 
 exports.get = function(req, res, next) {
@@ -44,19 +33,38 @@ exports.getOne = function(req, res, next) {
 	res.json(client)
 }
 
+exports.updateAdmin = function(req, res, next) {
+  var client = req.client
+
+  var update = req.body
+
+  client.admins = []
+
+  _.merge(client, update);
+
+  client.save(function(err, saved) {
+    if (err) {
+      next(err);
+    } else {
+      res.json(saved);
+    }
+  })
+}
+
 
 exports.put = function(req, res, next) {
-
-  if (!req.client.checkAdmin(req.user)){
-    next(new Error('Not authorized!!'));
-    return;
-  }
+  // if (!req.client.checkAdmin(req.user)){
+  //   next(new Error('Not authorized!!'));
+  //   return;
+  // }
 
   var client = req.client;
 
   var update = req.body;
 
+
   _.merge(client, update);
+
 
   client.save(function(err, saved) {
     if (err) {
@@ -87,12 +95,12 @@ exports.post = function(req, res, next) {
 exports.delete = function(req, res, next) {
   
 
-  // input user id here: the use of this application would 
-  // need to know to attach the current users id to req.user
-  if (!req.client.checkAdmin(req.user)){
-    next(new Error('Not authorized!!'));
-    return;
-  }
+  // // input user id here: the use of this application would 
+  // // need to know to attach the current users id to req.user
+  // if (!req.client.checkAdmin(req.user)){
+  //   next(new Error('Not authorized!!'));
+  //   return;
+  // }
 
   req.client.remove(function(err, removed) {
     if (err) {
@@ -107,6 +115,9 @@ exports.FindClient = function(id) {
   var client = Client.findById(id)
   return client
 }
+
+
+
 
 
 

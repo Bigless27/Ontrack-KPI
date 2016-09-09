@@ -5,8 +5,9 @@ h1{
 .table-holder {
 	margin:auto;
 	padding-top: 20px;
-	width: 1100px;
+	width: 1400px;
 	table{
+		margin-left: 5px;
 		float: left;
 		width: 220px;
 	}
@@ -25,9 +26,36 @@ h1{
   display: block;
 }
 
+/*admin add*/
+.scrollable-menu {
+	padding-left: 10px;
+    height: auto;
+    max-height: 140px;
+    overflow-x: hidden;
+    #admin-lable{
+    	font-size: 25px;
+    }
+    input{
+    	/*display: none;*/ /*hide checkboxes*/
+    }
+ /*   input:checked + span{
+    	border: 1px solid red;
+    	background-color: #a8a8a8;
+    }*/
+
+    
+}
+
+
+
+#admin-button-container{
+	padding: 15px 0px;
+}
+
+
 @media(max-width: 1100px){
 	.table-holder{
-		width:900px;
+		width:950px;
 		margin: auto;
 		table{
 			float: left;
@@ -38,7 +66,7 @@ h1{
 
 @media(max-width: 850px){
 	.table-holder{
-		width: 600px;
+		width: 850px;
 		margin: auto;
 		table{
 			float: left;

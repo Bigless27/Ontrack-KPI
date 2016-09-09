@@ -1,5 +1,5 @@
 (function() {
-	angular.module('onTrack', ['ui.router', 'ui.bootstrap.showErrors'])
+	angular.module('onTrack', ['ui.router', 'ui.bootstrap.showErrors', 'checklist-model'])
 	.config(['$stateProvider', '$urlRouterProvider', 'showErrorsConfigProvider',
 			function($stateProvider, $urlRouterProvider, showErrorsConfigProvider) {
 
@@ -69,6 +69,10 @@
 						url: '/user/:id',
 						templateUrl: 'client/api/users/user-partial.html',
 						controller: 'UsersController'
+					})
+					.state('client.addAdmin', {
+						templateUrl:'client/api/admin/admin-add-partial.html',
+						controller: 'AdminController'
 					})
 			}])
 }());

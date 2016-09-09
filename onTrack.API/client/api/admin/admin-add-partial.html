@@ -1,0 +1,18 @@
+<div class="scrollable-menu" role="menu">
+  <label id = 'admin-lable'>Users</label>
+  <div class = 'form-group' ng-repeat = 'role in roles'>
+      <div class 'checkbox'> 
+            <label>
+                  <input ng-change = 'highlight(role)'  type="checkbox" checklist-model="user.roles" checklist-value="role" >
+                  <span>{{role.email}}</span>
+              </label>
+      </div>
+    </div>
+   </div>
+</div>
+
+<div id = 'admin-button-container'>
+  <span class = 'btn btn-primary' ng-click = 'add()'>Add</span>
+  <span class = 'btn btn-primary' ng-click = 'uncheckAll()'>uncheckAll</span>
+  <span class = 'btn btn-danger' ui-sref = 'client({id: client._id})'>Close</span>
+</div>
