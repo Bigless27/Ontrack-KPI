@@ -1,5 +1,5 @@
 (function() {
-	angular.module('onTrack', ['ui.router', 'ui.bootstrap.showErrors'])
+	angular.module('onTrack', ['ui.router', 'ui.bootstrap.showErrors', 'checklist-model'])
 	.config(['$stateProvider', '$urlRouterProvider', 'showErrorsConfigProvider',
 			function($stateProvider, $urlRouterProvider, showErrorsConfigProvider) {
 
@@ -72,7 +72,7 @@
 					})
 					.state('client.addAdmin', {
 						templateUrl:'client/api/admin/admin-add-partial.html',
-						controller: 'ClientController'
+						controller: 'AdminController'
 					})
 			}])
 }());
@@ -202,21 +202,95 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('ClientController', ['$scope', '$state', '$http', '$window', '$stateParams',
+	.controller('AdminController', ['$scope', '$state', '$http', '$window', '$stateParams',
 		function($scope, $state, $http, $window, $stateParams) {
 		
 
-			// function getClient(){
-			// 	$http.get('/api/clients/' + $stateParams['id'])
-			// 		.success(function(data) {
-			// 			$scope.client = data
-			// 		})
-			// 		.error(function(err) {
-			// 			console.log(err);
-			// 		})
-			// }
 
-			// getClient()
+		$scope.highlight = function(x) {
+			if ($(`span:contains(${x.email})`).hasClass('check')){
+
+				$(`span:contains(${x.email})`).parent().parent().css({"background-color":"transparent"})
+				$(`span:contains(${x.email})`).removeClass('check')
+			}
+			else{
+				$(`span:contains(${x.email})`).parent().parent().css({"background-color":"#a8a8a8"})
+				$(`span:contains(${x.email})`).addClass('check')
+			}
+
+		}
+
+
+
+		$scope.user = {
+
+		  };
+
+		  $scope.uncheckAll = function() {
+		    $scope.user.roles = [];
+		  };
+
+
+		$scope.add = function(){
+			var token = $window.sessionStorage['jwt']
+
+			var client = {admins:[]}
+			client.admins.push($scope.client.admins[0]._id)
+			
+			$scope.user.roles.forEach(function(id){	
+				client.admins.push(id)
+			})
+
+			$http.put('/api/clients/' + $stateParams['id'],client, {
+				headers: {
+					'Authorization': `Bearer ${token}`
+				}
+			})
+			.success(function(data) {
+				console.log(data)
+				client = {}
+			})
+			.error(function(err) {
+				console.log(err)
+			})
+		}
+
+
+			function getUsers(){
+				$http.get('/api/users')
+					.success(function(data) {
+						$scope.roles = data
+					})
+					.error(function(err) {
+						console.log(err);
+					})
+			}
+
+			getUsers()
+
+
+
+		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('KPIController', ['$scope', '$state', '$http', '$window', '$stateParams',
+		function($scope, $state, $http, $window, $stateParams) {
+
+			function getKPI(){
+				$http.get('/api/clients/' + $stateParams['clientid'] 
+						+ '/kpis/' + $stateParams['kpiid'])
+							.success(function(data) {
+								console.log(data)
+								$scope.kpi = data;
+							})
+							.error(function(err) {
+								console.log(err);
+							})
+			}
+
+			getKPI()
 
 		
 	}])
@@ -244,24 +318,25 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('KPIController', ['$scope', '$state', '$http', '$window', '$stateParams',
-		function($scope, $state, $http, $window, $stateParams) {
+	.controller('LoginController', ['$scope', '$state', '$window', '$http',
+	 function($scope, $state, $window, $http) {
 
-			function getKPI(){
-				$http.get('/api/clients/' + $stateParams['clientid'] 
-						+ '/kpis/' + $stateParams['kpiid'])
-							.success(function(data) {
-								console.log(data)
-								$scope.kpi = data;
-							})
-							.error(function(err) {
-								console.log(err);
-							})
+			$scope.logUserIn = function(user) {
+				$scope.$broadcast('show-errors-check-validity');
+
+				if($scope.userForm.$invalid){return;}
+
+
+				$http.post('auth/signin', user)
+					.success(function(data) {
+						$window.sessionStorage.jwt = data['token']
+						$state.go('main')
+					})
+					.error(function(error) {
+						console.log(error)
+					})
 			}
 
-			getKPI()
-
-		
 	}])
 }());
 (function() {
@@ -306,29 +381,6 @@
 				$state.go('login')
 			}
 		
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('LoginController', ['$scope', '$state', '$window', '$http',
-	 function($scope, $state, $window, $http) {
-
-			$scope.logUserIn = function(user) {
-				$scope.$broadcast('show-errors-check-validity');
-
-				if($scope.userForm.$invalid){return;}
-
-
-				$http.post('auth/signin', user)
-					.success(function(data) {
-						$window.sessionStorage.jwt = data['token']
-						$state.go('main')
-					})
-					.error(function(error) {
-						console.log(error)
-					})
-			}
-
 	}])
 }());
 (function() {

@@ -19,7 +19,7 @@ router.route('/')
 
 router.route('/:id')
   .get(controller.getOne)// Tested
-  .put(controller.put)// Tested
+  .put(checkUser,controller.put)// Tested
   .delete(controller.delete)// Tested
 
 module.exports = router;

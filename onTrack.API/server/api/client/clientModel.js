@@ -13,7 +13,11 @@ var ClientSchema = new Schema({
 	promotions: [{type: Schema.Types.ObjectId, ref: 'promotion'}],
 	kpis: [{type: Schema.Types.ObjectId, ref: 'kpi'}],
 	owner: [{type: Schema.Types.ObjectId, ref: 'user'}],
-	admins: [{type: Schema.Types.ObjectId, ref: 'user'}],
+	admins: [{
+		id: String,
+		email: String
+	}]
+	,
 	settings: [{type: Schema.Types.ObjectId, ref: 'clientSettings'}]
 })
 

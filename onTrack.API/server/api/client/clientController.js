@@ -1,4 +1,5 @@
 var Client = require('./clientModel');
+var mongoose = require('mongoose')
 var _ = require('lodash');
 
 
@@ -46,7 +47,6 @@ exports.getOne = function(req, res, next) {
 
 
 exports.put = function(req, res, next) {
-
   if (!req.client.checkAdmin(req.user)){
     next(new Error('Not authorized!!'));
     return;
@@ -56,7 +56,10 @@ exports.put = function(req, res, next) {
 
   var update = req.body;
 
-  _.merge(client, update);
+  console.log(update)
+
+  _.merge(client, castUpdate);
+
 
   client.save(function(err, saved) {
     if (err) {
@@ -87,12 +90,12 @@ exports.post = function(req, res, next) {
 exports.delete = function(req, res, next) {
   
 
-  // input user id here: the use of this application would 
-  // need to know to attach the current users id to req.user
-  if (!req.client.checkAdmin(req.user)){
-    next(new Error('Not authorized!!'));
-    return;
-  }
+  // // input user id here: the use of this application would 
+  // // need to know to attach the current users id to req.user
+  // if (!req.client.checkAdmin(req.user)){
+  //   next(new Error('Not authorized!!'));
+  //   return;
+  // }
 
   req.client.remove(function(err, removed) {
     if (err) {
@@ -107,6 +110,9 @@ exports.FindClient = function(id) {
   var client = Client.findById(id)
   return client
 }
+
+
+
 
 
 

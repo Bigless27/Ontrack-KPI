@@ -1,23 +1,18 @@
-<div class="col-sm-2  scrollable-menu" role="menu">
-    <div>
-   <ul>
-  <li><a class="active" href="#home">Tutorials</a></li>
-  <li><a href="#news">News</a></li>
-  <li><a href="#contact">Contact</a></li>
-  <li><a href="#about">About</a></li>
-  <li><a href="#news">News</a></li>
-  <li><a href="#contact">Contact</a></li>
-  <li><a href="#about">About</a></li>
-  <li><a href="#news">News</a></li>
-  <li><a href="#contact">Contact</a></li>
-  <li><a href="#about">About</a></li>
-  <li><a href="#news">News</a></li>
-  <li><a href="#contact">Contact</a></li>
-  <li><a href="#about">About</a></li>
-  <li><a href="#news">News</a></li>
-  <li><a href="#contact">Contact</a></li>
-  <li><a href="#about">About</a></li>
-
-    </ul>
+<div class="scrollable-menu" role="menu">
+  <label id = 'admin-lable'>Users</label>
+  <div class = 'form-group' ng-repeat = 'role in roles'>
+      <div class 'checkbox' ng-click = 'highlight(role)'> 
+            <label>
+                  <input ng-change = 'highlight(role)'  type="checkbox" checklist-model="user.roles" checklist-value="role._id" >
+                  <span>{{role.email}}</span>
+              </label>
+      </div>
+    </div>
    </div>
+</div>
+
+<div id = 'admin-button-container'>
+  <span class = 'btn btn-primary' ng-click = 'add()'>Add</span>
+  <span class = 'btn btn-primary' ng-click = 'uncheckAll()'>uncheckAll</span>
+  <span class = 'btn btn-danger' ui-sref = 'client({id: client._id})'>Close</span>
 </div>
