@@ -20,23 +20,30 @@
 
 
 
-		$scope.user = {
+	$scope.user = {
 
-		  };
+	  };
 
-		  $scope.uncheckAll = function() {
-		    $scope.user.roles = [];
-		  };
+	  $scope.uncheckAll = function() {
+	    $scope.user.roles = [];
+	  };
 
 
 		$scope.add = function(){
 			var token = $window.sessionStorage['jwt']
 
 			var client = {admins:[]}
-			client.admins.push($scope.client.admins[0]._id)
+
+
+			$scope.client.admins.forEach(function(user) {
+				client.admins.push({id: user._id, email: user.email})
+			})
 			
-			$scope.user.roles.forEach(function(id){	
-				client.admins.push(id)
+
+			$scope.user.roles.forEach(function(user){
+				if (client.admins.filter(function(e){ e.email == user.email}).length > 0) {
+				 	client.admins.push({id:user._id, email: user.email})
+				}
 			})
 
 			$http.put('/api/clients/' + $stateParams['id'],client, {
@@ -45,13 +52,14 @@
 				}
 			})
 			.success(function(data) {
-				console.log(data)
-				client = {}
+				$scope.client = data
 			})
 			.error(function(err) {
 				console.log(err)
 			})
 		}
+
+
 
 
 			function getUsers(){

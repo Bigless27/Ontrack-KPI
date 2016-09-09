@@ -17,18 +17,6 @@ exports.params = function(req, res, next, id) {
       req.client = client;
       next()
     })
-
-  // Client.findById(id)
-	// 	.then(function(client) {
-	// 		if (!client) {
-	// 			next(new Error('No Client with that id'));
-	// 		} else {
-	// 			req.client = client;
-	// 			next();
-	// 		}
-	// 	}, function(err) {
-	// 		next(err);
-	// });
 };
 
 exports.get = function(req, res, next) {
@@ -47,18 +35,17 @@ exports.getOne = function(req, res, next) {
 
 
 exports.put = function(req, res, next) {
-  if (!req.client.checkAdmin(req.user)){
-    next(new Error('Not authorized!!'));
-    return;
-  }
+  // if (!req.client.checkAdmin(req.user)){
+  //   next(new Error('Not authorized!!'));
+  //   return;
+  // }
 
   var client = req.client;
 
   var update = req.body;
 
-  console.log(update)
 
-  _.merge(client, castUpdate);
+  _.merge(client, update);
 
 
   client.save(function(err, saved) {

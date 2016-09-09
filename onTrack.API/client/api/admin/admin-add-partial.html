@@ -1,9 +1,9 @@
 <div class="scrollable-menu" role="menu">
   <label id = 'admin-lable'>Users</label>
   <div class = 'form-group' ng-repeat = 'role in roles'>
-      <div class 'checkbox' ng-click = 'highlight(role)'> 
+      <div class 'checkbox'> 
             <label>
-                  <input ng-change = 'highlight(role)'  type="checkbox" checklist-model="user.roles" checklist-value="role._id" >
+                  <input ng-change = 'highlight(role)'  type="checkbox" checklist-model="user.roles" checklist-value="role" >
                   <span>{{role.email}}</span>
               </label>
       </div>

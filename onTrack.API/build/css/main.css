@@ -33,7 +33,8 @@ h1 {
   .scrollable-menu #admin-lable {
     font-size: 25px; }
   .scrollable-menu input {
-    display: none; }
+    /*display: none;*/
+    /*hide checkboxes*/ }
 
 #admin-button-container {
   padding: 15px 0px; }
