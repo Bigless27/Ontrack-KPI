@@ -220,8 +220,6 @@
 
 		}
 
-
-
 	$scope.user = {
 
 	  };
@@ -240,10 +238,10 @@
 			$scope.client.admins.forEach(function(user) {
 				client.admins.push({id: user._id, email: user.email})
 			})
-			
+
 
 			$scope.user.roles.forEach(function(user){
-				if (client.admins.filter(function(e){ e.email == user.email}).length > 0) {
+				if (client.admins.filter(function(e){return e.email == user.email}).length === 0) {
 				 	client.admins.push({id:user._id, email: user.email})
 				}
 			})
@@ -260,7 +258,6 @@
 				console.log(err)
 			})
 		}
-
 
 
 
@@ -326,6 +323,29 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('LoginController', ['$scope', '$state', '$window', '$http',
+	 function($scope, $state, $window, $http) {
+
+			$scope.logUserIn = function(user) {
+				$scope.$broadcast('show-errors-check-validity');
+
+				if($scope.userForm.$invalid){return;}
+
+
+				$http.post('auth/signin', user)
+					.success(function(data) {
+						$window.sessionStorage.jwt = data['token']
+						$state.go('main')
+					})
+					.error(function(error) {
+						console.log(error)
+					})
+			}
+
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('MainController', ['$scope', '$state', '$http', '$window', 
 		function($scope, $state, $http, $window) {
 
@@ -366,29 +386,6 @@
 				$state.go('login')
 			}
 		
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('LoginController', ['$scope', '$state', '$window', '$http',
-	 function($scope, $state, $window, $http) {
-
-			$scope.logUserIn = function(user) {
-				$scope.$broadcast('show-errors-check-validity');
-
-				if($scope.userForm.$invalid){return;}
-
-
-				$http.post('auth/signin', user)
-					.success(function(data) {
-						$window.sessionStorage.jwt = data['token']
-						$state.go('main')
-					})
-					.error(function(error) {
-						console.log(error)
-					})
-			}
-
 	}])
 }());
 (function() {
@@ -435,26 +432,6 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('UsersController', ['$scope', '$state', '$http', '$window', '$stateParams',
-		function($scope, $state, $http, $window, $stateParams) {
-
-			function getUser(){
-				$http.get('/api/users/' + $stateParams['id'])
-							.success(function(data) {
-								$scope.user = data;
-							})
-							.error(function(err) {
-								console.log(err);
-							})
-			}
-
-			getUser()
-
-		
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
 		function($scope, $state, $http, $window) {
 		$scope.signUp = function(user) {
@@ -471,6 +448,26 @@
 					console.log(error)
 				})
 		}
+		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('UsersController', ['$scope', '$state', '$http', '$window', '$stateParams',
+		function($scope, $state, $http, $window, $stateParams) {
+
+			function getUser(){
+				$http.get('/api/users/' + $stateParams['id'])
+							.success(function(data) {
+								$scope.user = data;
+							})
+							.error(function(err) {
+								console.log(err);
+							})
+			}
+
+			getUser()
+
 		
 	}])
 }());

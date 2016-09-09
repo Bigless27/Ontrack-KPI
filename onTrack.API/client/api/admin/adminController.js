@@ -18,8 +18,6 @@
 
 		}
 
-
-
 	$scope.user = {
 
 	  };
@@ -38,10 +36,10 @@
 			$scope.client.admins.forEach(function(user) {
 				client.admins.push({id: user._id, email: user.email})
 			})
-			
+
 
 			$scope.user.roles.forEach(function(user){
-				if (client.admins.filter(function(e){ e.email == user.email}).length > 0) {
+				if (client.admins.filter(function(e){return e.email == user.email}).length === 0) {
 				 	client.admins.push({id:user._id, email: user.email})
 				}
 			})
@@ -58,7 +56,6 @@
 				console.log(err)
 			})
 		}
-
 
 
 
