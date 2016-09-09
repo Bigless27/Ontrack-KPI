@@ -44,13 +44,15 @@
 				}
 			})
 
-			$http.put('/api/clients/' + $stateParams['id'],client, {
+
+			$http.put('/api/clients/' + $stateParams['id'], client, {
 				headers: {
 					'Authorization': `Bearer ${token}`
 				}
 			})
 			.success(function(data) {
-				$scope.client = data
+				$state.reload() //look into making this two way bound
+
 			})
 			.error(function(err) {
 				console.log(err)
