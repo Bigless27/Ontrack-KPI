@@ -17,6 +17,9 @@ router.route('/')
   .get(controller.get) // Tested
   .post(checkUser, controller.post) // Tested
 
+router.route('/:id/updateAdmin')
+	.put(checkUser, controller.updateAdmin)
+
 router.route('/:id')
   .get(controller.getOne)// Tested
   .put(checkUser,controller.put)// Tested

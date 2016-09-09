@@ -33,6 +33,24 @@ exports.getOne = function(req, res, next) {
 	res.json(client)
 }
 
+exports.updateAdmin = function(req, res, next) {
+  var client = req.client
+
+  var update = req.body
+
+  client.admins = []
+
+  _.merge(client, update);
+
+  client.save(function(err, saved) {
+    if (err) {
+      next(err);
+    } else {
+      res.json(saved);
+    }
+  })
+}
+
 
 exports.put = function(req, res, next) {
   // if (!req.client.checkAdmin(req.user)){

@@ -32,6 +32,8 @@
 
 			var client = {admins:[]}
 
+			console.log($scope.client.admins)
+
 
 			$scope.client.admins.forEach(function(user) {
 				client.admins.push({id: user._id, email: user.email})
