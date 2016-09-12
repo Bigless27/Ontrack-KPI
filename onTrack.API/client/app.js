@@ -40,6 +40,11 @@
 						templateUrl: 'client/api/kpi/kpi-partial.html',
 						controller: 'KPIController'
 					})
+					.state('kpi.edit', {
+						templateUrl: 'client/api/kpi/create/kpi-create-partial.html',
+						controller: 'KPIController'
+
+					})
 					.state('client.kpiCreate', {
 						url: '/kpi/:id',
 						templateUrl: 'client/api/kpi/create/kpi-create-partial.html',
@@ -74,5 +79,6 @@
 						templateUrl:'client/api/admin/admin-add-partial.html',
 						controller: 'AdminController'
 					})
+
 			}])
 }());

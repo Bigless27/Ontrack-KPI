@@ -2,11 +2,25 @@
 	angular.module('onTrack')
 	.controller('KPICreateController', ['$scope', '$state', '$http', '$window', '$stateParams',
 		function($scope, $state, $http, $window, $stateParams) {
+			$scope.create = true
 
 			$scope.clientId = $stateParams['id']
 
+			//for select button
+			$scope.myList = [{
+				    listValue: "sale"
+			      }, {
+			        listValue: "attendance"
+			      }, {
+			        listValue: "calls"
+			      }, {
+			        listValue: "refferals"
+			 }]
 
-			$scope.createKpi = function(kpi) {
+
+			$scope.submitKpi = function(kpi) {
+
+				
 				var token = $window.sessionStorage['jwt']
 
 				$http.post('api/clients/' + $stateParams['id'] + '/kpis', kpi ,{

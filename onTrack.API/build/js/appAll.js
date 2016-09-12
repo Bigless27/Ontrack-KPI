@@ -40,6 +40,11 @@
 						templateUrl: 'client/api/kpi/kpi-partial.html',
 						controller: 'KPIController'
 					})
+					.state('kpi.edit', {
+						templateUrl: 'client/api/kpi/create/kpi-create-partial.html',
+						controller: 'KPIController'
+
+					})
 					.state('client.kpiCreate', {
 						url: '/kpi/:id',
 						templateUrl: 'client/api/kpi/create/kpi-create-partial.html',
@@ -74,6 +79,7 @@
 						templateUrl:'client/api/admin/admin-add-partial.html',
 						controller: 'AdminController'
 					})
+
 			}])
 }());
 (function() {
@@ -282,6 +288,79 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('KPIController', ['$scope', '$state', '$http', '$window', '$stateParams',
+		function($scope, $state, $http, $window, $stateParams) {
+
+			$scope.create = false
+
+			$scope.deleteKpi = function() {
+				var token = $window.sessionStorage['jwt']
+
+				$http.delete('/api/clients/' + $stateParams['clientid']
+				 + '/kpis/' + $stateParams['kpiid'], {
+					headers: {
+						'Authorization': `Bearer ${token}`
+					}
+				})
+				.success(function(data){
+					var clientId = {'id': $stateParams['clientid'] + ''}
+					$state.go('client',clientId )
+				})
+				.error(function(err) {
+					console.log(err)
+				})
+			}
+
+			$scope.submitKpi = function(kpi) {
+				kpi['type'] = kpi['type']['listValue']
+				var token = $window.sessionStorage['jwt']
+
+				$http.put('/api/clients/' + $stateParams['clientid']
+				 + '/kpis/' + $stateParams['kpiid'], kpi,{
+					headers: {
+						'Authorization': `Bearer ${token}`
+					}
+				})
+				.success(function(data){
+					var params = {clientid: $stateParams['clientid'], kpiid: $stateParams['kpiid'] }
+					$state.reload()
+				})
+				.error(function(err) {
+					console.log(err)
+				})
+			}
+
+// Where to store all the list options
+			$scope.myList = [{
+				    listValue: "sale"
+			      }, {
+			        listValue: "attendance"
+			      }, {
+			        listValue: "calls"
+			      }, {
+			        listValue: "refferals"
+			 }]
+  		
+			
+
+			function getKpi(){
+				$http.get('/api/clients/' + $stateParams['clientid'] 
+						+ '/kpis/' + $stateParams['kpiid'])
+							.success(function(data) {
+								$scope.kpi = data;
+							})
+							.error(function(err) {
+								console.log(err);
+							})
+			}
+
+			getKpi()
+
+		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('ClientController', ['$scope', '$state', '$http', '$window', '$stateParams',
 		function($scope, $state, $http, $window, $stateParams) {
 		
@@ -320,46 +399,6 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('KPIController', ['$scope', '$state', '$http', '$window', '$stateParams',
-		function($scope, $state, $http, $window, $stateParams) {
-
-			$scope.deleteKpi = function() {
-				var token = $window.sessionStorage['jwt']
-
-				$http.delete('/api/clients/' + $stateParams['clientid']
-				 + '/kpis/' + $stateParams['kpiid'], {
-					headers: {
-						'Authorization': `Bearer ${token}`
-					}
-				})
-				.success(function(data){
-					var clientId = {'id': $stateParams['clientid'] + ''}
-					$state.go('client',clientId )
-				})
-				.error(function(err) {
-					console.log(err)
-				})
-			}
-
-			function getKpi(){
-				$http.get('/api/clients/' + $stateParams['clientid'] 
-						+ '/kpis/' + $stateParams['kpiid'])
-							.success(function(data) {
-								console.log(data)
-								$scope.kpi = data;
-							})
-							.error(function(err) {
-								console.log(err);
-							})
-			}
-
-			getKpi()
-
-		
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('LoginController', ['$scope', '$state', '$window', '$http',
 	 function($scope, $state, $window, $http) {
 
@@ -379,27 +418,6 @@
 					})
 			}
 
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('PromotionController', ['$scope', '$state', '$http', '$window', '$stateParams',
-		function($scope, $state, $http, $window, $stateParams) {
-
-			function getPromotions(){
-				$http.get('/api/clients/' + $stateParams['clientid'] 
-						+ '/promotions/' + $stateParams['promoid'])
-							.success(function(data) {
-								$scope.promotion = data;
-							})
-							.error(function(err) {
-								console.log(err);
-							})
-			}
-
-			getPromotions()
-
-		
 	}])
 }());
 (function() {
@@ -469,6 +487,27 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('PromotionController', ['$scope', '$state', '$http', '$window', '$stateParams',
+		function($scope, $state, $http, $window, $stateParams) {
+
+			function getPromotions(){
+				$http.get('/api/clients/' + $stateParams['clientid'] 
+						+ '/promotions/' + $stateParams['promoid'])
+							.success(function(data) {
+								$scope.promotion = data;
+							})
+							.error(function(err) {
+								console.log(err);
+							})
+			}
+
+			getPromotions()
+
+		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
 		function($scope, $state, $http, $window) {
 		$scope.signUp = function(user) {
@@ -512,11 +551,25 @@
 	angular.module('onTrack')
 	.controller('KPICreateController', ['$scope', '$state', '$http', '$window', '$stateParams',
 		function($scope, $state, $http, $window, $stateParams) {
+			$scope.create = true
 
 			$scope.clientId = $stateParams['id']
 
+			//for select button
+			$scope.myList = [{
+				    listValue: "sale"
+			      }, {
+			        listValue: "attendance"
+			      }, {
+			        listValue: "calls"
+			      }, {
+			        listValue: "refferals"
+			 }]
 
-			$scope.createKpi = function(kpi) {
+
+			$scope.submitKpi = function(kpi) {
+
+				
 				var token = $window.sessionStorage['jwt']
 
 				$http.post('api/clients/' + $stateParams['id'] + '/kpis', kpi ,{
