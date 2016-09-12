@@ -20,6 +20,7 @@
 			}
 
 
+
 			function getClient(){
 				$http.get('/api/clients/' + $stateParams['id'])
 					.success(function(data) {

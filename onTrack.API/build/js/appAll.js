@@ -41,9 +41,9 @@
 						controller: 'KPIController'
 					})
 					.state('client.kpiCreate', {
-						url: '/client/:id',
-						templateUrl: 'client/api/kpi/kpi-create-partial.html',
-						controller: 'ClientController'
+						url: '/kpi/:id',
+						templateUrl: 'client/api/kpi/create/kpi-create-partial.html',
+						controller: 'KPICreateController'
 					})
 					.state('promotion', {
 						url: '/client/:clientid/promotions/:promoid',
@@ -302,6 +302,7 @@
 			}
 
 
+
 			function getClient(){
 				$http.get('/api/clients/' + $stateParams['id'])
 					.success(function(data) {
@@ -322,7 +323,25 @@
 	.controller('KPIController', ['$scope', '$state', '$http', '$window', '$stateParams',
 		function($scope, $state, $http, $window, $stateParams) {
 
-			function getKPI(){
+			$scope.deleteKpi = function() {
+				var token = $window.sessionStorage['jwt']
+
+				$http.delete('/api/clients/' + $stateParams['clientid']
+				 + '/kpis/' + $stateParams['kpiid'], {
+					headers: {
+						'Authorization': `Bearer ${token}`
+					}
+				})
+				.success(function(data){
+					var clientId = {'id': $stateParams['clientid'] + ''}
+					$state.go('client',clientId )
+				})
+				.error(function(err) {
+					console.log(err)
+				})
+			}
+
+			function getKpi(){
 				$http.get('/api/clients/' + $stateParams['clientid'] 
 						+ '/kpis/' + $stateParams['kpiid'])
 							.success(function(data) {
@@ -334,7 +353,7 @@
 							})
 			}
 
-			getKPI()
+			getKpi()
 
 		
 	}])
@@ -360,6 +379,27 @@
 					})
 			}
 
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('PromotionController', ['$scope', '$state', '$http', '$window', '$stateParams',
+		function($scope, $state, $http, $window, $stateParams) {
+
+			function getPromotions(){
+				$http.get('/api/clients/' + $stateParams['clientid'] 
+						+ '/promotions/' + $stateParams['promoid'])
+							.success(function(data) {
+								$scope.promotion = data;
+							})
+							.error(function(err) {
+								console.log(err);
+							})
+			}
+
+			getPromotions()
+
+		
 	}])
 }());
 (function() {
@@ -403,27 +443,6 @@
 				$window.sessionStorage.clear()
 				$state.go('login')
 			}
-		
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('PromotionController', ['$scope', '$state', '$http', '$window', '$stateParams',
-		function($scope, $state, $http, $window, $stateParams) {
-
-			function getPromotions(){
-				$http.get('/api/clients/' + $stateParams['clientid'] 
-						+ '/promotions/' + $stateParams['promoid'])
-							.success(function(data) {
-								$scope.promotion = data;
-							})
-							.error(function(err) {
-								console.log(err);
-							})
-			}
-
-			getPromotions()
-
 		
 	}])
 }());
@@ -485,6 +504,34 @@
 			}
 
 			getUser()
+
+		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('KPICreateController', ['$scope', '$state', '$http', '$window', '$stateParams',
+		function($scope, $state, $http, $window, $stateParams) {
+
+			$scope.clientId = $stateParams['id']
+
+
+			$scope.createKpi = function(kpi) {
+				var token = $window.sessionStorage['jwt']
+
+				$http.post('api/clients/' + $stateParams['id'] + '/kpis', kpi ,{
+					headers: {
+						"Authorization": `Bearer ${token}`
+					}
+				})
+				.success(function(data){
+						$state.reload()
+				})
+				.error(function(err){
+					console.log(err)
+				})
+
+			}
 
 		
 	}])

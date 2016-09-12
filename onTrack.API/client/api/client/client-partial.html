@@ -41,7 +41,11 @@
  			<tr class ='active'><th>KPI(s)</th></tr>
  		</thead>
  		<tbody ng-repeat = 'kpi in client.kpis'>
- 			<tr class = 'info'><td><a ui-sref ='kpi({clientid: client._id ,kpiid: kpi._id})'>{{kpi.name}}</a></td></tr>
+ 			<tr class = 'info'>
+ 				<td>
+ 					<a ui-sref ='kpi({clientid: client._id ,kpiid: kpi._id})'>{{kpi.name}}</a>
+ 				</td>
+ 			</tr>
  		</tbody>
  		<tr class = 'active'>
  			<td>

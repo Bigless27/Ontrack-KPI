@@ -41,9 +41,9 @@
 						controller: 'KPIController'
 					})
 					.state('client.kpiCreate', {
-						url: '/client/:id',
-						templateUrl: 'client/api/kpi/kpi-create-partial.html',
-						controller: 'ClientController'
+						url: '/kpi/:id',
+						templateUrl: 'client/api/kpi/create/kpi-create-partial.html',
+						controller: 'KPICreateController'
 					})
 					.state('promotion', {
 						url: '/client/:clientid/promotions/:promoid',
