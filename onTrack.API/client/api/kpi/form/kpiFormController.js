@@ -1,6 +1,6 @@
 (function() {
 	angular.module('onTrack')
-	.controller('KPICreateController', ['$scope', '$state', '$http', '$window', '$stateParams',
+	.controller('KPIFormController', ['$scope', '$state', '$http', '$window', '$stateParams',
 		function($scope, $state, $http, $window, $stateParams) {
 			$scope.create = true
 

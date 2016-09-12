@@ -41,14 +41,14 @@
 						controller: 'KPIController'
 					})
 					.state('kpi.edit', {
-						templateUrl: 'client/api/kpi/create/kpi-create-partial.html',
+						templateUrl: 'client/api/kpi/form/kpi-form-partial.html',
 						controller: 'KPIController'
 
 					})
 					.state('client.kpiCreate', {
 						url: '/kpi/:id',
-						templateUrl: 'client/api/kpi/create/kpi-create-partial.html',
-						controller: 'KPICreateController'
+						templateUrl: 'client/api/kpi/form/kpi-form-partial.html',
+						controller: 'KPIFormController'
 					})
 					.state('promotion', {
 						url: '/client/:clientid/promotions/:promoid',
@@ -57,7 +57,7 @@
 					})
 					.state('client.promotionCreate', {
 						url: '/client/:id',
-						templateUrl: 'client/api/promotions/promotions-create-partial.html',
+						templateUrl: 'client/api/promotions/form/promotions-form-partial.html',
 						controller: 'ClientController'
 					})
 					.state('setting', {

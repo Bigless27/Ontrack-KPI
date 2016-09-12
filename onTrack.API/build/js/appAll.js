@@ -41,14 +41,14 @@
 						controller: 'KPIController'
 					})
 					.state('kpi.edit', {
-						templateUrl: 'client/api/kpi/create/kpi-create-partial.html',
+						templateUrl: 'client/api/kpi/form/kpi-form-partial.html',
 						controller: 'KPIController'
 
 					})
 					.state('client.kpiCreate', {
 						url: '/kpi/:id',
-						templateUrl: 'client/api/kpi/create/kpi-create-partial.html',
-						controller: 'KPICreateController'
+						templateUrl: 'client/api/kpi/form/kpi-form-partial.html',
+						controller: 'KPIFormController'
 					})
 					.state('promotion', {
 						url: '/client/:clientid/promotions/:promoid',
@@ -57,7 +57,7 @@
 					})
 					.state('client.promotionCreate', {
 						url: '/client/:id',
-						templateUrl: 'client/api/promotions/promotions-create-partial.html',
+						templateUrl: 'client/api/promotions/form/promotions-form-partial.html',
 						controller: 'ClientController'
 					})
 					.state('setting', {
@@ -288,6 +288,67 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('ClientController', ['$scope', '$state', '$http', '$window', '$stateParams',
+		function($scope, $state, $http, $window, $stateParams) {
+		
+			$scope.removeAdmin = function(admin) {
+				var token = $window.sessionStorage['jwt']
+
+				$http.put('/api/clients/' + $stateParams['id'] + '/updateAdmin', admin, {
+					headers: {
+						'Authorization': `Bearer ${token}`
+					}
+				})
+				.success(function(data){
+					$scope.client = data
+				})
+				.error(function(err) {
+					console.log(err)
+				})
+			}
+
+
+
+			function getClient(){
+				$http.get('/api/clients/' + $stateParams['id'])
+					.success(function(data) {
+						$scope.client = data
+					})
+					.error(function(err) {
+						console.log(err);
+					})
+			}
+
+			getClient()
+
+		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('LoginController', ['$scope', '$state', '$window', '$http',
+	 function($scope, $state, $window, $http) {
+
+			$scope.logUserIn = function(user) {
+				$scope.$broadcast('show-errors-check-validity');
+
+				if($scope.userForm.$invalid){return;}
+
+
+				$http.post('auth/signin', user)
+					.success(function(data) {
+						$window.sessionStorage.jwt = data['token']
+						$state.go('main')
+					})
+					.error(function(error) {
+						console.log(error)
+					})
+			}
+
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('KPIController', ['$scope', '$state', '$http', '$window', '$stateParams',
 		function($scope, $state, $http, $window, $stateParams) {
 
@@ -361,67 +422,6 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('ClientController', ['$scope', '$state', '$http', '$window', '$stateParams',
-		function($scope, $state, $http, $window, $stateParams) {
-		
-			$scope.removeAdmin = function(admin) {
-				var token = $window.sessionStorage['jwt']
-
-				$http.put('/api/clients/' + $stateParams['id'] + '/updateAdmin', admin, {
-					headers: {
-						'Authorization': `Bearer ${token}`
-					}
-				})
-				.success(function(data){
-					$scope.client = data
-				})
-				.error(function(err) {
-					console.log(err)
-				})
-			}
-
-
-
-			function getClient(){
-				$http.get('/api/clients/' + $stateParams['id'])
-					.success(function(data) {
-						$scope.client = data
-					})
-					.error(function(err) {
-						console.log(err);
-					})
-			}
-
-			getClient()
-
-		
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('LoginController', ['$scope', '$state', '$window', '$http',
-	 function($scope, $state, $window, $http) {
-
-			$scope.logUserIn = function(user) {
-				$scope.$broadcast('show-errors-check-validity');
-
-				if($scope.userForm.$invalid){return;}
-
-
-				$http.post('auth/signin', user)
-					.success(function(data) {
-						$window.sessionStorage.jwt = data['token']
-						$state.go('main')
-					})
-					.error(function(error) {
-						console.log(error)
-					})
-			}
-
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('MainController', ['$scope', '$state', '$http', '$window', 
 		function($scope, $state, $http, $window) {
 
@@ -466,27 +466,6 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('SettingController', ['$scope', '$state', '$http', '$window', '$stateParams',
-		function($scope, $state, $http, $window, $stateParams) {
-
-			function getSettings(){
-				$http.get('/api/clients/' + $stateParams['clientid'] 
-						+ '/settings/' + $stateParams['settingid'])
-							.success(function(data) {
-								$scope.setting = data;
-							})
-							.error(function(err) {
-								console.log(err);
-							})
-			}
-
-			getSettings()
-
-		
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('PromotionController', ['$scope', '$state', '$http', '$window', '$stateParams',
 		function($scope, $state, $http, $window, $stateParams) {
 
@@ -502,6 +481,27 @@
 			}
 
 			getPromotions()
+
+		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('SettingController', ['$scope', '$state', '$http', '$window', '$stateParams',
+		function($scope, $state, $http, $window, $stateParams) {
+
+			function getSettings(){
+				$http.get('/api/clients/' + $stateParams['clientid'] 
+						+ '/settings/' + $stateParams['settingid'])
+							.success(function(data) {
+								$scope.setting = data;
+							})
+							.error(function(err) {
+								console.log(err);
+							})
+			}
+
+			getSettings()
 
 		
 	}])
@@ -549,7 +549,7 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('KPICreateController', ['$scope', '$state', '$http', '$window', '$stateParams',
+	.controller('KPIFormController', ['$scope', '$state', '$http', '$window', '$stateParams',
 		function($scope, $state, $http, $window, $stateParams) {
 			$scope.create = true
 
