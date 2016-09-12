@@ -3,6 +3,11 @@ var Schema = mongoose.Schema;
 var _ = require('lodash')
 var User = require('../user/userModel')
 
+var adminSchema = new Schema({
+	name: {type: String},
+	email: {type: String}
+})
+
 
 var ClientSchema = new Schema({
 	name: {type: String, required: true},
@@ -13,13 +18,11 @@ var ClientSchema = new Schema({
 	promotions: [{type: Schema.Types.ObjectId, ref: 'promotion'}],
 	kpis: [{type: Schema.Types.ObjectId, ref: 'kpi'}],
 	owner: [{type: Schema.Types.ObjectId, ref: 'user'}],
-	admins: [{
-		id: String,
-		email: String
-	}]
-	,
+	admins: [adminSchema],
 	settings: [{type: Schema.Types.ObjectId, ref: 'clientSettings'}]
 })
+
+
 
 ClientSchema.post('save', function(doc) {
 	User.findById(doc.owner[0])

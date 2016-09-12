@@ -38,9 +38,14 @@ exports.updateAdmin = function(req, res, next) {
 
   var update = req.body
 
-  client.admins = []
+  var i = client.admins.length
 
-  _.merge(client, update);
+  while(i--){
+    var ad = client.admins[i]
+    if(ad._id.toString() === update._id.toString()){
+      ad.remove()
+    }
+  }
 
   client.save(function(err, saved) {
     if (err) {

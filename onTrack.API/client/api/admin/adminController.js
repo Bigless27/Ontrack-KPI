@@ -5,18 +5,18 @@
 		
 
 
-		$scope.highlight = function(x) {
-			if ($(`span:contains(${x.email})`).hasClass('check')){
+	$scope.highlight = function(x) {
+		if ($(`span:contains(${x.email})`).hasClass('check')){
 
-				$(`span:contains(${x.email})`).parent().parent().css({"background-color":"transparent"})
-				$(`span:contains(${x.email})`).removeClass('check')
-			}
-			else{
-				$(`span:contains(${x.email})`).parent().parent().css({"background-color":"#a8a8a8"})
-				$(`span:contains(${x.email})`).addClass('check')
-			}
-
+			$(`span:contains(${x.email})`).parent().parent().css({"background-color":"transparent"})
+			$(`span:contains(${x.email})`).removeClass('check')
 		}
+		else{
+			$(`span:contains(${x.email})`).parent().parent().css({"background-color":"#a8a8a8"})
+			$(`span:contains(${x.email})`).addClass('check')
+		}
+
+	}
 
 	$scope.user = {
 
@@ -31,8 +31,6 @@
 			var token = $window.sessionStorage['jwt']
 
 			var client = {admins:[]}
-
-			console.log($scope.client.admins)
 
 
 			$scope.client.admins.forEach(function(user) {
