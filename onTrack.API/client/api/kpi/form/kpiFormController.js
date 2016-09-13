@@ -19,7 +19,6 @@
 
 
 			$scope.submitKpi = function(kpi) {
-
 				kpi['type'] = kpi['type']['listValue']
 				var token = $window.sessionStorage['jwt']
 

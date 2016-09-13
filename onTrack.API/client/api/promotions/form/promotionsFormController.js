@@ -17,6 +17,7 @@
 			 }]
 			
 			$scope.submitPromotion = function(promotion) {
+				promotion['type'] = promotion['type']['listValue']
 				var token = $window.sessionStorage['jwt']
 
 				$http.post('api/clients/' + $stateParams['id'] + '/promotions', promotion ,{
