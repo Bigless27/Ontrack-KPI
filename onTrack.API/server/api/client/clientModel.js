@@ -4,14 +4,22 @@ var _ = require('lodash')
 var User = require('../user/userModel')
 
 var adminSchema = new Schema({
-	name: {type: String},
-	email: {type: String}
+	email: {type: String},
+	firstName: {type: String},
+	lastName: {type: String}
+})
+
+var clientUsersSchema = new Schema({
+	email: {type: String},
+	firstName: {type: String},
+	lastName: {type: String}
 })
 
 
 var ClientSchema = new Schema({
 	name: {type: String, required: true},
 	users: [{type: Schema.Types.ObjectId, ref: 'user'}],
+	usersClient: [clientUsersSchema],
 	startDate: {type: Date},
 	endDate: {type: Date},
 	type: {type: String},

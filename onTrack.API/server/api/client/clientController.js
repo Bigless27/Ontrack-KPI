@@ -4,12 +4,10 @@ var _ = require('lodash');
 
 
 exports.params = function(req, res, next, id) {
-	
   Client.findById(id)
-    .populate('admins')
-    .populate('users')
     .populate('owner')
     .populate('kpis')
+    .populate('users')
     .populate('promotions')
     .populate('settings')
     .exec(function(err, client) {
@@ -56,6 +54,29 @@ exports.updateAdmin = function(req, res, next) {
   })
 }
 
+exports.updateUsersClient = function(req, res, next) {
+  var client = req.client
+
+  var update = req.body
+
+  var i = client.usersClient.length
+
+  while(i--){
+    var ad = client.usersClient[i]
+    if(ad._id.toString() === update._id.toString()){
+      ad.remove()
+    }
+  }
+
+  client.save(function(err, saved) {
+    if (err) {
+      next(err);
+    } else {
+      res.json(saved);
+    }
+  })
+}
+
 
 exports.put = function(req, res, next) {
   // if (!req.client.checkAdmin(req.user)){
@@ -70,6 +91,7 @@ exports.put = function(req, res, next) {
 
   _.merge(client, update);
 
+  console.log(client)
 
   client.save(function(err, saved) {
     if (err) {

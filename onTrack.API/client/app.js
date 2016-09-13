@@ -79,6 +79,10 @@
 						templateUrl: 'client/api/users/user-partial.html',
 						controller: 'UsersController'
 					})
+					.state('client.addUser', {
+						templateUrl:'client/api/admin/admin-add-partial.html',
+						controller: 'AddUserController'
+					})
 					.state('client.addAdmin', {
 						templateUrl:'client/api/admin/admin-add-partial.html',
 						controller: 'AdminController'

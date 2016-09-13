@@ -22,8 +22,8 @@
  		</thead>
  		<tbody ng-repeat = 'admin in client.admins'>
  			<tr class = 'info'>
- 				<td>{{admin.email}}
- 					<span class = 'btn btn-danger' ng-click = "removeAdmin(admin)" style = 'float: right;'>X</span>
+ 				<td>{{admin.firstName}} {{admin.lastName}}
+  					<span class = 'btn btn-danger' ng-click = "removeAdmin(admin)" style = 'float: right;'>X</span>
  				</td>
 
  			</tr>
@@ -93,9 +93,15 @@
  		<tbody ng-repeat = 'user in client.users'>
  			<tr class = 'info'>
  				<td>
- 					<a ui-sref = 'user({id: user._id})'>{{user.email}}</a>
+ 					<a ui-sref = 'user({id: user._id})'>{{user.firstName}} {{user.lastName}}</a>
+ 					<span class = 'btn btn-danger' ng-click = "removeUser(user)" style = 'float: right;'>X</span>
  				</td>
  			</tr>
  		</tbody>
+ 		<tr>
+ 			<td class = 'active'>
+ 				<div ui-sref = 'client.addUser' class = 'btn btn-primary'>Add User</div>
+ 			</td>
+ 		</tr>
  	</table>
  </div>

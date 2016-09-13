@@ -20,6 +20,8 @@ router.route('/')
 router.route('/:id/updateAdmin')
 	.put(checkUser, controller.updateAdmin)
 
+router.route('/:id/updateUser')
+
 router.route('/:id')
   .get(controller.getOne)// Tested
   .put(checkUser,controller.put)// Tested
