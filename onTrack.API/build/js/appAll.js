@@ -288,44 +288,6 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('ClientController', ['$scope', '$state', '$http', '$window', '$stateParams',
-		function($scope, $state, $http, $window, $stateParams) {
-		
-			$scope.removeAdmin = function(admin) {
-				var token = $window.sessionStorage['jwt']
-
-				$http.put('/api/clients/' + $stateParams['id'] + '/updateAdmin', admin, {
-					headers: {
-						'Authorization': `Bearer ${token}`
-					}
-				})
-				.success(function(data){
-					$scope.client = data
-				})
-				.error(function(err) {
-					console.log(err)
-				})
-			}
-
-
-
-			function getClient(){
-				$http.get('/api/clients/' + $stateParams['id'])
-					.success(function(data) {
-						$scope.client = data
-					})
-					.error(function(err) {
-						console.log(err);
-					})
-			}
-
-			getClient()
-
-		
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('KPIController', ['$scope', '$state', '$http', '$window', '$stateParams',
 		function($scope, $state, $http, $window, $stateParams) {
 
@@ -399,6 +361,44 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('ClientController', ['$scope', '$state', '$http', '$window', '$stateParams',
+		function($scope, $state, $http, $window, $stateParams) {
+		
+			$scope.removeAdmin = function(admin) {
+				var token = $window.sessionStorage['jwt']
+
+				$http.put('/api/clients/' + $stateParams['id'] + '/updateAdmin', admin, {
+					headers: {
+						'Authorization': `Bearer ${token}`
+					}
+				})
+				.success(function(data){
+					$scope.client = data
+				})
+				.error(function(err) {
+					console.log(err)
+				})
+			}
+
+
+
+			function getClient(){
+				$http.get('/api/clients/' + $stateParams['id'])
+					.success(function(data) {
+						$scope.client = data
+					})
+					.error(function(err) {
+						console.log(err);
+					})
+			}
+
+			getClient()
+
+		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('LoginController', ['$scope', '$state', '$window', '$http',
 	 function($scope, $state, $window, $http) {
 
@@ -466,27 +466,6 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('SettingController', ['$scope', '$state', '$http', '$window', '$stateParams',
-		function($scope, $state, $http, $window, $stateParams) {
-
-			function getSettings(){
-				$http.get('/api/clients/' + $stateParams['clientid'] 
-						+ '/settings/' + $stateParams['settingid'])
-							.success(function(data) {
-								$scope.setting = data;
-							})
-							.error(function(err) {
-								console.log(err);
-							})
-			}
-
-			getSettings()
-
-		
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('PromotionController', ['$scope', '$state', '$http', '$window', '$stateParams',
 		function($scope, $state, $http, $window, $stateParams) {
 
@@ -504,6 +483,27 @@
 			}
 
 			getPromotions()
+
+		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('SettingController', ['$scope', '$state', '$http', '$window', '$stateParams',
+		function($scope, $state, $http, $window, $stateParams) {
+
+			function getSettings(){
+				$http.get('/api/clients/' + $stateParams['clientid'] 
+						+ '/settings/' + $stateParams['settingid'])
+							.success(function(data) {
+								$scope.setting = data;
+							})
+							.error(function(err) {
+								console.log(err);
+							})
+			}
+
+			getSettings()
 
 		
 	}])
@@ -571,7 +571,7 @@
 
 			$scope.submitKpi = function(kpi) {
 
-				
+				kpi['type'] = kpi['type']['listValue']
 				var token = $window.sessionStorage['jwt']
 
 				$http.post('api/clients/' + $stateParams['id'] + '/kpis', kpi ,{
@@ -598,19 +598,33 @@
 
 			$scope.create = true
 			$scope.clientId = $stateParams['id']
-			
-			// function getPromotions(){
-			// 	$http.get('/api/clients/' + $stateParams['clientid'] 
-			// 			+ '/promotions/' + $stateParams['promoid'])
-			// 				.success(function(data) {
-			// 					$scope.promotion = data;
-			// 				})
-			// 				.error(function(err) {
-			// 					console.log(err);
-			// 				})
-			// }
 
-			// getPromotions()
+			$scope.myList = [{
+				    listValue: "sale"
+			      }, {
+			        listValue: "attendance"
+			      }, {
+			        listValue: "calls"
+			      }, {
+			        listValue: "referals"
+			 }]
+			
+			$scope.submitPromotion = function(promotion) {
+				var token = $window.sessionStorage['jwt']
+
+				$http.post('api/clients/' + $stateParams['id'] + '/promotions', promotion ,{
+					headers: {
+						"Authorization": `Bearer ${token}`
+					}
+				})
+				.success(function(data){
+						$state.reload()
+				})
+				.error(function(err){
+					console.log(err)
+				})
+
+			}
 
 		
 	}])

@@ -10,7 +10,7 @@
 					name = 'name'
 					type = "text"
 					ng-model = "user.name" 
-					ng-init = 'user.name = kpi.name'
+					ng-init = 'user.name = promotion.name'
 					class = "form-control"
 					value = 'name' 
 					placeholder = 'enter new name'
@@ -29,7 +29,7 @@
 				<select 
 					name ='type'
 					ng-model = "user.type"
-					ng-init = "user.type = {listValue: kpi.type}"
+					ng-init = "user.type = {listValue: promotion.type}"
 					ng-options="list.listValue for list in myList track by list.listValue"
 					class = "form-control"
 					id = "type"
@@ -41,22 +41,27 @@
 		</div>
 
 		<div class = "form-group" show-errors>
-			<label for = "value" class = 'control-label'>Value</label>
+			<label for = "value" class = 'control-label'>Completion Value</label>
 			<div class = "input-group">
 				<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
 				<input 
-					name = 'value'
-					type = "value"
-					ng-model = "user.value" 
-					ng-init = 'user.value = kpi.value'
+					ng-min = "1"
+					name = 'completionValue'
+					type = "number"
+					ng-model = "user.completionValue" 
+					ng-init = 'user.completionValue = kpi.value'
 					class = "form-control"
-					placeholder = "enter new value"
-					value = 'value' 
+					placeholder = "enter completion value"
+					value = 'completionValue' 
 					required
 				>
             </div>
-            <p class="help-block" ng-if= "userForm.value.$error.required">Value is required</p>
+            <p class="help-block" ng-if= "userForm.completionValue.$error.required">Value is required</p>
+            <p class="help-block" ng-if= "userForm.completionValue.$error.digit">Value must be a digit</p>
+            <p class="help-block" ng-if= "userForm.completionValue.$error.min">Value must greater than 0</p>
 		</div>
+
+
 
 
 		<button type = 'button' ng-click = "submitPromotion(user)" class = "btn btn-primary">Submit</button>

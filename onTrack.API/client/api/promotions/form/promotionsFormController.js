@@ -5,19 +5,33 @@
 
 			$scope.create = true
 			$scope.clientId = $stateParams['id']
-			
-			// function getPromotions(){
-			// 	$http.get('/api/clients/' + $stateParams['clientid'] 
-			// 			+ '/promotions/' + $stateParams['promoid'])
-			// 				.success(function(data) {
-			// 					$scope.promotion = data;
-			// 				})
-			// 				.error(function(err) {
-			// 					console.log(err);
-			// 				})
-			// }
 
-			// getPromotions()
+			$scope.myList = [{
+				    listValue: "sale"
+			      }, {
+			        listValue: "attendance"
+			      }, {
+			        listValue: "calls"
+			      }, {
+			        listValue: "referals"
+			 }]
+			
+			$scope.submitPromotion = function(promotion) {
+				var token = $window.sessionStorage['jwt']
+
+				$http.post('api/clients/' + $stateParams['id'] + '/promotions', promotion ,{
+					headers: {
+						"Authorization": `Bearer ${token}`
+					}
+				})
+				.success(function(data){
+						$state.reload()
+				})
+				.error(function(err){
+					console.log(err)
+				})
+
+			}
 
 		
 	}])

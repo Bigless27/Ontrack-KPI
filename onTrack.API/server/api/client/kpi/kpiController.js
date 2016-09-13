@@ -60,9 +60,6 @@ exports.put = function(req, res, next) {
 
 	_.merge(kpi, update);
 
-	console.log(kpi)
-
-
 	kpi.save(function(err, saved) {
 		if (err) {
 			next(err);
