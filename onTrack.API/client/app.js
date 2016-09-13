@@ -58,7 +58,7 @@
 					.state('client.promotionCreate', {
 						url: '/client/:id',
 						templateUrl: 'client/api/promotions/form/promotions-form-partial.html',
-						controller: 'ClientController'
+						controller: 'PromotionFormController'
 					})
 					.state('setting', {
 						url: '/client/:clientid/settings/:settingid',

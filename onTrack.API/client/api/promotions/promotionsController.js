@@ -3,6 +3,8 @@
 	.controller('PromotionController', ['$scope', '$state', '$http', '$window', '$stateParams',
 		function($scope, $state, $http, $window, $stateParams) {
 
+			$scope.create = false
+			
 			function getPromotions(){
 				$http.get('/api/clients/' + $stateParams['clientid'] 
 						+ '/promotions/' + $stateParams['promoid'])

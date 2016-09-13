@@ -58,7 +58,7 @@
 					.state('client.promotionCreate', {
 						url: '/client/:id',
 						templateUrl: 'client/api/promotions/form/promotions-form-partial.html',
-						controller: 'ClientController'
+						controller: 'PromotionFormController'
 					})
 					.state('setting', {
 						url: '/client/:clientid/settings/:settingid',
@@ -326,29 +326,6 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('LoginController', ['$scope', '$state', '$window', '$http',
-	 function($scope, $state, $window, $http) {
-
-			$scope.logUserIn = function(user) {
-				$scope.$broadcast('show-errors-check-validity');
-
-				if($scope.userForm.$invalid){return;}
-
-
-				$http.post('auth/signin', user)
-					.success(function(data) {
-						$window.sessionStorage.jwt = data['token']
-						$state.go('main')
-					})
-					.error(function(error) {
-						console.log(error)
-					})
-			}
-
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('KPIController', ['$scope', '$state', '$http', '$window', '$stateParams',
 		function($scope, $state, $http, $window, $stateParams) {
 
@@ -422,6 +399,29 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('LoginController', ['$scope', '$state', '$window', '$http',
+	 function($scope, $state, $window, $http) {
+
+			$scope.logUserIn = function(user) {
+				$scope.$broadcast('show-errors-check-validity');
+
+				if($scope.userForm.$invalid){return;}
+
+
+				$http.post('auth/signin', user)
+					.success(function(data) {
+						$window.sessionStorage.jwt = data['token']
+						$state.go('main')
+					})
+					.error(function(error) {
+						console.log(error)
+					})
+			}
+
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('MainController', ['$scope', '$state', '$http', '$window', 
 		function($scope, $state, $http, $window) {
 
@@ -466,27 +466,6 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('PromotionController', ['$scope', '$state', '$http', '$window', '$stateParams',
-		function($scope, $state, $http, $window, $stateParams) {
-
-			function getPromotions(){
-				$http.get('/api/clients/' + $stateParams['clientid'] 
-						+ '/promotions/' + $stateParams['promoid'])
-							.success(function(data) {
-								$scope.promotion = data;
-							})
-							.error(function(err) {
-								console.log(err);
-							})
-			}
-
-			getPromotions()
-
-		
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('SettingController', ['$scope', '$state', '$http', '$window', '$stateParams',
 		function($scope, $state, $http, $window, $stateParams) {
 
@@ -502,6 +481,29 @@
 			}
 
 			getSettings()
+
+		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('PromotionController', ['$scope', '$state', '$http', '$window', '$stateParams',
+		function($scope, $state, $http, $window, $stateParams) {
+
+			$scope.create = false
+			
+			function getPromotions(){
+				$http.get('/api/clients/' + $stateParams['clientid'] 
+						+ '/promotions/' + $stateParams['promoid'])
+							.success(function(data) {
+								$scope.promotion = data;
+							})
+							.error(function(err) {
+								console.log(err);
+							})
+			}
+
+			getPromotions()
 
 		
 	}])
@@ -585,6 +587,30 @@
 				})
 
 			}
+
+		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('PromotionFormController', ['$scope', '$state', '$http', '$window', '$stateParams',
+		function($scope, $state, $http, $window, $stateParams) {
+
+			$scope.create = true
+			$scope.clientId = $stateParams['id']
+			
+			// function getPromotions(){
+			// 	$http.get('/api/clients/' + $stateParams['clientid'] 
+			// 			+ '/promotions/' + $stateParams['promoid'])
+			// 				.success(function(data) {
+			// 					$scope.promotion = data;
+			// 				})
+			// 				.error(function(err) {
+			// 					console.log(err);
+			// 				})
+			// }
+
+			// getPromotions()
 
 		
 	}])
