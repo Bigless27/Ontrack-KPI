@@ -6,6 +6,10 @@
 			$scope.create = true
 			$scope.clientId = $stateParams['id']
 
+			var today = new Date();
+			$scope.minDate = today.toISOString();
+
+
 			$scope.myList = [{
 				    listValue: "sale"
 			      }, {

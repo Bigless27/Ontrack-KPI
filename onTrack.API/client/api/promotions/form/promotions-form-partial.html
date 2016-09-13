@@ -49,10 +49,9 @@
 					name = 'completionValue'
 					type = "number"
 					ng-model = "user.completionValue" 
-					ng-init = 'user.completionValue = kpi.value'
+					ng-init = 'user.completionValue = promotion.completionValue'
 					class = "form-control"
-					placeholder = "enter completion value"
-					value = 'completionValue' 
+					placeholder = "enter completion value" 
 					required
 				>
             </div>
@@ -60,6 +59,67 @@
             <p class="help-block" ng-if= "userForm.completionValue.$error.digit">Value must be a digit</p>
             <p class="help-block" ng-if= "userForm.completionValue.$error.min">Value must greater than 0</p>
 		</div>
+
+		<div class = "form-group" show-errors>
+			<label for = "description" class = 'control-label'>Description</label>
+			<div class = "input-group">
+				<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+				<textarea 
+					name = 'description'
+					ng-model = "user.description" 
+					ng-init = 'user.description = promotion.description'
+					class = "form-control"
+					placeholder = "enter description"
+					value = 'description' 
+					required
+				>
+				</textarea>
+            </div>
+            <p class="help-block" ng-if= "userForm.description.$error.required">Description is required</p>
+		</div>
+
+
+		<div class = "form-group" show-errors>
+			<label for = "Date" class = 'control-label'>Start Date</label>
+			<div class = "input-group">
+				<span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
+				<input 
+					name = 'startDate'
+					type = "datetime-local"
+					ng-model = "user.startDate" 
+					ng-init = 'user.startDate = promotion.startDate'
+					class = "form-control"
+					placeholder="yyyy-MM-ddTHH:mm:ss"
+					min="{{minDate}}" 
+					max="2200-12-31T00:00:00" 
+					required
+				>
+            </div>
+            <p class="help-block" ng-if= "userForm.startDate.$error.required">Value is required</p>
+            <p class="help-block" ng-if= "userForm.startDate.$error.min">Start date can not be in past</p>
+		</div>
+
+		<div class = "form-group" show-errors>
+			<label for = "Date" class = 'control-label'>End Date</label>
+			<div class = "input-group">
+				<span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
+				<input 
+					name = 'endDate'
+					type = "datetime-local"
+					ng-model = "user.endDate" 
+					ng-init = 'user.endDate = promotion.endDate'
+					class = "form-control"
+					placeholder="yyyy-MM-ddTHH:mm:ss"
+					min="{{user.startDate}}" 
+					max="2200-12-31T00:00:00" 
+					required
+				>
+            </div>
+            <p class="help-block" ng-if= "userForm.endDate.$error.required">Value is required</p>
+            <p class="help-block" ng-if= "userForm.endDate.$error.min">End date can't be before start date</p>
+		</div>
+
+
 
 
 

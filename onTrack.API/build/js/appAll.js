@@ -55,6 +55,10 @@
 						templateUrl: 'client/api/promotions/promotions-partial.html',
 						controller: 'PromotionController'
 					})
+					.state('promotion.edit', {
+						templateUrl: 'client/api/promotions/form/promotions-form-partial.html',
+						controller: 'PromotionController'
+					})
 					.state('client.promotionCreate', {
 						url: '/client/:id',
 						templateUrl: 'client/api/promotions/form/promotions-form-partial.html',
@@ -288,44 +292,6 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('ClientController', ['$scope', '$state', '$http', '$window', '$stateParams',
-		function($scope, $state, $http, $window, $stateParams) {
-		
-			$scope.removeAdmin = function(admin) {
-				var token = $window.sessionStorage['jwt']
-
-				$http.put('/api/clients/' + $stateParams['id'] + '/updateAdmin', admin, {
-					headers: {
-						'Authorization': `Bearer ${token}`
-					}
-				})
-				.success(function(data){
-					$scope.client = data
-				})
-				.error(function(err) {
-					console.log(err)
-				})
-			}
-
-
-
-			function getClient(){
-				$http.get('/api/clients/' + $stateParams['id'])
-					.success(function(data) {
-						$scope.client = data
-					})
-					.error(function(err) {
-						console.log(err);
-					})
-			}
-
-			getClient()
-
-		
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('KPIController', ['$scope', '$state', '$http', '$window', '$stateParams',
 		function($scope, $state, $http, $window, $stateParams) {
 
@@ -422,6 +388,44 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('ClientController', ['$scope', '$state', '$http', '$window', '$stateParams',
+		function($scope, $state, $http, $window, $stateParams) {
+		
+			$scope.removeAdmin = function(admin) {
+				var token = $window.sessionStorage['jwt']
+
+				$http.put('/api/clients/' + $stateParams['id'] + '/updateAdmin', admin, {
+					headers: {
+						'Authorization': `Bearer ${token}`
+					}
+				})
+				.success(function(data){
+					$scope.client = data
+				})
+				.error(function(err) {
+					console.log(err)
+				})
+			}
+
+
+
+			function getClient(){
+				$http.get('/api/clients/' + $stateParams['id'])
+					.success(function(data) {
+						$scope.client = data
+					})
+					.error(function(err) {
+						console.log(err);
+					})
+			}
+
+			getClient()
+
+		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('MainController', ['$scope', '$state', '$http', '$window', 
 		function($scope, $state, $http, $window) {
 
@@ -471,6 +475,15 @@
 
 			$scope.create = false
 
+			$scope.myList = [{
+				    listValue: "sale"
+			      }, {
+			        listValue: "attendance"
+			      }, {
+			        listValue: "calls"
+			      }, {
+			        listValue: "referals"
+			 }]
 
 			$scope.deletePromotion = function() {
 				var token = $window.sessionStorage['jwt']
@@ -490,11 +503,32 @@
 				})
 			}
 
+			$scope.submitPromotion = function(promotion) {
+				promotion['type'] = promotion['type']['listValue']
+				var token = $window.sessionStorage['jwt']
+
+				$http.put('/api/clients/' + $stateParams['clientid']
+				 + '/promotions/' + $stateParams['promoid'], promotion,{
+					headers: {
+						'Authorization': `Bearer ${token}`
+					}
+				})
+				.success(function(data){
+					var params = {clientid: $stateParams['clientid'], promoid: $stateParams['promoid'] }
+					$state.reload()
+				})
+				.error(function(err) {
+					console.log(err)
+				})
+			}
+
 			function getPromotions(){
 				$http.get('/api/clients/' + $stateParams['clientid'] 
 						+ '/promotions/' + $stateParams['promoid'])
 							.success(function(data) {
 								$scope.promotion = data;
+								$scope.promotion['startDate'] = new Date($scope.promotion.startDate) 
+								$scope.promotion['endDate'] =  new Date($scope.promotion.endDate)
 							})
 							.error(function(err) {
 								console.log(err);
@@ -616,6 +650,10 @@
 
 			$scope.create = true
 			$scope.clientId = $stateParams['id']
+
+			var today = new Date();
+			$scope.minDate = today.toISOString();
+
 
 			$scope.myList = [{
 				    listValue: "sale"

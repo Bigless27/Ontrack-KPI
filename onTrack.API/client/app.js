@@ -55,6 +55,10 @@
 						templateUrl: 'client/api/promotions/promotions-partial.html',
 						controller: 'PromotionController'
 					})
+					.state('promotion.edit', {
+						templateUrl: 'client/api/promotions/form/promotions-form-partial.html',
+						controller: 'PromotionController'
+					})
 					.state('client.promotionCreate', {
 						url: '/client/:id',
 						templateUrl: 'client/api/promotions/form/promotions-form-partial.html',

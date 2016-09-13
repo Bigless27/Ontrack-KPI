@@ -20,14 +20,12 @@
 			<td>{{promotion.description}}</td>
 			<td>{{promotion.startDate | date: 'medium'}}</td>
 			<td>{{promotion.endDate | date: 'medium'}}</td>
-
-
-			
-
 		</tr>
 	</tbody>
 </table>
 
+<div id = 'edit' ui-view></div>
+
 <div class = "btn btn-danger" ui-sref = 'client({id: promotion.clientId})'>Back</div>
-<div class = "btn btn-default">Edit</div>
+<div class = "btn btn-default" ui-sref = 'promotion.edit'>Edit</div>
 <div class = "btn btn-default" ng-click = 'deletePromotion()'>Delete</div>
