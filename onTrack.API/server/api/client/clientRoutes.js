@@ -21,6 +21,7 @@ router.route('/:id/updateAdmin')
 	.put(checkUser, controller.updateAdmin)
 
 router.route('/:id/updateUser')
+	.put(checkUser, controller.updateUsersClient)
 
 router.route('/:id')
   .get(controller.getOne)// Tested

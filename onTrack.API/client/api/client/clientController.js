@@ -19,12 +19,10 @@
 				})
 			}
 
-			$scope.removeUsersClient = function(user) {
+			$scope.removeUser = function(user) {
 				var token = $window.sessionStorage['jwt']
 
-
-
-				$http.put('/api/clients/' + $stateParams['id'] + '/updateUsersClient', user, {
+				$http.put('/api/clients/' + $stateParams['id'] + '/updateUser', user, {
 					headers: {
 						'Authorization': `Bearer ${token}`
 					}
