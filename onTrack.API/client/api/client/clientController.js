@@ -6,8 +6,6 @@
 			$scope.removeAdmin = function(admin) {
 				var token = $window.sessionStorage['jwt']
 
-				console.log(admin)
-
 				$http.put('/api/clients/' + $stateParams['id'] + '/updateAdmin', admin, {
 					headers: {
 						'Authorization': `Bearer ${token}`
@@ -23,7 +21,8 @@
 
 			$scope.removeUsersClient = function(user) {
 				var token = $window.sessionStorage['jwt']
-				
+
+
 
 				$http.put('/api/clients/' + $stateParams['id'] + '/updateUsersClient', user, {
 					headers: {
