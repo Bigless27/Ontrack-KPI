@@ -18,7 +18,6 @@ var clientUsersSchema = new Schema({
 
 var ClientSchema = new Schema({
 	name: {type: String, required: true},
-	users: [{type: Schema.Types.ObjectId, ref: 'user'}],
 	usersClient: [clientUsersSchema],
 	startDate: {type: Date},
 	endDate: {type: Date},

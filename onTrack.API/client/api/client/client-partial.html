@@ -93,7 +93,7 @@
  		<tbody ng-repeat = 'user in client.usersClient'>
  			<tr class = 'info'>
  				<td>
- 					<a ui-sref = 'user({id: user._id})'>{{user.firstName}} {{user.lastName}}</a>
+ 					{{user.firstName}} {{user.lastName}}
  					<span class = 'btn btn-danger' ng-click = "removeUser(user)" style = 'float: right;'>X</span>
  				</td>
  			</tr>

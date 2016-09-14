@@ -74,11 +74,6 @@
 						templateUrl: 'client/api/settings/settings-create-partial.html',
 						controller: 'ClientController'
 					})
-					.state('user', {
-						url: '/user/:id',
-						templateUrl: 'client/api/users/user-partial.html',
-						controller: 'UsersController'
-					})
 					.state('client.addUser', {
 						templateUrl:'client/api/admin/admin-add-partial.html',
 						controller: 'AddUserController'

@@ -74,11 +74,6 @@
 						templateUrl: 'client/api/settings/settings-create-partial.html',
 						controller: 'ClientController'
 					})
-					.state('user', {
-						url: '/user/:id',
-						templateUrl: 'client/api/users/user-partial.html',
-						controller: 'UsersController'
-					})
 					.state('client.addUser', {
 						templateUrl:'client/api/admin/admin-add-partial.html',
 						controller: 'AddUserController'
@@ -350,29 +345,6 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('LoginController', ['$scope', '$state', '$window', '$http',
-	 function($scope, $state, $window, $http) {
-
-			$scope.logUserIn = function(user) {
-				$scope.$broadcast('show-errors-check-validity');
-
-				if($scope.userForm.$invalid){return;}
-
-
-				$http.post('auth/signin', user)
-					.success(function(data) {
-						$window.sessionStorage.jwt = data['token']
-						$state.go('main')
-					})
-					.error(function(error) {
-						console.log(error)
-					})
-			}
-
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('KPIController', ['$scope', '$state', '$http', '$window', '$stateParams',
 		function($scope, $state, $http, $window, $stateParams) {
 
@@ -442,6 +414,29 @@
 			getKpi()
 
 		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('LoginController', ['$scope', '$state', '$window', '$http',
+	 function($scope, $state, $window, $http) {
+
+			$scope.logUserIn = function(user) {
+				$scope.$broadcast('show-errors-check-validity');
+
+				if($scope.userForm.$invalid){return;}
+
+
+				$http.post('auth/signin', user)
+					.success(function(data) {
+						$window.sessionStorage.jwt = data['token']
+						$state.go('main')
+					})
+					.error(function(error) {
+						console.log(error)
+					})
+			}
+
 	}])
 }());
 (function() {
@@ -583,27 +578,6 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
-		$scope.signUp = function(user) {
-			$scope.$broadcast('show-errors-check-validity')
-
-			if ($scope.userForm.$invalid){return;}
-
-			$http.post('api/users', user)
-				.success(function(data) {
-					$window.sessionStorage.jwt = data['token']
-					$state.go('main')
-				})
-				.error(function(error) {
-					console.log(error)
-				})
-		}
-		
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('AddUserController', ['$scope', '$state', '$http', '$window', '$stateParams',
 		function($scope, $state, $http, $window, $stateParams) {
 
@@ -682,21 +656,22 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('UsersController', ['$scope', '$state', '$http', '$window', '$stateParams',
-		function($scope, $state, $http, $window, $stateParams) {
+	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+		$scope.signUp = function(user) {
+			$scope.$broadcast('show-errors-check-validity')
 
-			function getUser(){
-				$http.get('/api/users/' + $stateParams['id'])
-							.success(function(data) {
-								$scope.user = data;
-							})
-							.error(function(err) {
-								console.log(err);
-							})
-			}
+			if ($scope.userForm.$invalid){return;}
 
-			getUser()
-
+			$http.post('api/users', user)
+				.success(function(data) {
+					$window.sessionStorage.jwt = data['token']
+					$state.go('main')
+				})
+				.error(function(error) {
+					console.log(error)
+				})
+		}
 		
 	}])
 }());
