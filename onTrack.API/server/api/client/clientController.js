@@ -38,6 +38,7 @@ exports.updateAdmin = function(req, res, next) {
 
   var i = client.admins.length
 
+
   while(i--){
     var ad = client.admins[i]
     if(ad._id.toString() === update._id.toString()){

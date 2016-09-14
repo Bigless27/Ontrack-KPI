@@ -240,23 +240,23 @@
 
 	  $scope.uncheckAll = function() {
 	    $scope.user.roles = [];
-	  };
+	};
 
 
-		$scope.add = function(){
+	$scope.add = function(){
 			var token = $window.sessionStorage['jwt']
 
 			var client = {admins:[]}
 
 
 			$scope.client.admins.forEach(function(user) {
-				client.admins.push({id: user._id, email: user.email})
+				client.admins.push({id: user._id, email: user.email, firstName: user.firstName, lastName: user.lastName})
 			})
 
 
 			$scope.user.roles.forEach(function(user){
 				if (client.admins.filter(function(e){return e.email == user.email}).length === 0) {
-				 	client.admins.push({id:user._id, email: user.email})
+				 	client.admins.push({id:user._id, email: user.email, firstName: user.firstName, lastName: user.lastName})
 				}
 			})
 
@@ -273,7 +273,7 @@
 			.error(function(err) {
 				console.log(err)
 			})
-		}
+	}
 
 
 
@@ -317,9 +317,9 @@
 				})
 			}
 
-			$scope.removeUser = function(user) {
+			$scope.removeUsersClient = function(user) {
 				var token = $window.sessionStorage['jwt']
-				console.log(user)
+				
 
 				$http.put('/api/clients/' + $stateParams['id'] + '/updateUsersClient', user, {
 					headers: {

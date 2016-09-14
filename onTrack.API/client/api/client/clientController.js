@@ -21,9 +21,9 @@
 				})
 			}
 
-			$scope.removeUser = function(user) {
+			$scope.removeUsersClient = function(user) {
 				var token = $window.sessionStorage['jwt']
-				console.log(user)
+				
 
 				$http.put('/api/clients/' + $stateParams['id'] + '/updateUsersClient', user, {
 					headers: {
