@@ -42,6 +42,7 @@ gulp.task('sass', function() {
 	}))
 	.pipe(sass())
 	.pipe(gulp.dest('./build/css'))
+	.pipe(concat('appAll.css')) 
 	.pipe(browserSync.reload({
 		stream: true
 	}))

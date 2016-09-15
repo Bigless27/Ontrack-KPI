@@ -8,14 +8,17 @@
 
 				if($scope.userForm.$invalid){return;}
 
+				$scope.err = true
 
 				$http.post('auth/signin', user)
 					.success(function(data) {
+						$scope.err = false
 						$window.sessionStorage.jwt = data['token']
 						$state.go('main')
 					})
 					.error(function(error) {
-						console.log(error)
+						$scope.err = true
+						$scope.errMessage = error
 					})
 			}
 

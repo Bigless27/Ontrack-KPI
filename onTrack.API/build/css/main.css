@@ -1,6 +1,12 @@
 h1 {
   color: blue; }
 
+/*signup/login*/
+#login-form {
+  width: 800px;
+  margin: auto; }
+
+/**/
 .table-holder {
   margin: auto;
   padding-top: 20px;

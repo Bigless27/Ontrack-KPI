@@ -53,18 +53,18 @@ exports.verifyUser = function() {
 
 		// if no username or password then send
 		if (!email || !password) {
-     	 	res.status(400).send('You need a username and password');
+     	 	res.status(400).send('You need a email and password');
     	}
     	// look user up in the DB so we can check 
     	// if the passwords match for the username
     	User.findOne({email: email})
     		.then(function(user) {
 		        if (!user) {
-		          res.status(401).send('No user with the given username');
+		          res.status(401).send('Email or password is invalid');
 		        } else {
 		          // checking the passowords here
 		          user.authenticate(password, function(err,data) {
-		          	if(err) res.status(401).send('Wrong Password')
+		          	if(err) res.status(401).send('Email or password is invalid')
 		          	req.user = user;
 		          	next()
 		          })
