@@ -9,8 +9,8 @@
  	<ul ng-repeat = 'client in clients'>
  		<li><a ui-sref = 'client({id: client._id})'>{{client.name}}</a></li>
  	</ul>
-
- 	<div class = 'btn btn-default'> Create Client</div>
+ 	<div id = 'create-client' ui-view></div>
+ 	<div ui-sref = 'main.createClient' class = 'btn btn-default'> Create Client</div>
 
  </div>
 

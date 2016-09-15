@@ -3,23 +3,6 @@
 	.controller('MainController', ['$scope', '$state', '$http', '$window', 
 		function($scope, $state, $http, $window) {
 
-			// $scope.me = function() {
-				
-
-			// 	var token = $window.sessionStorage['jwt']
-				
-			// 	$http.get('api/users/me', {
-			// 		headers: {
-			// 			"Authorization": `Bearer ${token}`
-			// 		}
-			// 	})
-			// 	.success(function(data){
-			// 			console.log(data)
-			// 	})
-			// 	.error(function(err){
-			// 		console.log(err)
-			// 	})
-			// }
 			function getClients() {
 				$http.get('api/clients')
 					.success(function(data) {
@@ -31,6 +14,14 @@
 			}
 
 			getClients()
+
+			$scope.optionsList = [
+			  {id: 1,  name : "Java"},
+			  {id: 2,  name : "C"},
+			  {id: 3,  name : "C++"},
+			  {id: 4,  name : "AngularJs"},
+			  {id: 5,  name : "JavaScript"}
+			];
 
 
 

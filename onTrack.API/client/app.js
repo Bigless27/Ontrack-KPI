@@ -1,5 +1,5 @@
 (function() {
-	angular.module('onTrack', ['ui.router', 'ui.bootstrap.showErrors', 'checklist-model'])
+	angular.module('onTrack', ['ui.router', 'ui.bootstrap.showErrors', 'checklist-model', 'multipleSelect'])
 	.config(['$stateProvider', '$urlRouterProvider', 'showErrorsConfigProvider',
 			function($stateProvider, $urlRouterProvider, showErrorsConfigProvider) {
 
@@ -29,6 +29,11 @@
 								$location.url($location.path())
 							}
 						}]
+					})
+					.state('main.createClient', {
+						url: '/createClient',
+						templateUrl: 'client/api/client/form/client-form-partial.html',
+						controller: 'ClientFormController'
 					})
 					.state('client', {
 						url: '/client/:id',

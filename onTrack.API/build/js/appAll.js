@@ -1,5 +1,5 @@
 (function() {
-	angular.module('onTrack', ['ui.router', 'ui.bootstrap.showErrors', 'checklist-model'])
+	angular.module('onTrack', ['ui.router', 'ui.bootstrap.showErrors', 'checklist-model', 'multipleSelect'])
 	.config(['$stateProvider', '$urlRouterProvider', 'showErrorsConfigProvider',
 			function($stateProvider, $urlRouterProvider, showErrorsConfigProvider) {
 
@@ -29,6 +29,11 @@
 								$location.url($location.path())
 							}
 						}]
+					})
+					.state('main.createClient', {
+						url: '/createClient',
+						templateUrl: 'client/api/client/form/client-form-partial.html',
+						controller: 'ClientFormController'
 					})
 					.state('client', {
 						url: '/client/:id',
@@ -452,23 +457,6 @@
 	.controller('MainController', ['$scope', '$state', '$http', '$window', 
 		function($scope, $state, $http, $window) {
 
-			// $scope.me = function() {
-				
-
-			// 	var token = $window.sessionStorage['jwt']
-				
-			// 	$http.get('api/users/me', {
-			// 		headers: {
-			// 			"Authorization": `Bearer ${token}`
-			// 		}
-			// 	})
-			// 	.success(function(data){
-			// 			console.log(data)
-			// 	})
-			// 	.error(function(err){
-			// 		console.log(err)
-			// 	})
-			// }
 			function getClients() {
 				$http.get('api/clients')
 					.success(function(data) {
@@ -480,6 +468,14 @@
 			}
 
 			getClients()
+
+			$scope.optionsList = [
+			  {id: 1,  name : "Java"},
+			  {id: 2,  name : "C"},
+			  {id: 3,  name : "C++"},
+			  {id: 4,  name : "AngularJs"},
+			  {id: 5,  name : "JavaScript"}
+			];
 
 
 
@@ -592,17 +588,18 @@
 			$scope.$broadcast('show-errors-check-validity')
 
 			if ($scope.userForm.$invalid){return;}
-
+			$scope.err = false
 			$http.post('api/users', user)
 				.success(function(data) {
+					$scope.err = false
 					$window.sessionStorage.jwt = data['token']
 					$state.go('main')
 				})
 				.error(function(error) {
-					console.log(error)
+					$scope.err = true
+					$scope.errMessage = error.message
 				})
 		}
-		
 	}])
 }());
 (function() {
@@ -681,6 +678,42 @@
 
 
 		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('ClientFormController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+
+			$scope.hey = function(){
+				console.log('hey')
+			}
+
+			function getAllUsers() {
+				$http.get('/api/users')
+					.success(function(users){
+
+						users.forEach(function(user){
+							if(user){
+								$scope.optionsList.push(
+										{firstName: user.firstName, lastName: user.lastName, 
+											email: user.email, fullName: user.firstName + ' ' + user.lastName}
+									)
+							}
+							else{
+								$scope.optionsList = [{name: 'No users'}]
+							}
+						})
+					})
+					.error(function(err){
+						console.log(err)
+					})
+			}
+
+			getAllUsers()
+
+			$scope.optionsList = [];
+
 	}])
 }());
 (function() {
