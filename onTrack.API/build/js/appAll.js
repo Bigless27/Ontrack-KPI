@@ -340,6 +340,35 @@
 				})
 			}
 
+			$scope.deleteClient = function() {
+				var token = $window.sessionStorage['jwt']
+
+				swal({
+				  title: "Are you sure?",
+				  text: "You will not be able to recover thia client!",
+				  type: "warning",
+				  showCancelButton: true,
+				  confirmButtonColor: "#DD6B55",
+				  confirmButtonText: "Yes, delete it!",
+				  closeOnConfirm: true,
+				  html: false
+				}, function(){
+					$http.delete('/api/clients/' + $stateParams['id'],
+					 {
+						headers: {
+							'Authorization': `Bearer ${token}`
+						}
+					})
+					.success(function(data){
+						$state.go('main')
+					})
+					.error(function(err) {
+						console.log(err)
+					})
+				})
+
+			}
+
 			$scope.logout = function() {
 				$window.sessionStorage.clear()
 				$state.go('login')
@@ -498,6 +527,27 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('SettingController', ['$scope', '$state', '$http', '$window', '$stateParams',
+		function($scope, $state, $http, $window, $stateParams) {
+
+			function getSettings(){
+				$http.get('/api/clients/' + $stateParams['clientid'] 
+						+ '/settings/' + $stateParams['settingid'])
+							.success(function(data) {
+								$scope.setting = data;
+							})
+							.error(function(err) {
+								console.log(err);
+							})
+			}
+
+			getSettings()
+
+		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('PromotionController', ['$scope', '$state', '$http', '$window', '$stateParams',
 		function($scope, $state, $http, $window, $stateParams) {
 
@@ -564,49 +614,6 @@
 			}
 
 			getPromotions()
-
-		
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
-		$scope.signUp = function(user) {
-			$scope.$broadcast('show-errors-check-validity')
-
-			if ($scope.userForm.$invalid){return;}
-			$scope.err = false
-			$http.post('api/users', user)
-				.success(function(data) {
-					$scope.err = false
-					$window.sessionStorage.jwt = data['token']
-					$state.go('main')
-				})
-				.error(function(error) {
-					$scope.err = true
-					$scope.errMessage = error.message
-				})
-		}
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('SettingController', ['$scope', '$state', '$http', '$window', '$stateParams',
-		function($scope, $state, $http, $window, $stateParams) {
-
-			function getSettings(){
-				$http.get('/api/clients/' + $stateParams['clientid'] 
-						+ '/settings/' + $stateParams['settingid'])
-							.success(function(data) {
-								$scope.setting = data;
-							})
-							.error(function(err) {
-								console.log(err);
-							})
-			}
-
-			getSettings()
 
 		
 	}])
@@ -699,6 +706,28 @@
 
 
 		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+		$scope.signUp = function(user) {
+			$scope.$broadcast('show-errors-check-validity')
+
+			if ($scope.userForm.$invalid){return;}
+			$scope.err = false
+			$http.post('api/users', user)
+				.success(function(data) {
+					$scope.err = false
+					$window.sessionStorage.jwt = data['token']
+					$state.go('main')
+				})
+				.error(function(error) {
+					$scope.err = true
+					$scope.errMessage = error.message
+				})
+		}
 	}])
 }());
 (function() {
