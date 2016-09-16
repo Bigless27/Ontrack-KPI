@@ -1,9 +1,14 @@
 (function() {
 	angular.module('onTrack')
-	.controller('KPIController', ['$scope', '$state', '$http', '$window', '$stateParams',
-		function($scope, $state, $http, $window, $stateParams) {
+	.controller('KPIController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
+		function($scope, $state, $http, $window, $stateParams, $q) {
 
 			$scope.create = false
+
+			 $scope.showStatus = function() {
+			    var selected = $filter('filter')($scope.statuses, {value: $scope.user.status});
+			    return ($scope.user.status && selected.length) ? selected[0].text : 'Not set'
+			}
 
 			$scope.deleteKpi = function() {
 				var token = $window.sessionStorage['jwt']
@@ -33,6 +38,68 @@
 						console.log(err)
 					})
 				})
+			}
+
+			$scope.updateName = function(data) {
+				if (data === ''){
+					return 'Name is Required'
+				}
+				else if (data.length < 2){
+					return 'Name must be more than one character'
+				}
+				return updateKpi(data, 'name')
+			}
+
+			$scope.types = [
+				{value: 1, text: 'sale'},
+				{value: 2, text: 'attendance'},
+				{vale: 3, text: 'refferals'},
+				{value: 4, text: 'calls'}
+
+			]
+
+			$scope.updateType = function(data) {
+				if (data === ''){
+					return 'Type is required'
+				}
+				return updateKpi(data, 'type')
+			}
+
+			//have type show on edit click
+			$(document).on('click','.kpi-edit-button', function(){
+				$('#kpi-type-edit')[0].click()
+			} )
+			
+
+
+			$scope.updateValue = function(data) {
+				if (data === ''){
+					return 'Value is required'
+				}
+				return updateKpi(data, 'value')
+			}
+
+
+			function updateKpi(data, field){
+				var d = $q.defer();
+				var token = $window.sessionStorage['jwt']
+				$scope.kpi[field] = data
+
+
+				$http.put('/api/clients/' + $stateParams['clientid']
+				 + '/kpis/' + $stateParams['kpiid'], $scope.kpi,{
+					headers: {
+						'Authorization': `Bearer ${token}`
+					}
+				})
+				.success(function(data){
+					var params = {clientid: $stateParams['clientid'], kpiid: $stateParams['kpiid'] }
+					$state.reload()
+				})
+				.error(function(err) {
+					console.log(err)
+				})
+
 			}
 
 			$scope.submitKpi = function(kpi) {

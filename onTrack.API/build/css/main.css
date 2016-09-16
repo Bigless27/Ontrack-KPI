@@ -42,6 +42,10 @@ h1 {
     /*display: none;*/
     /*hide checkboxes*/ }
 
+/*make radio list vertical*/
+.editable-radiolist label {
+  display: block; }
+
 #admin-button-container {
   padding: 15px 0px; }
 

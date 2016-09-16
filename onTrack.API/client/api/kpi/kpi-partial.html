@@ -2,20 +2,42 @@
 
 
 <table class = 'table table-striped'>
-	<thead>
 		<tr>
-			<th>Name</th>
+			<th>Name:</th>
+			<td>
+				<span editable-text="kpi.name" e-form="name" onbeforesave="updateName($data)">{{kpi.name || 'empty'}}</span>
+			</td>
+			<td>
+				<a href="" ng-click="name.$show()" ng-hide="name.$visible">Edit</a>
+			</td>
+		</tr>
+		<tr>
 			<th>Type</th>
-			<th>Value</th>
+			<td>
+				<a 
+					id = 'kpi-type-edit' 
+					editable-radiolist="kpi.type"
+					e-ng-options = 't.text as t.text for t in ::types track by t.value'  
+					onbeforesave="updateType($data)" 
+					style = 'color:black; border-bottom:none;'>
+					{{kpi.type || 'empty'}}
+				</a>
+			</td>
+			<td>
+				<a style = 'cursor: pointer;' class = 'kpi-edit-button'>
+					Edit
+				</a>
+			</td>
 		</tr>
-	</thead>
-	<tbody>
 		<tr>
-			<td>{{kpi.name}}</td>
-			<td>{{kpi.type}}</td>
-			<td>{{kpi.value}}</td>
+			<th>Value:</th>
+			<td>
+				<span editable-text="kpi.value" e-form="value" onbeforesave="updateValue($data)">{{kpi.value || 'empty'}}</span>
+			</td>
+			<td>
+				<a href="" ng-click="value.$show()" ng-hide="value.$visible">Edit</a>
+			</td>
 		</tr>
-	</tbody>
 </table>
 
 <div id = 'kpi-edit' ui-view></div>

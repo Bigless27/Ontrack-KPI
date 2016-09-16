@@ -1,5 +1,5 @@
 (function() {
-	angular.module('onTrack', ['ui.router', 'ui.bootstrap.showErrors', 'multipleSelect'])
+	angular.module('onTrack', ['ui.router', 'ui.bootstrap.showErrors', 'multipleSelect', 'xeditable'])
 	.config(['$stateProvider', '$urlRouterProvider', 'showErrorsConfigProvider',
 			function($stateProvider, $urlRouterProvider, showErrorsConfigProvider) {
 
@@ -89,4 +89,7 @@
 					})
 
 			}])
+			.run(function(editableOptions) {
+			  editableOptions.theme = 'bs3'; // bootstrap3 theme. Can be also 'bs2', 'default'
+			})
 }());
