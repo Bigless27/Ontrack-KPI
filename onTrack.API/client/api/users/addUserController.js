@@ -25,7 +25,7 @@
 		};
 
 
-		$scope.add = function(){
+		$scope.add = function(data){
 			var token = $window.sessionStorage['jwt']
 
 			var client = {usersClient:[]}
@@ -36,7 +36,7 @@
 			})
 
 			// check duplicates
-			$scope.user.roles.forEach(function(user){
+			data.users.forEach(function(user){
 				if (client.usersClient.filter(function(e){return e.email == user.email}).length === 0) {
 				 	client.usersClient.push({id:user._id, email: user.email, firstName: user.firstName, lastName: user.lastName})
 				}
@@ -61,13 +61,25 @@
 
 		function getUsers(){
 			$http.get('/api/users')
-				.success(function(data) {
-					$scope.roles = data
+				.success(function(users) {
+					users.forEach(function(user){
+						if(user){
+							$scope.optionsList.push(
+									{firstName: user.firstName, lastName: user.lastName, 
+										email: user.email, fullName: user.firstName + ' ' + user.lastName}
+								)
+						}
+						else{
+							$scope.optionsList = [{name: 'No users'}]
+						}
+					})
 				})
 				.error(function(err) {
 					console.log(err);
 				})
 		}
+
+		$scope.optionsList = []
 
 		getUsers()
 
