@@ -5,11 +5,20 @@
 </nav>
 
  <div id = "client-mission-control">
- 	<h2>{{client.name}}</h2>
+ 	<div style = 'padding: 10px 5px'>
+	 	<span>
+		 	<h2 style = 'display:inline;'>
+		 		<span editable-text="client.name" e-form="name" onbeforesave="updateName($data)">{{client.name || 'empty'}}</span>
+		 	</h2>
+		 <span>
+			 	<a href="" ng-click="name.$show()" ng-hide="name.$visible">Edit</a>
+		 	</span>
+	 	</span>
+ 	</div>
  	<div>
  		Owner: {{client.owner[0].firstName}} {{client.owner[0].lastName}}
 
-	<span class = 'btn btn-danger' ng-click = 'deleteClient()'>Delete Client</span>
+		<span class = 'btn btn-danger' ng-click = 'deleteClient()'>Delete Client</span>
  	</div>
 
  	<div ui-view class = 'create-view'></div>

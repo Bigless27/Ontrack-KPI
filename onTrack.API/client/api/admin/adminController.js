@@ -22,7 +22,7 @@
 
 		  };
 
-		  $scope.uncheckAll = function() {
+		$scope.uncheckAll = function() {
 		    $scope.user.roles = [];
 		};
 

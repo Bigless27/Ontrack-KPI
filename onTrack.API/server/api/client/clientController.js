@@ -84,7 +84,6 @@ exports.put = function(req, res, next) {
   //   next(new Error('Not authorized!!'));
   //   return;
   // }
-
   var client = req.client;
 
   var update = req.body;
@@ -107,13 +106,22 @@ exports.post = function(req, res, next) {
   newclient.admins = req.user
   newclient.usersClients = req.user
 
-  Client.create(newclient)
+  Client.find({'name': newclient.name})
     .then(function(client) {
-      res.json(client);
+      if(!client){
+        Client.create(newclient)
+          .then(function(client) {
+            res.json(client);
+          }, function(err) {
+            next(err);
+          });
+      }else{
+        res.status(500).send({message: 'Name is already Taken'})
+      }
     }, function(err) {
+      next(err)
+    })
 
-      next(err);
-    });
 };
 
 
