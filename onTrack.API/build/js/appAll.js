@@ -305,94 +305,6 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('ClientController', ['$scope', '$state', '$http', '$window', '$stateParams',
-		function($scope, $state, $http, $window, $stateParams) {
-		
-			$scope.removeAdmin = function(admin) {
-				var token = $window.sessionStorage['jwt']
-
-				$http.put('/api/clients/' + $stateParams['id'] + '/updateAdmin', admin, {
-					headers: {
-						'Authorization': `Bearer ${token}`
-					}
-				})
-				.success(function(data){
-					$scope.client = data
-				})
-				.error(function(err) {
-					console.log(err)
-				})
-			}
-
-			$scope.removeUser = function(user) {
-				var token = $window.sessionStorage['jwt']
-
-				$http.put('/api/clients/' + $stateParams['id'] + '/updateUser', user, {
-					headers: {
-						'Authorization': `Bearer ${token}`
-					}
-				})
-				.success(function(data){
-					$scope.client = data
-				})
-				.error(function(err) {
-					console.log(err)
-				})
-			}
-
-			$scope.deleteClient = function() {
-				var token = $window.sessionStorage['jwt']
-
-				swal({
-				  title: "Are you sure?",
-				  text: "You will not be able to recover thia client!",
-				  type: "warning",
-				  showCancelButton: true,
-				  confirmButtonColor: "#DD6B55",
-				  confirmButtonText: "Yes, delete it!",
-				  closeOnConfirm: true,
-				  html: false
-				}, function(){
-					$http.delete('/api/clients/' + $stateParams['id'],
-					 {
-						headers: {
-							'Authorization': `Bearer ${token}`
-						}
-					})
-					.success(function(data){
-						$state.go('main')
-					})
-					.error(function(err) {
-						console.log(err)
-					})
-				})
-
-			}
-
-			$scope.logout = function() {
-				$window.sessionStorage.clear()
-				$state.go('login')
-			}
-
-
-
-			function getClient(){
-				$http.get('/api/clients/' + $stateParams['id'])
-					.success(function(data) {
-						$scope.client = data
-					})
-					.error(function(err) {
-						console.log(err);
-					})
-			}
-
-			getClient()
-
-		
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('KPIController', ['$scope', '$state', '$http', '$window', '$stateParams',
 		function($scope, $state, $http, $window, $stateParams) {
 
@@ -401,18 +313,30 @@
 			$scope.deleteKpi = function() {
 				var token = $window.sessionStorage['jwt']
 
-				$http.delete('/api/clients/' + $stateParams['clientid']
-				 + '/kpis/' + $stateParams['kpiid'], {
-					headers: {
-						'Authorization': `Bearer ${token}`
-					}
-				})
-				.success(function(data){
-					var clientId = {'id': $stateParams['clientid'] + ''}
-					$state.go('client',clientId )
-				})
-				.error(function(err) {
-					console.log(err)
+
+				swal({
+				  title: "Are you sure?",
+				  text: "You will not be able to recover this client!",
+				  type: "warning",
+				  showCancelButton: true,
+				  confirmButtonColor: "#DD6B55",
+				  confirmButtonText: "Yes, delete it!",
+				  closeOnConfirm: true,
+				  html: false
+				}, function(){
+					$http.delete('/api/clients/' + $stateParams['clientid']
+					 + '/kpis/' + $stateParams['kpiid'], {
+						headers: {
+							'Authorization': `Bearer ${token}`
+						}
+					})
+					.success(function(data){
+						var clientId = {'id': $stateParams['clientid'] + ''}
+						$state.go('client',clientId )
+					})
+					.error(function(err) {
+						console.log(err)
+					})
 				})
 			}
 
@@ -460,6 +384,94 @@
 			}
 
 			getKpi()
+
+		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('ClientController', ['$scope', '$state', '$http', '$window', '$stateParams',
+		function($scope, $state, $http, $window, $stateParams) {
+		
+			$scope.removeAdmin = function(admin) {
+				var token = $window.sessionStorage['jwt']
+
+				$http.put('/api/clients/' + $stateParams['id'] + '/updateAdmin', admin, {
+					headers: {
+						'Authorization': `Bearer ${token}`
+					}
+				})
+				.success(function(data){
+					$scope.client = data
+				})
+				.error(function(err) {
+					console.log(err)
+				})
+			}
+
+			$scope.removeUser = function(user) {
+				var token = $window.sessionStorage['jwt']
+
+				$http.put('/api/clients/' + $stateParams['id'] + '/updateUser', user, {
+					headers: {
+						'Authorization': `Bearer ${token}`
+					}
+				})
+				.success(function(data){
+					$scope.client = data
+				})
+				.error(function(err) {
+					console.log(err)
+				})
+			}
+
+			$scope.deleteClient = function() {
+				var token = $window.sessionStorage['jwt']
+
+				swal({
+				  title: "Are you sure?",
+				  text: "You will not be able to recover this client!",
+				  type: "warning",
+				  showCancelButton: true,
+				  confirmButtonColor: "#DD6B55",
+				  confirmButtonText: "Yes, delete it!",
+				  closeOnConfirm: true,
+				  html: false
+				}, function(){
+					$http.delete('/api/clients/' + $stateParams['id'],
+					 {
+						headers: {
+							'Authorization': `Bearer ${token}`
+						}
+					})
+					.success(function(data){
+						$state.go('main')
+					})
+					.error(function(err) {
+						console.log(err)
+					})
+				})
+
+			}
+
+			$scope.logout = function() {
+				$window.sessionStorage.clear()
+				$state.go('login')
+			}
+
+
+
+			function getClient(){
+				$http.get('/api/clients/' + $stateParams['id'])
+					.success(function(data) {
+						$scope.client = data
+					})
+					.error(function(err) {
+						console.log(err);
+					})
+			}
+
+			getClient()
 
 		
 	}])
@@ -522,27 +534,6 @@
 				$window.sessionStorage.clear()
 				$state.go('login')
 			}
-		
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('SettingController', ['$scope', '$state', '$http', '$window', '$stateParams',
-		function($scope, $state, $http, $window, $stateParams) {
-
-			function getSettings(){
-				$http.get('/api/clients/' + $stateParams['clientid'] 
-						+ '/settings/' + $stateParams['settingid'])
-							.success(function(data) {
-								$scope.setting = data;
-							})
-							.error(function(err) {
-								console.log(err);
-							})
-			}
-
-			getSettings()
-
 		
 	}])
 }());
@@ -616,6 +607,49 @@
 			getPromotions()
 
 		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('SettingController', ['$scope', '$state', '$http', '$window', '$stateParams',
+		function($scope, $state, $http, $window, $stateParams) {
+
+			function getSettings(){
+				$http.get('/api/clients/' + $stateParams['clientid'] 
+						+ '/settings/' + $stateParams['settingid'])
+							.success(function(data) {
+								$scope.setting = data;
+							})
+							.error(function(err) {
+								console.log(err);
+							})
+			}
+
+			getSettings()
+
+		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+		$scope.signUp = function(user) {
+			$scope.$broadcast('show-errors-check-validity')
+
+			if ($scope.userForm.$invalid){return;}
+			$scope.err = false
+			$http.post('api/users', user)
+				.success(function(data) {
+					$scope.err = false
+					$window.sessionStorage.jwt = data['token']
+					$state.go('main')
+				})
+				.error(function(error) {
+					$scope.err = true
+					$scope.errMessage = error.message
+				})
+		}
 	}])
 }());
 (function() {
@@ -710,24 +744,43 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
-		$scope.signUp = function(user) {
-			$scope.$broadcast('show-errors-check-validity')
+	.controller('KPIFormController', ['$scope', '$state', '$http', '$window', '$stateParams',
+		function($scope, $state, $http, $window, $stateParams) {
+			$scope.create = true
 
-			if ($scope.userForm.$invalid){return;}
-			$scope.err = false
-			$http.post('api/users', user)
-				.success(function(data) {
-					$scope.err = false
-					$window.sessionStorage.jwt = data['token']
-					$state.go('main')
+			$scope.clientId = $stateParams['id']
+
+			//for select button
+			$scope.myList = [{
+				    listValue: "sale"
+			      }, {
+			        listValue: "attendance"
+			      }, {
+			        listValue: "calls"
+			      }, {
+			        listValue: "refferals"
+			 }]
+
+
+			$scope.submitKpi = function(kpi) {
+				kpi['type'] = kpi['type']['listValue']
+				var token = $window.sessionStorage['jwt']
+
+				$http.post('api/clients/' + $stateParams['id'] + '/kpis', kpi ,{
+					headers: {
+						"Authorization": `Bearer ${token}`
+					}
 				})
-				.error(function(error) {
-					$scope.err = true
-					$scope.errMessage = error.message
+				.success(function(data){
+						$state.reload()
 				})
-		}
+				.error(function(err){
+					console.log(err)
+				})
+
+			}
+
+		
 	}])
 }());
 (function() {
@@ -739,7 +792,6 @@
 
 			$scope.createClient = function(user){
 				var token = $window.sessionStorage['jwt']
-				console.log(token)
 
 				$http.post('/api/clients' , user ,{
 					headers: {
@@ -782,47 +834,6 @@
 
 			$scope.optionsList = [];
 
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('KPIFormController', ['$scope', '$state', '$http', '$window', '$stateParams',
-		function($scope, $state, $http, $window, $stateParams) {
-			$scope.create = true
-
-			$scope.clientId = $stateParams['id']
-
-			//for select button
-			$scope.myList = [{
-				    listValue: "sale"
-			      }, {
-			        listValue: "attendance"
-			      }, {
-			        listValue: "calls"
-			      }, {
-			        listValue: "refferals"
-			 }]
-
-
-			$scope.submitKpi = function(kpi) {
-				kpi['type'] = kpi['type']['listValue']
-				var token = $window.sessionStorage['jwt']
-
-				$http.post('api/clients/' + $stateParams['id'] + '/kpis', kpi ,{
-					headers: {
-						"Authorization": `Bearer ${token}`
-					}
-				})
-				.success(function(data){
-						$state.reload()
-				})
-				.error(function(err){
-					console.log(err)
-				})
-
-			}
-
-		
 	}])
 }());
 (function() {

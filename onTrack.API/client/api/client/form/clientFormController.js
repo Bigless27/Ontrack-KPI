@@ -7,7 +7,6 @@
 
 			$scope.createClient = function(user){
 				var token = $window.sessionStorage['jwt']
-				console.log(token)
 
 				$http.post('/api/clients' , user ,{
 					headers: {

@@ -15,6 +15,12 @@ var clientUsersSchema = new Schema({
 	lastName: {type: String}
 })
 
+var ownerSchema = new Schema({
+	email: {type: String},
+	firstName: {type: String},
+	lastName: {type: String}
+})
+
 
 var ClientSchema = new Schema({
 	name: {type: String, required: true, unique: true},
@@ -23,7 +29,7 @@ var ClientSchema = new Schema({
 	endDate: {type: Date},
 	promotions: [{type: Schema.Types.ObjectId, ref: 'promotion'}],
 	kpis: [{type: Schema.Types.ObjectId, ref: 'kpi'}],
-	owner: [{type: Schema.Types.ObjectId, ref: 'user'}],
+	owner: [ownerSchema],
 	admins: [adminSchema],
 	settings: [{type: Schema.Types.ObjectId, ref: 'clientSettings'}]
 })
