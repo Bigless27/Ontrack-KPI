@@ -3,8 +3,26 @@
 	.controller('ClientFormController', ['$scope', '$state', '$http', '$window', 
 		function($scope, $state, $http, $window) {
 
-			$scope.hey = function(){
-				console.log('hey')
+			$scope.errorDisplay = false
+
+			$scope.createClient = function(user){
+				var token = $window.sessionStorage['jwt']
+				console.log(token)
+
+				$http.post('/api/clients' , user ,{
+					headers: {
+						'Authorization': `Bearer ${token}`
+					}
+				})
+				.success(function(data){
+					var clientId = {'id': data._id + ''}
+					$state.go('client',clientId )
+				})
+				.error(function(err) {
+					$scope.errorDisplay = true
+					$scope.oops = err.message
+				})
+
 			}
 
 			function getAllUsers() {

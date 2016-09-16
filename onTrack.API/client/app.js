@@ -1,5 +1,5 @@
 (function() {
-	angular.module('onTrack', ['ui.router', 'ui.bootstrap.showErrors', 'checklist-model', 'multipleSelect'])
+	angular.module('onTrack', ['ui.router', 'ui.bootstrap.showErrors', 'multipleSelect'])
 	.config(['$stateProvider', '$urlRouterProvider', 'showErrorsConfigProvider',
 			function($stateProvider, $urlRouterProvider, showErrorsConfigProvider) {
 

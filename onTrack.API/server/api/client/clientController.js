@@ -92,8 +92,6 @@ exports.put = function(req, res, next) {
 
   _.merge(client, update);
 
-  console.log(client)
-
   client.save(function(err, saved) {
     if (err) {
       next(err);

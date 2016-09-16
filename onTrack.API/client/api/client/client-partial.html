@@ -1,6 +1,6 @@
 <nav class="navbar navbar-inverse">
 	<h1>Client View</h1>
-	<div class = 'btn btn-default' ui-sref = 'login'>Back</div>
+	<div class = 'btn btn-default' ui-sref = 'main'>Back</div>
 	<div class = 'btn btn-danger' ng-click = 'logout()'>Logout</div>
 </nav>
 
@@ -9,8 +9,7 @@
  	<div>
  		Owner: {{client.owner[0].firstName}} {{client.owner[0].lastName}}
 
-	<span class = 'btn btn-default'>Edit Client</span>
-	<span class = 'btn btn-default'>Delete Client</span>
+	<span class = 'btn btn-danger'>Delete Client</span>
  	</div>
 
  	<div ui-view class = 'create-view'></div>

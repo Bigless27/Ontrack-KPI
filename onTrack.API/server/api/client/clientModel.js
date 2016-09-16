@@ -17,7 +17,7 @@ var clientUsersSchema = new Schema({
 
 
 var ClientSchema = new Schema({
-	name: {type: String, required: true},
+	name: {type: String, required: true, unique: true},
 	usersClient: [clientUsersSchema],
 	startDate: {type: Date},
 	endDate: {type: Date},
