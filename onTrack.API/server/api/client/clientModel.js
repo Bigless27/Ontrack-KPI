@@ -37,7 +37,7 @@ var ClientSchema = new Schema({
 
 
 ClientSchema.post('save', function(doc) {
-	User.findById(doc.owner[0])
+	User.findById(doc.owner[0]._id)
 		.then(function(user) {
 			if(!user) {
 				console.log('err')
