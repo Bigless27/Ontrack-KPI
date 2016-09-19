@@ -15,6 +15,22 @@
 			        listValue: "referals"
 			 }]
 
+			$scope.types = [
+				{value: 1, text: 'sale'},
+				{value: 2, text: 'attendance'},
+				{vale: 3, text: 'refferals'},
+				{value: 4, text: 'calls'}
+
+			]
+
+			//have type show on edit click
+			$(document).on('click','.promotion-startDate-edit-button', function(){
+				$('#promotion-startDate-edit')[0].click()
+			} )
+			$(document).on('click','.promotion-endDate-edit-button', function(){
+				$('#promotion-endDate-edit')[0].click()
+			} )
+
 			$scope.deletePromotion = function() {
 				var token = $window.sessionStorage['jwt']
 

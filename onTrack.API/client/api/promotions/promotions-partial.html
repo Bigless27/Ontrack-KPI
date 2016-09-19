@@ -2,26 +2,98 @@
 
 
 <table class = 'table table-striped'>
-	<thead>
 		<tr>
 			<th>Name</th>
-			<th>Type</th>
-			<th>Completion Value</th>
-			<th>Description</th>
-			<th>Start Date</th>
-			<th>End Date</th>
+			<td>
+				<span 
+					editable-text = "promotion.name" 
+					e-form = 'name' 
+					onbeforesave = 'updateName($data)'> 
+					{{promotion.name}}
+				</span>
+			</td>
+			<td>
+				<a href="" ng-click="name.$show()" ng-hide="name.$visible">Edit</a>
+			</td>
 		</tr>
-	</thead>
-	<tbody>
 		<tr>
-			<td>{{promotion.name}}</td>
-			<td>{{promotion.type}}</td>
-			<td>{{promotion.completionValue}}</td>
-			<td>{{promotion.description}}</td>
-			<td>{{promotion.startDate | date: 'medium'}}</td>
-			<td>{{promotion.endDate | date: 'medium'}}</td>
+			<th>Type</th>
+			<td>
+				<a 
+					id = 'promotion-type-edit' 
+					editable-radiolist="promotion.type"
+					e-ng-options = 't.text as t.text for t in ::types track by t.value'  
+					onbeforesave="updateType($data)" 
+					style = 'color:black; border-bottom:none;'>
+					{{promotion.type || 'empty'}}
+				</a>
+			</td>
+			<td>
+				<a style = 'cursor: pointer;' class = 'promotion-edit-button'>
+					Edit
+				</a>
+			</td>
 		</tr>
-	</tbody>
+		<tr>
+			<th>Completion Value</th>
+			<td>
+				<span 
+					editable-text = "promotion.completionValue" 
+					e-form = 'completionValue' 
+					onbeforesave = 'updateCompletionValue($data)'> 
+					{{promotion.completionValue}}
+				</span>
+			</td>
+			<td>
+				<a href="" ng-click="completionValue.$show()" ng-hide="completionValue.$visible">Edit</a>
+			</td>
+		</tr>
+		<tr>
+			<th>Description</th>
+			<td>
+				<span 
+					editable-textarea = "promotion.description" 
+					e-rows = '4' 
+					e-cols = '40' 
+					e-form = 'description' 
+					onbeforesave = 'updateDescription($data)'> 
+					{{promotion.description}}
+				</span>
+			</td>
+			<td>
+				<a href="" ng-click="description.$show()" ng-hide="description.$visible">Edit</a>
+			</td>
+		</tr>
+		<tr>
+			<th>Start Date</th>
+			<td>
+				<span 
+					id = 'promotion-startDate-edit'
+					editable-combodate = 'promotion.startDate' 
+					style = 'color:black; border-bottom:none;'
+					>
+					{{ (promotion.startDate | date:'medium') || 'empty' }}
+				</span>
+			</td>
+			<td>
+				<a class = 'promotion-startDate-edit-button' href="">Edit</a>
+			</td>
+		</tr>
+		<tr>
+			<th>End Date</th>
+			<td>
+				<span 
+					id = 'promotion-endDate-edit'
+					editable-combodate = 'promotion.endDate' 
+					style = 'color:black; border-bottom:none;'
+					>
+					{{ (promotion.endDate | date:'medium') || 'empty' }}
+				</span>
+			</td>
+			<td>
+				<a class = 'promotion-endDate-edit-button' href="">Edit</a>
+			</td>
+		</tr>		
 </table>
 
 <div id = 'edit' ui-view></div>
