@@ -3,28 +3,6 @@
 	.controller('AddUserController', ['$scope', '$state', '$http', '$window', '$stateParams',
 		function($scope, $state, $http, $window, $stateParams) {
 
-		$scope.highlight = function(x) {
-			if ($(`span:contains(${x.email})`).hasClass('check')){
-
-				$(`span:contains(${x.email})`).parent().parent().css({"background-color":"transparent"})
-				$(`span:contains(${x.email})`).removeClass('check')
-			}
-			else{
-				$(`span:contains(${x.email})`).parent().parent().css({"background-color":"#a8a8a8"})
-				$(`span:contains(${x.email})`).addClass('check')
-			}
-
-		}
-
-		$scope.user = {
-
-		  };
-
-		$scope.uncheckAll = function() {
-		$scope.user.roles = [];
-		};
-
-
 		$scope.add = function(data){
 			var token = $window.sessionStorage['jwt']
 

@@ -35,6 +35,11 @@
 						templateUrl: 'client/api/client/form/client-form-partial.html',
 						controller: 'ClientFormController'
 					})
+					.state('main.createUser', {
+						url: '/createUser',
+						templateUrl: 'client/api/users/form/user-form-partial.html',
+						controller: 'UserFormController'
+					})
 					.state('client', {
 						url: '/client/:id',
 						templateUrl: 'client/api/client/client-partial.html',
