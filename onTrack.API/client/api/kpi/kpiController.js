@@ -93,7 +93,6 @@
 					}
 				})
 				.success(function(data){
-					var params = {clientid: $stateParams['clientid'], kpiid: $stateParams['kpiid'] }
 					$state.reload()
 				})
 				.error(function(err) {

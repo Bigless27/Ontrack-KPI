@@ -29,7 +29,7 @@
 				</a>
 			</td>
 			<td>
-				<a style = 'cursor: pointer;' class = 'promotion-edit-button'>
+				<a style = 'cursor: pointer;' class = 'promotion-edit-type-button'>
 					Edit
 				</a>
 			</td>
@@ -69,8 +69,11 @@
 			<td>
 				<span 
 					id = 'promotion-startDate-edit'
+					e-min-year = '2016'
+					e-max-year = '2025'
 					editable-combodate = 'promotion.startDate' 
 					style = 'color:black; border-bottom:none;'
+					onbeforesave = 'updateStartDate($data)'
 					>
 					{{ (promotion.startDate | date:'medium') || 'empty' }}
 				</span>
@@ -84,8 +87,11 @@
 			<td>
 				<span 
 					id = 'promotion-endDate-edit'
+					e-min-year = '2016'
+					e-max-year = '2025'
 					editable-combodate = 'promotion.endDate' 
 					style = 'color:black; border-bottom:none;'
+					onbeforesave = 'updateEndDate($data)'
 					>
 					{{ (promotion.endDate | date:'medium') || 'empty' }}
 				</span>

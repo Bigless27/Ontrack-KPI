@@ -1,7 +1,7 @@
 (function() {
 	angular.module('onTrack')
-	.controller('PromotionController', ['$scope', '$state', '$http', '$window', '$stateParams',
-		function($scope, $state, $http, $window, $stateParams) {
+	.controller('PromotionController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
+		function($scope, $state, $http, $window, $stateParams, $q) {
 
 			$scope.create = false
 
@@ -26,10 +26,94 @@
 			//have type show on edit click
 			$(document).on('click','.promotion-startDate-edit-button', function(){
 				$('#promotion-startDate-edit')[0].click()
-			} )
-			$(document).on('click','.promotion-endDate-edit-button', function(){
+			})
+			.on('click','.promotion-endDate-edit-button', function(){
 				$('#promotion-endDate-edit')[0].click()
-			} )
+			})
+			.on('click', '.promotion-edit-type-button', function(){
+				$('#promotion-type-edit')[0].click()
+			})
+
+
+			$scope.updateName = function(data) {
+				if (data === ''){
+					return 'Name is Required'
+				}
+				else if (data.length < 2){
+					return 'Name must be more than one character'
+				}
+				return updatePromotion(data, 'name')
+			}
+
+
+			$scope.updateType = function(data) {
+				if (data === ''){
+					return 'Type is required'
+				}
+				return updatePromotion(data, 'type')
+			}
+
+			$scope.updateCompletionValue = function(data) {
+				var reg = new RegExp('^\\d+$')
+
+				if (data === ''){
+					return 'Value is required'
+				}
+				else if (!reg.test(data)){
+					return 'Value must be an integer'
+				}
+				data['completionValue'] = parseInt(data['completionValue'])
+				return updatePromotion(data, 'completionValue')
+			}
+
+			$scope.updateDescription = function(data) {
+				if (data === '') {
+					return 'Description is required'
+				}
+				return updatePromotion(data, 'description')
+			}
+
+			$scope.updateStartDate = function(data) {
+				var today = new Date();
+				  if (data < today.toISOString()) {
+				  	return "Start Date can't be in the past"
+				  }
+				  return updatePromotion(data, 'startDate')
+			}
+
+			$scope.updateEndDate = function(data) {
+				if ($scope.promotion.startDate.toISOString() > data){
+					return 'End date must come after start date'
+				}
+				return updatePromotion(data, 'endDate')
+			}
+
+
+			function updatePromotion(data, field){
+				var d = $q.defer();
+				var token = $window.sessionStorage['jwt']
+				$scope.promotion[field] = data
+
+
+				$http.put('/api/clients/' + $stateParams['clientid']
+				 + '/promotions/' + $stateParams['promoid'], $scope.promotion,{
+					headers: {
+						'Authorization': `Bearer ${token}`
+					}
+				})
+				.success(function(data){
+					$state.reload()
+				})
+				.error(function(err) {
+					console.log(err)
+				})
+
+			}
+
+
+
+
+
 
 			$scope.deletePromotion = function() {
 				var token = $window.sessionStorage['jwt']
