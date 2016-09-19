@@ -58,6 +58,8 @@
             <p class="help-block" ng-if= "userForm.value.$error.required">Value is required</p>
 		</div>
 
+		<p ng-if = 'err'>{{oops}}</p>
+
 
 		<button type = 'button' ng-click = "submitKpi(user)" class = "btn btn-primary">Submit</button>
 		<div ng-if = '!create' class = 'btn btn-default' ui-sref = 'kpi({id: kpi._id})'>Close</div>
