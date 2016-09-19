@@ -45,11 +45,6 @@
 						templateUrl: 'client/api/kpi/kpi-partial.html',
 						controller: 'KPIController'
 					})
-					.state('kpi.edit', {
-						templateUrl: 'client/api/kpi/form/kpi-form-partial.html',
-						controller: 'KPIController'
-
-					})
 					.state('client.kpiCreate', {
 						url: '/kpi/:id',
 						templateUrl: 'client/api/kpi/form/kpi-form-partial.html',
@@ -58,10 +53,6 @@
 					.state('promotion', {
 						url: '/client/:clientid/promotions/:promoid',
 						templateUrl: 'client/api/promotions/promotions-partial.html',
-						controller: 'PromotionController'
-					})
-					.state('promotion.edit', {
-						templateUrl: 'client/api/promotions/form/promotions-form-partial.html',
 						controller: 'PromotionController'
 					})
 					.state('client.promotionCreate', {
@@ -446,8 +437,6 @@
 	.controller('KPIController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
 		function($scope, $state, $http, $window, $stateParams, $q) {
 
-			$scope.create = false
-
 			 $scope.showStatus = function() {
 			    var selected = $filter('filter')($scope.statuses, {value: $scope.user.status});
 			    return ($scope.user.status && selected.length) ? selected[0].text : 'Not set'
@@ -543,39 +532,7 @@
 				})
 
 			}
-
-			$scope.submitKpi = function(kpi) {
-				kpi['type'] = kpi['type']['listValue']
-				var token = $window.sessionStorage['jwt']
-
-				$http.put('/api/clients/' + $stateParams['clientid']
-				 + '/kpis/' + $stateParams['kpiid'], kpi,{
-					headers: {
-						'Authorization': `Bearer ${token}`
-					}
-				})
-				.success(function(data){
-					var params = {clientid: $stateParams['clientid'], kpiid: $stateParams['kpiid'] }
-					$state.reload()
-				})
-				.error(function(err) {
-					console.log(err)
-				})
-			}
-
-// Where to store all the list options
-			$scope.myList = [{
-				    listValue: "sale"
-			      }, {
-			        listValue: "attendance"
-			      }, {
-			        listValue: "calls"
-			      }, {
-			        listValue: "refferals"
-			 }]
   		
-			
-
 			function getKpi(){
 				$http.get('/api/clients/' + $stateParams['clientid'] 
 						+ '/kpis/' + $stateParams['kpiid'])
@@ -658,17 +615,6 @@
 	.controller('PromotionController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
 		function($scope, $state, $http, $window, $stateParams, $q) {
 
-			$scope.create = false
-
-			$scope.myList = [{
-				    listValue: "sale"
-			      }, {
-			        listValue: "attendance"
-			      }, {
-			        listValue: "calls"
-			      }, {
-			        listValue: "referals"
-			 }]
 
 			$scope.types = [
 				{value: 1, text: 'sale'},
@@ -749,7 +695,6 @@
 				var token = $window.sessionStorage['jwt']
 				$scope.promotion[field] = data
 
-
 				$http.put('/api/clients/' + $stateParams['clientid']
 				 + '/promotions/' + $stateParams['promoid'], $scope.promotion,{
 					headers: {
@@ -798,25 +743,6 @@
 					})
 				})
 
-			}
-
-			$scope.submitPromotion = function(promotion) {
-				promotion['type'] = promotion['type']['listValue']
-				var token = $window.sessionStorage['jwt']
-
-				$http.put('/api/clients/' + $stateParams['clientid']
-				 + '/promotions/' + $stateParams['promoid'], promotion,{
-					headers: {
-						'Authorization': `Bearer ${token}`
-					}
-				})
-				.success(function(data){
-					var params = {clientid: $stateParams['clientid'], promoid: $stateParams['promoid'] }
-					$state.reload()
-				})
-				.error(function(err) {
-					console.log(err)
-				})
 			}
 
 			function getPromotions(){

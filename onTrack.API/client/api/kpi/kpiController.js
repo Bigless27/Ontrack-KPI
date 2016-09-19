@@ -3,8 +3,6 @@
 	.controller('KPIController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
 		function($scope, $state, $http, $window, $stateParams, $q) {
 
-			$scope.create = false
-
 			 $scope.showStatus = function() {
 			    var selected = $filter('filter')($scope.statuses, {value: $scope.user.status});
 			    return ($scope.user.status && selected.length) ? selected[0].text : 'Not set'
@@ -100,39 +98,7 @@
 				})
 
 			}
-
-			$scope.submitKpi = function(kpi) {
-				kpi['type'] = kpi['type']['listValue']
-				var token = $window.sessionStorage['jwt']
-
-				$http.put('/api/clients/' + $stateParams['clientid']
-				 + '/kpis/' + $stateParams['kpiid'], kpi,{
-					headers: {
-						'Authorization': `Bearer ${token}`
-					}
-				})
-				.success(function(data){
-					var params = {clientid: $stateParams['clientid'], kpiid: $stateParams['kpiid'] }
-					$state.reload()
-				})
-				.error(function(err) {
-					console.log(err)
-				})
-			}
-
-// Where to store all the list options
-			$scope.myList = [{
-				    listValue: "sale"
-			      }, {
-			        listValue: "attendance"
-			      }, {
-			        listValue: "calls"
-			      }, {
-			        listValue: "refferals"
-			 }]
   		
-			
-
 			function getKpi(){
 				$http.get('/api/clients/' + $stateParams['clientid'] 
 						+ '/kpis/' + $stateParams['kpiid'])

@@ -3,17 +3,6 @@
 	.controller('PromotionController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
 		function($scope, $state, $http, $window, $stateParams, $q) {
 
-			$scope.create = false
-
-			$scope.myList = [{
-				    listValue: "sale"
-			      }, {
-			        listValue: "attendance"
-			      }, {
-			        listValue: "calls"
-			      }, {
-			        listValue: "referals"
-			 }]
 
 			$scope.types = [
 				{value: 1, text: 'sale'},
@@ -94,7 +83,6 @@
 				var token = $window.sessionStorage['jwt']
 				$scope.promotion[field] = data
 
-
 				$http.put('/api/clients/' + $stateParams['clientid']
 				 + '/promotions/' + $stateParams['promoid'], $scope.promotion,{
 					headers: {
@@ -143,25 +131,6 @@
 					})
 				})
 
-			}
-
-			$scope.submitPromotion = function(promotion) {
-				promotion['type'] = promotion['type']['listValue']
-				var token = $window.sessionStorage['jwt']
-
-				$http.put('/api/clients/' + $stateParams['clientid']
-				 + '/promotions/' + $stateParams['promoid'], promotion,{
-					headers: {
-						'Authorization': `Bearer ${token}`
-					}
-				})
-				.success(function(data){
-					var params = {clientid: $stateParams['clientid'], promoid: $stateParams['promoid'] }
-					$state.reload()
-				})
-				.error(function(err) {
-					console.log(err)
-				})
 			}
 
 			function getPromotions(){
