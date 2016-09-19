@@ -19,6 +19,10 @@
 
 
 			$scope.submitKpi = function(kpi) {
+				$scope.$broadcast('show-errors-check-validity');
+
+				if($scope.userForm.$invalid){return;}
+
 				kpi['type'] = kpi['type']['listValue']
 				var token = $window.sessionStorage['jwt']
 

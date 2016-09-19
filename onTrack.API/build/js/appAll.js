@@ -621,6 +621,41 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('MainController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+
+			function getClients() {
+				$http.get('api/clients')
+					.success(function(data) {
+						$scope.clients = data
+					})
+					.error(function(err) {
+						console.log(err);
+					})
+			}
+
+			getClients()
+
+			$scope.optionsList = [
+			  {id: 1,  name : "Java"},
+			  {id: 2,  name : "C"},
+			  {id: 3,  name : "C++"},
+			  {id: 4,  name : "AngularJs"},
+			  {id: 5,  name : "JavaScript"}
+			];
+
+
+
+
+			$scope.logout = function() {
+				$window.sessionStorage.clear()
+				$state.go('login')
+			}
+		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('PromotionController', ['$scope', '$state', '$http', '$window', '$stateParams',
 		function($scope, $state, $http, $window, $stateParams) {
 
@@ -705,41 +740,6 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('MainController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
-
-			function getClients() {
-				$http.get('api/clients')
-					.success(function(data) {
-						$scope.clients = data
-					})
-					.error(function(err) {
-						console.log(err);
-					})
-			}
-
-			getClients()
-
-			$scope.optionsList = [
-			  {id: 1,  name : "Java"},
-			  {id: 2,  name : "C"},
-			  {id: 3,  name : "C++"},
-			  {id: 4,  name : "AngularJs"},
-			  {id: 5,  name : "JavaScript"}
-			];
-
-
-
-
-			$scope.logout = function() {
-				$window.sessionStorage.clear()
-				$state.go('login')
-			}
-		
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('SettingController', ['$scope', '$state', '$http', '$window', '$stateParams',
 		function($scope, $state, $http, $window, $stateParams) {
 
@@ -757,28 +757,6 @@
 			getSettings()
 
 		
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
-		$scope.signUp = function(user) {
-			$scope.$broadcast('show-errors-check-validity')
-
-			if ($scope.userForm.$invalid){return;}
-			$scope.err = false
-			$http.post('api/users', user)
-				.success(function(data) {
-					$scope.err = false
-					$window.sessionStorage.jwt = data['token']
-					$state.go('main')
-				})
-				.error(function(error) {
-					$scope.err = true
-					$scope.errMessage = error.message
-				})
-		}
 	}])
 }());
 (function() {
@@ -873,6 +851,28 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+		$scope.signUp = function(user) {
+			$scope.$broadcast('show-errors-check-validity')
+
+			if ($scope.userForm.$invalid){return;}
+			$scope.err = false
+			$http.post('api/users', user)
+				.success(function(data) {
+					$scope.err = false
+					$window.sessionStorage.jwt = data['token']
+					$state.go('main')
+				})
+				.error(function(error) {
+					$scope.err = true
+					$scope.errMessage = error.message
+				})
+		}
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('ClientFormController', ['$scope', '$state', '$http', '$window', 
 		function($scope, $state, $http, $window) {
 
@@ -945,6 +945,10 @@
 
 
 			$scope.submitKpi = function(kpi) {
+				$scope.$broadcast('show-errors-check-validity');
+
+				if($scope.userForm.$invalid){return;}
+
 				kpi['type'] = kpi['type']['listValue']
 				var token = $window.sessionStorage['jwt']
 
