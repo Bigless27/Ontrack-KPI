@@ -78,6 +78,11 @@
 						templateUrl:'client/api/admin/admin-add-partial.html',
 						controller: 'AdminController'
 					})
+					.state('user', {
+						url: '/user/:id',
+						templateUrl: 'client/api/users/user-partial.html',
+						controller: 'UserController'
+					})
 
 			}])
 			.run(function(editableOptions) {

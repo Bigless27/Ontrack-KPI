@@ -34,23 +34,14 @@ h1{
 }
 
 /*admin add*/
-.scrollable-menu {
+#usersList {
 	padding-left: 10px;
     height: auto;
-    max-height: 140px;
+    max-height: 120px;
     overflow-x: hidden;
-    #admin-lable{
-    	font-size: 25px;
+    ul{
+    	list-style: none;
     }
-    input{
-    	/*display: none;*/ /*hide checkboxes*/
-    }
- /*   input:checked + span{
-    	border: 1px solid red;
-    	background-color: #a8a8a8;
-    }*/
-
-    
 }
 /*make radio list vertical*/
 .editable-radiolist label {

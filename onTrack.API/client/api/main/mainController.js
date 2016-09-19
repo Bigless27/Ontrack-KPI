@@ -13,6 +13,17 @@
 					})
 			}
 
+			function getUsers() {
+				$http.get('api/users')
+					.success(function(data) {
+						$scope.users = data
+					})
+					.error(function(err) {
+						console.log(err)
+					})
+			}
+
+			getUsers() 
 			getClients()
 
 			$scope.optionsList = [

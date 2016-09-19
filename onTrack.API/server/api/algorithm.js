@@ -25,7 +25,6 @@ exports.lookUpPromotions = function(doc) {
 						return console.log(err);
 					} else {
 						
-
 						var matchingKpis = getKpis(client.kpis, doc.items[0].type)
 
 						var evaluatedValue = parseKpisValue(matchingKpis, doc)
@@ -59,7 +58,6 @@ function getActivePromotions(current, promotions) {
 	var activeArray = []
 
 	promotions.forEach(function(promo) {
-
 		if (promo.startDate < current < promo.endDate){
 			activeArray.push(promo);
 		}
@@ -82,13 +80,11 @@ function getMatchingPromotions(promotions, type) {
 function parseKpisValue(kpis, activity) {
 	var solution = 0
 	kpis.forEach(function(kpi) {
-
 		var formulas = activity.items[0].value[0].toObject()
+		
 		//set all variables
 		_.forIn(formulas, function(value, key) {
 			parser.set(key + '', value)
-
-
 		})
 
 		solution += parser.eval(kpi.value);
@@ -101,7 +97,6 @@ function updatePromoProgress(value, progress, promos) {
 	promos.forEach(function(promo) {
 
 		progress.forEach(function(prog) {
-			
 			if(promo._id.toString() === prog['promotionId'].toString()){
 				prog['value'] += value
 				prog.save(function(err, saved){

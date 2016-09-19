@@ -1,8 +1,8 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var algorithm = require('../algorithm')
+var algorithm = require('../../algorithm')
 var _ = require('lodash')
-var User = require('../user/userModel')
+var User = require('../../user/userModel')
 
 var UserActivitySchema = new Schema({
 	items: [{
@@ -64,8 +64,6 @@ UserActivitySchema.post('save', function(doc) {
 		}, function(err) {
 			console.log(err)
 	})
-
-
 	algorithm.lookUpPromotions(doc)
 })
 

@@ -44,17 +44,22 @@
 			<div class = "input-group">
 				<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
 				<input 
+					ng-click = 'expression()'
 					name = 'value'
 					type = "value"
 					ng-model = "user.value" 
 					ng-init = 'user.value = kpi.value'
 					class = "form-control"
-					placeholder = "enter new value"
+					placeholder = "Enter a expression"
 					value = 'value' 
 					required
 				>
             </div>
             <p class="help-block" ng-if= "userForm.value.$error.required">Value is required</p>
+		</div>
+
+		<div id = 'sandbox' ng-if = 'sandbox'>
+			
 		</div>
 
 		<p ng-if = 'err'>{{oops}}</p>

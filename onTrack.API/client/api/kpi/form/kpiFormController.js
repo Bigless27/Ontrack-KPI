@@ -17,6 +17,10 @@
 			        listValue: "refferals"
 			 }]
 
+			 $scope.expression = function() {
+			 	console.log('hiiii')
+			 }
+
 
 			$scope.submitKpi = function(kpi) {
 				$scope.$broadcast('show-errors-check-validity');

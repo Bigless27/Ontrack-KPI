@@ -4,13 +4,33 @@
 	<div class = 'btn btn-danger' ng-click = 'logout()'>Logout</div>
 </nav>
 
- <div  class = "login jumbotron center-block">
- 	<h2>My Clients</h2>
- 	<ul ng-repeat = 'client in clients'>
- 		<li><a ui-sref = 'client({id: client._id})'>{{client.name}}</a></li>
- 	</ul>
- 	<div id = 'create-client' ui-view></div>
- 	<div ui-sref = 'main.createClient' class = 'btn btn-default'> Create Client</div>
+ <div class = "jumbotron center-block">
+ 	<div>
+	 	<h2>My Clients</h2>
+	 	<ul ng-repeat = 'client in clients'>
+	 		<li>
+	 			<a ui-sref = 'client({id: client._id})'>{{client.name}}</a>
+	 		</li>
+	 	</ul>
+	 	<div id = 'create-client' ui-view></div>
+	 	<div ui-sref = 'main.createClient' class = 'btn btn-default'> Create Client</div>
+	 	
+ 	</div>
+
+ 	<div>
+	 	<h2>All Users</h2>
+
+	 	<input ng-model = 'query' type = 'text' placeholder = 'Search Users'>
+	 	<div id = 'usersList'>
+		 	<ul ng-repeat = "user in users | filter: query | orderBy: sortField: reverse" >
+		 		<li>
+		 			<a ui-sref = 'user({id: user._id})'>{{user.firstName}} {{user.lastName}}</a>
+		 		</li>
+		 	</ul>
+	 	</div>
+ 	</div>
+
+
 
  </div>
 

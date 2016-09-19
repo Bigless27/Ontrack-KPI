@@ -11,8 +11,7 @@ router.get('/me', checkUser, controller.me);
 router.get('restricted', checkUser, controller.less)
 
 //nested routes not in use anymore
-// router.use('/:id/settings', require('./settings/settingsRoutes'));
-// router.use('/:id/activity', require('./activity/activityRoutes'));
+	router.use('/:id/activity', require('./activity/activityRoutes'));
 //
 
 

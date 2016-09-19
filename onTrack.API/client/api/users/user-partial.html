@@ -1,0 +1,31 @@
+<table class = 'table table-striped'>
+	<tr>
+		<th>First Name</th>
+		<td>{{user.firstName}}</td>
+	</tr>
+	<tr>
+		<th>Last Name</th>
+		<td>{{user.lastName}}</td>
+	</tr>
+	<tr>
+		<th>Email</th>
+		<td>{{user.email}}</td>
+	</tr>
+	<tr>
+		<th>Date Joined</th>
+		<td>{{user.dateJoined | date: 'medium'}}</td>
+	</tr>
+</table>
+
+<div>
+	<h2>Current Activity</h2>
+	<ul ng-repeat = 'activity in user.activity'>
+		<li>
+			{{activity || "empty"}}
+		</li>
+	</ul>
+</div>
+
+<h2>hello</h2>
+
+<div class = 'btn btn-default' ui-sref = 'main'>Back</div>
