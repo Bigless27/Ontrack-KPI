@@ -106,21 +106,12 @@ exports.post = function(req, res, next) {
   newclient.admins = req.user
   newclient.usersClients = req.user
 
-  Client.find({'name': newclient.name})
+  Client.create(newclient)
     .then(function(client) {
-      if(!client){
-        Client.create(newclient)
-          .then(function(client) {
-            res.json(client);
-          }, function(err) {
-            next(err);
-          });
-      }else{
-        res.status(500).send({message: 'Name is already Taken'})
-      }
+      res.json(client);
     }, function(err) {
-      next(err)
-    })
+      next(err);
+    });
 
 };
 

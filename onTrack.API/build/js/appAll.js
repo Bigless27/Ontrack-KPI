@@ -444,8 +444,6 @@
 
 			$scope.deleteKpi = function() {
 				var token = $window.sessionStorage['jwt']
-
-
 				swal({
 				  title: "Are you sure?",
 				  text: "You will not be able to recover this client!",
@@ -903,29 +901,40 @@
 
 			$scope.errorDisplay = false
 
-			$scope.createClient = function(user){
+			$scope.createClient = function(data){
 				var token = $window.sessionStorage['jwt']
 
-				$http.post('/api/clients' , user ,{
-					headers: {
-						'Authorization': `Bearer ${token}`
-					}
+
+				var names = $scope.clients.filter(function(client) {
+					return client.name == data.name
 				})
-				.success(function(data){
-					var clientId = {'id': data._id + ''}
-					$state.go('client',clientId )
-				})
-				.error(function(err) {
+
+				if(names.length > 0){
 					$scope.errorDisplay = true
-					$scope.oops = err.message
-				})
+					$scope.oops = 'Name is already taken!'
+					return
+				}
+				else{
+					$http.post('/api/clients' , data ,{
+						headers: {
+							'Authorization': `Bearer ${token}`
+						}
+					})
+					.success(function(data){
+						var clientId = {'id': data._id + ''}
+						$state.go('client',clientId )
+					})
+					.error(function(err) {
+						$scope.errorDisplay = true
+						$scope.oops = err.message
+					})
+				}
 
 			}
 
 			function getAllUsers() {
 				$http.get('/api/users')
 					.success(function(users){
-
 						users.forEach(function(user){
 							if(user){
 								$scope.optionsList.push(

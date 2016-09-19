@@ -10,8 +10,6 @@
 
 			$scope.deleteKpi = function() {
 				var token = $window.sessionStorage['jwt']
-
-
 				swal({
 				  title: "Are you sure?",
 				  text: "You will not be able to recover this client!",
