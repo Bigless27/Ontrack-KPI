@@ -91,7 +91,7 @@
 
 
     <button type = 'button' ng-click = "createUser(user)" class = "btn btn-primary">Submit</button>
-    <p style = 'color: red;' ng-if = 'err'>{{errMessage}}</p>
+    <button class = 'btn btn-default' ui-sref = "main">Close</button>
+    <p style = 'color: red;' ng-if = 'errorDisplay'>{{oops}}</p>
     </form>
-  <button class = 'btn btn-default signup-button' ui-sref = "login"> Click here to login</button>
 </div>
