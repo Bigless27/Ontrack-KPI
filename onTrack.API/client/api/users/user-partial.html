@@ -1,19 +1,42 @@
 <table class = 'table table-striped'>
 	<tr>
 		<th>First Name</th>
-		<td>{{user.firstName}}</td>
+		<td editable-text = 'user.firstName' e-form = 'firstName' onbeforesave = 'updateFirstName($data)'>{{user.firstName || 'empty'}}</td>
+		<td>
+			<a href="" ng-click="firstName.$show()" ng-hide="firstName.$visible">Edit</a>
+		</td>
 	</tr>
 	<tr>
 		<th>Last Name</th>
-		<td>{{user.lastName}}</td>
+		<td editable-text = 'user.lastName' e-form = 'lastName' onbeforesave = 'updateLastName($data)'>{{user.lastName || 'empty'}}</td>
+		<td>
+			<a href="" ng-click="lastName.$show()" ng-hide="lastName.$visible">Edit</a>
+		</td>
 	</tr>
 	<tr>
 		<th>Email</th>
-		<td>{{user.email}}</td>
+		<td id = 'user-email-edit' style = 'color:black;' editable-email='user.email' onbeforesave = 'updateEmail($data)'>{{user.email || 'empty'}}</td>
+		<td>
+			<a style = 'cursor: pointer;' class = 'user-email-edit-button'>Edit</a>
+		</td>
 	</tr>
 	<tr>
 		<th>Date Joined</th>
-		<td>{{user.dateJoined | date: 'medium'}}</td>
+		<td>
+			<span
+				id = 'user-dateJoined-edit'
+				e-min-year = '2016'
+				e-max-year = '2025'
+				editable-combodate = 'user.dateJoined' 
+				style = 'color:black; border-bottom:none;'
+				onbeforesave = 'updateDateJoined($data)'
+				>
+				{{(user.dateJoined | date: 'medium') || 'empty'}}
+			</span>
+		</td>
+		<td>
+			<a class = 'user-dateJoined-edit-button' href="">Edit</a>
+		</td>
 	</tr>
 </table>
 

@@ -6,6 +6,7 @@
 			$scope.logUserIn = function(user) {
 				$scope.$broadcast('show-errors-check-validity');
 
+
 				if($scope.userForm.$invalid){return;}
 
 				$scope.err = true
