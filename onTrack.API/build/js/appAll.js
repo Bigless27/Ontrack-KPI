@@ -1,5 +1,5 @@
 (function() {
-	angular.module('onTrack', ['ui.router', 'ui.bootstrap.showErrors', 'multipleSelect', 'xeditable'])
+	angular.module('onTrack', ['ui.router', 'ui.bootstrap.showErrors', 'multipleSelect', 'xeditable', 'ngTagsInput'])
 	.config(['$stateProvider', '$urlRouterProvider', 'showErrorsConfigProvider',
 			function($stateProvider, $urlRouterProvider, showErrorsConfigProvider) {
 
@@ -1086,7 +1086,11 @@
 	angular.module('onTrack')
 	.controller('MainSettingsFormController', ['$scope', '$state', '$window', '$http',
 	 function($scope, $state, $window, $http) {
-	 	
+
+	 	$scope.submitSetting = function(setting) {
+	 		console.log(setting)
+	 	}
+
 
 
 	}])
