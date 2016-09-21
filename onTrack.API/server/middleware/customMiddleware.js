@@ -1,6 +1,6 @@
 var config = require('../config/config');
 var Client = require('../api/client/clientModel')
-var User = require('../api/user/userModel')
+var User = require('../api/users/userModel')
 var _ = require('lodash')
 
 exports.getClient = function() {

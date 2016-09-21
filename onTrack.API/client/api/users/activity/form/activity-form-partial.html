@@ -1,0 +1,72 @@
+<form id = 'edit' name ="userForm" role = "form" data-toggle = 'validator'>
+		<h1>Activity</h1>
+
+		<div class = "form-group" show-errors>
+			<label for = "type">Type</label>
+			<div class = "input-group">
+				<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+
+				<select 
+					name ='type'
+					ng-model = "user.type"
+					ng-init = "user.type = {listValue: activity.type}"
+					ng-options="list.listValue for list in myList track by list.listValue"
+					class = "form-control"
+					id = "type"
+					required
+				>
+				</select>
+            </div>
+           <p class="help-block" ng-if="userForm.type.$error.required">The user's type is required</p>
+		</div>
+
+		<div class = "form-group" show-errors>
+			<label for = "type">Name</label>
+			<div class = "input-group">
+				<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+
+				<select 
+					name ='name'
+					ng-model = "user.name"
+					ng-init = "user.name = {listValue:activity.type}"
+					ng-options="list.listValue for list in myList track by list.listValue"
+					class = "form-control"
+					id = "type"
+					required
+				>
+				</select>
+            </div>
+           <p class="help-block" ng-if="userForm.type.$error.required">The user's type is required</p>
+		</div>
+
+		
+
+		<div class = "form-group" show-errors>
+			<label for = "value" class = 'control-label'>Value</label>
+			<div class = "input-group">
+				<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+				<input 
+					ng-click = 'expression()'
+					name = 'value'
+					type = "number"
+					ng-model = "user.value" 
+					ng-init = 'user.value = kpi.value'
+					class = "form-control"
+					placeholder = "Enter a value"
+					value = 'value' 
+					required
+				>
+            </div>
+            <p class="help-block" ng-if= "userForm.value.$error.required">Value is required</p>
+		</div>
+
+		
+			
+		</div>
+
+		<p ng-if = 'err'>{{oops}}</p>
+
+
+		<button type = 'button' ng-click = "submitKpi(user)" class = "btn btn-primary">Submit</button>
+		<div class = 'btn btn-default' ui-sref = 'user({id: userId})'>Close</div>
+</form>

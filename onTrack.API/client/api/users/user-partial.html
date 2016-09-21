@@ -41,7 +41,13 @@
 </table>
 
 <div>
-	<h2>Current Activity</h2>
+	<h2 style = 'display: inline-block'>Current Activity</h2>
+	<span 
+		class = 'btn btn-primary' 
+		ui-sref = 'user.activityCreate'
+		>Create Activity
+	</span>
+	<div ui-view></div>
 	<ul ng-repeat = 'activity in user.activity'>
 		<li>
 			{{activity || "empty"}}
@@ -49,7 +55,7 @@
 	</ul>
 </div>
 
-<h2>hello</h2>
 
+<div style	= 'height: 100px;'></div>
 <button class = 'btn btn-default' ui-sref = 'main'>Back</button>
 <button class = 'btn btn-danger' ng-click = 'deleteUser()'>Delete</button>

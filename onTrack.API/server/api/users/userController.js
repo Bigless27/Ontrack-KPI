@@ -48,8 +48,6 @@ exports.put = function(req, res, next) {
 
   _.merge(user, update);
 
-  res.json(user)
-
   user.save(function(err, saved) {
     if (err) {
       next(err);

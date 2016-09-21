@@ -77,7 +77,6 @@
 					}
 				})
 				.success(function(data){
-					console.log(data)
 					$state.reload()
 				})
 				.error(function(err) {

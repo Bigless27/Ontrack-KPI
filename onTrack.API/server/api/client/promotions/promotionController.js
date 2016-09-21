@@ -1,5 +1,5 @@
 var Promotion = require('./promotionModel');
-var Progress = require('../../userPromoProgress/progressModel')
+var Progress = require('../../users/progress/progressModel')
 var Client = require('../clientModel')
 var _ = require('lodash');
 

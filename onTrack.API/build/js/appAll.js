@@ -45,48 +45,62 @@
 						templateUrl: 'client/api/client/client-partial.html',
 						controller: 'ClientController'
 					})
-					.state('kpi', {
-						url: '/client/:clientid/kpis/:kpiid',
-						templateUrl: 'client/api/kpi/kpi-partial.html',
-						controller: 'KPIController'
-					})
 					.state('client.kpiCreate', {
 						url: '/kpi/:id',
-						templateUrl: 'client/api/kpi/form/kpi-form-partial.html',
+						templateUrl: 'client/api/client/kpi/form/kpi-form-partial.html',
 						controller: 'KPIFormController'
-					})
-					.state('promotion', {
-						url: '/client/:clientid/promotions/:promoid',
-						templateUrl: 'client/api/promotions/promotions-partial.html',
-						controller: 'PromotionController'
 					})
 					.state('client.promotionCreate', {
 						url: '/client/:id',
-						templateUrl: 'client/api/promotions/form/promotions-form-partial.html',
+						templateUrl: 'client/api/client/promotions/form/promotions-form-partial.html',
 						controller: 'PromotionFormController'
-					})
-					.state('setting', {
-						url: '/client/:clientid/settings/:settingid',
-						templateUrl: 'client/api/settings/settings-partial.html',
-						controller: 'SettingController'
 					})
 					.state('client.settingCreate',{
 						url: 'client/:id',
-						templateUrl: 'client/api/settings/settings-create-partial.html',
+						templateUrl: 'client/api/client/settings/settings-create-partial.html',
 						controller: 'ClientController'
 					})
 					.state('client.addUser', {
-						templateUrl:'client/api/admin/admin-add-partial.html',
+						templateUrl:'client/api/client/admin/admin-add-partial.html',
 						controller: 'AddUserController'
 					})
 					.state('client.addAdmin', {
-						templateUrl:'client/api/admin/admin-add-partial.html',
+						templateUrl:'client/api/client/admin/admin-add-partial.html',
 						controller: 'AdminController'
+					})
+					.state('clientSetting', {
+						url: '/client/:clientid/settings/:settingid',
+						templateUrl: 'client/api/client/settings/settings-partial.html',
+						controller: 'ClientSettingController'
+					})
+					.state('kpi', {
+						url: '/client/:clientid/kpis/:kpiid',
+						templateUrl: 'client/api/client/kpi/kpi-partial.html',
+						controller: 'KPIController'
+					})
+					.state('promotion', {
+						url: '/client/:clientid/promotions/:promoid',
+						templateUrl: 'client/api/client/promotions/promotions-partial.html',
+						controller: 'PromotionController'
 					})
 					.state('user', {
 						url: '/user/:id',
 						templateUrl: 'client/api/users/user-partial.html',
 						controller: 'UserController'
+					})
+					.state('user.activityCreate', {
+						templateUrl: 'client/api/clinet/activity/form/activity-form-partial.html',
+						controller: 'ActivityFormController'
+					})
+					.state('setting', {
+						templateUrl: 'client/api/main-settings/settings-partial.html',
+						controller: 'MainSettingsController',
+						url: '/settings'
+					})
+					.state('setting.settingCreate',{
+						templateUrl: 'client/api/main-settings/form/settings-form-partial.html',
+						controller: 'MainSettingsFormController',
+						url: '/create'
 					})
 
 			}])
@@ -217,95 +231,6 @@
 			}
 		}
 	})
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('AdminController', ['$scope', '$state', '$http', '$window', '$stateParams',
-		function($scope, $state, $http, $window, $stateParams) {
-		
-
-
-		$scope.highlight = function(x) {
-			if ($(`span:contains(${x.email})`).hasClass('check')){
-
-				$(`span:contains(${x.email})`).parent().parent().css({"background-color":"transparent"})
-				$(`span:contains(${x.email})`).removeClass('check')
-			}
-			else{
-				$(`span:contains(${x.email})`).parent().parent().css({"background-color":"#a8a8a8"})
-				$(`span:contains(${x.email})`).addClass('check')
-			}
-
-		}
-
-		$scope.user = {
-
-		  };
-
-		$scope.uncheckAll = function() {
-		    $scope.user.roles = [];
-		};
-
-
-		$scope.add = function(data){
-				var token = $window.sessionStorage['jwt']
-
-				var client = {admins:[]}
-
-
-				$scope.client.admins.forEach(function(user) {
-					client.admins.push({id: user._id, email: user.email, firstName: user.firstName, lastName: user.lastName})
-				})
-
-
-				data.users.forEach(function(user){
-					if (client.admins.filter(function(e){return e.email == user.email}).length === 0) {
-					 	client.admins.push({id:user._id, email: user.email, firstName: user.firstName, lastName: user.lastName})
-					}
-				})
-
-
-				$http.put('/api/clients/' + $stateParams['id'], client, {
-					headers: {
-						'Authorization': `Bearer ${token}`
-					}
-				})
-				.success(function(data) {
-					$state.reload() //look into making this two way bound
-
-				})
-				.error(function(err) {
-					console.log(err)
-				})
-		}
-
-
-
-		function getUsers(){
-			$http.get('/api/users')
-				.success(function(users) {
-					users.forEach(function(user){
-						if(user){
-							$scope.optionsList.push(
-									{firstName: user.firstName, lastName: user.lastName, 
-										email: user.email, fullName: user.firstName + ' ' + user.lastName}
-								)
-						}
-						else{
-							$scope.optionsList = [{name: 'No users'}]
-						}
-					})
-				})
-				.error(function(err) {
-					console.log(err);
-				})
-		}
-
-		$scope.optionsList = []
-
-		getUsers()
-
-	}])
 }());
 (function() {
 	angular.module('onTrack')
@@ -444,121 +369,6 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('KPIController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
-		function($scope, $state, $http, $window, $stateParams, $q) {
-
-			 $scope.showStatus = function() {
-			    var selected = $filter('filter')($scope.statuses, {value: $scope.user.status});
-			    return ($scope.user.status && selected.length) ? selected[0].text : 'Not set'
-			}
-
-			$scope.deleteKpi = function() {
-				var token = $window.sessionStorage['jwt']
-				swal({
-				  title: "Are you sure?",
-				  text: "You will not be able to recover this client!",
-				  type: "warning",
-				  showCancelButton: true,
-				  confirmButtonColor: "#DD6B55",
-				  confirmButtonText: "Yes, delete it!",
-				  closeOnConfirm: true,
-				  html: false
-				}, function(){
-					$http.delete('/api/clients/' + $stateParams['clientid']
-					 + '/kpis/' + $stateParams['kpiid'], {
-						headers: {
-							'Authorization': `Bearer ${token}`
-						}
-					})
-					.success(function(data){
-						var clientId = {'id': $stateParams['clientid'] + ''}
-						$state.go('client',clientId )
-					})
-					.error(function(err) {
-						console.log(err)
-					})
-				})
-			}
-
-			$scope.updateName = function(data) {
-				if (data === ''){
-					return 'Name is Required'
-				}
-				else if (data.length < 2){
-					return 'Name must be more than one character'
-				}
-				return updateKpi(data, 'name')
-			}
-
-			$scope.types = [
-				{value: 1, text: 'sale'},
-				{value: 2, text: 'attendance'},
-				{vale: 3, text: 'refferals'},
-				{value: 4, text: 'calls'}
-
-			]
-
-			$scope.updateType = function(data) {
-				if (data === ''){
-					return 'Type is required'
-				}
-				return updateKpi(data, 'type')
-			}
-
-			//have type show on edit click
-			$(document).on('click','.kpi-edit-button', function(){
-				$('#kpi-type-edit')[0].click()
-			} )
-			
-
-
-			$scope.updateValue = function(data) {
-				if (data === ''){
-					return 'Value is required'
-				}
-				return updateKpi(data, 'value')
-			}
-
-
-			function updateKpi(data, field){
-				var d = $q.defer();
-				var token = $window.sessionStorage['jwt']
-				$scope.kpi[field] = data
-
-
-				$http.put('/api/clients/' + $stateParams['clientid']
-				 + '/kpis/' + $stateParams['kpiid'], $scope.kpi,{
-					headers: {
-						'Authorization': `Bearer ${token}`
-					}
-				})
-				.success(function(data){
-					$state.reload()
-				})
-				.error(function(err) {
-					console.log(err)
-				})
-
-			}
-  		
-			function getKpi(){
-				$http.get('/api/clients/' + $stateParams['clientid'] 
-						+ '/kpis/' + $stateParams['kpiid'])
-							.success(function(data) {
-								$scope.kpi = data;
-							})
-							.error(function(err) {
-								console.log(err);
-							})
-			}
-
-			getKpi()
-
-		
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('LoginController', ['$scope', '$state', '$window', '$http',
 	 function($scope, $state, $window, $http) {
 
@@ -632,176 +442,11 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('SettingController', ['$scope', '$state', '$http', '$window', '$stateParams',
-		function($scope, $state, $http, $window, $stateParams) {
-
-			function getSettings(){
-				$http.get('/api/clients/' + $stateParams['clientid'] 
-						+ '/settings/' + $stateParams['settingid'])
-							.success(function(data) {
-								$scope.setting = data;
-							})
-							.error(function(err) {
-								console.log(err);
-							})
-			}
-
-			getSettings()
-
-		
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('PromotionController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
-		function($scope, $state, $http, $window, $stateParams, $q) {
-
-
-			$scope.types = [
-				{value: 1, text: 'sale'},
-				{value: 2, text: 'attendance'},
-				{vale: 3, text: 'refferals'},
-				{value: 4, text: 'calls'}
-
-			]
-
-			//have type show on edit click
-			$(document).on('click','.promotion-startDate-edit-button', function(){
-				$('#promotion-startDate-edit')[0].click()
-			})
-			.on('click','.promotion-endDate-edit-button', function(){
-				$('#promotion-endDate-edit')[0].click()
-			})
-			.on('click', '.promotion-edit-type-button', function(){
-				$('#promotion-type-edit')[0].click()
-			})
-
-
-			$scope.updateName = function(data) {
-				if (data === ''){
-					return 'Name is Required'
-				}
-				else if (data.length < 2){
-					return 'Name must be more than one character'
-				}
-				return updatePromotion(data, 'name')
-			}
-
-
-			$scope.updateType = function(data) {
-				if (data === ''){
-					return 'Type is required'
-				}
-				return updatePromotion(data, 'type')
-			}
-
-			$scope.updateCompletionValue = function(data) {
-				var reg = new RegExp('^\\d+$')
-
-				if (data === ''){
-					return 'Value is required'
-				}
-				else if (!reg.test(data)){
-					return 'Value must be an integer'
-				}
-				data['completionValue'] = parseInt(data['completionValue'])
-				return updatePromotion(data, 'completionValue')
-			}
-
-			$scope.updateDescription = function(data) {
-				if (data === '') {
-					return 'Description is required'
-				}
-				return updatePromotion(data, 'description')
-			}
-
-			$scope.updateStartDate = function(data) {
-				var today = new Date();
-				  if (data < today.toISOString()) {
-				  	return "Start Date can't be in the past"
-				  }
-				  return updatePromotion(data, 'startDate')
-			}
-
-			$scope.updateEndDate = function(data) {
-				if ($scope.promotion.startDate.toISOString() > data){
-					return 'End date must come after start date'
-				}
-				return updatePromotion(data, 'endDate')
-			}
-
-
-			function updatePromotion(data, field){
-				var d = $q.defer();
-				var token = $window.sessionStorage['jwt']
-				$scope.promotion[field] = data
-
-				$http.put('/api/clients/' + $stateParams['clientid']
-				 + '/promotions/' + $stateParams['promoid'], $scope.promotion,{
-					headers: {
-						'Authorization': `Bearer ${token}`
-					}
-				})
-				.success(function(data){
-					$state.reload()
-				})
-				.error(function(err) {
-					console.log(err)
-				})
-
-			}
+	.controller('MainSettingsController', ['$scope', '$state', '$window', '$http',
+	 function($scope, $state, $window, $http) {
 
 
 
-
-
-
-			$scope.deletePromotion = function() {
-				var token = $window.sessionStorage['jwt']
-
-				swal({
-				  title: "Are you sure?",
-				  text: "You will not be able to recover this client!",
-				  type: "warning",
-				  showCancelButton: true,
-				  confirmButtonColor: "#DD6B55",
-				  confirmButtonText: "Yes, delete it!",
-				  closeOnConfirm: true,
-				  html: false
-				}, function(){
-					$http.delete('/api/clients/' + $stateParams['clientid']
-					 + '/promotions/' + $stateParams['promoid'], {
-						headers: {
-							'Authorization': `Bearer ${token}`
-						}
-					})
-					.success(function(data){
-						var clientId = {'id': $stateParams['clientid'] + ''}
-						$state.go('client',clientId )
-					})
-					.error(function(err) {
-						console.log(err)
-					})
-				})
-
-			}
-
-			function getPromotions(){
-				$http.get('/api/clients/' + $stateParams['clientid'] 
-						+ '/promotions/' + $stateParams['promoid'])
-							.success(function(data) {
-								$scope.promotion = data;
-								$scope.promotion['startDate'] = new Date($scope.promotion.startDate) 
-								$scope.promotion['endDate'] =  new Date($scope.promotion.endDate)
-							})
-							.error(function(err) {
-								console.log(err);
-							})
-			}
-
-			getPromotions()
-
-		
 	}])
 }());
 (function() {
@@ -973,7 +618,6 @@
 					}
 				})
 				.success(function(data){
-					console.log(data)
 					$state.reload()
 				})
 				.error(function(err) {
@@ -994,6 +638,95 @@
 
 			getUser()
 		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('AdminController', ['$scope', '$state', '$http', '$window', '$stateParams',
+		function($scope, $state, $http, $window, $stateParams) {
+		
+
+
+		$scope.highlight = function(x) {
+			if ($(`span:contains(${x.email})`).hasClass('check')){
+
+				$(`span:contains(${x.email})`).parent().parent().css({"background-color":"transparent"})
+				$(`span:contains(${x.email})`).removeClass('check')
+			}
+			else{
+				$(`span:contains(${x.email})`).parent().parent().css({"background-color":"#a8a8a8"})
+				$(`span:contains(${x.email})`).addClass('check')
+			}
+
+		}
+
+		$scope.user = {
+
+		  };
+
+		$scope.uncheckAll = function() {
+		    $scope.user.roles = [];
+		};
+
+
+		$scope.add = function(data){
+				var token = $window.sessionStorage['jwt']
+
+				var client = {admins:[]}
+
+
+				$scope.client.admins.forEach(function(user) {
+					client.admins.push({id: user._id, email: user.email, firstName: user.firstName, lastName: user.lastName})
+				})
+
+
+				data.users.forEach(function(user){
+					if (client.admins.filter(function(e){return e.email == user.email}).length === 0) {
+					 	client.admins.push({id:user._id, email: user.email, firstName: user.firstName, lastName: user.lastName})
+					}
+				})
+
+
+				$http.put('/api/clients/' + $stateParams['id'], client, {
+					headers: {
+						'Authorization': `Bearer ${token}`
+					}
+				})
+				.success(function(data) {
+					$state.reload() //look into making this two way bound
+
+				})
+				.error(function(err) {
+					console.log(err)
+				})
+		}
+
+
+
+		function getUsers(){
+			$http.get('/api/users')
+				.success(function(users) {
+					users.forEach(function(user){
+						if(user){
+							$scope.optionsList.push(
+									{firstName: user.firstName, lastName: user.lastName, 
+										email: user.email, fullName: user.firstName + ' ' + user.lastName}
+								)
+						}
+						else{
+							$scope.optionsList = [{name: 'No users'}]
+						}
+					})
+				})
+				.error(function(err) {
+					console.log(err);
+				})
+		}
+
+		$scope.optionsList = []
+
+		getUsers()
+
 	}])
 }());
 (function() {
@@ -1062,6 +795,343 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('KPIController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
+		function($scope, $state, $http, $window, $stateParams, $q) {
+
+			 $scope.showStatus = function() {
+			    var selected = $filter('filter')($scope.statuses, {value: $scope.user.status});
+			    return ($scope.user.status && selected.length) ? selected[0].text : 'Not set'
+			}
+
+			$scope.deleteKpi = function() {
+				var token = $window.sessionStorage['jwt']
+				swal({
+				  title: "Are you sure?",
+				  text: "You will not be able to recover this client!",
+				  type: "warning",
+				  showCancelButton: true,
+				  confirmButtonColor: "#DD6B55",
+				  confirmButtonText: "Yes, delete it!",
+				  closeOnConfirm: true,
+				  html: false
+				}, function(){
+					$http.delete('/api/clients/' + $stateParams['clientid']
+					 + '/kpis/' + $stateParams['kpiid'], {
+						headers: {
+							'Authorization': `Bearer ${token}`
+						}
+					})
+					.success(function(data){
+						var clientId = {'id': $stateParams['clientid'] + ''}
+						$state.go('client',clientId )
+					})
+					.error(function(err) {
+						console.log(err)
+					})
+				})
+			}
+
+			$scope.updateName = function(data) {
+				if (data === ''){
+					return 'Name is Required'
+				}
+				else if (data.length < 2){
+					return 'Name must be more than one character'
+				}
+				return updateKpi(data, 'name')
+			}
+
+			$scope.types = [
+				{value: 1, text: 'sale'},
+				{value: 2, text: 'attendance'},
+				{vale: 3, text: 'refferals'},
+				{value: 4, text: 'calls'}
+
+			]
+
+			$scope.updateType = function(data) {
+				if (data === ''){
+					return 'Type is required'
+				}
+				return updateKpi(data, 'type')
+			}
+
+			//have type show on edit click
+			$(document).on('click','.kpi-edit-button', function(){
+				$('#kpi-type-edit')[0].click()
+			} )
+			
+
+
+			$scope.updateValue = function(data) {
+				if (data === ''){
+					return 'Value is required'
+				}
+				return updateKpi(data, 'value')
+			}
+
+
+			function updateKpi(data, field){
+				var d = $q.defer();
+				var token = $window.sessionStorage['jwt']
+				$scope.kpi[field] = data
+
+
+				$http.put('/api/clients/' + $stateParams['clientid']
+				 + '/kpis/' + $stateParams['kpiid'], $scope.kpi,{
+					headers: {
+						'Authorization': `Bearer ${token}`
+					}
+				})
+				.success(function(data){
+					$state.reload()
+				})
+				.error(function(err) {
+					console.log(err)
+				})
+
+			}
+  		
+			function getKpi(){
+				$http.get('/api/clients/' + $stateParams['clientid'] 
+						+ '/kpis/' + $stateParams['kpiid'])
+							.success(function(data) {
+								$scope.kpi = data;
+							})
+							.error(function(err) {
+								console.log(err);
+							})
+			}
+
+			getKpi()
+
+		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('PromotionController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
+		function($scope, $state, $http, $window, $stateParams, $q) {
+
+
+			$scope.types = [
+				{value: 1, text: 'sale'},
+				{value: 2, text: 'attendance'},
+				{vale: 3, text: 'refferals'},
+				{value: 4, text: 'calls'}
+
+			]
+
+			//have type show on edit click
+			$(document).on('click','.promotion-startDate-edit-button', function(){
+				$('#promotion-startDate-edit')[0].click()
+			})
+			.on('click','.promotion-endDate-edit-button', function(){
+				$('#promotion-endDate-edit')[0].click()
+			})
+			.on('click', '.promotion-edit-type-button', function(){
+				$('#promotion-type-edit')[0].click()
+			})
+
+
+			$scope.updateName = function(data) {
+				if (data === ''){
+					return 'Name is Required'
+				}
+				else if (data.length < 2){
+					return 'Name must be more than one character'
+				}
+				return updatePromotion(data, 'name')
+			}
+
+
+			$scope.updateType = function(data) {
+				if (data === ''){
+					return 'Type is required'
+				}
+				return updatePromotion(data, 'type')
+			}
+
+			$scope.updateCompletionValue = function(data) {
+				var reg = new RegExp('^\\d+$')
+
+				if (data === ''){
+					return 'Value is required'
+				}
+				else if (!reg.test(data)){
+					return 'Value must be an integer'
+				}
+				data['completionValue'] = parseInt(data['completionValue'])
+				return updatePromotion(data, 'completionValue')
+			}
+
+			$scope.updateDescription = function(data) {
+				if (data === '') {
+					return 'Description is required'
+				}
+				return updatePromotion(data, 'description')
+			}
+
+			$scope.updateStartDate = function(data) {
+				var today = new Date();
+				  if (data < today.toISOString()) {
+				  	return "Start Date can't be in the past"
+				  }
+				  return updatePromotion(data, 'startDate')
+			}
+
+			$scope.updateEndDate = function(data) {
+				if ($scope.promotion.startDate.toISOString() > data){
+					return 'End date must come after start date'
+				}
+				return updatePromotion(data, 'endDate')
+			}
+
+
+			function updatePromotion(data, field){
+				var d = $q.defer();
+				var token = $window.sessionStorage['jwt']
+				$scope.promotion[field] = data
+
+				$http.put('/api/clients/' + $stateParams['clientid']
+				 + '/promotions/' + $stateParams['promoid'], $scope.promotion,{
+					headers: {
+						'Authorization': `Bearer ${token}`
+					}
+				})
+				.success(function(data){
+					$state.reload()
+				})
+				.error(function(err) {
+					console.log(err)
+				})
+
+			}
+
+
+
+
+
+
+			$scope.deletePromotion = function() {
+				var token = $window.sessionStorage['jwt']
+
+				swal({
+				  title: "Are you sure?",
+				  text: "You will not be able to recover this client!",
+				  type: "warning",
+				  showCancelButton: true,
+				  confirmButtonColor: "#DD6B55",
+				  confirmButtonText: "Yes, delete it!",
+				  closeOnConfirm: true,
+				  html: false
+				}, function(){
+					$http.delete('/api/clients/' + $stateParams['clientid']
+					 + '/promotions/' + $stateParams['promoid'], {
+						headers: {
+							'Authorization': `Bearer ${token}`
+						}
+					})
+					.success(function(data){
+						var clientId = {'id': $stateParams['clientid'] + ''}
+						$state.go('client',clientId )
+					})
+					.error(function(err) {
+						console.log(err)
+					})
+				})
+
+			}
+
+			function getPromotions(){
+				$http.get('/api/clients/' + $stateParams['clientid'] 
+						+ '/promotions/' + $stateParams['promoid'])
+							.success(function(data) {
+								$scope.promotion = data;
+								$scope.promotion['startDate'] = new Date($scope.promotion.startDate) 
+								$scope.promotion['endDate'] =  new Date($scope.promotion.endDate)
+							})
+							.error(function(err) {
+								console.log(err);
+							})
+			}
+
+			getPromotions()
+
+		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('ClientSettingController', ['$scope', '$state', '$http', '$window', '$stateParams',
+		function($scope, $state, $http, $window, $stateParams) {
+
+			function getSettings(){
+				$http.get('/api/clients/' + $stateParams['clientid'] 
+						+ '/settings/' + $stateParams['settingid'])
+							.success(function(data) {
+								$scope.setting = data;
+							})
+							.error(function(err) {
+								console.log(err);
+							})
+			}
+
+			getSettings()
+
+		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('MainSettingsFormController', ['$scope', '$state', '$window', '$http',
+	 function($scope, $state, $window, $http) {
+	 	
+
+
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('ActivityController', ['$scope', '$state', '$window', '$http',
+	 function($scope, $state, $window, $http) {
+
+
+
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('UserFormController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+
+			$scope.errorDisplay = false
+
+			$scope.createUser = function(user) {
+				
+				var duplicate = $scope.users.filter(function(x){
+					return x.email == user.email
+				})
+
+				if (duplicate.length > 0){
+					$scope.oops = 'Email is already taken!'
+					$scope.errorDisplay = true
+					return
+				}
+				else{
+					$http.post('/api/users', user)
+						.success(function(data){
+							$state.go('main')
+						})
+						.error(function(err) {
+							console.log(err)
+						})
+				}
+			}
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('KPIFormController', ['$scope', '$state', '$http', '$window', '$stateParams',
 		function($scope, $state, $http, $window, $stateParams) {
 			$scope.create = true
@@ -1078,10 +1148,6 @@
 			      }, {
 			        listValue: "refferals"
 			 }]
-
-			 $scope.expression = function() {
-			 	console.log('hiiii')
-			 }
 
 
 			$scope.submitKpi = function(kpi) {
@@ -1166,31 +1232,30 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('UserFormController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
+	.controller('ActivityFormController', ['$scope', '$state', '$window', '$http', '$stateParams',
+	 function($scope, $state, $window, $http, $stateParams) {
 
-			$scope.errorDisplay = false
+			$scope.userId = $stateParams['id']
 
-			$scope.createUser = function(user) {
-				
-				var duplicate = $scope.users.filter(function(x){
-					return x.email == user.email
-				})
+			$scope.myList = [{
+				    listValue: "sale"
+			      }, {
+			        listValue: "attendance"
+			      }, {
+			        listValue: "calls"
+			      }, {
+			        listValue: "refferals"
+			 }]
 
-				if (duplicate.length > 0){
-					$scope.oops = 'Email is already taken!'
-					$scope.errorDisplay = true
-					return
-				}
-				else{
-					$http.post('/api/users', user)
-						.success(function(data){
-							$state.go('main')
-						})
-						.error(function(err) {
-							console.log(err)
-						})
-				}
-			}
+			 $scope.nameList = [{
+			 	listValue: "retail sale",
+			 },{
+			 	listValue: ""
+			 }]
+
+			 $scope.createActivity = function(activity){
+
+			 }
+
 	}])
 }());

@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var _ = require('lodash')
-var User = require('../user/userModel')
+var User = require('../users/userModel')
 
 var adminSchema = new Schema({
 	email: {type: String},

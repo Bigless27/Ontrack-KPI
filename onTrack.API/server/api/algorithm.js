@@ -1,10 +1,10 @@
 var ClientCtrl = require('./client/clientController');
-var UserCtrl = require('./user/userController');
+var UserCtrl = require('./users/userController');
 var TriggerCtrl = require('./client/trigger/triggerModel');
 var math = require('mathjs');
 var _ = require('lodash');
 var parser = math.parser();
-var Progress = require('./userPromoProgress/progressModel')
+var Progress = require('./users/progress/progressModel')
 
 
 exports.lookUpPromotions = function(doc) {

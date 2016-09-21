@@ -1,6 +1,6 @@
 (function() {
 	angular.module('onTrack')
-	.controller('SettingController', ['$scope', '$state', '$http', '$window', '$stateParams',
+	.controller('ClientSettingController', ['$scope', '$state', '$http', '$window', '$stateParams',
 		function($scope, $state, $http, $window, $stateParams) {
 
 			function getSettings(){

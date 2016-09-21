@@ -45,48 +45,62 @@
 						templateUrl: 'client/api/client/client-partial.html',
 						controller: 'ClientController'
 					})
-					.state('kpi', {
-						url: '/client/:clientid/kpis/:kpiid',
-						templateUrl: 'client/api/kpi/kpi-partial.html',
-						controller: 'KPIController'
-					})
 					.state('client.kpiCreate', {
 						url: '/kpi/:id',
-						templateUrl: 'client/api/kpi/form/kpi-form-partial.html',
+						templateUrl: 'client/api/client/kpi/form/kpi-form-partial.html',
 						controller: 'KPIFormController'
-					})
-					.state('promotion', {
-						url: '/client/:clientid/promotions/:promoid',
-						templateUrl: 'client/api/promotions/promotions-partial.html',
-						controller: 'PromotionController'
 					})
 					.state('client.promotionCreate', {
 						url: '/client/:id',
-						templateUrl: 'client/api/promotions/form/promotions-form-partial.html',
+						templateUrl: 'client/api/client/promotions/form/promotions-form-partial.html',
 						controller: 'PromotionFormController'
-					})
-					.state('setting', {
-						url: '/client/:clientid/settings/:settingid',
-						templateUrl: 'client/api/settings/settings-partial.html',
-						controller: 'SettingController'
 					})
 					.state('client.settingCreate',{
 						url: 'client/:id',
-						templateUrl: 'client/api/settings/settings-create-partial.html',
+						templateUrl: 'client/api/client/settings/settings-create-partial.html',
 						controller: 'ClientController'
 					})
 					.state('client.addUser', {
-						templateUrl:'client/api/admin/admin-add-partial.html',
+						templateUrl:'client/api/client/admin/admin-add-partial.html',
 						controller: 'AddUserController'
 					})
 					.state('client.addAdmin', {
-						templateUrl:'client/api/admin/admin-add-partial.html',
+						templateUrl:'client/api/client/admin/admin-add-partial.html',
 						controller: 'AdminController'
+					})
+					.state('clientSetting', {
+						url: '/client/:clientid/settings/:settingid',
+						templateUrl: 'client/api/client/settings/settings-partial.html',
+						controller: 'ClientSettingController'
+					})
+					.state('kpi', {
+						url: '/client/:clientid/kpis/:kpiid',
+						templateUrl: 'client/api/client/kpi/kpi-partial.html',
+						controller: 'KPIController'
+					})
+					.state('promotion', {
+						url: '/client/:clientid/promotions/:promoid',
+						templateUrl: 'client/api/client/promotions/promotions-partial.html',
+						controller: 'PromotionController'
 					})
 					.state('user', {
 						url: '/user/:id',
 						templateUrl: 'client/api/users/user-partial.html',
 						controller: 'UserController'
+					})
+					.state('user.activityCreate', {
+						templateUrl: 'client/api/clinet/activity/form/activity-form-partial.html',
+						controller: 'ActivityFormController'
+					})
+					.state('setting', {
+						templateUrl: 'client/api/main-settings/settings-partial.html',
+						controller: 'MainSettingsController',
+						url: '/settings'
+					})
+					.state('setting.settingCreate',{
+						templateUrl: 'client/api/main-settings/form/settings-form-partial.html',
+						controller: 'MainSettingsFormController',
+						url: '/create'
 					})
 
 			}])
