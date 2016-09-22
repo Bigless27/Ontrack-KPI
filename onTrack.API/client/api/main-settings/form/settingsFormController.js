@@ -5,6 +5,13 @@
 
 	 	$scope.submitSetting = function(setting) {
 	 		console.log(setting)
+	 		$http.post('/api/settings', setting)
+	 			.success(function(data) {
+	 				$state.reload()
+	 			})
+	 			.error(function(err) {
+	 				console.log(err)
+	 			})
 	 	}
 
 

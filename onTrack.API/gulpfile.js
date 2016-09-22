@@ -25,7 +25,7 @@ gulp.task('nodemon', function(done) {
 	var started = false;
 	return nodemon({
 		script: 'index.js',
-		watch: ['index.js'],
+		watch: ['index.js', 'server/**/*.js'],
 		ignore: ['gulpfile.js', 'node_modules/**/*', '.gitignore'],
 	})
 	.on('start', function() {

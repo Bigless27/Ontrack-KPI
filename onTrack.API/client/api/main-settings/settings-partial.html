@@ -9,15 +9,11 @@
 <a href="" class = 'btn btn-default' ui-sref = 'setting.settingCreate'>Create Setting</a>
 
 <div class  = 'table-holder'>
-	<table class = 'table table-bordered'>
-		<tr class = 'info'>
-			<th>Types</th>
-		</tr>
-		<tr>
-			<td>Sale</td>
-		</tr>
-		<tr>
-			<td>Refferal</td>
+	
+	<table class = 'table table-bordered' ng-repeat = 'set in settings'>
+		<tr >
+			<th>Type</th>
+			<td>{{set.type}}</td>
 		</tr>
 	</table>
 

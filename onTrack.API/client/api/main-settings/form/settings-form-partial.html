@@ -22,14 +22,16 @@
 		<div class = "form-group">
 			<label for = "value" class = 'control-label'>Subtypes</label>
 			<div class = "input-group">
-				<span></span>
 				<tags-input 
+					class = 'bootstrap'
+					replace-spaces-with-dashes = "false"
+					style = 'width: 200px;'
 					type = 'text'
 					name = 'subTypes'
 					ng-model = 'setting.subTypes'
 					placeholder = 'Add a subtype'
 					min-length = '2'
-					max-length = '15'
+					max-length = '25'
 					>
 				</tags-input>
             </div>

@@ -9,7 +9,6 @@ exports.params = function(req, res, next, id) {
     .populate('kpis')
     .populate('users')
     .populate('promotions')
-    .populate('settings')
     .exec(function(err, client) {
       if(err) return next(err);
       req.client = client;
