@@ -12,7 +12,7 @@
 				var token = $window.sessionStorage['jwt']
 				swal({
 				  title: "Are you sure?",
-				  text: "You will not be able to recover this client!",
+				  text: "You will not be able to recover this kpi!",
 				  type: "warning",
 				  showCancelButton: true,
 				  confirmButtonColor: "#DD6B55",

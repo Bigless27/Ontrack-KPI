@@ -13,6 +13,6 @@ router.route('/')
 router.route('/:settingsId')
 	.get(controller.getOne)
 	.put(client.getClient(), controller.put)
-	.delete(client.getClient(), controller.delete)
+	.delete(controller.delete)
 
 module.exports = router;
