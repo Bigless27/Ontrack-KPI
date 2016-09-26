@@ -11,16 +11,17 @@
 <div class  = 'table-holder row' ng-repeat = 'set in settings'>
 	
 	<table class = 'table table-bordered' >
-		<tr >
+		<tr>
 			<th>Type</th>
-			<td>{{set.type}}</td>
+			<td>
+				{{set.type || 'empty'}}
+			</td>
 		</tr>
 		<tr class = 'active' ng-repeat = 'sub in set.subTypes'>
 			<th>SubType</th>
-			<th>{{sub.text}}</th>
+			<th>{{sub.text || 'empty'}}</th>
 		</tr>
 	</table>
-	<div class = 'btn btn-default'>Edit</div>
 	<div class = 'btn btn-danger' ng-click = 'deleteSetting(set)'>X</div>
 </div>
 

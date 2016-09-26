@@ -4,29 +4,14 @@ var algorithm = require('../../algorithm')
 var _ = require('lodash')
 var User = require('../userModel')
 
-// var UserActivitySchema = new Schema({
-// 	items: [{
-// 			type: {type: String, required: true},
-// 			value: [{
-// 						srv: {type: Number, required: true},
-// 						retail: {type: Number, required: true},
-// 						quantity: {type: Number, required: true}
-// 					}]
-// 			}],
-// 	userId: {type: Schema.Types.ObjectId, ref: 'user'},
-// 	date: {type: Date, default: Date.now}
-// });
 
 var UserActivitySchema = new Schema({
-	items: [{
-			type: {type: String, required: true},
-			activity: [{
-						name: {type: String, required: true},
-						value: {type: Number, required: true}
-					}]
-			}],
-	userId: {type: Schema.Types.ObjectId, ref: 'user'},
-	date: {type: Date, default: Date.now}
+		type: {type: String, required: true},
+		subType: {type: String},
+		name: {type: String, required: true},
+		value: {type: Number, required: true},
+		userId: {type: Schema.Types.ObjectId, ref: 'user'},
+		date: {type: Date, default: Date.now}
 });
 
 UserActivitySchema.post('remove', function(doc) {

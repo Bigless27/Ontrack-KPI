@@ -19,7 +19,8 @@
 				else{
 					$http.post('/api/users', user)
 						.success(function(data){
-							$state.go('main')
+							$state.reload()
+
 						})
 						.error(function(err) {
 							console.log(err)

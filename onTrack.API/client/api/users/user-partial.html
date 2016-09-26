@@ -50,7 +50,7 @@
 	<div ui-view></div>
 	<ul ng-repeat = 'activity in user.activity'>
 		<li>
-			{{activity || "empty"}}
+			{{activity.name || "empty"}}
 		</li>
 	</ul>
 </div>

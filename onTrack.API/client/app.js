@@ -89,7 +89,7 @@
 						controller: 'UserController'
 					})
 					.state('user.activityCreate', {
-						templateUrl: 'client/api/clinet/activity/form/activity-form-partial.html',
+						templateUrl: 'client/api/users/activity/form/activity-form-partial.html',
 						controller: 'ActivityFormController'
 					})
 					.state('setting', {
