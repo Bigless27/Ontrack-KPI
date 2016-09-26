@@ -52,20 +52,10 @@ exports.put = function(req, res, next) {// works
 
 exports.post = function(req, res, next) { //works
 	var newSetting = req.body;
-	newSetting.clientId = req.params.id;
 
 	Settings.create(newSetting)
 		.then(function(setting) {
-			var updatedClient = req.client
-			updatedClient.settings.push(setting._id);
-
-			updatedClient.save(function(err, saved) {
-				if(err) {
-					next(err)
-				} else {
-					res.json(setting)
-				}
-			})
+			res.json(setting)
 		}, function(err) {
 			next(err)
 	})

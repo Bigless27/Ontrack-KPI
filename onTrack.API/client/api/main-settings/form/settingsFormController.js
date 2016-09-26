@@ -4,9 +4,9 @@
 	 function($scope, $state, $window, $http) {
 
 	 	$scope.submitSetting = function(setting) {
-	 		console.log(setting)
 	 		$http.post('/api/settings', setting)
 	 			.success(function(data) {
+	 				$scope.settings = data
 	 				$state.reload()
 	 			})
 	 			.error(function(err) {

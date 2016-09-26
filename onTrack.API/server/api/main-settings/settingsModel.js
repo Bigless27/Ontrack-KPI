@@ -5,7 +5,7 @@ var _ = require('lodash');
 
 
 var subTypesSchema = new Schema({
-	name: {type: String}
+	text: {type: String}
 })
 
 var SettingsSchema = new Schema({
