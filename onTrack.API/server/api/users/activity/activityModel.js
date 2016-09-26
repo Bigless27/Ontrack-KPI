@@ -53,7 +53,7 @@ UserActivitySchema.post('save', function(doc) {
 					if(err) {
 						console.log(err)
 					} else {
-						console.log('saved')
+						return
 					}
 				})
 
@@ -61,7 +61,8 @@ UserActivitySchema.post('save', function(doc) {
 		}, function(err) {
 			console.log(err)
 	})
-	algorithm.lookUpPromotions(doc)
+
+	//algorithm.lookUpPromotions(doc)
 })
 
 module.exports = mongoose.model('useractivity', UserActivitySchema);

@@ -57,7 +57,7 @@ exports.post = function(req, res, next) { //yup
 						.then(function(progress) {
 							res.json(promotion)
 						}, function(err) {
-							console.log(err);
+							next(err);
 						})
 				}
 			})

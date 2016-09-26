@@ -369,6 +369,33 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('LoginController', ['$scope', '$state', '$window', '$http',
+	 function($scope, $state, $window, $http) {
+
+			$scope.logUserIn = function(user) {
+				$scope.$broadcast('show-errors-check-validity');
+
+
+				if($scope.userForm.$invalid){return;}
+
+				$scope.err = true
+
+				$http.post('auth/signin', user)
+					.success(function(data) {
+						$scope.err = false
+						$window.sessionStorage.jwt = data['token']
+						$state.go('main')
+					})
+					.error(function(error) {
+						$scope.err = true
+						$scope.errMessage = error
+					})
+			}
+
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('MainController', ['$scope', '$state', '$http', '$window', 
 		function($scope, $state, $http, $window) {
 
@@ -415,33 +442,6 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('LoginController', ['$scope', '$state', '$window', '$http',
-	 function($scope, $state, $window, $http) {
-
-			$scope.logUserIn = function(user) {
-				$scope.$broadcast('show-errors-check-validity');
-
-
-				if($scope.userForm.$invalid){return;}
-
-				$scope.err = true
-
-				$http.post('auth/signin', user)
-					.success(function(data) {
-						$scope.err = false
-						$window.sessionStorage.jwt = data['token']
-						$state.go('main')
-					})
-					.error(function(error) {
-						$scope.err = true
-						$scope.errMessage = error
-					})
-			}
-
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('MainSettingsController', ['$scope', '$state', '$window', '$http',
 	 function($scope, $state, $window, $http) {
 
@@ -483,6 +483,28 @@
 
 	 	loadSettings()
 
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+		$scope.signUp = function(user) {
+			$scope.$broadcast('show-errors-check-validity')
+
+			if ($scope.userForm.$invalid){return;}
+			$scope.err = false
+			$http.post('api/users', user)
+				.success(function(data) {
+					$scope.err = false
+					$window.sessionStorage.jwt = data['token']
+					$state.go('main')
+				})
+				.error(function(error) {
+					$scope.err = true
+					$scope.errMessage = error.message
+				})
+		}
 	}])
 }());
 (function() {
@@ -562,7 +584,7 @@
 			$scope.deleteUser = function() {
 				swal({
 				  title: "Are you sure?",
-				  text: "You will not be able to recover this client!",
+				  text: "You will not be able to recover this user!",
 				  type: "warning",
 				  showCancelButton: true,
 				  confirmButtonColor: "#DD6B55",
@@ -573,6 +595,28 @@
 					$http.delete('/api/users/' + $stateParams.id)
 					.success(function(data){
 						$state.go('main' )
+					})
+					.error(function(err) {
+						console.log(err)
+					})
+				})
+			}
+
+			$scope.deleteActivity = function(activity) {
+				swal({
+				  title: "Are you sure?",
+				  text: "You will not be able to recover this activity!",
+				  type: "warning",
+				  showCancelButton: true,
+				  confirmButtonColor: "#DD6B55",
+				  confirmButtonText: "Yes, delete it!",
+				  closeOnConfirm: true,
+				  html: false
+				}, function(){
+					$http.delete('/api/users/' + $stateParams.id
+					 + '/activity/' + activity._id  )
+					.success(function(data){
+						$state.reload()
 					})
 					.error(function(err) {
 						console.log(err)
@@ -652,28 +696,6 @@
 
 			getUser()
 		
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
-		$scope.signUp = function(user) {
-			$scope.$broadcast('show-errors-check-validity')
-
-			if ($scope.userForm.$invalid){return;}
-			$scope.err = false
-			$http.post('api/users', user)
-				.success(function(data) {
-					$scope.err = false
-					$window.sessionStorage.jwt = data['token']
-					$state.go('main')
-				})
-				.error(function(error) {
-					$scope.err = true
-					$scope.errMessage = error.message
-				})
-		}
 	}])
 }());
 (function() {
@@ -1280,9 +1302,8 @@
 			}
 
 			$scope.setSubtypes = function(){
-
 				$scope.settings.forEach(function(set){
-					if(set.type === $scope.user.type.listValue){
+					if(set.type === $scope.activity.type.listValue){
 						set.subTypes.forEach(function(sub){
 							$scope.subList.push({listValue: sub.text})	
 						})
@@ -1303,20 +1324,19 @@
 
 			 getTypes()
 
-			 $scope.submitActivity = function(){
+			 $scope.submitActivity = function(activity){
 			 	var token = $window.sessionStorage['jwt']
-			 	$scope.user.userId = []
-			 	$scope.user.userId.push($stateParams.id)
-			 	$scope.user['type'] = $scope.user.type.listValue
-			 	$scope.user['subType'] = $scope.user.subType.listValue
- 
-				$http.post('/api/users/' + $stateParams['id'] + '/activity', $scope.user,{
+			 	activity.userId = []
+			 	activity.userId.push($stateParams['id'])
+			 	activity['type'] = $scope.activity.type.listValue
+			 	activity['subType'] = $scope.activity.subType.listValue
+
+				$http.post('/api/users/' + $stateParams.id + '/activity', activity,{
 					headers: {
 						'Authorization': `Bearer ${token}`
 					}
 				})
 				.success(function(data) {
-					console.log(data)
 					$state.reload()
 				})
 				.error(function(err) {

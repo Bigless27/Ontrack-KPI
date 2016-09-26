@@ -24,9 +24,8 @@
 			}
 
 			$scope.setSubtypes = function(){
-
 				$scope.settings.forEach(function(set){
-					if(set.type === $scope.user.type.listValue){
+					if(set.type === $scope.activity.type.listValue){
 						set.subTypes.forEach(function(sub){
 							$scope.subList.push({listValue: sub.text})	
 						})
@@ -47,20 +46,19 @@
 
 			 getTypes()
 
-			 $scope.submitActivity = function(){
+			 $scope.submitActivity = function(activity){
 			 	var token = $window.sessionStorage['jwt']
-			 	$scope.user.userId = []
-			 	$scope.user.userId.push($stateParams.id)
-			 	$scope.user['type'] = $scope.user.type.listValue
-			 	$scope.user['subType'] = $scope.user.subType.listValue
- 
-				$http.post('/api/users/' + $stateParams['id'] + '/activity', $scope.user,{
+			 	activity.userId = []
+			 	activity.userId.push($stateParams['id'])
+			 	activity['type'] = $scope.activity.type.listValue
+			 	activity['subType'] = $scope.activity.subType.listValue
+
+				$http.post('/api/users/' + $stateParams.id + '/activity', activity,{
 					headers: {
 						'Authorization': `Bearer ${token}`
 					}
 				})
 				.success(function(data) {
-					console.log(data)
 					$state.reload()
 				})
 				.error(function(err) {

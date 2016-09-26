@@ -51,13 +51,6 @@ exports.post = function(req, res, next) {//check
   var newActivity = req.body;
   Activity.create(newActivity)
     .then(function(activity) {
-      var updatedUser = req.user
-      updatedUser.activity.push(activity._id)
-      updateUser.save(function(err, saved) {
-        if(err){
-          next(err)
-        } 
-      })
       res.json(activity)
     }, function(err) {
       console.log(err)

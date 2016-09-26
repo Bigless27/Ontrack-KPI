@@ -7,7 +7,7 @@
 			$scope.deleteUser = function() {
 				swal({
 				  title: "Are you sure?",
-				  text: "You will not be able to recover this client!",
+				  text: "You will not be able to recover this user!",
 				  type: "warning",
 				  showCancelButton: true,
 				  confirmButtonColor: "#DD6B55",
@@ -18,6 +18,28 @@
 					$http.delete('/api/users/' + $stateParams.id)
 					.success(function(data){
 						$state.go('main' )
+					})
+					.error(function(err) {
+						console.log(err)
+					})
+				})
+			}
+
+			$scope.deleteActivity = function(activity) {
+				swal({
+				  title: "Are you sure?",
+				  text: "You will not be able to recover this activity!",
+				  type: "warning",
+				  showCancelButton: true,
+				  confirmButtonColor: "#DD6B55",
+				  confirmButtonText: "Yes, delete it!",
+				  closeOnConfirm: true,
+				  html: false
+				}, function(){
+					$http.delete('/api/users/' + $stateParams.id
+					 + '/activity/' + activity._id  )
+					.success(function(data){
+						$state.reload()
 					})
 					.error(function(err) {
 						console.log(err)

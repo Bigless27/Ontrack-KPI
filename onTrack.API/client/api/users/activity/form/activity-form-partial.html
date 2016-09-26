@@ -1,4 +1,4 @@
-<form id = 'edit' name ="userForm" role = "form" data-toggle = 'validator'>
+<form id = 'edit' name ="activityForm" role = "form" data-toggle = 'validator'>
 		<h1>Activity</h1>
 
 		<div class = "form-group" show-errors>
@@ -9,8 +9,7 @@
 				<select 
 					name ='type'
 					ng-blur = 'setSubtypes()'
-					ng-model = "user.type"
-					ng-init = "user.type = {listValue: activity.type}"
+					ng-model = "activity.type"
 					ng-options="list.listValue for list in typeList track by list.listValue"
 					class = "form-control"
 					id = "type"
@@ -28,8 +27,8 @@
 
 				<select 
 					name ='subType'
-					ng-model = "user.subType"
-					ng-init = "user.type = {listValue: activity.type}"
+					ng-model = "activity.subType"
+					
 					ng-options="list.listValue for list in subList track by list.listValue"
 					class = "form-control"
 					id = "type"
@@ -47,7 +46,7 @@
 				<input 
 					name = 'name'
 					type = "text"
-					ng-model = "user.name" 
+					ng-model = "activity.name" 
 					class = "form-control"
 					placeholder = "Enter a Name" 
 					required
@@ -65,7 +64,7 @@
 					ng-click = 'expression()'
 					name = 'value'
 					type = "number"
-					ng-model = "user.value" 
+					ng-model = "activity.value" 
 					class = "form-control"
 					placeholder = "Enter a value" 
 					required
@@ -81,6 +80,6 @@
 		<p ng-if = 'err'>{{oops}}</p>
 
 
-		<button type = 'button' ng-click = "submitActivity(user)" class = "btn btn-primary">Submit</button>
+		<button type = 'button' ng-click = "submitActivity(activity)" class = "btn btn-primary">Submit</button>
 		<div class = 'btn btn-default' ui-sref = 'user({id: userId})'>Close</div>
 </form>

@@ -48,11 +48,41 @@
 		>Create Activity
 	</span>
 	<div ui-view></div>
-	<ul ng-repeat = 'activity in user.activity'>
-		<li>
-			{{activity.name || "empty"}}
-		</li>
-	</ul>
+	<div class = 'table-holder row' ng-repeat = 'activity in user.activity'>
+		<table class = 'table table-bordered' style = 'width:300px'>
+			<tr>
+				<th>Name</th>
+				<td>
+					{{activity.name || "empty"}}
+				</td>
+			</tr>
+			<tr>
+				<th>Type</th>
+				<td>
+					{{activity.type || 'empty'}}
+				</td>
+			</tr>
+			<tr>
+				<th>SubType</th>
+				<td>
+					{{activity.subType || 'empty'}}
+				</td>
+			</tr>
+			<tr>
+				<th>Value</th>
+				<td>
+					{{activity.value || 'empty'}}
+				</td>
+			</tr>
+			<tr>
+				<th>Date</th>
+				<td>
+					{{(activity.value | date:'medium') || 'empty'}}
+				</td>
+			</tr>
+		</table>
+		<div class = 'btn btn-danger' ng-click = 'deleteActivity(activity)'>X</div>
+	</div>
 </div>
 
 
