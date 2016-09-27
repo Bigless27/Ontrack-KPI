@@ -102,6 +102,12 @@
 						controller: 'MainSettingsFormController',
 						url: '/create'
 					})
+					.state('activity', {
+						url: '/users/:id/activity/:activityId',
+						templateUrl: 'client/api/users/activity/activity-partial.html',
+						controller: 'ActivityController'
+					})
+
 
 			}])
 			.run(function(editableOptions) {

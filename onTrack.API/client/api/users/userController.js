@@ -3,6 +3,7 @@
 	.controller('UserController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
 		function($scope, $state, $http, $window, $stateParams, $q) {
 
+			
 
 			$scope.deleteUser = function() {
 				swal({
@@ -115,6 +116,26 @@
 						console.log(err)
 					})
 			}
+
+			//ui-select
+			function populateTypes() {
+				$http.get('api/settings')
+					.success(function(data) {
+						$scope.settings = data
+						var unUniqueTypes = $scope.settings.map(function(x){
+							return x.type
+						})
+						$scope.typeList = [...new Set(unUniqueTypes)]
+						
+						
+					})
+					.error(function(err) {
+						console.log(err)
+					})
+			}
+			populateTypes()
+
+		
 
 
 			getUser()

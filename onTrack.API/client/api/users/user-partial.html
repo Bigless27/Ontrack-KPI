@@ -57,19 +57,35 @@
 			<tr>
 				<th>Name</th>
 				<td>
-					{{activity.name || "empty"}}
+					<span 
+						editable-text = 'activity.name'
+						e-form = 'name'
+						onbeforesave = 'updateActivityName($data)'>
+						{{activity.name || 'empty'}}
+					</span>
 				</td>
 			</tr>
 			<tr>
 				<th>Type</th>
 				<td>
-					{{activity.type || 'empty'}}
+					<span 
+						id = 'activity-type-edit'  
+						style = 'color:black; text-decoration:none;'
+						editable-select="activity.type" 
+						e-ng-options="s for s in typeList" onbeforesave = 'updateActivityType($data)'
+					>
+						{{activity.type || 'empty'}}
+					</span>
 				</td>
 			</tr>
 			<tr>
 				<th>SubType</th>
 				<td>
-					{{activity.subType || 'empty'}}
+					<a href="" 
+					id = 'activity-subTypes-edit-button'
+					ng-click = 'getSubtypes()'
+					>Edit
+					</a>
 				</td>
 			</tr>
 			<tr>
@@ -85,6 +101,7 @@
 				</td>
 			</tr>
 		</table>
+		<div class = 'btn btn-default' ui-sref = 'activity({id: user._id, activityId: activity._id})'>View</div>
 		<div class = 'btn btn-danger' ng-click = 'deleteActivity(activity)'>X</div>
 	</div>
 </div>
