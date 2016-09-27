@@ -3,6 +3,8 @@
 	.controller('ActivityController', ['$scope', '$state', '$window', '$stateParams', '$http', '$q',
 	 function($scope, $state, $window, $stateParams, $http, $q) {
 
+
+	 	//Look into doubling the http requests!!! or not idk lol haha 
 	 	function getActivity() {
 	 		$http.get('api/users/' + $stateParams.id + 
 	 			'/activity/' + $stateParams.activityId)
@@ -34,7 +36,11 @@
 	 	}
 
 	 	function getUniqueSubtypes() {
-	 		var unUniqueSubtypes = $scope.settings.map(function(x){
+	 		var unSetSubtypes = $scope.settings.filter(function(set) {
+	 			return set.type === $scope.activity.type
+	 		})
+	 		console.log(unSetSubtypes)
+	 		var unUniqueSubtypes = unSetSubtypes.map(function(x){
 	 			return x.subTypes.map(function(sub){
 	 				return sub.text
 	 			})
@@ -52,6 +58,20 @@
 		.on('click', '#activity-date-edit-button', function() {
 			$('#activity-date-edit')[0].click()
 		})
+
+
+		$scope.updateType = function(data) {
+			if(data === '')return 'Type is Required'
+			$scope.updateSubtype('empty')
+
+			return updateActivity(data, 'type')
+		}
+
+		$scope.updateSubtype = function(data) {
+			if(data === '')return 'Subtype is Required'
+
+			return updateActivity(data, 'subType')
+		}
 
 		$scope.updateName = function(data) {
 			if(data.length < 2) return 'Name is too short'
@@ -95,8 +115,8 @@
 			}
 
 
-		getSettings()
 	 	getActivity()
+		getSettings()
 
 
 	}])

@@ -20,7 +20,7 @@
 					id = 'activity-type-edit'  
 					style = 'color:black; text-decoration:none;'
 					editable-select="activity.type" 
-					e-ng-options="s for s in typeList" onbeforesave = 'updateActivityType($data)'
+					e-ng-options="s for s in typeList" onbeforesave = 'updateType($data)'
 				>
 					{{activity.type || 'empty'}}
 				</span>
@@ -36,7 +36,7 @@
 					id = 'activity-subTypes-edit'  
 					style = 'color:black; text-decoration:none;'
 					editable-select="activity.subType" 
-					e-ng-options="s for s in subTypes" onbeforesave = 'updateActivitySubtype($data)'
+					e-ng-options="s for s in subTypes" onbeforesave = 'updateSubtype($data)'
 				>
 					{{activity.subType || 'empty'}}
 				</span>
