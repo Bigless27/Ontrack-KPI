@@ -18,19 +18,25 @@
 			}
 
 			function populateLists(data){
-				data.forEach(function(set) {
-					$scope.typeList.push({listValue: set.type})			
+				var listHolder = []
+				data.forEach(function(set) {					
+					listHolder.push(set.type)
 				})
+				$scope.typeList = [...new Set(listHolder)]
+				
 			}
 
 			$scope.setSubtypes = function(){
-				$scope.settings.forEach(function(set){
-					if(set.type === $scope.activity.type.listValue){
-						set.subTypes.forEach(function(sub){
-							$scope.subList.push({listValue: sub.text})	
-						})
-					}
-				})
+				if(!$scope.activity) return
+				else{
+						$scope.settings.forEach(function(set){
+						if(set.type === $scope.activity.type){
+							set.subTypes.forEach(function(sub){
+								$scope.subList.push({listValue: sub.text})	
+							})
+						}
+					})
+				}
 			}
 
 
@@ -50,7 +56,7 @@
 			 	var token = $window.sessionStorage['jwt']
 			 	activity.userId = []
 			 	activity.userId.push($stateParams['id'])
-			 	activity['type'] = $scope.activity.type.listValue
+			 	activity['type'] = $scope.activity.type
 			 	activity['subType'] = $scope.activity.subType.listValue
 
 				$http.post('/api/users/' + $stateParams.id + '/activity', activity,{

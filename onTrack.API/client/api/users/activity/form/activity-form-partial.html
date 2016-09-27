@@ -10,7 +10,7 @@
 					name ='type'
 					ng-blur = 'setSubtypes()'
 					ng-model = "activity.type"
-					ng-options="list.listValue for list in typeList track by list.listValue"
+					ng-options="list for list in typeList"
 					class = "form-control"
 					id = "type"
 					required
