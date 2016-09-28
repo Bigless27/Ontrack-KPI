@@ -119,9 +119,6 @@
 				var token = $window.sessionStorage['jwt']
 				$scope.kpi[field] = data
 
-				console.log($scope.kpi)
-
-
 				$http.put('/api/clients/' + $stateParams.clientId
 				 + '/kpis/' + $stateParams.kpiId, $scope.kpi,{
 					headers: {

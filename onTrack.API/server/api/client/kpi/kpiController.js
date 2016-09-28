@@ -58,7 +58,7 @@ exports.put = function(req, res, next) {
 
 	var update = req.body;
 
-	_.merge(kpi, update);
+	_.mergeWith(kpi, update, customizer);
 
 	kpi.save(function(err, saved) {
 		if (err) {
@@ -78,6 +78,14 @@ exports.delete = function(req, res, next) {
 			res.json(removed);
 		}
 	})
+}
+
+function customizer(objValue, srcValue){
+	if(Array.isArray(objValue)){
+		if(objValue.length > srcValue.length){
+			return objValue = srcValue
+		}
+	}
 }
 
 
