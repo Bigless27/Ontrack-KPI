@@ -4,6 +4,52 @@
 		function($scope, $state, $http, $window, $stateParams, $q) {
 
 
+			function getKpiSettings() {
+		 		var d = $q.defer();
+		 		$http.get('api/clients/' + $stateParams.clientId + 
+		 			'/kpis/' + $stateParams.kpiId)
+		 			.success(function(kpi) {
+		 				$http.get('api/settings')
+				 			.success(function(set){
+				 				$scope.kpi = kpi
+				 				$scope.settings = set
+				 				getUniqueTypes()
+				 				getUniqueSubtypes()
+				 				d.resolve()
+				 			})
+				 			.error(function(err) {
+				 				console.log(err)
+				 				d.reject()
+				 			})
+		 			})
+		 			.error(function(err) {
+		 				console.log(err)
+		 				d.reject()
+		 			})
+		 	}
+
+	 	function getUniqueTypes() {
+	 		var typeCopy = $scope.settings
+	 		var unUniqueTypes = typeCopy.map(function(x){
+				return x.type
+			})
+			$scope.typeList = [...new Set(unUniqueTypes)]
+	 	}
+
+	 	function getUniqueSubtypes() {
+	 		var unSetSubtypes = $scope.settings.filter(function(set) {
+	 			return set.type === $scope.kpi.type
+	 		})
+	 		var unUniqueSubtypes = unSetSubtypes.map(function(x){
+	 			return x.subTypes.map(function(sub){
+	 				return sub.text
+	 			})
+	 		})
+	 		unUniqueSubtypes = unUniqueSubtypes.reduce(function(a,b){return a.concat(b)})
+	 		$scope.subTypes = [...new Set(unUniqueSubtypes)]
+	 	}
+
+
 			$scope.deleteKpi = function() {
 				var token = $window.sessionStorage['jwt']
 				swal({
@@ -42,13 +88,6 @@
 				return updateKpi(data, 'name')
 			}
 
-			$scope.types = [
-				{value: 1, text: 'sale'},
-				{value: 2, text: 'attendance'},
-				{vale: 3, text: 'refferals'},
-				{value: 4, text: 'calls'}
-
-			]
 
 			$scope.updateType = function(data) {
 				if (data === ''){
@@ -57,8 +96,11 @@
 				return updateKpi(data, 'type')
 			}
 
+			$scope.updateSubtypes = function(data) {
+				return updateKpi(data,'subTypes')			}
+
 			//have type show on edit click
-			$(document).on('click','.kpi-edit-button', function(){
+			$(document).on('click','#kpi-type-edit-button', function(){
 				$('#kpi-type-edit')[0].click()
 			} )
 			
@@ -77,9 +119,11 @@
 				var token = $window.sessionStorage['jwt']
 				$scope.kpi[field] = data
 
+				console.log($scope.kpi)
 
-				$http.put('/api/clients/' + $stateParams['clientid']
-				 + '/kpis/' + $stateParams['kpiid'], $scope.kpi,{
+
+				$http.put('/api/clients/' + $stateParams.clientId
+				 + '/kpis/' + $stateParams.kpiId, $scope.kpi,{
 					headers: {
 						'Authorization': `Bearer ${token}`
 					}
@@ -90,22 +134,10 @@
 				.error(function(err) {
 					console.log(err)
 				})
-
 			}
+
+			getKpiSettings()
   		
-			function getKpi(){
-				$http.get('/api/clients/' + $stateParams['clientid'] 
-						+ '/kpis/' + $stateParams['kpiid'])
-							.success(function(data) {
-								$scope.kpi = data;
-								console.log($scope.kpi)
-							})
-							.error(function(err) {
-								console.log(err);
-							})
-			}
-
-			getKpi()
 
 		
 	}])

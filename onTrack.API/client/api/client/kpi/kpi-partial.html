@@ -14,30 +14,32 @@
 		<tr>
 			<th>Type</th>
 			<td>
-				<a 
-					id = 'kpi-type-edit' 
-					editable-radiolist="kpi.type"
-					e-ng-options = 't.text as t.text for t in ::types track by t.value'  
-					onbeforesave="updateType($data)" 
-					style = 'color:black; border-bottom:none;'>
+				<span 
+					id = 'kpi-type-edit'  
+					style = 'color:black; text-decoration:none;'
+					editable-select="kpi.type" 
+					e-ng-options="s for s in typeList" onbeforesave = 'updateType($data)'
+				>
 					{{kpi.type || 'empty'}}
-				</a>
+				</span>
 			</td>
 			<td>
-				<a style = 'cursor: pointer;' class = 'kpi-edit-button'>
-					Edit
-				</a>
+				<a href="" id = 'kpi-type-edit-button'>Edit</a>
 			</td>
 		</tr>
 		<tr>
-		<tr>
-			<th>Subtype</th>
+			<th>Subtypes</th>
 			<td>
 				<span 
 					id = 'kpi-subType-edit' 
-					editable-radiolist="kpi.subType" 
-					onbeforesave="updateType($data)" 
-					style = 'color:black; border-bottom:none;'>
+					editable-tags-input="subTypes"
+					data-e-form="ngTagsForm"
+					data-e-name="subTypes"
+					name="subTypes"
+					onbeforesave = 'updateSubtypes($data)'
+					data-e-ng-model="kpi.subTypes"
+					>
+				 	<editable-tags-input-auto-complete source="subTypes"></editable-tags-input-auto-complete>
 					<ul ng-repeat = 'sub in kpi.subTypes'>
 						<li>
 							{{sub.text || 'empty'}}
@@ -46,9 +48,9 @@
 				</span>
 			</td>
 			<td>
-				<a style = 'cursor: pointer;' class = 'kpi-edit-button'>
-					Edit
-				</a>
+				<a type="button" ng-click="ngTagsForm.$show()" ng-show="!ngTagsForm.$visible">
+			        Edit
+			    </a>
 			</td>
 		</tr>
 		<tr>

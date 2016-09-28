@@ -74,7 +74,7 @@
 						controller: 'ClientSettingController'
 					})
 					.state('kpi', {
-						url: '/client/:clientid/kpis/:kpiid',
+						url: '/client/:clientId/kpis/:kpiId',
 						templateUrl: 'client/api/client/kpi/kpi-partial.html',
 						controller: 'KPIController'
 					})
@@ -376,78 +376,6 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('LoginController', ['$scope', '$state', '$window', '$http',
-	 function($scope, $state, $window, $http) {
-
-			$scope.logUserIn = function(user) {
-				$scope.$broadcast('show-errors-check-validity');
-
-
-				if($scope.userForm.$invalid){return;}
-
-				$scope.err = true
-
-				$http.post('auth/signin', user)
-					.success(function(data) {
-						$scope.err = false
-						$window.sessionStorage.jwt = data['token']
-						$state.go('main')
-					})
-					.error(function(error) {
-						$scope.err = true
-						$scope.errMessage = error
-					})
-			}
-
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('MainSettingsController', ['$scope', '$state', '$window', '$http',
-	 function($scope, $state, $window, $http) {
-
-	 	function loadSettings(){
-		 	 $http.get('api/settings')
-		 		.success(function(data) {
-		 			$scope.settings = data
-		 		})
-		 		.error(function(err) {
-		 			console.log(err)
-		 		})
-	 	}
-
-	 	$scope.deleteSetting = function(set){
-	 		var token = $window.sessionStorage['jwt']
-				swal({
-				  title: "Are you sure?",
-				  text: "You will not be able to recover this setting!",
-				  type: "warning",
-				  showCancelButton: true,
-				  confirmButtonColor: "#DD6B55",
-				  confirmButtonText: "Yes, delete it!",
-				  closeOnConfirm: true,
-				  html: false
-				}, function(){
-					$http.delete('/api/settings/' + set._id, {
-						headers: {
-							'Authorization': `Bearer ${token}`
-						}
-					})
-					.success(function(data){
-						$state.reload()
-					})
-					.error(function(err) {
-						console.log(err)
-					})
-				})
-	 	}
-
-	 	loadSettings()
-
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('MainController', ['$scope', '$state', '$http', '$window', 
 		function($scope, $state, $http, $window) {
 
@@ -494,6 +422,33 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('LoginController', ['$scope', '$state', '$window', '$http',
+	 function($scope, $state, $window, $http) {
+
+			$scope.logUserIn = function(user) {
+				$scope.$broadcast('show-errors-check-validity');
+
+
+				if($scope.userForm.$invalid){return;}
+
+				$scope.err = true
+
+				$http.post('auth/signin', user)
+					.success(function(data) {
+						$scope.err = false
+						$window.sessionStorage.jwt = data['token']
+						$state.go('main')
+					})
+					.error(function(error) {
+						$scope.err = true
+						$scope.errMessage = error
+					})
+			}
+
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
 		function($scope, $state, $http, $window) {
 		$scope.signUp = function(user) {
@@ -512,6 +467,51 @@
 					$scope.errMessage = error.message
 				})
 		}
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('MainSettingsController', ['$scope', '$state', '$window', '$http',
+	 function($scope, $state, $window, $http) {
+
+	 	function loadSettings(){
+		 	 $http.get('api/settings')
+		 		.success(function(data) {
+		 			$scope.settings = data
+		 		})
+		 		.error(function(err) {
+		 			console.log(err)
+		 		})
+	 	}
+
+	 	$scope.deleteSetting = function(set){
+	 		var token = $window.sessionStorage['jwt']
+				swal({
+				  title: "Are you sure?",
+				  text: "You will not be able to recover this setting!",
+				  type: "warning",
+				  showCancelButton: true,
+				  confirmButtonColor: "#DD6B55",
+				  confirmButtonText: "Yes, delete it!",
+				  closeOnConfirm: true,
+				  html: false
+				}, function(){
+					$http.delete('/api/settings/' + set._id, {
+						headers: {
+							'Authorization': `Bearer ${token}`
+						}
+					})
+					.success(function(data){
+						$state.reload()
+					})
+					.error(function(err) {
+						console.log(err)
+					})
+				})
+	 	}
+
+	 	loadSettings()
+
 	}])
 }());
 (function() {
@@ -860,6 +860,52 @@
 		function($scope, $state, $http, $window, $stateParams, $q) {
 
 
+			function getKpiSettings() {
+		 		var d = $q.defer();
+		 		$http.get('api/clients/' + $stateParams.clientId + 
+		 			'/kpis/' + $stateParams.kpiId)
+		 			.success(function(kpi) {
+		 				$http.get('api/settings')
+				 			.success(function(set){
+				 				$scope.kpi = kpi
+				 				$scope.settings = set
+				 				getUniqueTypes()
+				 				getUniqueSubtypes()
+				 				d.resolve()
+				 			})
+				 			.error(function(err) {
+				 				console.log(err)
+				 				d.reject()
+				 			})
+		 			})
+		 			.error(function(err) {
+		 				console.log(err)
+		 				d.reject()
+		 			})
+		 	}
+
+	 	function getUniqueTypes() {
+	 		var typeCopy = $scope.settings
+	 		var unUniqueTypes = typeCopy.map(function(x){
+				return x.type
+			})
+			$scope.typeList = [...new Set(unUniqueTypes)]
+	 	}
+
+	 	function getUniqueSubtypes() {
+	 		var unSetSubtypes = $scope.settings.filter(function(set) {
+	 			return set.type === $scope.kpi.type
+	 		})
+	 		var unUniqueSubtypes = unSetSubtypes.map(function(x){
+	 			return x.subTypes.map(function(sub){
+	 				return sub.text
+	 			})
+	 		})
+	 		unUniqueSubtypes = unUniqueSubtypes.reduce(function(a,b){return a.concat(b)})
+	 		$scope.subTypes = [...new Set(unUniqueSubtypes)]
+	 	}
+
+
 			$scope.deleteKpi = function() {
 				var token = $window.sessionStorage['jwt']
 				swal({
@@ -898,13 +944,6 @@
 				return updateKpi(data, 'name')
 			}
 
-			$scope.types = [
-				{value: 1, text: 'sale'},
-				{value: 2, text: 'attendance'},
-				{vale: 3, text: 'refferals'},
-				{value: 4, text: 'calls'}
-
-			]
 
 			$scope.updateType = function(data) {
 				if (data === ''){
@@ -913,8 +952,11 @@
 				return updateKpi(data, 'type')
 			}
 
+			$scope.updateSubtypes = function(data) {
+				return updateKpi(data,'subTypes')			}
+
 			//have type show on edit click
-			$(document).on('click','.kpi-edit-button', function(){
+			$(document).on('click','#kpi-type-edit-button', function(){
 				$('#kpi-type-edit')[0].click()
 			} )
 			
@@ -933,9 +975,11 @@
 				var token = $window.sessionStorage['jwt']
 				$scope.kpi[field] = data
 
+				console.log($scope.kpi)
 
-				$http.put('/api/clients/' + $stateParams['clientid']
-				 + '/kpis/' + $stateParams['kpiid'], $scope.kpi,{
+
+				$http.put('/api/clients/' + $stateParams.clientId
+				 + '/kpis/' + $stateParams.kpiId, $scope.kpi,{
 					headers: {
 						'Authorization': `Bearer ${token}`
 					}
@@ -946,22 +990,10 @@
 				.error(function(err) {
 					console.log(err)
 				})
-
 			}
+
+			getKpiSettings()
   		
-			function getKpi(){
-				$http.get('/api/clients/' + $stateParams['clientid'] 
-						+ '/kpis/' + $stateParams['kpiid'])
-							.success(function(data) {
-								$scope.kpi = data;
-								console.log($scope.kpi)
-							})
-							.error(function(err) {
-								console.log(err);
-							})
-			}
-
-			getKpi()
 
 		
 	}])
@@ -1333,53 +1365,6 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('PromotionFormController', ['$scope', '$state', '$http', '$window', '$stateParams',
-		function($scope, $state, $http, $window, $stateParams) {
-
-			$scope.create = true
-			$scope.clientId = $stateParams['id']
-
-			var today = new Date();
-			$scope.minDate = today.toISOString();
-
-
-			$scope.myList = [{
-				    listValue: "sale"
-			      }, {
-			        listValue: "attendance"
-			      }, {
-			        listValue: "calls"
-			      }, {
-			        listValue: "referals"
-			 }]
-			
-			$scope.submitPromotion = function(promotion) {
-				$scope.$broadcast('show-errors-check-validity');
-
-				if($scope.userForm.$invalid){return;}
-
-				promotion['type'] = promotion['type']['listValue']
-				var token = $window.sessionStorage['jwt']
-
-				$http.post('api/clients/' + $stateParams['id'] + '/promotions', promotion ,{
-					headers: {
-						"Authorization": `Bearer ${token}`
-					}
-				})
-				.success(function(data){
-						$state.reload()
-				})
-				.error(function(err){
-					console.log(err)
-				})
-
-			}
-
-		
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('KPIFormController', ['$scope', '$state', '$http', '$window', '$stateParams',
 		function($scope, $state, $http, $window, $stateParams) {
 			$scope.create = true
@@ -1452,6 +1437,53 @@
 					})
 				}
 			}
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('PromotionFormController', ['$scope', '$state', '$http', '$window', '$stateParams',
+		function($scope, $state, $http, $window, $stateParams) {
+
+			$scope.create = true
+			$scope.clientId = $stateParams['id']
+
+			var today = new Date();
+			$scope.minDate = today.toISOString();
+
+
+			$scope.myList = [{
+				    listValue: "sale"
+			      }, {
+			        listValue: "attendance"
+			      }, {
+			        listValue: "calls"
+			      }, {
+			        listValue: "referals"
+			 }]
+			
+			$scope.submitPromotion = function(promotion) {
+				$scope.$broadcast('show-errors-check-validity');
+
+				if($scope.userForm.$invalid){return;}
+
+				promotion['type'] = promotion['type']['listValue']
+				var token = $window.sessionStorage['jwt']
+
+				$http.post('api/clients/' + $stateParams['id'] + '/promotions', promotion ,{
+					headers: {
+						"Authorization": `Bearer ${token}`
+					}
+				})
+				.success(function(data){
+						$state.reload()
+				})
+				.error(function(err){
+					console.log(err)
+				})
+
+			}
+
+		
 	}])
 }());
 (function() {

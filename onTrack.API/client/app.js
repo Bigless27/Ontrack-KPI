@@ -74,7 +74,7 @@
 						controller: 'ClientSettingController'
 					})
 					.state('kpi', {
-						url: '/client/:clientid/kpis/:kpiid',
+						url: '/client/:clientId/kpis/:kpiId',
 						templateUrl: 'client/api/client/kpi/kpi-partial.html',
 						controller: 'KPIController'
 					})
