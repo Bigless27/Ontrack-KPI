@@ -3,6 +3,17 @@
 	.controller('ClientController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
 		function($scope, $state, $http, $window, $stateParams, $q) {
 		
+			function getSettings() {
+				$http.get('api/settings')
+					.success(function(data) {
+						$scope.settings = data
+					})
+					.error(function(err){
+						console.log(err)
+					})
+			}
+
+
 			$scope.removeAdmin = function(admin) {
 				var token = $window.sessionStorage['jwt']
 
@@ -127,7 +138,7 @@
 			}
 
 			getClients()
-
+			getSettings()
 			getClient()
 
 		

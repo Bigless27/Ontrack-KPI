@@ -6,6 +6,7 @@ var _ = require('lodash')
 var KpiSchema = new Schema({
     name: { type: String, unique: true, required: true, index: true },
     type: { type: String, required: true },
+    subTypes: [{type: String, required: true}],
     value: { type: String, required: true },
     clientId: {type: Schema.Types.ObjectId, ref: 'client'}
 });

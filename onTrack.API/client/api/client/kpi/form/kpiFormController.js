@@ -7,15 +7,22 @@
 			$scope.clientId = $stateParams['id']
 
 			//for select button
-			$scope.myList = [{
-				    listValue: "sale"
-			      }, {
-			        listValue: "attendance"
-			      }, {
-			        listValue: "calls"
-			      }, {
-			        listValue: "refferals"
-			 }]
+			function setSubtype() {
+				var subTypeHoler = []
+				var set = $scope.settings.map(function(set) {
+					return set.subTypes
+				})
+
+				var flatSet = set.reduce(function(a,b) {
+					return a.concat(b)
+				}).map(function(s){
+					return s.text
+				})
+				$scope.subTypes = [...new Set(flatSet)]
+
+			}
+
+			setSubtype()
 
 
 			$scope.submitKpi = function(kpi) {

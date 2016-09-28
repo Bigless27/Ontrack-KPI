@@ -1,6 +1,5 @@
 var ClientCtrl = require('./client/clientController');
 var UserCtrl = require('./users/userController');
-var TriggerCtrl = require('./client/trigger/triggerModel');
 var math = require('mathjs');
 var _ = require('lodash');
 var parser = math.parser();

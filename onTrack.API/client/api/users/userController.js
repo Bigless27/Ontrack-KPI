@@ -3,15 +3,6 @@
 	.controller('UserController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
 		function($scope, $state, $http, $window, $stateParams, $q) {
 
-			function getSettings() {
-				$http.get('api/settings')
-					.success(function(data) {
-						$scope.settings = data
-					})
-					.error(function(err){
-						console.log(err)
-					})
-			}
 
 			$scope.deleteUser = function() {
 				swal({
@@ -122,7 +113,6 @@
 			}
 
 			populateTypes()
-			getSettings()
 			getUser()
 		
 	}])

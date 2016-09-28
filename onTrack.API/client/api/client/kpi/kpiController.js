@@ -3,10 +3,10 @@
 	.controller('KPIController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
 		function($scope, $state, $http, $window, $stateParams, $q) {
 
-			 $scope.showStatus = function() {
-			    var selected = $filter('filter')($scope.statuses, {value: $scope.user.status});
-			    return ($scope.user.status && selected.length) ? selected[0].text : 'Not set'
-			}
+			//  $scope.showStatus = function() {
+			//     var selected = $filter('filter')($scope.statuses, {value: $scope.user.status});
+			//     return ($scope.user.status && selected.length) ? selected[0].text : 'Not set'
+			// }
 
 			$scope.deleteKpi = function() {
 				var token = $window.sessionStorage['jwt']
