@@ -1,4 +1,4 @@
-<form name ="userForm" role = "form" data-toggle = 'validator'>
+<form name ="kpiForm" role = "form" data-toggle = 'validator'>
 		<h1>KPI</h1>
 
 		<div class = "form-group" show-errors>
@@ -8,7 +8,7 @@
 				<input 
 					name = 'name'
 					type = "text"
-					ng-model = "user.name" 
+					ng-model = "kpi.name" 
 					ng-init = 'user.name = kpi.name'
 					class = "form-control"
 					value = 'name' 
@@ -27,7 +27,7 @@
 
 				<select 
 					name ='type'
-					ng-model = "user.type"
+					ng-model = "kpi.type"
 					ng-options="t for t in types"
 					class = "form-control"
 					id = "type"
@@ -45,7 +45,7 @@
 						 ng-model="kpi.subType"
 						 add-on-paste = "true"
 						 placeholder = 'Type in subType'
-						 min-length = '2'
+						 min-length = '3'
 						 max-length = '25'
 						 class = 'bootstrap'
 						 name = 'subTypes'
@@ -63,7 +63,7 @@
 					ng-click = 'expression()'
 					name = 'value'
 					type = "value"
-					ng-model = "user.value" 
+					ng-model = "kpi.value" 
 					ng-init = 'user.value = kpi.value'
 					class = "form-control"
 					placeholder = "Enter a expression"

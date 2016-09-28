@@ -98,6 +98,7 @@
 						+ '/kpis/' + $stateParams['kpiid'])
 							.success(function(data) {
 								$scope.kpi = data;
+								console.log($scope.kpi)
 							})
 							.error(function(err) {
 								console.log(err);

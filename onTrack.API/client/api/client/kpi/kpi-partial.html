@@ -30,6 +30,28 @@
 			</td>
 		</tr>
 		<tr>
+		<tr>
+			<th>Subtype</th>
+			<td>
+				<span 
+					id = 'kpi-subType-edit' 
+					editable-radiolist="kpi.subType" 
+					onbeforesave="updateType($data)" 
+					style = 'color:black; border-bottom:none;'>
+					<ul ng-repeat = 'sub in kpi.subTypes'>
+						<li>
+							{{sub.text || 'empty'}}
+						</li>
+					</ul>
+				</span>
+			</td>
+			<td>
+				<a style = 'cursor: pointer;' class = 'kpi-edit-button'>
+					Edit
+				</a>
+			</td>
+		</tr>
+		<tr>
 			<th>Value:</th>
 			<td>
 				<span editable-text="kpi.value" e-form="value" onbeforesave="updateValue($data)">{{kpi.value || 'empty'}}</span>

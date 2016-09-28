@@ -243,16 +243,6 @@
 	.controller('ClientController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
 		function($scope, $state, $http, $window, $stateParams, $q) {
 		
-			function getSettings() {
-				$http.get('api/settings')
-					.success(function(data) {
-						$scope.settings = data
-					})
-					.error(function(err){
-						console.log(err)
-					})
-			}
-
 
 			$scope.removeAdmin = function(admin) {
 				var token = $window.sessionStorage['jwt']
@@ -378,10 +368,36 @@
 			}
 
 			getClients()
-			getSettings()
 			getClient()
 
 		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('LoginController', ['$scope', '$state', '$window', '$http',
+	 function($scope, $state, $window, $http) {
+
+			$scope.logUserIn = function(user) {
+				$scope.$broadcast('show-errors-check-validity');
+
+
+				if($scope.userForm.$invalid){return;}
+
+				$scope.err = true
+
+				$http.post('auth/signin', user)
+					.success(function(data) {
+						$scope.err = false
+						$window.sessionStorage.jwt = data['token']
+						$state.go('main')
+					})
+					.error(function(error) {
+						$scope.err = true
+						$scope.errMessage = error
+					})
+			}
+
 	}])
 }());
 (function() {
@@ -428,33 +444,6 @@
 				$state.go('login')
 			}
 		
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('LoginController', ['$scope', '$state', '$window', '$http',
-	 function($scope, $state, $window, $http) {
-
-			$scope.logUserIn = function(user) {
-				$scope.$broadcast('show-errors-check-validity');
-
-
-				if($scope.userForm.$invalid){return;}
-
-				$scope.err = true
-
-				$http.post('auth/signin', user)
-					.success(function(data) {
-						$scope.err = false
-						$window.sessionStorage.jwt = data['token']
-						$state.go('main')
-					})
-					.error(function(error) {
-						$scope.err = true
-						$scope.errMessage = error
-					})
-			}
-
 	}])
 }());
 (function() {
@@ -964,6 +953,7 @@
 						+ '/kpis/' + $stateParams['kpiid'])
 							.success(function(data) {
 								$scope.kpi = data;
+								console.log($scope.kpi)
 							})
 							.error(function(err) {
 								console.log(err);
@@ -1348,6 +1338,17 @@
 			$scope.err = false
 			$scope.clientId = $stateParams['id']
 
+			function getSettings() {
+			$http.get('api/settings')
+				.success(function(data) {
+					$scope.settings = data
+					setTypes()
+					setSubtype()
+				})
+				.error(function(err){
+					console.log(err)
+				})
+			}
 			//for select button
 			function setTypes() {
 				var settingsCopy = $scope.settings
@@ -1371,38 +1372,39 @@
 				$scope.subTypes = [...new Set(flatSet)]
 
 			}
-			setTypes()
-			setSubtype()
+			getSettings()
 
 
 			$scope.submitKpi = function(kpi) {
 				$scope.$broadcast('show-errors-check-validity');
 
-				if($scope.userForm.$invalid){return;}
+				if($scope.kpiForm.$invalid){return;}
 				var token = $window.sessionStorage['jwt']
 
 				var names = $scope.client.kpis.filter(function(x) {
 					return x.name == kpi.name
 				})
 
-				if(names.length > 0){
-					$scope.err = true
-					$scope.oops = 'Name is already taken!'
-					return
-				}
-				else{
-					$http.post('api/clients/' + $stateParams['id'] + '/kpis', kpi ,{
-						headers: {
-							"Authorization": `Bearer ${token}`
-						}
-					})
-					.success(function(data){
-							$state.reload()
-					})
-					.error(function(err){
-						console.log(err)
-					})
-				}
+				console.log(kpi)
+
+				// if(names.length > 0){
+				// 	$scope.err = true
+				// 	$scope.oops = 'Name is already taken!'
+				// 	return
+				// }
+				// else{
+				// 	$http.post('api/clients/' + $stateParams['id'] + '/kpis', kpi ,{
+				// 		headers: {
+				// 			"Authorization": `Bearer ${token}`
+				// 		}
+				// 	})
+				// 	.success(function(data){
+				// 			$state.reload()
+				// 	})
+				// 	.error(function(err){
+				// 		console.log(err)
+				// 	})
+				// }
 			}
 	}])
 }());
