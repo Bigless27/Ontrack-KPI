@@ -3,10 +3,14 @@ var Schema = mongoose.Schema;
 var Client = require('../clientModel')
 var _ = require('lodash')
 
+var subTypesSchema = new Schema({
+	text: {type: String}
+})
+
 var KpiSchema = new Schema({
     name: { type: String, unique: true, required: true, index: true },
     type: { type: String, required: true },
-    subTypes: [{type: String, required: true}],
+    subTypes: [subTypesSchema],
     value: { type: String, required: true },
     clientId: {type: Schema.Types.ObjectId, ref: 'client'}
 });
