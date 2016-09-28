@@ -243,6 +243,7 @@
 	.controller('ClientController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
 		function($scope, $state, $http, $window, $stateParams, $q) {
 		
+		
 
 			$scope.removeAdmin = function(admin) {
 				var token = $window.sessionStorage['jwt']
@@ -402,6 +403,51 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('MainSettingsController', ['$scope', '$state', '$window', '$http',
+	 function($scope, $state, $window, $http) {
+
+	 	function loadSettings(){
+		 	 $http.get('api/settings')
+		 		.success(function(data) {
+		 			$scope.settings = data
+		 		})
+		 		.error(function(err) {
+		 			console.log(err)
+		 		})
+	 	}
+
+	 	$scope.deleteSetting = function(set){
+	 		var token = $window.sessionStorage['jwt']
+				swal({
+				  title: "Are you sure?",
+				  text: "You will not be able to recover this setting!",
+				  type: "warning",
+				  showCancelButton: true,
+				  confirmButtonColor: "#DD6B55",
+				  confirmButtonText: "Yes, delete it!",
+				  closeOnConfirm: true,
+				  html: false
+				}, function(){
+					$http.delete('/api/settings/' + set._id, {
+						headers: {
+							'Authorization': `Bearer ${token}`
+						}
+					})
+					.success(function(data){
+						$state.reload()
+					})
+					.error(function(err) {
+						console.log(err)
+					})
+				})
+	 	}
+
+	 	loadSettings()
+
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('MainController', ['$scope', '$state', '$http', '$window', 
 		function($scope, $state, $http, $window) {
 
@@ -444,51 +490,6 @@
 				$state.go('login')
 			}
 		
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('MainSettingsController', ['$scope', '$state', '$window', '$http',
-	 function($scope, $state, $window, $http) {
-
-	 	function loadSettings(){
-		 	 $http.get('api/settings')
-		 		.success(function(data) {
-		 			$scope.settings = data
-		 		})
-		 		.error(function(err) {
-		 			console.log(err)
-		 		})
-	 	}
-
-	 	$scope.deleteSetting = function(set){
-	 		var token = $window.sessionStorage['jwt']
-				swal({
-				  title: "Are you sure?",
-				  text: "You will not be able to recover this setting!",
-				  type: "warning",
-				  showCancelButton: true,
-				  confirmButtonColor: "#DD6B55",
-				  confirmButtonText: "Yes, delete it!",
-				  closeOnConfirm: true,
-				  html: false
-				}, function(){
-					$http.delete('/api/settings/' + set._id, {
-						headers: {
-							'Authorization': `Bearer ${token}`
-						}
-					})
-					.success(function(data){
-						$state.reload()
-					})
-					.error(function(err) {
-						console.log(err)
-					})
-				})
-	 	}
-
-	 	loadSettings()
-
 	}])
 }());
 (function() {
@@ -1332,6 +1333,53 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('PromotionFormController', ['$scope', '$state', '$http', '$window', '$stateParams',
+		function($scope, $state, $http, $window, $stateParams) {
+
+			$scope.create = true
+			$scope.clientId = $stateParams['id']
+
+			var today = new Date();
+			$scope.minDate = today.toISOString();
+
+
+			$scope.myList = [{
+				    listValue: "sale"
+			      }, {
+			        listValue: "attendance"
+			      }, {
+			        listValue: "calls"
+			      }, {
+			        listValue: "referals"
+			 }]
+			
+			$scope.submitPromotion = function(promotion) {
+				$scope.$broadcast('show-errors-check-validity');
+
+				if($scope.userForm.$invalid){return;}
+
+				promotion['type'] = promotion['type']['listValue']
+				var token = $window.sessionStorage['jwt']
+
+				$http.post('api/clients/' + $stateParams['id'] + '/promotions', promotion ,{
+					headers: {
+						"Authorization": `Bearer ${token}`
+					}
+				})
+				.success(function(data){
+						$state.reload()
+				})
+				.error(function(err){
+					console.log(err)
+				})
+
+			}
+
+		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('KPIFormController', ['$scope', '$state', '$http', '$window', '$stateParams',
 		function($scope, $state, $http, $window, $stateParams) {
 			$scope.create = true
@@ -1385,74 +1433,25 @@
 					return x.name == kpi.name
 				})
 
-				console.log(kpi)
-
-				// if(names.length > 0){
-				// 	$scope.err = true
-				// 	$scope.oops = 'Name is already taken!'
-				// 	return
-				// }
-				// else{
-				// 	$http.post('api/clients/' + $stateParams['id'] + '/kpis', kpi ,{
-				// 		headers: {
-				// 			"Authorization": `Bearer ${token}`
-				// 		}
-				// 	})
-				// 	.success(function(data){
-				// 			$state.reload()
-				// 	})
-				// 	.error(function(err){
-				// 		console.log(err)
-				// 	})
-				// }
+				if(names.length > 0){
+					$scope.err = true
+					$scope.oops = 'Name is already taken!'
+					return
+				}
+				else{
+					$http.post('api/clients/' + $stateParams['id'] + '/kpis', kpi ,{
+						headers: {
+							"Authorization": `Bearer ${token}`
+						}
+					})
+					.success(function(data){
+							$state.reload()
+					})
+					.error(function(err){
+						console.log(err)
+					})
+				}
 			}
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('PromotionFormController', ['$scope', '$state', '$http', '$window', '$stateParams',
-		function($scope, $state, $http, $window, $stateParams) {
-
-			$scope.create = true
-			$scope.clientId = $stateParams['id']
-
-			var today = new Date();
-			$scope.minDate = today.toISOString();
-
-
-			$scope.myList = [{
-				    listValue: "sale"
-			      }, {
-			        listValue: "attendance"
-			      }, {
-			        listValue: "calls"
-			      }, {
-			        listValue: "referals"
-			 }]
-			
-			$scope.submitPromotion = function(promotion) {
-				$scope.$broadcast('show-errors-check-validity');
-
-				if($scope.userForm.$invalid){return;}
-
-				promotion['type'] = promotion['type']['listValue']
-				var token = $window.sessionStorage['jwt']
-
-				$http.post('api/clients/' + $stateParams['id'] + '/promotions', promotion ,{
-					headers: {
-						"Authorization": `Bearer ${token}`
-					}
-				})
-				.success(function(data){
-						$state.reload()
-				})
-				.error(function(err){
-					console.log(err)
-				})
-
-			}
-
-		
 	}])
 }());
 (function() {

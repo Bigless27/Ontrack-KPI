@@ -53,26 +53,24 @@
 					return x.name == kpi.name
 				})
 
-				console.log(kpi)
-
-				// if(names.length > 0){
-				// 	$scope.err = true
-				// 	$scope.oops = 'Name is already taken!'
-				// 	return
-				// }
-				// else{
-				// 	$http.post('api/clients/' + $stateParams['id'] + '/kpis', kpi ,{
-				// 		headers: {
-				// 			"Authorization": `Bearer ${token}`
-				// 		}
-				// 	})
-				// 	.success(function(data){
-				// 			$state.reload()
-				// 	})
-				// 	.error(function(err){
-				// 		console.log(err)
-				// 	})
-				// }
+				if(names.length > 0){
+					$scope.err = true
+					$scope.oops = 'Name is already taken!'
+					return
+				}
+				else{
+					$http.post('api/clients/' + $stateParams['id'] + '/kpis', kpi ,{
+						headers: {
+							"Authorization": `Bearer ${token}`
+						}
+					})
+					.success(function(data){
+							$state.reload()
+					})
+					.error(function(err){
+						console.log(err)
+					})
+				}
 			}
 	}])
 }());
