@@ -28,8 +28,7 @@
 				<select 
 					name ='type'
 					ng-model = "user.type"
-					ng-init = "user.type = {listValue: kpi.type}"
-					ng-options="list.listValue for list in myList track by list.listValue"
+					ng-options="t for t in types"
 					class = "form-control"
 					id = "type"
 					required

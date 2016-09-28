@@ -7,6 +7,14 @@
 			$scope.clientId = $stateParams['id']
 
 			//for select button
+			function setTypes() {
+				var settingsCopy = $scope.settings
+				$scope.types = [...new Set(settingsCopy.map(function(set){
+					return set.type
+				}))]
+
+			}
+
 			function setSubtype() {
 				var subTypeHoler = []
 				var set = $scope.settings.map(function(set) {
@@ -21,7 +29,7 @@
 				$scope.subTypes = [...new Set(flatSet)]
 
 			}
-
+			setTypes()
 			setSubtype()
 
 
