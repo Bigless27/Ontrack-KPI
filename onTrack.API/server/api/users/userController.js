@@ -47,7 +47,7 @@ exports.put = function(req, res, next) {
 
   var update = req.body;
 
-  _.merge(user, update);
+  _.mergeWith(user, update, customizer);
 
   user.save(function(err, saved) {
     if (err) {
@@ -103,8 +103,12 @@ exports.FindUser = function(id) {
 	return user
 }
 
-exports.less = function(req, res, next) {
-	res.send('hellooooooooooooooooooo')
+function customizer(objValue, srcValue){
+  if(Array.isArray(objValue)){
+    if(objValue.length > srcValue.length){
+      return objValue = srcValue
+    }
+  }
 }
 
 

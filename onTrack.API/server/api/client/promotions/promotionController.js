@@ -72,10 +72,9 @@ exports.put = function(req, res, next) {// works
   
   	var promotion = req.promotion;
 
-
 	var update = req.body;
 
-	_.merge(promotion, update);
+	_.mergeWith(promotion, update, customizer);
 
 	promotion.save(function(err, saved) {
 	if (err) {
@@ -97,6 +96,13 @@ exports.delete = function(req, res, next) { //works
 	})
 }
 
+function customizer(objValue, srcValue){
+	if(Array.isArray(objValue)){
+		if(objValue.length > srcValue.length){
+			return objValue = srcValue
+		}
+	}
+}
 
 
 

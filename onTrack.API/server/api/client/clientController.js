@@ -88,7 +88,7 @@ exports.put = function(req, res, next) {
   var update = req.body;
 
 
-  _.merge(client, update);
+  _.mergeWith(client, update, customizer);
 
   client.save(function(err, saved) {
     if (err) {
@@ -137,6 +137,14 @@ exports.delete = function(req, res, next) {
 exports.FindClient = function(id) {
   var client = Client.findById(id)
   return client
+}
+
+function customizer(objValue, srcValue){
+  if(Array.isArray(objValue)){
+    if(objValue.length > srcValue.length){
+      return objValue = srcValue
+    }
+  }
 }
 
 

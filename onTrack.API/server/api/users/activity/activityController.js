@@ -36,7 +36,7 @@ exports.put = function(req, res, next) {
 
   var update = req.body;
 
-  _.merge(activity, update);
+  _.mergeWith(activity, update, customizer);
 
   activity.save(function(err, saved) {
     if (err) {
@@ -69,6 +69,13 @@ exports.delete = function(req, res, next) {
   });
 };
 
+function customizer(objValue, srcValue){
+  if(Array.isArray(objValue)){
+    if(objValue.length > srcValue.length){
+      return objValue = srcValue
+    }
+  }
+}
 
 
 

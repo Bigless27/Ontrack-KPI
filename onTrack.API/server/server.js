@@ -11,6 +11,7 @@ var passport = require('passport')
 
 
 require('./auth/oauth/passport')(passport)
+
 // db.url is different depending on NODE_ENV
 mongoose.Promise = global.Promise 
 mongoose.connect(config.db.url, function(err) {

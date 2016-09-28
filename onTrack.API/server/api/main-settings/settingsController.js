@@ -39,7 +39,7 @@ exports.put = function(req, res, next) {// works
 
 	var update = req.body;
 
-	_.merge(settings, update);
+	_.mergeWith(settings, update, customizer);
 
 	settings.save(function(err, saved) {
 	if (err) {
@@ -72,6 +72,15 @@ exports.delete = function(req, res, next) { //works
 		}
 	})
 }
+
+function customizer(objValue, srcValue){
+	if(Array.isArray(objValue)){
+		if(objValue.length > srcValue.length){
+			return objValue = srcValue
+		}
+	}
+}
+
 
 
 

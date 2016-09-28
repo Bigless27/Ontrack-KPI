@@ -34,7 +34,7 @@ exports.put = function(req, res, next) {
 
   var update = req.body;
 
-  _.merge(progress, update);
+  _.mergeWith(progress, update, customizer);
 
   progress.save(function(err, saved) {
     if (err) {
@@ -66,5 +66,13 @@ exports.delete = function(req, res, next) {
     }
   });
 };
+
+function customizer(objValue, srcValue){
+  if(Array.isArray(objValue)){
+    if(objValue.length > srcValue.length){
+      return objValue = srcValue
+    }
+  }
+}
 
 
