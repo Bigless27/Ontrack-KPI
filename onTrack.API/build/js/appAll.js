@@ -375,33 +375,6 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('LoginController', ['$scope', '$state', '$window', '$http',
-	 function($scope, $state, $window, $http) {
-
-			$scope.logUserIn = function(user) {
-				$scope.$broadcast('show-errors-check-validity');
-
-
-				if($scope.userForm.$invalid){return;}
-
-				$scope.err = true
-
-				$http.post('auth/signin', user)
-					.success(function(data) {
-						$scope.err = false
-						$window.sessionStorage.jwt = data['token']
-						$state.go('main')
-					})
-					.error(function(error) {
-						$scope.err = true
-						$scope.errMessage = error
-					})
-			}
-
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('MainController', ['$scope', '$state', '$http', '$window', 
 		function($scope, $state, $http, $window) {
 
@@ -444,6 +417,33 @@
 				$state.go('login')
 			}
 		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('LoginController', ['$scope', '$state', '$window', '$http',
+	 function($scope, $state, $window, $http) {
+
+			$scope.logUserIn = function(user) {
+				$scope.$broadcast('show-errors-check-validity');
+
+
+				if($scope.userForm.$invalid){return;}
+
+				$scope.err = true
+
+				$http.post('auth/signin', user)
+					.success(function(data) {
+						$scope.err = false
+						$window.sessionStorage.jwt = data['token']
+						$state.go('main')
+					})
+					.error(function(error) {
+						$scope.err = true
+						$scope.errMessage = error
+					})
+			}
+
 	}])
 }());
 (function() {
@@ -586,7 +586,15 @@
 	.controller('UserController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
 		function($scope, $state, $http, $window, $stateParams, $q) {
 
-			
+			function getSettings() {
+				$http.get('api/settings')
+					.success(function(data) {
+						$scope.settings = data
+					})
+					.error(function(err){
+						console.log(err)
+					})
+			}
 
 			$scope.deleteUser = function() {
 				swal({
@@ -609,27 +617,6 @@
 				})
 			}
 
-			$scope.deleteActivity = function(activity) {
-				swal({
-				  title: "Are you sure?",
-				  text: "You will not be able to recover this activity!",
-				  type: "warning",
-				  showCancelButton: true,
-				  confirmButtonColor: "#DD6B55",
-				  confirmButtonText: "Yes, delete it!",
-				  closeOnConfirm: true,
-				  html: false
-				}, function(){
-					$http.delete('/api/users/' + $stateParams.id
-					 + '/activity/' + activity._id  )
-					.success(function(data){
-						$state.reload()
-					})
-					.error(function(err) {
-						console.log(err)
-					})
-				})
-			}
 
 			$(document).on('click','.user-email-edit-button', function(){
 				$('#user-email-edit')[0].click()
@@ -716,11 +703,9 @@
 						console.log(err)
 					})
 			}
+
 			populateTypes()
-
-		
-
-
+			getSettings()
 			getUser()
 		
 	}])
@@ -811,70 +796,6 @@
 		$scope.optionsList = []
 
 		getUsers()
-
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('ClientFormController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
-
-			$scope.errorDisplay = false
-
-			$scope.createClient = function(data){
-				var token = $window.sessionStorage['jwt']
-
-
-				var names = $scope.clients.filter(function(client) {
-					return client.name == data.name
-				})
-
-				if(names.length > 0){
-					$scope.errorDisplay = true
-					$scope.oops = 'Name is already taken!'
-					return
-				}
-				else{
-					$http.post('/api/clients' , data ,{
-						headers: {
-							'Authorization': `Bearer ${token}`
-						}
-					})
-					.success(function(data){
-						var clientId = {'id': data._id + ''}
-						$state.go('client',clientId )
-					})
-					.error(function(err) {
-						$scope.errorDisplay = true
-						$scope.oops = err.message
-					})
-				}
-
-			}
-
-			function getAllUsers() {
-				$http.get('/api/users')
-					.success(function(users){
-						users.forEach(function(user){
-							if(user){
-								$scope.optionsList.push(
-										{firstName: user.firstName, lastName: user.lastName, 
-											email: user.email, fullName: user.firstName + ' ' + user.lastName}
-									)
-							}
-							else{
-								$scope.optionsList = [{name: 'No users'}]
-							}
-						})
-					})
-					.error(function(err){
-						console.log(err)
-					})
-			}
-
-			getAllUsers()
-
-			$scope.optionsList = [];
 
 	}])
 }());
@@ -1148,6 +1069,70 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('ClientFormController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+
+			$scope.errorDisplay = false
+
+			$scope.createClient = function(data){
+				var token = $window.sessionStorage['jwt']
+
+
+				var names = $scope.clients.filter(function(client) {
+					return client.name == data.name
+				})
+
+				if(names.length > 0){
+					$scope.errorDisplay = true
+					$scope.oops = 'Name is already taken!'
+					return
+				}
+				else{
+					$http.post('/api/clients' , data ,{
+						headers: {
+							'Authorization': `Bearer ${token}`
+						}
+					})
+					.success(function(data){
+						var clientId = {'id': data._id + ''}
+						$state.go('client',clientId )
+					})
+					.error(function(err) {
+						$scope.errorDisplay = true
+						$scope.oops = err.message
+					})
+				}
+
+			}
+
+			function getAllUsers() {
+				$http.get('/api/users')
+					.success(function(users){
+						users.forEach(function(user){
+							if(user){
+								$scope.optionsList.push(
+										{firstName: user.firstName, lastName: user.lastName, 
+											email: user.email, fullName: user.firstName + ' ' + user.lastName}
+									)
+							}
+							else{
+								$scope.optionsList = [{name: 'No users'}]
+							}
+						})
+					})
+					.error(function(err){
+						console.log(err)
+					})
+			}
+
+			getAllUsers()
+
+			$scope.optionsList = [];
+
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('MainSettingsFormController', ['$scope', '$state', '$window', '$http',
 	 function($scope, $state, $window, $http) {
 
@@ -1170,14 +1155,27 @@
 
 
 	 	//Look into doubling the http requests!!! or not idk lol haha 
-	 	function getActivity() {
+	 	function getActivitySettings() {
+	 		var d = $q.defer();
 	 		$http.get('api/users/' + $stateParams.id + 
 	 			'/activity/' + $stateParams.activityId)
-	 			.success(function(data) {
-	 				$scope.activity = data
+	 			.success(function(act) {
+	 				$http.get('api/settings')
+			 			.success(function(set){
+			 				$scope.activity = act
+			 				$scope.settings = set
+			 				getUniqueTypes()
+			 				getUniqueSubtypes()
+			 				d.resolve()
+			 			})
+			 			.error(function(err) {
+			 				console.log(err)
+			 				d.reject()
+			 			})
 	 			})
 	 			.error(function(err) {
 	 				console.log(err)
+	 				d.reject()
 	 			})
 	 	}
 
@@ -1201,10 +1199,10 @@
 	 	}
 
 	 	function getUniqueSubtypes() {
+
 	 		var unSetSubtypes = $scope.settings.filter(function(set) {
 	 			return set.type === $scope.activity.type
 	 		})
-	 		console.log(unSetSubtypes)
 	 		var unUniqueSubtypes = unSetSubtypes.map(function(x){
 	 			return x.subTypes.map(function(sub){
 	 				return sub.text
@@ -1225,6 +1223,15 @@
 		})
 
 
+
+		$scope.updateName = function(data) {
+			if(data.length < 2) return 'Name is too short'
+			else if(data === '') return 'Name is required'
+			else if(data.length > 45) return 'Name is too long'
+
+			return updateActivity(data, 'name')
+		}
+
 		$scope.updateType = function(data) {
 			if(data === '')return 'Type is Required'
 			$scope.updateSubtype('empty')
@@ -1238,15 +1245,6 @@
 			return updateActivity(data, 'subType')
 		}
 
-		$scope.updateName = function(data) {
-			if(data.length < 2) return 'Name is too short'
-			else if(data === '') return 'Name is required'
-			else if(data.length > 45) return 'Name is too long'
-
-			return updateActivity(data, 'name')
-		}
-
-
 		$scope.updateValue = function(data) {
 				var reg = new RegExp('^\\d+$')
 
@@ -1258,6 +1256,11 @@
 				}
 				data = parseInt(data)
 				return updateActivity(data, 'value')
+		}
+
+		$scope.updateDate = function(data) {
+			if(data === '') return 'Date is required'
+			return updateActivity(data, 'date')
 		}
 
 		function updateActivity(data, field){
@@ -1279,9 +1282,32 @@
 
 			}
 
+		$scope.deleteActivity = function(activity) {
+				swal({
+				  title: "Are you sure?",
+				  text: "You will not be able to recover this activity!",
+				  type: "warning",
+				  showCancelButton: true,
+				  confirmButtonColor: "#DD6B55",
+				  confirmButtonText: "Yes, delete it!",
+				  closeOnConfirm: true,
+				  html: false
+				}, function(){
+					$http.delete('api/users/' + $stateParams.id
+					 + '/activity/' + activity._id  )
+					.success(function(data){
+						userId = {'id': $stateParams.id}
+						$state.go('user',userId)
+					})
+					.error(function(err) {
+						console.log(err)
+					})
+				})
+			}
 
-	 	getActivity()
-		getSettings()
+
+	 	getActivitySettings()
+		
 
 
 	}])

@@ -62,11 +62,12 @@
 				<span
 					id = 'activity-date-edit'
 					e-min-year = '2016'
+					e-max-year = '2030'
 					editable-combodate = 'activity.date' 
 					style = 'color:black; border-bottom:none;'
 					onbeforesave = 'updateDate($data)'
 					>
-					{{(activity.value | date:'medium') || 'empty'}}
+					{{(activity.date | date:'medium') || 'empty'}}
 				</span>
 			</td>
 			<td>
@@ -75,6 +76,7 @@
 		</tr>
 	</table>
 </table>
+<span class = 'btn btn-danger' ng-click = 'deleteActivity(activity)'><i class="glyphicon glyphicon-trash" aria-hidden="true"></i></span>
 
-<div class = 'btn btn-default'>Back</div>
+<div class = 'btn btn-default' ui-sref = 'user({id: activity.userId})'>Back</div>
 <div class ></div>

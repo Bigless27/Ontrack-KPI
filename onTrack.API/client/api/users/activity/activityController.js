@@ -5,14 +5,27 @@
 
 
 	 	//Look into doubling the http requests!!! or not idk lol haha 
-	 	function getActivity() {
+	 	function getActivitySettings() {
+	 		var d = $q.defer();
 	 		$http.get('api/users/' + $stateParams.id + 
 	 			'/activity/' + $stateParams.activityId)
-	 			.success(function(data) {
-	 				$scope.activity = data
+	 			.success(function(act) {
+	 				$http.get('api/settings')
+			 			.success(function(set){
+			 				$scope.activity = act
+			 				$scope.settings = set
+			 				getUniqueTypes()
+			 				getUniqueSubtypes()
+			 				d.resolve()
+			 			})
+			 			.error(function(err) {
+			 				console.log(err)
+			 				d.reject()
+			 			})
 	 			})
 	 			.error(function(err) {
 	 				console.log(err)
+	 				d.reject()
 	 			})
 	 	}
 
@@ -36,10 +49,10 @@
 	 	}
 
 	 	function getUniqueSubtypes() {
+
 	 		var unSetSubtypes = $scope.settings.filter(function(set) {
 	 			return set.type === $scope.activity.type
 	 		})
-	 		console.log(unSetSubtypes)
 	 		var unUniqueSubtypes = unSetSubtypes.map(function(x){
 	 			return x.subTypes.map(function(sub){
 	 				return sub.text
@@ -60,6 +73,15 @@
 		})
 
 
+
+		$scope.updateName = function(data) {
+			if(data.length < 2) return 'Name is too short'
+			else if(data === '') return 'Name is required'
+			else if(data.length > 45) return 'Name is too long'
+
+			return updateActivity(data, 'name')
+		}
+
 		$scope.updateType = function(data) {
 			if(data === '')return 'Type is Required'
 			$scope.updateSubtype('empty')
@@ -73,15 +95,6 @@
 			return updateActivity(data, 'subType')
 		}
 
-		$scope.updateName = function(data) {
-			if(data.length < 2) return 'Name is too short'
-			else if(data === '') return 'Name is required'
-			else if(data.length > 45) return 'Name is too long'
-
-			return updateActivity(data, 'name')
-		}
-
-
 		$scope.updateValue = function(data) {
 				var reg = new RegExp('^\\d+$')
 
@@ -93,6 +106,11 @@
 				}
 				data = parseInt(data)
 				return updateActivity(data, 'value')
+		}
+
+		$scope.updateDate = function(data) {
+			if(data === '') return 'Date is required'
+			return updateActivity(data, 'date')
 		}
 
 		function updateActivity(data, field){
@@ -114,9 +132,32 @@
 
 			}
 
+		$scope.deleteActivity = function(activity) {
+				swal({
+				  title: "Are you sure?",
+				  text: "You will not be able to recover this activity!",
+				  type: "warning",
+				  showCancelButton: true,
+				  confirmButtonColor: "#DD6B55",
+				  confirmButtonText: "Yes, delete it!",
+				  closeOnConfirm: true,
+				  html: false
+				}, function(){
+					$http.delete('api/users/' + $stateParams.id
+					 + '/activity/' + activity._id  )
+					.success(function(data){
+						userId = {'id': $stateParams.id}
+						$state.go('user',userId)
+					})
+					.error(function(err) {
+						console.log(err)
+					})
+				})
+			}
 
-	 	getActivity()
-		getSettings()
+
+	 	getActivitySettings()
+		
 
 
 	}])

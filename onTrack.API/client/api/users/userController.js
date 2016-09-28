@@ -3,7 +3,15 @@
 	.controller('UserController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
 		function($scope, $state, $http, $window, $stateParams, $q) {
 
-			
+			function getSettings() {
+				$http.get('api/settings')
+					.success(function(data) {
+						$scope.settings = data
+					})
+					.error(function(err){
+						console.log(err)
+					})
+			}
 
 			$scope.deleteUser = function() {
 				swal({
@@ -26,27 +34,6 @@
 				})
 			}
 
-			$scope.deleteActivity = function(activity) {
-				swal({
-				  title: "Are you sure?",
-				  text: "You will not be able to recover this activity!",
-				  type: "warning",
-				  showCancelButton: true,
-				  confirmButtonColor: "#DD6B55",
-				  confirmButtonText: "Yes, delete it!",
-				  closeOnConfirm: true,
-				  html: false
-				}, function(){
-					$http.delete('/api/users/' + $stateParams.id
-					 + '/activity/' + activity._id  )
-					.success(function(data){
-						$state.reload()
-					})
-					.error(function(err) {
-						console.log(err)
-					})
-				})
-			}
 
 			$(document).on('click','.user-email-edit-button', function(){
 				$('#user-email-edit')[0].click()
@@ -133,11 +120,9 @@
 						console.log(err)
 					})
 			}
+
 			populateTypes()
-
-		
-
-
+			getSettings()
 			getUser()
 		
 	}])
