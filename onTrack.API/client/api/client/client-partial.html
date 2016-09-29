@@ -82,20 +82,6 @@
 
  	<table class = 'table table-bordered'>
  		<thead>
- 			<tr class ='active'><th>Settings</th></tr>
- 		</thead>
- 		<tbody ng-repeat = 'setting in client.settings'>
- 			<tr class = 'info'><td><a ui-sref = 'clientSetting({clientid:client._id, settingid: setting._id})'>{{}}</a></td></tr>
- 		</tbody>
- 		<tr class = 'active'>
- 			<td>
- 				<div ui-sref = 'client.settingCreate' class = 'btn btn-primary'>Add Setting</div>
- 			</td>
- 		</tr>
- 	</table>
-
- 	<table class = 'table table-bordered'>
- 		<thead>
  			<tr class ='active'><th>Users</th></tr>
  		</thead>
  		<tbody ng-repeat = 'user in client.usersClient'>

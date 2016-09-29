@@ -93,14 +93,19 @@
 						controller: 'ActivityFormController'
 					})
 					.state('setting', {
+						url: '/settings',
 						templateUrl: 'client/api/main-settings/settings-partial.html',
-						controller: 'MainSettingsController',
-						url: '/settings'
+						controller: 'MainSettingsController'
 					})
 					.state('setting.settingCreate',{
+						url: '/create',
 						templateUrl: 'client/api/main-settings/form/settings-form-partial.html',
-						controller: 'MainSettingsFormController',
-						url: '/create'
+						controller: 'MainSettingsFormController'
+					})
+					.state('settingView', {
+						url: '/settings/:id',
+						templateUrl: 'client/api/main-settings/view/view-settings-partial.html',
+						controller: "ViewSettingsController"
 					})
 					.state('activity', {
 						url: '/users/:id/activity/:activityId',
