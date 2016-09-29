@@ -8,9 +8,14 @@ var subTypesSchema = new Schema({
 	text: {type: String}
 })
 
+var progressSchema = new Schema({
+	
+})
+
 var SettingsSchema = new Schema({
 	type: {type: String},
-	subTypes: [subTypesSchema]
+	subTypes: [subTypesSchema],
+	progress: [progressSchema]
 });
 
 // SettingsSchema.post('remove', function(doc) {

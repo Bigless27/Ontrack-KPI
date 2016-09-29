@@ -5,23 +5,47 @@
 </div>
 
 <div ui-view></div>
+<div class = 'container'>
+	<div class = 'col-sm-6 col-md-6'>
+		<h2>Type Settings</h2>
+		<a href="" class = 'btn btn-default' ui-sref = 'setting.settingCreate'>Create Type Setting</a>
 
-<a href="" class = 'btn btn-default' ui-sref = 'setting.settingCreate'>Create Setting</a>
+		<div class  = 'table-holder row' ng-repeat = 'set in settings'>
+			
+			<table class = 'table table-bordered' >
+				<tr>
+					<th>Type</th>
+					<td>
+						{{set.type || 'empty'}}
+					</td>
+				</tr>
+				<tr class = 'active' ng-repeat = 'sub in set.subTypes'>
+					<th>SubType</th>
+					<th>{{sub.text || 'empty'}}</th>
+				</tr>
+			</table>
+			<div class = 'btn btn-info' ui-sref = 'settingView({id: set._id})'>View</div>
+		</div>
+	</div>
+	<div class = 'col-sm-6 col-md-6'>
+		<h2>Assign Progress Tracker</h2>
+		 <div class = "form-group">
+			<label id = 'admin-lable'>Users</label>
+			<div class = "input-group">
+				<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+				<multiple-autocomplete 
+				ng-model="user.users"
+				  object-property="fullName"
+				  suggestions-arr="optionsList"
+				  required = 'true'>
+				</multiple-autocomplete>
+			</div>
+      			<p class="help-block" ng-if= "userForm.users.$error.required">Value is required</p>
+      			<div id = 'user-select-button' class = 'btn btn-info' ng-click ='selectAll()'>
+					Select All
+				</div>
+		</div>
 
-<div class  = 'table-holder row' ng-repeat = 'set in settings'>
-	
-	<table class = 'table table-bordered' >
-		<tr>
-			<th>Type</th>
-			<td>
-				{{set.type || 'empty'}}
-			</td>
-		</tr>
-		<tr class = 'active' ng-repeat = 'sub in set.subTypes'>
-			<th>SubType</th>
-			<th>{{sub.text || 'empty'}}</th>
-		</tr>
-	</table>
-	<div class = 'btn btn-info' ui-sref = 'settingView({id: set._id})'>View</div>
+	</div>
 </div>
 

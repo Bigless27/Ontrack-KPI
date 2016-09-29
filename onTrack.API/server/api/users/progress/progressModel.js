@@ -36,4 +36,4 @@ UserPromoProgressSchema.post('save', function(doc) {
 	})
 })
 
-module.exports = mongoose.model('userpromoprogress', UserPromoProgressSchema)
+module.exports = mongoose.model('userprogess', UserPromoProgressSchema)

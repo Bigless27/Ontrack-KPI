@@ -461,7 +461,40 @@
 	.controller('MainSettingsController', ['$scope', '$state', '$window', '$http',
 	 function($scope, $state, $window, $http) {
 
-	 	function loadSettings(){
+	 	$scope.selectAll = function(){
+	 		if($scope.user.users.length < $scope.optionsList.length){
+		 		$scope.user.users = $scope.optionsList
+		 		$('#user-select-button')[0].innerHTML = 'Clear'
+	 		}
+	 		else{
+	 			$scope.user.users = []
+	 			$('#user-select-button')[0].innerHTML = 'Select All'
+	 		}
+	 	}
+
+	 	$scope.optionsList = []
+
+	 	function getUsers(){
+			$http.get('/api/users')
+				.success(function(users) {
+					users.forEach(function(user){
+						if(user){
+							$scope.optionsList.push(
+									{firstName: user.firstName, lastName: user.lastName, 
+										email: user.email, fullName: user.firstName + ' ' + user.lastName}
+								)
+						}
+						else{
+							$scope.optionsList = [{name: 'No users'}]
+						}
+					})
+				})
+				.error(function(err) {
+					console.log(err);
+				})
+		}
+
+	 	function loadTypeSettings(){
 		 	 $http.get('api/settings')
 		 		.success(function(data) {
 		 			$scope.settings = data
@@ -471,7 +504,9 @@
 		 		})
 	 	}
 
-	 	loadSettings()
+
+	 	getUsers()
+	 	loadTypeSettings()
 
 	}])
 }());
@@ -690,19 +725,6 @@
 		function($scope, $state, $http, $window, $stateParams) {
 		
 
-
-		$scope.highlight = function(x) {
-			if ($(`span:contains(${x.email})`).hasClass('check')){
-
-				$(`span:contains(${x.email})`).parent().parent().css({"background-color":"transparent"})
-				$(`span:contains(${x.email})`).removeClass('check')
-			}
-			else{
-				$(`span:contains(${x.email})`).parent().parent().css({"background-color":"#a8a8a8"})
-				$(`span:contains(${x.email})`).addClass('check')
-			}
-
-		}
 
 		$scope.user = {
 
