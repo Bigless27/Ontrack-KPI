@@ -10,15 +10,26 @@
 			$scope.minDate = today.toISOString();
 
 
-			$scope.myList = [{
-				    listValue: "sale"
-			      }, {
-			        listValue: "attendance"
-			      }, {
-			        listValue: "calls"
-			      }, {
-			        listValue: "referals"
-			 }]
+			function getSettings(){
+				$http.get('api/settings')
+					.success(function(data){
+						$scope.settings = data
+						setTypes()
+					})
+					.error(function(err) {
+						console.log(err)
+					})
+			}
+
+			function setTypes() {
+				var unUniqueTypes = $scope.settings.map(function(set){
+					return set.type
+				})
+				$scope.typeList = [...new Set(unUniqueTypes)]
+			}
+
+			getSettings()
+
 			
 			$scope.submitPromotion = function(promotion) {
 				$scope.$broadcast('show-errors-check-validity');
