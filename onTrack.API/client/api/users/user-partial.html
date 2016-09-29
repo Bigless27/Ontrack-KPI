@@ -42,65 +42,97 @@
 
 <button class = 'btn btn-default' ui-sref = 'main'>Back</button>
 <button class = 'btn btn-danger' ng-click = 'deleteUser()'>Delete</button>
-<div style	= 'height: 100px;'></div>
 
-<div>
-	<h2 style = 'display: inline-block'>Current Activity</h2>
-	<span 
-		class = 'btn btn-primary' 
-		ui-sref = 'user.activityCreate'
-		>Create Activity
-	</span>
-	<div ui-view></div>
-	<div class = 'table-holder row' ng-repeat = 'activity in user.activity'>
-		<table class = 'table table-bordered' style = 'width:300px'>
-			<tr>
-				<th>Name</th>
-				<td>
-					<span 
-						editable-text = 'activity.name'
-						e-form = 'name'
-						onbeforesave = 'updateActivityName($data)'>
-						{{activity.name || 'empty'}}
-					</span>
-				</td>
-			</tr>
-			<tr>
-				<th>Type</th>
-				<td>
-					<span 
-						id = 'activity-type-edit'  
-						style = 'color:black; text-decoration:none;'
-						editable-select="activity.type" 
-						e-ng-options="s for s in typeList" onbeforesave = 'updateActivityType($data)'
-					>
-						{{activity.type || 'empty'}}
-					</span>
-				</td>
-			</tr>
-			<tr>
-				<th>SubType</th>
-				<td>
-					<a href="" 
-					id = 'activity-subTypes-edit-button'
-					ng-click = 'getSubtypes()'
-					>Edit
-					</a>
-				</td>
-			</tr>
-			<tr>
-				<th>Value</th>
-				<td>
-					{{activity.value || 'empty'}}
-				</td>
-			</tr>
-			<tr>
-				<th>Date</th>
-				<td>
-					{{(activity.value | date:'medium') || 'empty'}}
-				</td>
-			</tr>
-		</table>
-		<div class = 'btn btn-default' ui-sref = 'activity({id: user._id, activityId: activity._id})'>View</div>
+<div style	= 'height: 100px;'></div>
+<div class = 'container'>
+
+	<div class = 'col-md-6'>
+		<h2 style = 'display: inline-block'>Current Activity</h2>
+		<span 
+			class = 'btn btn-primary' 
+			ui-sref = 'user.activityCreate'
+			>Create Activity
+		</span>
+		<div ui-view></div>
+		<div class = 'table-holder row' ng-repeat = 'activity in user.activity'>
+			<table class = 'table table-bordered' style = 'width:300px'>
+				<tr>
+					<th>Name</th>
+					<td>
+						<span 
+							editable-text = 'activity.name'
+							e-form = 'name'
+							onbeforesave = 'updateActivityName($data)'>
+							{{activity.name || 'empty'}}
+						</span>
+					</td>
+				</tr>
+				<tr>
+					<th>Type</th>
+					<td>
+						<span 
+							id = 'activity-type-edit'  
+							style = 'color:black; text-decoration:none;'
+							editable-select="activity.type" 
+							e-ng-options="s for s in typeList" onbeforesave = 'updateActivityType($data)'
+						>
+							{{activity.type || 'empty'}}
+						</span>
+					</td>
+				</tr>
+				<tr>
+					<th>SubType</th>
+					<td>
+						{{activity.subType || 'empty'}}
+					</td>
+				</tr>
+				<tr>
+					<th>Value</th>
+					<td>
+						{{activity.value || 'empty'}}
+					</td>
+				</tr>
+				<tr>
+					<th>Date</th>
+					<td>
+						{{(activity.date | date:'medium') || 'empty'}}
+					</td>
+				</tr>
+			</table>
+			<div class = 'btn btn-default' ui-sref = 'activity({id: user._id, activityId: activity._id})'>View</div>
+		</div>
+	</div>
+	<div class = 'col-md-6'>
+		<h2 style = 'display: inline-block'>Progress</h2>
+		<h2>Type: {{progress.type || 'empty'}}</h2>
+		<div class = 'table-holder row'>
+			<table class = 'table table-bordered' style = 'width:300px'>
+				<tr>
+					<th>Name</th>
+					<td>
+						<span 
+							editable-text = 'progressname'
+							e-form = 'name'
+							onbeforesave = 'updateProgressName($data)'>
+							{{progress.name || 'empty'}}
+						</span>
+					</td>
+				</tr>
+				<tr>
+					<th>SubType</th>
+					<td>
+						{{progress.subType || 'empty'}}
+					</td>
+				</tr>
+				<tr>
+					<th>Value</th>
+					<td>
+						{{progress.value || 'empty'}}
+					</td>
+				</tr>
+			</table>
+			<div class = 'btn btn-default' ui-sref = 'progress({id: user._id, progressId: progress._id})'>View</div>
+		</div>
 	</div>
 </div>
+

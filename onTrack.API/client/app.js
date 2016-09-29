@@ -112,7 +112,11 @@
 						templateUrl: 'client/api/users/activity/activity-partial.html',
 						controller: 'ActivityController'
 					})
-
+					.state('progress', {
+						url: '/users/:id/progress/:progressId',
+						templateUrl: 'client/api/users/progress/progress-partial.html',
+						controller: 'ProgressController'
+					})
 
 			}])
 			.run(function(editableOptions) {

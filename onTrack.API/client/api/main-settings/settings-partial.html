@@ -22,7 +22,6 @@
 			<th>{{sub.text || 'empty'}}</th>
 		</tr>
 	</table>
-	<div class = 'btn btn-info' ui-sref = 'settingView'>View</div>
-	<div class = 'btn btn-danger' ng-click = 'deleteSetting(set)'>X</div>
+	<div class = 'btn btn-info' ui-sref = 'settingView({id: set._id})'>View</div>
 </div>
 

@@ -6,7 +6,9 @@ var User = require('../userModel')
 var UserPromoProgressSchema = new Schema({
 	userId: {type: Schema.Types.ObjectId, ref: 'user', required: true},
 	promotionId: {type: Schema.Types.ObjectId, ref: 'promotion', required: true},
-	value: {type: Number, default: 0}
+	value: {type: Number, default: 0},
+	type: {type: String, required: true},
+	subType: {type: String, required: true}
 });
 
 UserPromoProgressSchema.post('save', function(doc) {
