@@ -1,10 +1,10 @@
 var router = require('express').Router({mergeParams: true});
 var controller = require('./settingsController');
-var client = require('../../middleware/customMiddleware')
+var client = require('../../../middleware/customMiddleware')
 
 
-
-router.param('settingsId', controller.params);
+//changed from setting id
+router.param('id', controller.params);
 
 router.route('/')
 	.get(controller.get)

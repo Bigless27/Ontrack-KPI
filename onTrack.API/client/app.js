@@ -55,11 +55,6 @@
 						templateUrl: 'client/api/client/promotions/form/promotions-form-partial.html',
 						controller: 'PromotionFormController'
 					})
-					.state('client.settingCreate',{
-						url: 'client/:id',
-						templateUrl: 'client/api/client/settings/settings-create-partial.html',
-						controller: 'ClientController'
-					})
 					.state('client.addUser', {
 						templateUrl:'client/api/client/admin/admin-add-partial.html',
 						controller: 'AddUserController'
@@ -67,11 +62,6 @@
 					.state('client.addAdmin', {
 						templateUrl:'client/api/client/admin/admin-add-partial.html',
 						controller: 'AdminController'
-					})
-					.state('clientSetting', {
-						url: '/client/:clientid/settings/:settingid',
-						templateUrl: 'client/api/client/settings/settings-partial.html',
-						controller: 'ClientSettingController'
 					})
 					.state('kpi', {
 						url: '/client/:clientId/kpis/:kpiId',
@@ -97,10 +87,10 @@
 						templateUrl: 'client/api/main-settings/settings-partial.html',
 						controller: 'MainSettingsController'
 					})
-					.state('setting.settingCreate',{
+					.state('setting.settingTypeCreate',{
 						url: '/create',
-						templateUrl: 'client/api/main-settings/form/settings-form-partial.html',
-						controller: 'MainSettingsFormController'
+						templateUrl: 'client/api/main-settings/type-form/settings-form-partial.html',
+						controller: 'SettingsTypeFormController'
 					})
 					.state('settingView', {
 						url: '/settings/:id',

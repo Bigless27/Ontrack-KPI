@@ -55,11 +55,6 @@
 						templateUrl: 'client/api/client/promotions/form/promotions-form-partial.html',
 						controller: 'PromotionFormController'
 					})
-					.state('client.settingCreate',{
-						url: 'client/:id',
-						templateUrl: 'client/api/client/settings/settings-create-partial.html',
-						controller: 'ClientController'
-					})
 					.state('client.addUser', {
 						templateUrl:'client/api/client/admin/admin-add-partial.html',
 						controller: 'AddUserController'
@@ -67,11 +62,6 @@
 					.state('client.addAdmin', {
 						templateUrl:'client/api/client/admin/admin-add-partial.html',
 						controller: 'AdminController'
-					})
-					.state('clientSetting', {
-						url: '/client/:clientid/settings/:settingid',
-						templateUrl: 'client/api/client/settings/settings-partial.html',
-						controller: 'ClientSettingController'
 					})
 					.state('kpi', {
 						url: '/client/:clientId/kpis/:kpiId',
@@ -97,10 +87,10 @@
 						templateUrl: 'client/api/main-settings/settings-partial.html',
 						controller: 'MainSettingsController'
 					})
-					.state('setting.settingCreate',{
+					.state('setting.settingTypeCreate',{
 						url: '/create',
-						templateUrl: 'client/api/main-settings/form/settings-form-partial.html',
-						controller: 'MainSettingsFormController'
+						templateUrl: 'client/api/main-settings/type-form/settings-form-partial.html',
+						controller: 'SettingsTypeFormController'
 					})
 					.state('settingView', {
 						url: '/settings/:id',
@@ -458,60 +448,6 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('MainSettingsController', ['$scope', '$state', '$window', '$http',
-	 function($scope, $state, $window, $http) {
-
-	 	$scope.selectAll = function(){
-	 		if($scope.user.users.length < $scope.optionsList.length){
-		 		$scope.user.users = $scope.optionsList
-		 		$('#user-select-button')[0].innerHTML = 'Clear'
-	 		}
-	 		else{
-	 			$scope.user.users = []
-	 			$('#user-select-button')[0].innerHTML = 'Select All'
-	 		}
-	 	}
-
-	 	$scope.optionsList = []
-
-	 	function getUsers(){
-			$http.get('/api/users')
-				.success(function(users) {
-					users.forEach(function(user){
-						if(user){
-							$scope.optionsList.push(
-									{firstName: user.firstName, lastName: user.lastName, 
-										email: user.email, fullName: user.firstName + ' ' + user.lastName}
-								)
-						}
-						else{
-							$scope.optionsList = [{name: 'No users'}]
-						}
-					})
-				})
-				.error(function(err) {
-					console.log(err);
-				})
-		}
-
-	 	function loadTypeSettings(){
-		 	 $http.get('api/settings')
-		 		.success(function(data) {
-		 			$scope.settings = data
-		 		})
-		 		.error(function(err) {
-		 			console.log(err)
-		 		})
-	 	}
-
-
-	 	getUsers()
-	 	loadTypeSettings()
-
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
 		function($scope, $state, $http, $window) {
 		$scope.signUp = function(user) {
@@ -717,6 +653,60 @@
 			populateTypes()
 			getUser()
 		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('MainSettingsController', ['$scope', '$state', '$window', '$http',
+	 function($scope, $state, $window, $http) {
+
+	 	$scope.selectAll = function(){
+	 		if($scope.user.users.length < $scope.optionsList.length){
+		 		$scope.user.users = $scope.optionsList
+		 		$('#user-select-button')[0].innerHTML = 'Clear'
+	 		}
+	 		else{
+	 			$scope.user.users = []
+	 			$('#user-select-button')[0].innerHTML = 'Select All'
+	 		}
+	 	}
+
+	 	$scope.optionsList = []
+
+	 	function getUsers(){
+			$http.get('/api/users')
+				.success(function(users) {
+					users.forEach(function(user){
+						if(user){
+							$scope.optionsList.push(
+									{firstName: user.firstName, lastName: user.lastName, 
+										email: user.email, fullName: user.firstName + ' ' + user.lastName}
+								)
+						}
+						else{
+							$scope.optionsList = [{name: 'No users'}]
+						}
+					})
+				})
+				.error(function(err) {
+					console.log(err);
+				})
+		}
+
+	 	function loadTypeSettings(){
+		 	 $http.get('api/settings')
+		 		.success(function(data) {
+		 			$scope.settings = data
+		 		})
+		 		.error(function(err) {
+		 			console.log(err)
+		 		})
+	 	}
+
+
+	 	getUsers()
+	 	loadTypeSettings()
+
 	}])
 }());
 (function() {
@@ -1155,69 +1145,6 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('MainSettingsFormController', ['$scope', '$state', '$window', '$http',
-	 function($scope, $state, $window, $http) {
-
-	 	$scope.submitSetting = function(setting) {
-	 		$http.post('/api/settings', setting)
-	 			.success(function(data) {
-	 				$scope.settings = data
-	 				$state.reload()
-	 			})
-	 			.error(function(err) {
-	 				console.log(err)
-	 			})
-	 	}
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('ViewSettingsController', ['$scope', '$state', '$window', '$http', '$stateParams',
-	 function($scope, $state, $window, $http, $stateParams) {
-
-	 		$scope.deleteSetting = function() {
-				var token = $window.sessionStorage['jwt']
-				swal({
-				  title: "Are you sure?",
-				  text: "You will not be able to recover this Setting!",
-				  type: "warning",
-				  showCancelButton: true,
-				  confirmButtonColor: "#DD6B55",
-				  confirmButtonText: "Yes, delete it!",
-				  closeOnConfirm: true,
-				  html: false
-				}, function(){
-					$http.delete('/api/settings/'+ $stateParams.id, {
-						headers: {
-							'Authorization': `Bearer ${token}`
-						}
-					})
-					.success(function(data){
-						$state.go('setting')
-					})
-					.error(function(err) {
-						console.log(err)
-					})
-				})
-			}
-
-	 		function getSetting(){
-	 			$http.get('api/settings/' + $stateParams.id)
-	 				.success(function(data) {
-	 					$scope.setting = data
-	 					console.log($scope.setting)
-	 				})
-	 				.error(function(err) {
-	 					console.log(err)
-	 				})
-	 		}
-
-	 		getSetting()
-
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('ActivityController', ['$scope', '$state', '$window', '$stateParams', '$http', '$q',
 	 function($scope, $state, $window, $stateParams, $http, $q) {
 
@@ -1382,6 +1309,14 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('ProgressController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
+		function($scope, $state, $http, $window, $stateParams, $q) {
+			
+					
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('UserFormController', ['$scope', '$state', '$http', '$window', 
 		function($scope, $state, $http, $window) {
 
@@ -1413,10 +1348,65 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('ProgressController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
-		function($scope, $state, $http, $window, $stateParams, $q) {
-			
-					
+	.controller('SettingsTypeFormController', ['$scope', '$state', '$window', '$http',
+	 function($scope, $state, $window, $http) {
+
+	 	$scope.submitSetting = function(setting) {
+	 		$http.post('/api/settings', setting)
+	 			.success(function(data) {
+	 				$scope.settings = data
+	 				$state.reload()
+	 			})
+	 			.error(function(err) {
+	 				console.log(err)
+	 			})
+	 	}
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('ViewSettingsController', ['$scope', '$state', '$window', '$http', '$stateParams',
+	 function($scope, $state, $window, $http, $stateParams) {
+
+	 		$scope.deleteSetting = function() {
+				var token = $window.sessionStorage['jwt']
+				swal({
+				  title: "Are you sure?",
+				  text: "You will not be able to recover this Setting!",
+				  type: "warning",
+				  showCancelButton: true,
+				  confirmButtonColor: "#DD6B55",
+				  confirmButtonText: "Yes, delete it!",
+				  closeOnConfirm: true,
+				  html: false
+				}, function(){
+					$http.delete('/api/settings/'+ $stateParams.id, {
+						headers: {
+							'Authorization': `Bearer ${token}`
+						}
+					})
+					.success(function(data){
+						$state.go('setting')
+					})
+					.error(function(err) {
+						console.log(err)
+					})
+				})
+			}
+
+	 		function getSetting(){
+	 			$http.get('api/settings/' + $stateParams.id)
+	 				.success(function(data) {
+	 					$scope.setting = data
+	 					console.log($scope.setting)
+	 				})
+	 				.error(function(err) {
+	 					console.log(err)
+	 				})
+	 		}
+
+	 		getSetting()
+
 	}])
 }());
 (function() {
