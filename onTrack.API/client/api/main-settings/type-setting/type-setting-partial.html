@@ -1,1 +1,15 @@
-<h1>Type Setting</h1>
+<div>
+	<table class = 'table table-striped'>
+		<tr>
+			<th>Type</th>
+			<td>{{setting.type}}</td>
+		</tr>
+		<tr ng-repeat = 'set in setting.subTypes'>
+			<th>Subtypes</th>
+			<td>{{set.text}}</td>
+		</tr>		
+	</table>
+</div>
+
+<div class = 'btn btn-default' ui-sref = 'setting'>Back</div>
+<span class = 'btn btn-danger' ng-click = 'deleteSetting()'><i class="glyphicon glyphicon-trash" aria-hidden="true"></i></span>

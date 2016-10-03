@@ -104,13 +104,8 @@
 					})
 					.state('settingType', {
 						url: '/typeSetting/:id', 
-						templateUrl: 'client/api/main-setting/type-setting/type-setting-partial.html',
+						templateUrl: 'client/api/main-settings/type-setting/type-setting-partial.html',
 						controller: 'TypeSettingController'
-					})
-					.state('settingView', {
-						url: '/settings/:id',
-						templateUrl: 'client/api/main-settings/view/view-settings-partial.html',
-						controller: "ViewSettingsController"
 					})
 					.state('activity', {
 						url: '/users/:id/activity/:activityId',

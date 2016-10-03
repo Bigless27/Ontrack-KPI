@@ -104,13 +104,8 @@
 					})
 					.state('settingType', {
 						url: '/typeSetting/:id', 
-						templateUrl: 'client/api/main-setting/type-setting/type-setting-partial.html',
+						templateUrl: 'client/api/main-settings/type-setting/type-setting-partial.html',
 						controller: 'TypeSettingController'
-					})
-					.state('settingView', {
-						url: '/settings/:id',
-						templateUrl: 'client/api/main-settings/view/view-settings-partial.html',
-						controller: "ViewSettingsController"
 					})
 					.state('activity', {
 						url: '/users/:id/activity/:activityId',
@@ -463,28 +458,6 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
-		$scope.signUp = function(user) {
-			$scope.$broadcast('show-errors-check-validity')
-
-			if ($scope.userForm.$invalid){return;}
-			$scope.err = false
-			$http.post('api/users', user)
-				.success(function(data) {
-					$scope.err = false
-					$window.sessionStorage.jwt = data['token']
-					$state.go('main')
-				})
-				.error(function(error) {
-					$scope.err = true
-					$scope.errMessage = error.message
-				})
-		}
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('MainSettingsController', ['$scope', '$state', '$window', '$http',
 	 function($scope, $state, $window, $http) {
 
@@ -546,6 +519,28 @@
 	 	loadTypeSettings()
 	 	loadProgressSettings()
 
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+		$scope.signUp = function(user) {
+			$scope.$broadcast('show-errors-check-validity')
+
+			if ($scope.userForm.$invalid){return;}
+			$scope.err = false
+			$http.post('api/users', user)
+				.success(function(data) {
+					$scope.err = false
+					$window.sessionStorage.jwt = data['token']
+					$state.go('main')
+				})
+				.error(function(error) {
+					$scope.err = true
+					$scope.errMessage = error.message
+				})
+		}
 	}])
 }());
 (function() {
@@ -1174,6 +1169,32 @@
 	.controller('ProgressSettingController', ['$scope', '$state', '$window', '$http', '$stateParams',
 	 function($scope, $state, $window, $http, $stateParams) {
 
+	 	$scope.deleteSetting = function() {
+				var token = $window.sessionStorage['jwt']
+				swal({
+				  title: "Are you sure?",
+				  text: "You will not be able to recover this Setting!",
+				  type: "warning",
+				  showCancelButton: true,
+				  confirmButtonColor: "#DD6B55",
+				  confirmButtonText: "Yes, delete it!",
+				  closeOnConfirm: true,
+				  html: false
+				}, function(){
+					$http.delete('/api/progress-settings/'+ $stateParams.id, {
+						headers: {
+							'Authorization': `Bearer ${token}`
+						}
+					})
+					.success(function(data){
+						$state.go('setting')
+					})
+					.error(function(err) {
+						console.log(err)
+					})
+				})
+			}
+
 	 	function getSetting(){
 	 		$http.get('api/progress-settings/' + $stateParams.id)
 	 			.success(function(data){
@@ -1191,15 +1212,7 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('TypeSettingController', ['$scope', '$state', '$window', '$http',
-	 function($scope, $state, $window, $http) {
-
-	 	
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('ViewSettingsController', ['$scope', '$state', '$window', '$http', '$stateParams',
+	.controller('TypeSettingController', ['$scope', '$state', '$window', '$http', '$stateParams',
 	 function($scope, $state, $window, $http, $stateParams) {
 
 	 		$scope.deleteSetting = function() {
@@ -1214,7 +1227,7 @@
 				  closeOnConfirm: true,
 				  html: false
 				}, function(){
-					$http.delete('/api/settings/'+ $stateParams.id, {
+					$http.delete('/api/type-settings/'+ $stateParams.id, {
 						headers: {
 							'Authorization': `Bearer ${token}`
 						}
@@ -1229,7 +1242,7 @@
 			}
 
 	 		function getSetting(){
-	 			$http.get('api/settings/' + $stateParams.id)
+	 			$http.get('api/type-settings/' + $stateParams.id)
 	 				.success(function(data) {
 	 					$scope.setting = data
 	 					console.log($scope.setting)
