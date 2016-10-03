@@ -6,7 +6,7 @@
 	 	$scope.submitSetting = function(setting) {
 	 		$http.post('/api/type-settings', setting)
 	 			.success(function(data) {
-	 				$scope.settings = data
+	 				$scope.typeSettings = data
 	 				$state.reload()
 	 			})
 	 			.error(function(err) {

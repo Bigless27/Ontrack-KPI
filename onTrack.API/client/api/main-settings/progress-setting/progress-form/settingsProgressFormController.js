@@ -5,12 +5,12 @@
 
 
 	 	$scope.selectAll = function(){
-	 		if($scope.user.users.length < $scope.optionsList.length){
-		 		$scope.user.users = $scope.optionsList
+	 		if($scope.setting.users.length < $scope.optionsList.length){
+		 		$scope.setting.users = $scope.optionsList
 		 		$('#user-select-button')[0].innerHTML = 'Clear'
 	 		}
 	 		else{
-	 			$scope.user.users = []
+	 			$scope.setting.users = []
 	 			$('#user-select-button')[0].innerHTML = 'Select All'
 	 		}
 	 	}
@@ -23,8 +23,9 @@
 					users.forEach(function(user){
 						if(user){
 							$scope.optionsList.push(
-									{firstName: user.firstName, lastName: user.lastName, 
-										email: user.email, fullName: user.firstName + ' ' + user.lastName}
+									{ fullName: user.firstName + ' ' + user.lastName,
+										userId: user._id
+									}
 								)
 						}
 						else{
@@ -37,20 +38,29 @@
 				})
 		}
 
+	 	$scope.submitProgressSetting = function(setting) {
+	 		if(!setting.users){
+	 			return 'No Users Assigned'
+	 		}
+	 		else{
+	 			 var modSetting = setting.users.map(function(user) {
+	 				return user.userId
+	 			})
+	 		}
 
+	 		setting['users'] = modSetting
 
-	 	getUsers()
-
-
-	 	$scope.submitSetting = function(setting) {
 	 		$http.post('/api/progress-settings', setting)
 	 			.success(function(data) {
-	 				$scope.settings = data
+	 				$scope.progressSettings = data
 	 				$state.reload()
 	 			})
 	 			.error(function(err) {
 	 				console.log(err)
 	 			})
 	 	}
+
+
+	 	getUsers()
 	}])
 }());

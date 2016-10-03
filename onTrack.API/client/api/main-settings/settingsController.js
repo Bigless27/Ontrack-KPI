@@ -39,16 +39,27 @@
 	 	function loadTypeSettings(){
 		 	 $http.get('api/type-settings')
 		 		.success(function(data) {
-		 			$scope.settings = data
+		 			$scope.typeSettings = data
 		 		})
 		 		.error(function(err) {
 		 			console.log(err)
 		 		})
 	 	}
 
+	 	function loadProgressSettings(){
+	 		$http.get('api/progress-settings')
+	 			.success(function(data) {
+	 				$scope.progressSettings = data
+	 			})
+	 			.error(function(err) {
+	 				console.log(err)
+	 			})
+	 	}
+
 
 	 	getUsers()
 	 	loadTypeSettings()
+	 	loadProgressSettings()
 
 	}])
 }());
