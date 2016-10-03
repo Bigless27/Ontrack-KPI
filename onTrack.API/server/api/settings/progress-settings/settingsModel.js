@@ -4,15 +4,9 @@ var Client = require('../../client/clientModel');
 var _ = require('lodash');
 
 
-var subTypesSchema = new Schema({
-	text: {type: String}
-})
-
 var SettingsSchema = new Schema({
-	type: {type: String},
-	subType: {type: String},
-	value: {type: String}
-	
+	name: {type: String},
+	users: [{type: Schema.Types.ObjectId, ref: 'users'}]	
 });
 
 

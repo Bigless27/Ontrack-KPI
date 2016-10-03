@@ -1,7 +1,8 @@
 (function() {
 	angular.module('onTrack')
-	.controller('MainSettingsController', ['$scope', '$state', '$window', '$http',
+	.controller('SettingsProgressFormController', ['$scope', '$state', '$window', '$http',
 	 function($scope, $state, $window, $http) {
+
 
 	 	$scope.selectAll = function(){
 	 		if($scope.user.users.length < $scope.optionsList.length){
@@ -36,19 +37,20 @@
 				})
 		}
 
-	 	function loadTypeSettings(){
-		 	 $http.get('api/type-settings')
-		 		.success(function(data) {
-		 			$scope.settings = data
-		 		})
-		 		.error(function(err) {
-		 			console.log(err)
-		 		})
-	 	}
 
 
 	 	getUsers()
-	 	loadTypeSettings()
 
+
+	 	$scope.submitSetting = function(setting) {
+	 		$http.post('/api/progress-settings', setting)
+	 			.success(function(data) {
+	 				$scope.settings = data
+	 				$state.reload()
+	 			})
+	 			.error(function(err) {
+	 				console.log(err)
+	 			})
+	 	}
 	}])
 }());

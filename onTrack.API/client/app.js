@@ -88,9 +88,14 @@
 						controller: 'MainSettingsController'
 					})
 					.state('setting.settingTypeCreate',{
-						url: '/create',
-						templateUrl: 'client/api/main-settings/type-form/settings-form-partial.html',
+						url: '/createType',
+						templateUrl: 'client/api/main-settings/type-form/settings-type-form-partial.html',
 						controller: 'SettingsTypeFormController'
+					})
+					.state('setting.settingProgressCreate', {
+						url: '/createProgress',
+						templateUrl: 'client/api/main-settings/progress-form/settings-progress-form-partial.html',
+						controller: 'SettingsProgressFormController'
 					})
 					.state('settingView', {
 						url: '/settings/:id',

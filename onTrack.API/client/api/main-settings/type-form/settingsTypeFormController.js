@@ -4,7 +4,7 @@
 	 function($scope, $state, $window, $http) {
 
 	 	$scope.submitSetting = function(setting) {
-	 		$http.post('/api/settings', setting)
+	 		$http.post('/api/type-settings', setting)
 	 			.success(function(data) {
 	 				$scope.settings = data
 	 				$state.reload()

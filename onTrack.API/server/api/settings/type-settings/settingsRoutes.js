@@ -10,7 +10,7 @@ router.route('/')
 	.get(controller.get)
 	.post(controller.post)
 
-router.route('/:settingsId')
+router.route('/:settingsTypeId')
 	.get(controller.getOne)
 	.put(client.getClient(), controller.put)
 	.delete(controller.delete)
