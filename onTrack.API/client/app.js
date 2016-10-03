@@ -98,12 +98,12 @@
 						controller: 'SettingsProgressFormController'
 					})
 					.state('settingProgress', {
-						url: '/progressSetting',
+						url: '/progressSetting/:id',
 						templateUrl: 'client/api/main-settings/progress-setting/progress-setting-partial.html',
-						controler: "ProgressSettingController"
+						controller: "ProgressSettingController"
 					})
 					.state('settingType', {
-						url: '/typeSetting', 
+						url: '/typeSetting/:id', 
 						templateUrl: 'client/api/main-setting/type-setting/type-setting-partial.html',
 						controller: 'TypeSettingController'
 					})

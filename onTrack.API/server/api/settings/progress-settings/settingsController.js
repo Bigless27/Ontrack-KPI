@@ -4,17 +4,14 @@ var  _ = require('lodash');
 
 
 exports.params = function(req, res, next, id) {
+	
 	Settings.findById(id)
-		.then(function(setting) {
-			if (!setting) {
-				next(new Error('No Setting with that id'));
-			} else {
-				req.settings = setting;
-				next();
-			}
-		}, function(err) {
-			next(err);
-	});
+		.populate('users')
+		.exec(function(err, setting){
+			if (err) return next(err);
+			req.settings = setting
+			next()
+	})
 };
 
 exports.get = function(req, res, next) { // works

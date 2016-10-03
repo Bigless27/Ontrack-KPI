@@ -98,12 +98,12 @@
 						controller: 'SettingsProgressFormController'
 					})
 					.state('settingProgress', {
-						url: '/progressSetting',
+						url: '/progressSetting/:id',
 						templateUrl: 'client/api/main-settings/progress-setting/progress-setting-partial.html',
-						controler: "ProgressSettingController"
+						controller: "ProgressSettingController"
 					})
 					.state('settingType', {
-						url: '/typeSetting', 
+						url: '/typeSetting/:id', 
 						templateUrl: 'client/api/main-setting/type-setting/type-setting-partial.html',
 						controller: 'TypeSettingController'
 					})
@@ -390,6 +390,33 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('LoginController', ['$scope', '$state', '$window', '$http',
+	 function($scope, $state, $window, $http) {
+
+			$scope.logUserIn = function(user) {
+				$scope.$broadcast('show-errors-check-validity');
+
+
+				if($scope.userForm.$invalid){return;}
+
+				$scope.err = true
+
+				$http.post('auth/signin', user)
+					.success(function(data) {
+						$scope.err = false
+						$window.sessionStorage.jwt = data['token']
+						$state.go('main')
+					})
+					.error(function(error) {
+						$scope.err = true
+						$scope.errMessage = error
+					})
+			}
+
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('MainController', ['$scope', '$state', '$http', '$window', 
 		function($scope, $state, $http, $window) {
 
@@ -436,29 +463,24 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('LoginController', ['$scope', '$state', '$window', '$http',
-	 function($scope, $state, $window, $http) {
+	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+		$scope.signUp = function(user) {
+			$scope.$broadcast('show-errors-check-validity')
 
-			$scope.logUserIn = function(user) {
-				$scope.$broadcast('show-errors-check-validity');
-
-
-				if($scope.userForm.$invalid){return;}
-
-				$scope.err = true
-
-				$http.post('auth/signin', user)
-					.success(function(data) {
-						$scope.err = false
-						$window.sessionStorage.jwt = data['token']
-						$state.go('main')
-					})
-					.error(function(error) {
-						$scope.err = true
-						$scope.errMessage = error
-					})
-			}
-
+			if ($scope.userForm.$invalid){return;}
+			$scope.err = false
+			$http.post('api/users', user)
+				.success(function(data) {
+					$scope.err = false
+					$window.sessionStorage.jwt = data['token']
+					$state.go('main')
+				})
+				.error(function(error) {
+					$scope.err = true
+					$scope.errMessage = error.message
+				})
+		}
 	}])
 }());
 (function() {
@@ -524,28 +546,6 @@
 	 	loadTypeSettings()
 	 	loadProgressSettings()
 
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
-		$scope.signUp = function(user) {
-			$scope.$broadcast('show-errors-check-validity')
-
-			if ($scope.userForm.$invalid){return;}
-			$scope.err = false
-			$http.post('api/users', user)
-				.success(function(data) {
-					$scope.err = false
-					$window.sessionStorage.jwt = data['token']
-					$state.go('main')
-				})
-				.error(function(error) {
-					$scope.err = true
-					$scope.errMessage = error.message
-				})
-		}
 	}])
 }());
 (function() {
@@ -715,7 +715,7 @@
 
 			//ui-select
 			function populateTypes() {
-				$http.get('api/settings')
+				$http.get('api/type-settings')
 					.success(function(data) {
 						$scope.settings = data
 						var unUniqueTypes = $scope.settings.map(function(x){
@@ -1171,8 +1171,21 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('ProgressSettingController', ['$scope', '$state', '$window', '$http',
-	 function($scope, $state, $window, $http) {
+	.controller('ProgressSettingController', ['$scope', '$state', '$window', '$http', '$stateParams',
+	 function($scope, $state, $window, $http, $stateParams) {
+
+	 	function getSetting(){
+	 		$http.get('api/progress-settings/' + $stateParams.id)
+	 			.success(function(data){
+	 				console.log(data)
+	 				$scope.setting = data
+	 			})
+	 			.error(function(err) {
+	 				console.log(err)
+	 			})
+	 	}
+
+	 	getSetting()
 
 	}])
 }());

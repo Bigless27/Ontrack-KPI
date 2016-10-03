@@ -1,1 +1,21 @@
 <h1>Progress Setting</h1>
+
+<table class = 'table table-striped'> 
+	<tr>
+		<th>Name</th>
+		<td>{{setting.name}}</td>
+	</tr>
+	<tr>
+
+		<th>Users</th>
+		<td>
+			<ul ng-repeat = 'user in setting.users'>
+				<li>
+					{{user.firstName}} {{user.lastName}}
+				</li>
+			</ul>
+		</td>
+	</tr>
+</table>
+
+<div class = 'btn btn-default' ui-sref = 'setting'>Back</div>

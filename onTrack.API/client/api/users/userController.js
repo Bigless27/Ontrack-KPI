@@ -97,7 +97,7 @@
 
 			//ui-select
 			function populateTypes() {
-				$http.get('api/settings')
+				$http.get('api/type-settings')
 					.success(function(data) {
 						$scope.settings = data
 						var unUniqueTypes = $scope.settings.map(function(x){

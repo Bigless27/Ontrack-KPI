@@ -6,7 +6,7 @@ var _ = require('lodash');
 
 var SettingsSchema = new Schema({
 	name: {type: String},
-	users: [{type: Schema.Types.ObjectId, ref: 'users'}]	
+	users: [{type: Schema.Types.ObjectId, ref: 'user'}]	
 });
 
 
