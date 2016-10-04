@@ -24,7 +24,8 @@
 						if(user){
 							$scope.optionsList.push(
 									{ fullName: user.firstName + ' ' + user.lastName,
-										userId: user._id
+										userId: user._id, firstName: user.firstName,
+										lastName: user.lastName
 									}
 								)
 						}
@@ -39,16 +40,6 @@
 		}
 
 	 	$scope.submitProgressSetting = function(setting) {
-	 		if(!setting.users){
-	 			return 'No Users Assigned'
-	 		}
-	 		else{
-	 			 var modSetting = setting.users.map(function(user) {
-	 				return user.userId
-	 			})
-	 		}
-
-	 		setting['users'] = modSetting
 
 	 		$http.post('/api/progress-settings', setting)
 	 			.success(function(data) {

@@ -4,9 +4,7 @@ var  _ = require('lodash');
 
 
 exports.params = function(req, res, next, id) {
-	
 	Settings.findById(id)
-		.populate('users')
 		.exec(function(err, setting){
 			if (err) return next(err);
 			req.settings = setting
@@ -29,14 +27,13 @@ exports.getOne = function(req, res, next) {// works
 }
 
 exports.put = function(req, res, next) {// works
-	
   
   	var settings = req.settings;
-
 
 	var update = req.body;
 
 	_.mergeWith(settings, update, customizer);
+
 
 	settings.save(function(err, saved) {
 	if (err) {
