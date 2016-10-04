@@ -2,6 +2,8 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var _ = require('lodash')
 var User = require('../users/userModel')
+var Kpis = require('./kpi/kpiModel')
+var Promotions = require('./promotions/promotionModel')
 
 var adminSchema = new Schema({
 	email: {type: String},
@@ -36,6 +38,7 @@ var ClientSchema = new Schema({
 
 
 
+
 ClientSchema.post('save', function(doc) {
 	User.findById(doc.owner[0]._id)
 		.then(function(user) {
@@ -60,11 +63,26 @@ ClientSchema.post('save', function(doc) {
 		})
 })
 
+ClientSchema.post('remove', function(doc){
+	var kpiIds = doc.kpis.map(k => k._id)
+	var promotionIds = doc.promotions.map(p => p._id)
+
+	Kpis.remove({ _id: {$in: kpiIds}}, function(err) {
+		if(err) console.log(err)
+
+	})
+
+	Promotions.remove({ _id: {$in: promotionIds}}, function(err) {
+		if(err) console.log(err)
+
+	})
+})
+
 ClientSchema.methods = {
 
 	checkAdmin: function(user) {
 		return  _.includes(this.admins.toString(), user._id)
- 		}
+ 	}
 }
 
 
