@@ -7,7 +7,7 @@
 
 
 			function getTypes() {
-				$http.get('/api/settings')
+				$http.get('/api/type-settings')
 					.success(function(data) {
 						$scope.settings = data
 						populateLists(data)

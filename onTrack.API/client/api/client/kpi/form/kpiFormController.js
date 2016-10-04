@@ -7,7 +7,7 @@
 			$scope.clientId = $stateParams['id']
 
 			function getSettings() {
-			$http.get('api/settings')
+			$http.get('api/type-settings')
 				.success(function(data) {
 					$scope.settings = data
 					setTypes()

@@ -29,11 +29,44 @@
 				})
 			}
 
+		function getUsers() {
+			$http.get('api/users')
+				.success(function(data) {
+					$scope.users = data
+					sortUsers(data)
+				})
+				.error(function(err) {
+					console.log(err)
+				})
+		}
+
+		function sortUsers(users){
+			var sub = []
+			users.forEach(function(user) {
+				sub.push({userId: user._id, fullName: user.firstName + ' ' + user.lastName})
+			})
+			$scope.optionsList = sub 
+
+		}
+
+		$scope.userTags = false
+
+		$scope.toggleEdit = function() {
+			if($scope.userTags){
+				$scope.userTags = false
+			}
+			else{
+				$scope.userTags = true
+			}
+		}
+
+
+
 	 	function getSetting(){
 	 		$http.get('api/progress-settings/' + $stateParams.id)
 	 			.success(function(data){
-	 				console.log(data)
 	 				$scope.setting = data
+
 	 			})
 	 			.error(function(err) {
 	 				console.log(err)
@@ -41,6 +74,7 @@
 	 	}
 
 	 	getSetting()
+	 	getUsers()
 
 	}])
 }());

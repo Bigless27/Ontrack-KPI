@@ -33,7 +33,6 @@
 	 			$http.get('api/type-settings/' + $stateParams.id)
 	 				.success(function(data) {
 	 					$scope.setting = data
-	 					console.log($scope.setting)
 	 				})
 	 				.error(function(err) {
 	 					console.log(err)

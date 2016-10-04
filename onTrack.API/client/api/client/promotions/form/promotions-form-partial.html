@@ -1,4 +1,4 @@
-<form name ="userForm" role = "form" data-toggle = 'validator'>
+<form name ="promotionForm" role = "form" data-toggle = 'validator'>
 		<h1>Promotion</h1>
 
 		<div class = "form-group" show-errors>
@@ -8,15 +8,14 @@
 				<input 
 					name = 'name'
 					type = "text"
-					ng-model = "user.name" 
-					ng-init = 'user.name = promotion.name'
+					ng-model = "promotion.name" 
 					class = "form-control"
 					value = 'name' 
 					placeholder = 'enter name'
 					required
 				>
             </div>
-            <p class="help-block" ng-if= "userForm.value.$error.required">Name is required</p>
+            <p class="help-block" ng-if= "promotionForm.value.$error.required">Name is required</p>
 		</div>
 
 
@@ -27,7 +26,7 @@
 
 				<select 
 					name ='type'
-					ng-model = "user.type"
+					ng-model = "promotion.type"
 					ng-options="t for t in typeList"
 					class = "form-control"
 					id = "type"
@@ -35,7 +34,7 @@
 				>
 				</select>
             </div>
-           <p class="help-block" ng-if="userForm.type.$error.required">The user's type is required</p>
+           <p class="help-block" ng-if="promotionForm.type.$error.required">The user's type is required</p>
 		</div>
 
 		<div class = "form-group" show-errors>
@@ -46,16 +45,15 @@
 					ng-min = "1"
 					name = 'completionValue'
 					type = "number"
-					ng-model = "user.completionValue" 
-					ng-init = 'user.completionValue = promotion.completionValue'
+					ng-model = "promotion.completionValue" 
 					class = "form-control"
 					placeholder = "enter completion value" 
 					required
 				>
             </div>
-            <p class="help-block" ng-if= "userForm.completionValue.$error.required">Value is required</p>
-            <p class="help-block" ng-if= "userForm.completionValue.$error.digit">Value must be a digit</p>
-            <p class="help-block" ng-if= "userForm.completionValue.$error.min">Value must greater than 0</p>
+            <p class="help-block" ng-if= "promotionForm.completionValue.$error.required">Value is required</p>
+            <p class="help-block" ng-if= "promotionForm.completionValue.$error.digit">Value must be a digit</p>
+            <p class="help-block" ng-if= "promotionForm.completionValue.$error.min">Value must greater than 0</p>
 		</div>
 
 		<div class = "form-group" show-errors>
@@ -64,8 +62,7 @@
 				<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
 				<textarea 
 					name = 'description'
-					ng-model = "user.description" 
-					ng-init = 'user.description = promotion.description'
+					ng-model = "promotion.description" 
 					class = "form-control"
 					placeholder = "enter description"
 					value = 'description' 
@@ -73,7 +70,7 @@
 				>
 				</textarea>
             </div>
-            <p class="help-block" ng-if= "userForm.description.$error.required">Description is required</p>
+            <p class="help-block" ng-if= "promotionForm.description.$error.required">Description is required</p>
 		</div>
 
 
@@ -84,8 +81,7 @@
 				<input 
 					name = 'startDate'
 					type = "datetime-local"
-					ng-model = "user.startDate" 
-					ng-init = 'user.startDate = promotion.startDate'
+					ng-model = "promotion.startDate" 
 					class = "form-control"
 					placeholder="yyyy-MM-ddTHH:mm:ss"
 					min="{{minDate}}" 
@@ -93,8 +89,8 @@
 					required
 				>
             </div>
-            <p class="help-block" ng-if= "userForm.startDate.$error.required">Value is required</p>
-            <p class="help-block" ng-if= "userForm.startDate.$error.min">Start date can not be in past</p>
+            <p class="help-block" ng-if= "promotionForm.startDate.$error.required">Value is required</p>
+            <p class="help-block" ng-if= "promotionForm.startDate.$error.min">Start date can not be in past</p>
 		</div>
 
 		<div class = "form-group" show-errors>
@@ -104,8 +100,7 @@
 				<input 
 					name = 'endDate'
 					type = "datetime-local"
-					ng-model = "user.endDate" 
-					ng-init = 'user.endDate = promotion.endDate'
+					ng-model = "promotion.endDate" 
 					class = "form-control"
 					placeholder="yyyy-MM-ddTHH:mm:ss"
 					min="{{user.startDate}}" 
@@ -113,16 +108,11 @@
 					required
 				>
             </div>
-            <p class="help-block" ng-if= "userForm.endDate.$error.required">Value is required</p>
-            <p class="help-block" ng-if= "userForm.endDate.$error.min">End date can't be before start date</p>
+            <p class="help-block" ng-if= "promotionForm.endDate.$error.required">Value is required</p>
+            <p class="help-block" ng-if= "promotionForm.endDate.$error.min">End date can't be before start date</p>
 		</div>
 
-
-
-
-
-
-		<button type = 'button' ng-click = "submitPromotion(user)" class = "btn btn-primary">Submit</button>
+		<button type = 'button' ng-click = "submitPromotion(promotion)" class = "btn btn-primary">Submit</button>
 		<div ng-if = '!create' class = 'btn btn-default' ui-sref = 'promotion({id: promotion._id})'>Close</div>
 		<div ng-if = 'create' class = 'btn btn-default' ui-sref = 'client({id: clientId})'>Close</div>
 </form>

@@ -10,7 +10,7 @@
 	 		$http.get('api/users/' + $stateParams.id + 
 	 			'/activity/' + $stateParams.activityId)
 	 			.success(function(act) {
-	 				$http.get('api/settings')
+	 				$http.get('api/type-settings')
 			 			.success(function(set){
 			 				$scope.activity = act
 			 				$scope.settings = set
@@ -30,7 +30,7 @@
 	 	}
 
 	 	function getSettings() {
-	 		$http.get('api/settings')
+	 		$http.get('api/type-settings')
 	 			.success(function(data){
 	 				$scope.settings = data
 	 				getUniqueTypes()

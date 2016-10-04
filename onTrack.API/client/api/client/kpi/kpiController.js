@@ -9,7 +9,7 @@
 		 		$http.get('api/clients/' + $stateParams.clientId + 
 		 			'/kpis/' + $stateParams.kpiId)
 		 			.success(function(kpi) {
-		 				$http.get('api/settings')
+		 				$http.get('api/type-settings')
 				 			.success(function(set){
 				 				$scope.kpi = kpi
 				 				$scope.settings = set

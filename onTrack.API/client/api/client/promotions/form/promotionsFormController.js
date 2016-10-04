@@ -11,7 +11,7 @@
 
 
 			function getSettings(){
-				$http.get('api/settings')
+				$http.get('api/type-settings')
 					.success(function(data){
 						$scope.settings = data
 						setTypes()
@@ -34,9 +34,7 @@
 			$scope.submitPromotion = function(promotion) {
 				$scope.$broadcast('show-errors-check-validity');
 
-				if($scope.userForm.$invalid){return;}
-
-				promotion['type'] = promotion['type']['listValue']
+				if($scope.promotionForm.$invalid){return;}
 				var token = $window.sessionStorage['jwt']
 
 				$http.post('api/clients/' + $stateParams['id'] + '/promotions', promotion ,{
@@ -50,9 +48,6 @@
 				.error(function(err){
 					console.log(err)
 				})
-
 			}
-
-		
 	}])
 }());

@@ -881,7 +881,7 @@
 		 		$http.get('api/clients/' + $stateParams.clientId + 
 		 			'/kpis/' + $stateParams.kpiId)
 		 			.success(function(kpi) {
-		 				$http.get('api/settings')
+		 				$http.get('api/type-settings')
 				 			.success(function(set){
 				 				$scope.kpi = kpi
 				 				$scope.settings = set
@@ -1195,11 +1195,44 @@
 				})
 			}
 
+		function getUsers() {
+			$http.get('api/users')
+				.success(function(data) {
+					$scope.users = data
+					sortUsers(data)
+				})
+				.error(function(err) {
+					console.log(err)
+				})
+		}
+
+		function sortUsers(users){
+			var sub = []
+			users.forEach(function(user) {
+				sub.push({userId: user._id, fullName: user.firstName + ' ' + user.lastName})
+			})
+			$scope.optionsList = sub 
+
+		}
+
+		$scope.userTags = false
+
+		$scope.toggleEdit = function() {
+			if($scope.userTags){
+				$scope.userTags = false
+			}
+			else{
+				$scope.userTags = true
+			}
+		}
+
+
+
 	 	function getSetting(){
 	 		$http.get('api/progress-settings/' + $stateParams.id)
 	 			.success(function(data){
-	 				console.log(data)
 	 				$scope.setting = data
+
 	 			})
 	 			.error(function(err) {
 	 				console.log(err)
@@ -1207,6 +1240,7 @@
 	 	}
 
 	 	getSetting()
+	 	getUsers()
 
 	}])
 }());
@@ -1245,7 +1279,6 @@
 	 			$http.get('api/type-settings/' + $stateParams.id)
 	 				.success(function(data) {
 	 					$scope.setting = data
-	 					console.log($scope.setting)
 	 				})
 	 				.error(function(err) {
 	 					console.log(err)
@@ -1268,7 +1301,7 @@
 	 		$http.get('api/users/' + $stateParams.id + 
 	 			'/activity/' + $stateParams.activityId)
 	 			.success(function(act) {
-	 				$http.get('api/settings')
+	 				$http.get('api/type-settings')
 			 			.success(function(set){
 			 				$scope.activity = act
 			 				$scope.settings = set
@@ -1288,7 +1321,7 @@
 	 	}
 
 	 	function getSettings() {
-	 		$http.get('api/settings')
+	 		$http.get('api/type-settings')
 	 			.success(function(data){
 	 				$scope.settings = data
 	 				getUniqueTypes()
@@ -1468,7 +1501,7 @@
 			$scope.clientId = $stateParams['id']
 
 			function getSettings() {
-			$http.get('api/settings')
+			$http.get('api/type-settings')
 				.success(function(data) {
 					$scope.settings = data
 					setTypes()
@@ -1548,7 +1581,7 @@
 
 
 			function getSettings(){
-				$http.get('api/settings')
+				$http.get('api/type-settings')
 					.success(function(data){
 						$scope.settings = data
 						setTypes()
@@ -1571,9 +1604,7 @@
 			$scope.submitPromotion = function(promotion) {
 				$scope.$broadcast('show-errors-check-validity');
 
-				if($scope.userForm.$invalid){return;}
-
-				promotion['type'] = promotion['type']['listValue']
+				if($scope.promotionForm.$invalid){return;}
 				var token = $window.sessionStorage['jwt']
 
 				$http.post('api/clients/' + $stateParams['id'] + '/promotions', promotion ,{
@@ -1587,10 +1618,7 @@
 				.error(function(err){
 					console.log(err)
 				})
-
 			}
-
-		
 	}])
 }());
 (function() {
@@ -1685,7 +1713,7 @@
 
 
 			function getTypes() {
-				$http.get('/api/settings')
+				$http.get('/api/type-settings')
 					.success(function(data) {
 						$scope.settings = data
 						populateLists(data)

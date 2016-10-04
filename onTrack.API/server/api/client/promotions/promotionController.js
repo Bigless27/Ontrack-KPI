@@ -51,14 +51,7 @@ exports.post = function(req, res, next) { //yup
 				if(err) {
 					next(err)
 				} else {
-
-					user = req.user
-					Progress.create({userId: user._id, promotionId: promotion._id})
-						.then(function(progress) {
-							res.json(promotion)
-						}, function(err) {
-							next(err);
-						})
+					res.json(promotion)
 				}
 			})
 	}, function(err) {

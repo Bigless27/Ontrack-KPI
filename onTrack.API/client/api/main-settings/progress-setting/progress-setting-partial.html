@@ -3,17 +3,48 @@
 <table class = 'table table-striped'> 
 	<tr>
 		<th>Name</th>
-		<td>{{setting.name}}</td>
+		<td>
+			<span
+				editable-text = 'setting.name'
+				e-form = 'name'
+				onbeforesave = 'updateName($data)'
+			>
+				{{setting.name || 'empty'}}
+			</span>
+		</td>
+		<td>
+			<a ng-click = 'name.$show()'ng-hide = "name.$visable">
+				Edit
+			</a>
+		</td>
 	</tr>
 	<tr>
-
+		<!-- find a library of do it yourself -->
 		<th>Users</th>
 		<td>
-			<ul ng-repeat = 'user in setting.users'>
-				<li>
-					{{user.firstName}} {{user.lastName}}
-				</li>
-			</ul>
+			<span ng-show = '!userTags'>
+				<ul ng-repeat = 'u in setting.users'>
+					<li>
+						{{u.firstName}} {{u.lastName}}
+					</li>
+				</ul>
+			</span>
+			<span ng-show = 'userTags'>
+				<multiple-autocomplete 
+					ng-model="setting.users"
+					
+     				object-property="fullName"
+     				suggestions-arr="optionsList"
+     				required = 'true'>
+				</multiple-autocomplete>
+				<span class = 'btn btn-info'><i class = 'glyphicon glyphicon-ok' aria-hidden = 'true'></i></span>
+				<span class = 'btn btn-danger' ng-click= 'toggleEdit()'><i class = 'glyphicon glyphicon-remove'></i></span>
+			</span>
+		</td>
+		<td>
+			<a ng-click = 'toggleEdit()' ng-show = '!userTags'>
+				Edit
+			</a>
 		</td>
 	</tr>
 </table>
