@@ -18,13 +18,11 @@
 					<td>
 						{{set.type || 'empty'}}
 					</td>
-				</tr>
-				<tr class = 'active' ng-repeat = 'sub in set.subTypes'>
-					<th>SubType</th>
-					<th>{{sub.text || 'empty'}}</th>
+					<td>
+						<div class = 'btn btn-info' ui-sref = 'settingType({id: set._id})'>View</div>
+					</td>
 				</tr>
 			</table>
-			<div class = 'btn btn-info' ui-sref = 'settingType({id: set._id})'>View</div>
 		</div>
 	</div>
 	<div class = 'col-sm-6 col-md-6'>

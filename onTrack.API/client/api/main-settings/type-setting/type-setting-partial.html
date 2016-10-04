@@ -4,9 +4,15 @@
 			<th>Type</th>
 			<td>{{setting.type}}</td>
 		</tr>
-		<tr ng-repeat = 'set in setting.subTypes'>
+		<tr>
 			<th>Subtypes</th>
-			<td>{{set.text}}</td>
+			<td>
+				<ul ng-repeat = 'set in setting.subTypes'>
+					<li>
+						{{set.text}}
+					</li>
+				</ul>
+			</td>
 		</tr>		
 	</table>
 </div>

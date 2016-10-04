@@ -523,6 +523,28 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+		$scope.signUp = function(user) {
+			$scope.$broadcast('show-errors-check-validity')
+
+			if ($scope.userForm.$invalid){return;}
+			$scope.err = false
+			$http.post('api/users', user)
+				.success(function(data) {
+					$scope.err = false
+					$window.sessionStorage.jwt = data['token']
+					$state.go('main')
+				})
+				.error(function(error) {
+					$scope.err = true
+					$scope.errMessage = error.message
+				})
+		}
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('AddUserController', ['$scope', '$state', '$http', '$window', '$stateParams',
 		function($scope, $state, $http, $window, $stateParams) {
 
@@ -706,28 +728,6 @@
 			populateTypes()
 			getUser()
 		
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
-		$scope.signUp = function(user) {
-			$scope.$broadcast('show-errors-check-validity')
-
-			if ($scope.userForm.$invalid){return;}
-			$scope.err = false
-			$http.post('api/users', user)
-				.success(function(data) {
-					$scope.err = false
-					$window.sessionStorage.jwt = data['token']
-					$state.go('main')
-				})
-				.error(function(error) {
-					$scope.err = true
-					$scope.errMessage = error.message
-				})
-		}
 	}])
 }());
 (function() {
@@ -1720,16 +1720,37 @@
 	.controller('SettingsTypeFormController', ['$scope', '$state', '$window', '$http',
 	 function($scope, $state, $window, $http) {
 
-	 	$scope.submitSetting = function(setting) {
-	 		$http.post('/api/type-settings', setting)
-	 			.success(function(data) {
-	 				$scope.typeSettings = data
-	 				$state.reload()
+	 	$scope.err = false
+
+	 	function getSettings(){
+	 		$http.get('api/type-settings')
+	 			.success(function(data){
+	 				$scope.settings = data
 	 			})
 	 			.error(function(err) {
 	 				console.log(err)
 	 			})
 	 	}
+
+	 	$scope.submitSetting = function(setting) {
+	 		var allTypes = $scope.settings.map(s => s.type.toLowerCase())
+	 		if (allTypes.includes(setting.type.toLowerCase())){
+	 			$scope.oops = 'Type is already being used, add a subtype in the view'
+	 			$scope.err = true
+	 		}
+	 		else{
+		 		$http.post('api/type-settings', setting)
+		 			.success(function(data) {
+		 				$scope.typeSettings = data
+		 				$state.reload()
+		 			})
+		 			.error(function(err) {
+		 				console.log(err)
+		 			})
+	 		}
+	 	}
+
+	 	getSettings()
 	}])
 }());
 (function() {
