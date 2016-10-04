@@ -523,28 +523,6 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
-		$scope.signUp = function(user) {
-			$scope.$broadcast('show-errors-check-validity')
-
-			if ($scope.userForm.$invalid){return;}
-			$scope.err = false
-			$http.post('api/users', user)
-				.success(function(data) {
-					$scope.err = false
-					$window.sessionStorage.jwt = data['token']
-					$state.go('main')
-				})
-				.error(function(error) {
-					$scope.err = true
-					$scope.errMessage = error.message
-				})
-		}
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('AddUserController', ['$scope', '$state', '$http', '$window', '$stateParams',
 		function($scope, $state, $http, $window, $stateParams) {
 
@@ -728,6 +706,28 @@
 			populateTypes()
 			getUser()
 		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+		$scope.signUp = function(user) {
+			$scope.$broadcast('show-errors-check-validity')
+
+			if ($scope.userForm.$invalid){return;}
+			$scope.err = false
+			$http.post('api/users', user)
+				.success(function(data) {
+					$scope.err = false
+					$window.sessionStorage.jwt = data['token']
+					$state.go('main')
+				})
+				.error(function(error) {
+					$scope.err = true
+					$scope.errMessage = error.message
+				})
+		}
 	}])
 }());
 (function() {
@@ -1235,7 +1235,7 @@
 			users.forEach(function(user) {
 				sub.push({userId: user._id, fullName: user.firstName + ' ' + user.lastName,
 							firstName: user.firstName, lastName: user.lastName})
-			})
+			})	
 			$scope.optionsList = sub 
 		}
 
@@ -1264,7 +1264,11 @@
 	 	function getSetting(){
 	 		$http.get('api/progress-settings/' + $stateParams.id)
 	 			.success(function(data){
+	 				$scope.noUsers = false
 	 				$scope.setting = data
+	 				if ($scope.setting.users. length === 0){
+	 					$scope.noUsers = true
+	 				}
 	 				sortInitUsers(data)
 	 			})
 	 			.error(function(err) {

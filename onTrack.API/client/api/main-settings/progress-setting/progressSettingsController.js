@@ -69,7 +69,7 @@
 			users.forEach(function(user) {
 				sub.push({userId: user._id, fullName: user.firstName + ' ' + user.lastName,
 							firstName: user.firstName, lastName: user.lastName})
-			})
+			})	
 			$scope.optionsList = sub 
 		}
 
@@ -98,7 +98,11 @@
 	 	function getSetting(){
 	 		$http.get('api/progress-settings/' + $stateParams.id)
 	 			.success(function(data){
+	 				$scope.noUsers = false
 	 				$scope.setting = data
+	 				if ($scope.setting.users. length === 0){
+	 					$scope.noUsers = true
+	 				}
 	 				sortInitUsers(data)
 	 			})
 	 			.error(function(err) {

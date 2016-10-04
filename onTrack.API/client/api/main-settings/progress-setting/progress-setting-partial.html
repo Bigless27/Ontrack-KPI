@@ -23,11 +23,12 @@
 		<th>Users</th>
 		<td>
 			<span ng-show = '!userTags'>
-				<ul ng-repeat = 'u in setting.users'>
+				<ul ng-show = '!noUsers' ng-repeat = 'u in setting.users'>
 					<li>
 						{{u.firstName}} {{u.lastName}}
 					</li>
 				</ul>
+				<span ng-show = 'noUsers' class ='label label-danger'>Empty!</span>
 			</span>
 			<span ng-show = 'userTags' style = 'width: 200px;'>
 				<multiple-autocomplete 
