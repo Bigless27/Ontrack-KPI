@@ -43,7 +43,6 @@
 
 		function updateSetting(data, field){
 			$scope.setting[field] = data
-			console.log($scope.setting)
 			$http.put('api/progress-settings/' + $stateParams.id, $scope.setting)
 				.success(function(data){
 					$state.reload()
@@ -100,7 +99,7 @@
 	 			.success(function(data){
 	 				$scope.noUsers = false
 	 				$scope.setting = data
-	 				if ($scope.setting.users. length === 0){
+	 				if ($scope.setting.users.length === 0){
 	 					$scope.noUsers = true
 	 				}
 	 				sortInitUsers(data)

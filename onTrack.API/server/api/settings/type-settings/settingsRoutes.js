@@ -12,7 +12,7 @@ router.route('/')
 
 router.route('/:id')
 	.get(controller.getOne)
-	.put(client.getClient(), controller.put)
+	.put(controller.put)
 	.delete(controller.delete)
 
 module.exports = router;

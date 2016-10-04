@@ -1209,7 +1209,6 @@
 
 		function updateSetting(data, field){
 			$scope.setting[field] = data
-			console.log($scope.setting)
 			$http.put('api/progress-settings/' + $stateParams.id, $scope.setting)
 				.success(function(data){
 					$state.reload()
@@ -1266,7 +1265,7 @@
 	 			.success(function(data){
 	 				$scope.noUsers = false
 	 				$scope.setting = data
-	 				if ($scope.setting.users. length === 0){
+	 				if ($scope.setting.users.length === 0){
 	 					$scope.noUsers = true
 	 				}
 	 				sortInitUsers(data)
@@ -1312,10 +1311,51 @@
 				})
 			}
 
+			$scope.userTags = false
+
+			$scope.toggleEdit = function() {
+				if($scope.userTags){
+					$scope.userTags = false
+				}
+				else{
+					$scope.userTags = true
+				}
+			}
+
+			$scope.updateType = function(type){
+				updateSetting(type, 'type')
+			}
+
+			$scope.updateSubtype = function(sub){
+				updateSetting(sub, 'subTypes')
+			}
+
+
+			function updateSetting(data, field){
+				var token = $window.sessionStorage['jwt']
+				$scope.setting[field] = data
+				$http.put('api/type-settings/' + $stateParams.id, $scope.setting, {
+					headers: {
+						'Authorization': `Bearer ${token}`
+					}
+				})
+				.success(function(data){
+					$state.reload()
+				})
+				.error(function(err) {
+					console.log(err)
+				})
+			}
+
+
 	 		function getSetting(){
 	 			$http.get('api/type-settings/' + $stateParams.id)
 	 				.success(function(data) {
+	 					$scope.noSubTypes = false
 	 					$scope.setting = data
+	 					if ($scope.setting.subTypes.length === 0){
+	 						$scope.noSubTypes = true
+	 					}
 	 				})
 	 				.error(function(err) {
 	 					console.log(err)
