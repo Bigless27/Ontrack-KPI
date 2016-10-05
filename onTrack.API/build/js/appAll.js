@@ -249,6 +249,33 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('LoginController', ['$scope', '$state', '$window', '$http',
+	 function($scope, $state, $window, $http) {
+
+			$scope.logUserIn = function(user) {
+				$scope.$broadcast('show-errors-check-validity');
+
+
+				if($scope.userForm.$invalid){return;}
+
+				$scope.err = true
+
+				$http.post('auth/signin', user)
+					.success(function(data) {
+						$scope.err = false
+						$window.sessionStorage.jwt = data['token']
+						$state.go('main')
+					})
+					.error(function(error) {
+						$scope.err = true
+						$scope.errMessage = error
+					})
+			}
+
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('ClientController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
 		function($scope, $state, $http, $window, $stateParams, $q) {
 		
@@ -385,33 +412,6 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('LoginController', ['$scope', '$state', '$window', '$http',
-	 function($scope, $state, $window, $http) {
-
-			$scope.logUserIn = function(user) {
-				$scope.$broadcast('show-errors-check-validity');
-
-
-				if($scope.userForm.$invalid){return;}
-
-				$scope.err = true
-
-				$http.post('auth/signin', user)
-					.success(function(data) {
-						$scope.err = false
-						$window.sessionStorage.jwt = data['token']
-						$state.go('main')
-					})
-					.error(function(error) {
-						$scope.err = true
-						$scope.errMessage = error
-					})
-			}
-
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('MainController', ['$scope', '$state', '$http', '$window', 
 		function($scope, $state, $http, $window) {
 
@@ -454,6 +454,28 @@
 				$state.go('login')
 			}
 		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+		$scope.signUp = function(user) {
+			$scope.$broadcast('show-errors-check-validity')
+
+			if ($scope.userForm.$invalid){return;}
+			$scope.err = false
+			$http.post('api/users', user)
+				.success(function(data) {
+					$scope.err = false
+					$window.sessionStorage.jwt = data['token']
+					$state.go('main')
+				})
+				.error(function(error) {
+					$scope.err = true
+					$scope.errMessage = error.message
+				})
+		}
 	}])
 }());
 (function() {
@@ -519,28 +541,6 @@
 	 	loadTypeSettings()
 	 	loadProgressSettings()
 
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
-		$scope.signUp = function(user) {
-			$scope.$broadcast('show-errors-check-validity')
-
-			if ($scope.userForm.$invalid){return;}
-			$scope.err = false
-			$http.post('api/users', user)
-				.success(function(data) {
-					$scope.err = false
-					$window.sessionStorage.jwt = data['token']
-					$state.go('main')
-				})
-				.error(function(error) {
-					$scope.err = true
-					$scope.errMessage = error.message
-				})
-		}
 	}])
 }());
 (function() {
@@ -1039,14 +1039,6 @@
 		function($scope, $state, $http, $window, $stateParams, $q) {
 
 
-			$scope.types = [
-				{value: 1, text: 'sale'},
-				{value: 2, text: 'attendance'},
-				{vale: 3, text: 'refferals'},
-				{value: 4, text: 'calls'}
-
-			]
-
 			//have type show on edit click
 			$(document).on('click','.promotion-startDate-edit-button', function(){
 				$('#promotion-startDate-edit')[0].click()
@@ -1134,10 +1126,6 @@
 			}
 
 
-
-
-
-
 			$scope.deletePromotion = function() {
 				var token = $window.sessionStorage['jwt']
 
@@ -1169,7 +1157,7 @@
 			}
 
 			function getPromotions(){
-				$http.get('/api/clients/' + $stateParams['clientid'] 
+				$http.get('api/clients/' + $stateParams['clientid'] 
 						+ '/promotions/' + $stateParams['promoid'])
 							.success(function(data) {
 								$scope.promotion = data;
@@ -1181,7 +1169,18 @@
 							})
 			}
 
+			function getTypes(){
+				$http.get('api/type-settings')
+					.success(function(data){
+						$scope.typeList = data.map(x => x.type)
+					})
+					.error(function(err){
+						console.log(err)
+					})
+			}
+
 			getPromotions()
+			getTypes()
 
 		
 	}])
@@ -1563,14 +1562,6 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('ProgressController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
-		function($scope, $state, $http, $window, $stateParams, $q) {
-			
-					
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('UserFormController', ['$scope', '$state', '$http', '$window', 
 		function($scope, $state, $http, $window) {
 
@@ -1598,6 +1589,14 @@
 						})
 				}
 			}
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('ProgressController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
+		function($scope, $state, $http, $window, $stateParams, $q) {
+			
+					
 	}])
 }());
 (function() {

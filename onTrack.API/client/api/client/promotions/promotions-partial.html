@@ -19,14 +19,14 @@
 		<tr>
 			<th>Type</th>
 			<td>
-				<a 
-					id = 'promotion-type-edit' 
-					editable-radiolist="promotion.type"
-					e-ng-options = 't.text as t.text for t in ::types track by t.value'  
-					onbeforesave="updateType($data)" 
-					style = 'color:black; border-bottom:none;'>
+				<span 
+					id = 'promotion-type-edit'  
+					style = 'color:black; border: none;'
+					editable-select="promotion.type" 
+					e-ng-options="s for s in typeList" onbeforesave = 'updateType($data)'
+				>
 					{{promotion.type || 'empty'}}
-				</a>
+				</span>
 			</td>
 			<td>
 				<a style = 'cursor: pointer;' class = 'promotion-edit-type-button'>

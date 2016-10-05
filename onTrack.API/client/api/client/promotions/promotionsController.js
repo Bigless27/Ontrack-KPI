@@ -4,14 +4,6 @@
 		function($scope, $state, $http, $window, $stateParams, $q) {
 
 
-			$scope.types = [
-				{value: 1, text: 'sale'},
-				{value: 2, text: 'attendance'},
-				{vale: 3, text: 'refferals'},
-				{value: 4, text: 'calls'}
-
-			]
-
 			//have type show on edit click
 			$(document).on('click','.promotion-startDate-edit-button', function(){
 				$('#promotion-startDate-edit')[0].click()
@@ -99,10 +91,6 @@
 			}
 
 
-
-
-
-
 			$scope.deletePromotion = function() {
 				var token = $window.sessionStorage['jwt']
 
@@ -134,7 +122,7 @@
 			}
 
 			function getPromotions(){
-				$http.get('/api/clients/' + $stateParams['clientid'] 
+				$http.get('api/clients/' + $stateParams['clientid'] 
 						+ '/promotions/' + $stateParams['promoid'])
 							.success(function(data) {
 								$scope.promotion = data;
@@ -146,7 +134,18 @@
 							})
 			}
 
+			function getTypes(){
+				$http.get('api/type-settings')
+					.success(function(data){
+						$scope.typeList = data.map(x => x.type)
+					})
+					.error(function(err){
+						console.log(err)
+					})
+			}
+
 			getPromotions()
+			getTypes()
 
 		
 	}])
