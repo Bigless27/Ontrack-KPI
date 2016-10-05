@@ -24,11 +24,13 @@ SettingsSchema.post('save', function(doc) {
 		if (err) console.log(err)
 
 		docs.forEach(function(user) {
-			user.progress.push(doc._id)
-			user.save(function(err, result) {
-				if (err) console.log(err)
-				console.log('progress associated with user')
-			})
+			if(!user.progress.includes(doc._id)){
+				user.progress.push(doc._id)
+				user.save(function(err, result) {
+					if (err) console.log(err)
+					console.log('progress associated with user')
+				})
+			}
 		})
 	})
 

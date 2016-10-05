@@ -37,7 +37,10 @@
 		}
 
 		$scope.updateUsers = function(users) {
-			updateSetting(users, 'users')
+			if($scope.setting.users.length > users.length ){
+				
+			}
+			// updateSetting(users, 'users')
 		}
 
 
