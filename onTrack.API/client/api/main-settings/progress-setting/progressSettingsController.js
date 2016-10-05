@@ -92,8 +92,6 @@
 			}
 		}
 
-
-
 	 	function getSetting(){
 	 		$http.get('api/progress-settings/' + $stateParams.id)
 	 			.success(function(data){

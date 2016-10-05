@@ -30,29 +30,29 @@
 		<tr>
 			<th>Subtypes</th>
 			<td> 
-				<!-- tiny bug with below on init, come back to this -->
-				<span 
-					id = 'kpi-subType-edit' 
-					class = 'bootstrap'
-					editable-tags-input="subTypes"
-					data-e-form="ngTagsForm"
-					data-e-name="subTypes"
-					name="subTypes"
-					onbeforesave = 'updateSubtypes($data)'
-					data-e-ng-model="kpi.subTypes"
-					>
-				 	<editable-tags-input-auto-complete source="subTypes"></editable-tags-input-auto-complete>
-					<ul ng-repeat = 'sub in kpi.subTypes'>
+				<span ng-show = '!userTags'>
+					<ul ng-show = '!noSubtypes' ng-repeat = 'sub in kpi.subTypes '>
 						<li>
-							{{sub.text || 'empty'}}
+							{{sub.text}}
 						</li>
 					</ul>
+					<span ng-show = 'noSubtypes' class ='label label-danger'>Empty!</span>
+				</span>
+				<span ng-show = 'userTags' style = 'width: 200px;'>
+					<multiple-autocomplete 
+						ng-model="kpi.subTypes"
+	     				object-property = "text"
+	     				suggestions-arr="subTypes"
+	     				required = 'true'>
+					</multiple-autocomplete>
+					<span class = 'btn btn-info' ng-click = 'updateSubtypes(kpi.subTypes)'><i class = 'glyphicon glyphicon-ok' aria-hidden = 'true'></i></span>
+					<span class = 'btn btn-danger' ng-click= 'toggleEdit()'><i class = 'glyphicon glyphicon-remove'></i></span>
 				</span>
 			</td>
 			<td>
-				<a type="button" ng-click="ngTagsForm.$show()" ng-show="!ngTagsForm.$visible">
-			        Edit
-			    </a>
+				<a ng-click = 'toggleEdit()' ng-show = '!userTags'>
+				Edit
+				</a>
 			</td>
 		</tr>
 		<tr>

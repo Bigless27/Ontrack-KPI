@@ -60,7 +60,6 @@ exports.put = function(req, res, next) {
 
 	_.mergeWith(kpi, update, customizer);
 
-
 	kpi.save(function(err, saved) {
 		if (err) {
 			next(err);
@@ -82,6 +81,8 @@ exports.delete = function(req, res, next) {
 }
 
 function customizer(objValue, srcValue){
+		console.log(objValue)
+		console.log(srcValue)
 	if(Array.isArray(objValue)){
 		if(objValue.length > srcValue.length){
 			return objValue = srcValue

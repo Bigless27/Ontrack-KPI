@@ -65,6 +65,17 @@
 				})
 			}
 
+			//make this work!
+			$scope.clickMe = function(){
+				
+
+
+			}
+
+			function getCbUsers(cb){
+
+			}
+
 
 	 		function getSetting(){
 	 			$http.get('api/type-settings/' + $stateParams.id)

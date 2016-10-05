@@ -12,6 +12,10 @@
 		 				$http.get('api/type-settings')
 				 			.success(function(set){
 				 				$scope.kpi = kpi
+				 				$scope.noSubtypes = false
+				 				if (kpi.subTypes.length === 0){
+				 					$scope.noSubtypes = true
+				 				}
 				 				$scope.settings = set
 				 				getUniqueTypes()
 				 				getUniqueSubtypes()
@@ -46,8 +50,25 @@
 	 			})
 	 		})
 	 		unUniqueSubtypes = unUniqueSubtypes.reduce(function(a,b){return a.concat(b)})
-	 		$scope.subTypes = [...new Set(unUniqueSubtypes)]
+	 		var subArr = [...new Set(unUniqueSubtypes)].map(x =>{ 
+	 						var obj = {}
+	 						obj['text'] = x
+	 						return obj
+	 					})
+
+	 		$scope.subTypes = subArr
 	 	}
+
+	 	$scope.userTags = false
+
+		$scope.toggleEdit = function() {
+			if($scope.userTags){
+				$scope.userTags = false
+			}
+			else{
+				$scope.userTags = true
+			}
+		}
 
 
 			$scope.deleteKpi = function() {
@@ -97,7 +118,8 @@
 			}
 
 			$scope.updateSubtypes = function(data) {
-				return updateKpi(data,'subTypes')			}
+				return updateKpi(data,'subTypes')			
+			}
 
 			//have type show on edit click
 			$(document).on('click','#kpi-type-edit-button', function(){
