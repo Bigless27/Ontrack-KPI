@@ -15,4 +15,4 @@ var SettingsSchema = new Schema({
 
 
 
-module.exports = mongoose.model('typeSetting', SettingsSchema);
+module.exports = mongoose.model('typesetting', SettingsSchema);

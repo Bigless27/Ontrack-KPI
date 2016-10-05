@@ -3,7 +3,7 @@ var Schema = mongoose.Schema;
 var _ = require('lodash')
 var User = require('../userModel')
 
-var UserPromoProgressSchema = new Schema({
+var UserProgressSchema = new Schema({
 	userId: {type: Schema.Types.ObjectId, ref: 'user', required: true},
 	promotionId: {type: Schema.Types.ObjectId, ref: 'promotion', required: true},
 	value: {type: Number, default: 0},
@@ -11,7 +11,7 @@ var UserPromoProgressSchema = new Schema({
 	subType: {type: String, required: true}
 });
 
-UserPromoProgressSchema.post('save', function(doc) {
+UserProgressSchema.post('save', function(doc) {
 	User.findById(doc.userId)
 		.then(function(user) {
 			if(!user) {
@@ -36,4 +36,4 @@ UserPromoProgressSchema.post('save', function(doc) {
 	})
 })
 
-module.exports = mongoose.model('userprogess', UserPromoProgressSchema)
+module.exports = mongoose.model('userprogess', UserProgressSchema)

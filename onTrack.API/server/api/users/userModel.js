@@ -12,8 +12,7 @@ var UserSchema = new Schema({
     avatarUrl: { type: String },
     dateJoined: { type: Date, default: Date.now },
     state: { type: String },
-    activity: [{type: Schema.Types.ObjectId, ref: 'useractivity'}],
-    progress: [{type: Schema.Types.ObjectId, ref: 'userpromoprogress'}],
+    progress: [{type: Schema.Types.ObjectId, ref: 'progresssettings'}],
     facebook: {
         id: String,
         token: String,

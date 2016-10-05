@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var Client = require('../../client/clientModel');
 var _ = require('lodash');
+var User = require('../../users/userModel')
 
 var usersSchema = new Schema({
 	firstName: {type: String},
@@ -14,5 +15,24 @@ var SettingsSchema = new Schema({
 	users: [usersSchema]	
 });
 
+SettingsSchema.post('save', function(doc) {
+	User.find({
+		'_id': { $in: 
+				doc.users.map(x => x.userId)
+			}
+	}, function(err, docs){
+		if (err) console.log(err)
 
-module.exports = mongoose.model('progressSetting', SettingsSchema);
+		docs.forEach(function(user) {
+			user.progress.push(doc._id)
+			user.save(function(err, result) {
+				if (err) console.log(err)
+				console.log('progress associated with user')
+			})
+		})
+	})
+
+})
+
+
+module.exports = mongoose.model('progresssetting', SettingsSchema);
