@@ -1,10 +1,12 @@
 var Settings = require('./settingsModel');
 var  _ = require('lodash');
+var mongoose = require('mongoose')
 
 
 
 exports.params = function(req, res, next, id) {
 	Settings.findById(id)
+		.populate('users')
 		.exec(function(err, setting){
 			if (err) return next(err);
 			req.settings = setting
@@ -34,7 +36,6 @@ exports.put = function(req, res, next) {// works
 
 	_.mergeWith(settings, update, customizer);
 
-
 	settings.save(function(err, saved) {
 	if (err) {
 	  next(err);
@@ -46,6 +47,10 @@ exports.put = function(req, res, next) {// works
 
 exports.post = function(req, res, next) { //works
 	var newSetting = req.body;
+
+	if(newSetting.users.length > 0){
+		newSetting['users'] = newSetting.users.map(x => mongoose.Types.ObjectId(x))
+	}
 
 	Settings.create(newSetting)
 		.then(function(setting) {

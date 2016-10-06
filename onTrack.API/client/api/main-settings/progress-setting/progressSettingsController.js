@@ -37,10 +37,8 @@
 		}
 
 		$scope.updateUsers = function(users) {
-			if($scope.setting.users.length > users.length ){
-				
-			}
-			// updateSetting(users, 'users')
+			users = users.map(x => x.userId)
+			updateSetting(users, 'users')
 		}
 
 
@@ -109,6 +107,7 @@
 	 				console.log(err)
 	 			})
 	 	}
+
 
 	 	getSetting()
 	 	getUsers()

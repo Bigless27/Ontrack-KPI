@@ -40,7 +40,7 @@
 		}
 
 	 	$scope.submitProgressSetting = function(setting) {
-
+	 		setting['users'] = setting.users.map(x => x.userId)
 	 		$http.post('/api/progress-settings', setting)
 	 			.success(function(data) {
 	 				$scope.progressSettings = data
