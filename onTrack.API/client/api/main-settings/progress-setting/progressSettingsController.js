@@ -37,7 +37,6 @@
 		}
 
 		$scope.updateUsers = function(users) {
-			users = users.map(x => x.userId)
 			updateSetting(users, 'users')
 		}
 
