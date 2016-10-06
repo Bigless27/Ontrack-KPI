@@ -16,7 +16,6 @@ var SettingsSchema = new Schema({
 })
 
 SettingsSchema.post('save', function(doc, next) {
-	console.log(doc)
 	if(doc.users.length === 0){
 		next()
 	}
@@ -27,7 +26,7 @@ SettingsSchema.post('save', function(doc, next) {
 	}, function(err, docs){
 		if (err) next(err)
 		docs.forEach(function(user) {
-			if(!user.progress.includes(doc._id)){
+			if(!user.progress.map(x => x.toString()).includes(doc._id.toString())){
 				user.progress.push(doc._id)
 				user.save(function(err, result) {
 					if (err) return next(err)

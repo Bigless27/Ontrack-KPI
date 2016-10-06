@@ -48,6 +48,7 @@ exports.put = function(req, res, next) {
   var update = req.body;
 
   _.mergeWith(user, update, customizer);
+  console.log(update)
 
   user.save(function(err, saved) {
     if (err) {

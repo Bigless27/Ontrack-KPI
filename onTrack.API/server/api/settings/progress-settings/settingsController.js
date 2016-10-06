@@ -48,10 +48,6 @@ exports.put = function(req, res, next) {// works
 exports.post = function(req, res, next) { //works
 	var newSetting = req.body;
 
-	if(newSetting.users.length > 0){
-		newSetting['users'] = newSetting.users.map(x => mongoose.Types.ObjectId(x))
-	}
-
 	Settings.create(newSetting)
 		.then(function(setting) {
 			res.json(setting)

@@ -1224,6 +1224,32 @@
 		}
 
 		$scope.updateUsers = function(users) {
+			if($scope.setting.users.length > users.length){
+				var editRefs = $scope.setting.users.filter(function(user){
+					if (!users.map(x => x.userId).includes(user.userId)) {
+						return user
+					}
+				})
+				editRefs.forEach(function(r) {
+					var token = $window.sessionStorage['jwt']
+					var newUser = $scope.users.find(x => x._id === r.userId)
+					newUser['progress'] = users
+					console.log(newUser)
+					console.log(editRefs)
+					$http.put('api/users/' + r.userId, newUser, {
+						headers: {
+							'Authorization': `Bearer ${token}`
+						}
+					})
+					.success(function(data){
+						console.log('updated')
+					})
+					.error(function(err) {
+						console.log(err)
+					})
+				})
+			}
+
 			updateSetting(users, 'users')
 		}
 
@@ -1262,7 +1288,7 @@
 		function sortInitUsers(set){
 			var initMS = []
 			set.users.forEach(function(user) {
-				initMS.push({userId: user._id, fullName: user.firstName + ' ' + user.lastName,
+				initMS.push({userId: user.userId, fullName: user.firstName + ' ' + user.lastName,
 							firstName: user.firstName, lastName: user.lastName})
 			})
 			$scope.initUsers = initMS
