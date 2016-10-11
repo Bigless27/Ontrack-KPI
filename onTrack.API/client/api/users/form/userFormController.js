@@ -16,8 +16,6 @@
 					$scope.errorDisplay = true
 					return
 				}
-
-				
 				else{
 					$http.post('api/users', user)
 						.success(function(data){

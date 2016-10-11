@@ -103,9 +103,8 @@
 		</div>
 	</div>
 	<div class = 'col-md-6'>
-		<h2 style = 'display: inline-block'>Progress</h2>
-		<h3>Type: {{progress.type || 'empty'}}</h3>
-		<div class = 'table-holder row'>
+		<h2 style = 'display: inline-block'>Progress</h2>		
+		<div ng-repeat = 'progress in user.progress' class = 'table-holder row'>
 			<table class = 'table table-bordered' style = 'width:300px'>
 				<tr>
 					<th>Name</th>
@@ -118,13 +117,6 @@
 						</span>
 					</td>
 				</tr>
-				<tr>
-					<th>SubType</th>
-					<td>
-						{{progress.subType || 'empty'}}
-					</td>
-				</tr>
-				<tr>
 					<th>Value</th>
 					<td>
 						{{progress.value || 'empty'}}

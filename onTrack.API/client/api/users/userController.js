@@ -89,6 +89,7 @@
 				$http.get('/api/users/' + $stateParams.id)
 					.success(function(data){
 						$scope.user = data
+						console.log(data)
 					})
 					.error(function(err) {
 						console.log(err)
@@ -111,6 +112,7 @@
 						console.log(err)
 					})
 			}
+
 
 			populateTypes()
 			getUser()

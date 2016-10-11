@@ -702,6 +702,7 @@
 				$http.get('/api/users/' + $stateParams.id)
 					.success(function(data){
 						$scope.user = data
+						console.log(data)
 					})
 					.error(function(err) {
 						console.log(err)
@@ -724,6 +725,7 @@
 						console.log(err)
 					})
 			}
+
 
 			populateTypes()
 			getUser()
@@ -1233,7 +1235,7 @@
 				editRefs.forEach(function(r) {
 					var token = $window.sessionStorage['jwt']
 					var newUser = $scope.users.find(x => x._id === r.userId)
-					newUser['progress'] = users
+					newUser['settingProgress'] = users
 					$http.put('api/users/' + r.userId, newUser, {
 						headers: {
 							'Authorization': `Bearer ${token}`
@@ -1603,8 +1605,6 @@
 					$scope.errorDisplay = true
 					return
 				}
-
-				
 				else{
 					$http.post('api/users', user)
 						.success(function(data){
@@ -1796,6 +1796,46 @@
 				})
 		}
 
+		function getSettings() {
+			$http.get('api/type-settings')
+				.success(function(data) {
+					$scope.typeSettings = data
+					setTypes()
+				})
+				.error(function(err){
+					console.log(err)
+				})
+		}
+
+		//for select button
+		function setTypes() {
+			var settingsCopy = $scope.typeSettings
+			$scope.types = [...new Set(settingsCopy.map(function(set){
+				return set.type
+			}))]
+
+		}
+
+
+		getSettings()
+		$scope.subList = []
+
+		$scope.setSubtypes = function(){
+			if(!$scope.setting.type) return
+			else{
+					$scope.subList = []
+					$scope.typeSettings.forEach(function(set){
+					if(set.type === $scope.setting.type){
+						set.subTypes.forEach(function(sub){
+							$scope.subList.push(sub.text)	
+						})
+					}
+				})
+			}
+		}
+
+
+
 	 	$scope.submitProgressSetting = function(setting) {
 	 		$http.post('/api/progress-settings', setting)
 	 			.success(function(data) {
@@ -1894,12 +1934,6 @@
 			$scope.typeList = []
 
 			$scope.subList = []
-
-			 $scope.nameList = [{
-			 	listValue: "retail sale",
-			 },{
-			 	listValue: ""
-			 }]
 
 			 getTypes()
 

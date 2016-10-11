@@ -44,12 +44,6 @@
 
 			$scope.subList = []
 
-			 $scope.nameList = [{
-			 	listValue: "retail sale",
-			 },{
-			 	listValue: ""
-			 }]
-
 			 getTypes()
 
 			 $scope.submitActivity = function(activity){

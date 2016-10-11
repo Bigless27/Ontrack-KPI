@@ -39,6 +39,46 @@
 				})
 		}
 
+		function getSettings() {
+			$http.get('api/type-settings')
+				.success(function(data) {
+					$scope.typeSettings = data
+					setTypes()
+				})
+				.error(function(err){
+					console.log(err)
+				})
+		}
+
+		//for select button
+		function setTypes() {
+			var settingsCopy = $scope.typeSettings
+			$scope.types = [...new Set(settingsCopy.map(function(set){
+				return set.type
+			}))]
+
+		}
+
+
+		getSettings()
+		$scope.subList = []
+
+		$scope.setSubtypes = function(){
+			if(!$scope.setting.type) return
+			else{
+					$scope.subList = []
+					$scope.typeSettings.forEach(function(set){
+					if(set.type === $scope.setting.type){
+						set.subTypes.forEach(function(sub){
+							$scope.subList.push(sub.text)	
+						})
+					}
+				})
+			}
+		}
+
+
+
 	 	$scope.submitProgressSetting = function(setting) {
 	 		$http.post('/api/progress-settings', setting)
 	 			.success(function(data) {

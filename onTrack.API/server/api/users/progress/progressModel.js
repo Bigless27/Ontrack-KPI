@@ -4,11 +4,11 @@ var _ = require('lodash')
 var User = require('../userModel')
 
 var UserProgressSchema = new Schema({
-	userId: {type: Schema.Types.ObjectId, ref: 'user', required: true},
-	promotionId: {type: Schema.Types.ObjectId, ref: 'promotion', required: true},
+	name: {type: String, required: true},
 	value: {type: Number, default: 0},
-	type: {type: String, required: true},
-	subType: {type: String, required: true}
+	userId: {type: Schema.Types.ObjectId, ref: 'user', required: true},
+	types: {type: String, required: true},
+	subTypes: {type: String, required: true}
 });
 
 UserProgressSchema.post('save', function(doc) {
@@ -36,4 +36,4 @@ UserProgressSchema.post('save', function(doc) {
 	})
 })
 
-module.exports = mongoose.model('userprogess', UserProgressSchema)
+module.exports = mongoose.model('userprogress', UserProgressSchema)

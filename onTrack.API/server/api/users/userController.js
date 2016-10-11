@@ -6,6 +6,7 @@ exports.params = function(req, res, next, id) {
 	User.findById(id)
 		.select('-password') // doesn't grab it
     .populate('activity')
+    .populate('progress')
 		.exec()
 		.then(function(user) {
 			if (!user) {
@@ -41,14 +42,10 @@ exports.getOne = function(req, res, next) {
 };
 
 
-
 exports.put = function(req, res, next) {
   var user = req.user;
-  console.log(user)
-  console.log('above')
-  var update = req.body;
-  console.log(update)
 
+  var update = req.body;
 
   _.mergeWith(user, update, customizer);
 
