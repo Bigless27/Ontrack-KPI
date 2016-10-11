@@ -44,11 +44,13 @@ exports.getOne = function(req, res, next) {
 
 exports.put = function(req, res, next) {
   var user = req.user;
-
+  console.log(user)
+  console.log('above')
   var update = req.body;
+  console.log(update)
+
 
   _.mergeWith(user, update, customizer);
-  console.log(update)
 
   user.save(function(err, saved) {
     if (err) {
@@ -67,15 +69,7 @@ exports.post = function(req, res, next) {
   var newUser = new User(req.body);
 
   newUser.save(function(err, user) {
-    if(err) { 
-    	if (err.name === 'MongoError' && err.code === 11000) {
-        // Duplicate email
-      	return res.status(500).send({ succes: false, message: 'Email is already taken' });
-      }
-      else{
-      	return next(err)
-      }
-    }
+    if(err) return next(err)
     var token = signToken(user._id);
     res.json({token: token});
   }, function(err) {

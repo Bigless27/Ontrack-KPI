@@ -47,15 +47,13 @@
 					var token = $window.sessionStorage['jwt']
 					var newUser = $scope.users.find(x => x._id === r.userId)
 					newUser['progress'] = users
-					console.log(newUser)
-					console.log(editRefs)
 					$http.put('api/users/' + r.userId, newUser, {
 						headers: {
 							'Authorization': `Bearer ${token}`
 						}
 					})
 					.success(function(data){
-						console.log('updated')
+						$state.reload()
 					})
 					.error(function(err) {
 						console.log(err)

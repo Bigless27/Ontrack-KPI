@@ -19,23 +19,25 @@ SettingsSchema.post('save', function(doc, next) {
 	if(doc.users.length === 0){
 		next()
 	}
-	User.find({
-		'_id': { $in: 
-				doc.users.map(x => x.userId)
-			}
-	}, function(err, docs){
-		if (err) next(err)
-		docs.forEach(function(user) {
-			if(!user.progress.map(x => x.toString()).includes(doc._id.toString())){
-				user.progress.push(doc._id)
-				user.save(function(err, result) {
-					if (err) return next(err)
-					next()
-				})
-			}
-			next()
+	else{
+		User.find({
+			'_id': { $in: 
+					doc.users.map(x => x.userId)
+				}
+		}, function(err, docs){
+			if (err) next(err)
+			docs.forEach(function(user) {
+				if(!user.progress.map(x => x.toString()).includes(doc._id.toString())){
+					user.progress.push(doc._id)
+					user.save(function(err, result) {
+						if (err) return next(err)
+						next()
+					})
+				}
+				next()
+			})
 		})
-	})
+	}
 })
 
 
