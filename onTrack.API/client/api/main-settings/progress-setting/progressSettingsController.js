@@ -45,8 +45,11 @@
 				})
 				editRefs.forEach(function(r) {
 					var token = $window.sessionStorage['jwt']
-					var newUser = $scope.users.find(x => x._id === r.userId)
-					newUser['settingProgress'] = users
+					var newUser = $scope.users.find(x => x._id === r.userId) //find the actually user from the subdocument of prog setting
+					// newUser['settingProgress'] = users
+
+					var delIndex = newUser.settingProgress.indexOf($scope.setting._id)
+					newUser.settingProgress.splice(delIndex, 1)
 					$http.put('api/users/' + r.userId, newUser, {
 						headers: {
 							'Authorization': `Bearer ${token}`

@@ -703,7 +703,6 @@
 				$http.get('/api/users/' + $stateParams.id)
 					.success(function(data){
 						$scope.user = data
-						console.log(data)
 					})
 					.error(function(err) {
 						console.log(err)
@@ -806,70 +805,6 @@
 		$scope.optionsList = []
 
 		getUsers()
-
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('ClientFormController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
-
-			$scope.errorDisplay = false
-
-			$scope.createClient = function(data){
-				var token = $window.sessionStorage['jwt']
-
-
-				var names = $scope.clients.filter(function(client) {
-					return client.name == data.name
-				})
-
-				if(names.length > 0){
-					$scope.errorDisplay = true
-					$scope.oops = 'Name is already taken!'
-					return
-				}
-				else{
-					$http.post('/api/clients' , data ,{
-						headers: {
-							'Authorization': `Bearer ${token}`
-						}
-					})
-					.success(function(data){
-						var clientId = {'id': data._id + ''}
-						$state.go('client',clientId )
-					})
-					.error(function(err) {
-						$scope.errorDisplay = true
-						$scope.oops = err.message
-					})
-				}
-
-			}
-
-			function getAllUsers() {
-				$http.get('/api/users')
-					.success(function(users){
-						users.forEach(function(user){
-							if(user){
-								$scope.optionsList.push(
-										{firstName: user.firstName, lastName: user.lastName, 
-											email: user.email, fullName: user.firstName + ' ' + user.lastName}
-									)
-							}
-							else{
-								$scope.optionsList = [{name: 'No users'}]
-							}
-						})
-					})
-					.error(function(err){
-						console.log(err)
-					})
-			}
-
-			getAllUsers()
-
-			$scope.optionsList = [];
 
 	}])
 }());
@@ -1034,6 +969,70 @@
   		
 
 		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('ClientFormController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+
+			$scope.errorDisplay = false
+
+			$scope.createClient = function(data){
+				var token = $window.sessionStorage['jwt']
+
+
+				var names = $scope.clients.filter(function(client) {
+					return client.name == data.name
+				})
+
+				if(names.length > 0){
+					$scope.errorDisplay = true
+					$scope.oops = 'Name is already taken!'
+					return
+				}
+				else{
+					$http.post('/api/clients' , data ,{
+						headers: {
+							'Authorization': `Bearer ${token}`
+						}
+					})
+					.success(function(data){
+						var clientId = {'id': data._id + ''}
+						$state.go('client',clientId )
+					})
+					.error(function(err) {
+						$scope.errorDisplay = true
+						$scope.oops = err.message
+					})
+				}
+
+			}
+
+			function getAllUsers() {
+				$http.get('/api/users')
+					.success(function(users){
+						users.forEach(function(user){
+							if(user){
+								$scope.optionsList.push(
+										{firstName: user.firstName, lastName: user.lastName, 
+											email: user.email, fullName: user.firstName + ' ' + user.lastName}
+									)
+							}
+							else{
+								$scope.optionsList = [{name: 'No users'}]
+							}
+						})
+					})
+					.error(function(err){
+						console.log(err)
+					})
+			}
+
+			getAllUsers()
+
+			$scope.optionsList = [];
+
 	}])
 }());
 (function() {
@@ -1235,8 +1234,11 @@
 				})
 				editRefs.forEach(function(r) {
 					var token = $window.sessionStorage['jwt']
-					var newUser = $scope.users.find(x => x._id === r.userId)
-					newUser['settingProgress'] = users
+					var newUser = $scope.users.find(x => x._id === r.userId) //find the actually user from the subdocument of prog setting
+					// newUser['settingProgress'] = users
+
+					var delIndex = newUser.settingProgress.indexOf($scope.setting._id)
+					newUser.settingProgress.splice(delIndex, 1)
 					$http.put('api/users/' + r.userId, newUser, {
 						headers: {
 							'Authorization': `Bearer ${token}`
@@ -1847,7 +1849,6 @@
 	 		if(setting.subTypes){
 	 			setting['subTypes'] = setting.subTypes.map(x => x.name)
 	 		}
-	 		console.log(setting)
 	 		$http.post('/api/progress-settings', setting)
 	 			.success(function(data) {
 	 				$scope.progressSettings = data

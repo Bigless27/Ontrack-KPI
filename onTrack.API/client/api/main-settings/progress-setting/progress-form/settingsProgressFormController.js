@@ -89,7 +89,6 @@
 	 		if(setting.subTypes){
 	 			setting['subTypes'] = setting.subTypes.map(x => x.name)
 	 		}
-	 		console.log(setting)
 	 		$http.post('/api/progress-settings', setting)
 	 			.success(function(data) {
 	 				$scope.progressSettings = data

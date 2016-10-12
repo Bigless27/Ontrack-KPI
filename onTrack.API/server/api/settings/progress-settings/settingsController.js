@@ -57,8 +57,6 @@ exports.post = function(req, res, next) { //works
 }
 
 exports.delete = function(req, res, next) { //works
-
-
 	req.settings.remove(function(err, removed) {
 		if (err) {
 			next(err);
