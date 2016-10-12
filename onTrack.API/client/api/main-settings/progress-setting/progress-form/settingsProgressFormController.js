@@ -61,25 +61,35 @@
 
 
 		getSettings()
-		$scope.subList = []
 
 		$scope.setSubtypes = function(){
 			if(!$scope.setting.type) return
+
 			else{
+					var id = 1
 					$scope.subList = []
 					$scope.typeSettings.forEach(function(set){
 					if(set.type === $scope.setting.type){
 						set.subTypes.forEach(function(sub){
-							$scope.subList.push(sub.text)	
+							$scope.itemArray.push({id: id, name: sub.text})
+							id++	
 						})
 					}
 				})
 			}
 		}
 
+		 $scope.itemArray = [];
+
+    	$scope.selected = { value: $scope.itemArray[0] };
+
 
 
 	 	$scope.submitProgressSetting = function(setting) {
+	 		if(setting.subTypes){
+	 			setting['subTypes'] = setting.subTypes.map(x => x.name)
+	 		}
+	 		console.log(setting)
 	 		$http.post('/api/progress-settings', setting)
 	 			.success(function(data) {
 	 				$scope.progressSettings = data
