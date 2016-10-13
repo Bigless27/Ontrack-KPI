@@ -30,8 +30,8 @@ SettingsSchema.pre('save', function(next) {
 				}
 		}, function(err, docs){
 			if (err) next(err)
-			docs.forEach(function(user) {
-				if(!user.settingProgress.map(x => x.toString()).includes(progSetting._id.toString())) {
+			docs.forEach(function(user) {//this only creates a progress if the settingsId isn't already associated witht the user
+				if(!user.settingProgress.map(x => x.toString()).includes(progSetting._id.toString())) { //check if the user is already associated with the progsetting
 					user.settingProgress.push(progSetting._id)
 					user.save(function(err, result) {
 						if (err) return next(err)

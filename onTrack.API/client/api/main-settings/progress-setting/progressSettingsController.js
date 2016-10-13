@@ -36,7 +36,9 @@
 			updateSetting(name, 'name')
 		}
 
+
 		$scope.updateUsers = function(users) {
+			//This can definetly be made better. Needs to update users and delete users promotions
 			if($scope.setting.users.length > users.length){
 				var editRefs = $scope.setting.users.filter(function(user){
 					if (!users.map(x => x.userId).includes(user.userId)) {
@@ -46,8 +48,7 @@
 				editRefs.forEach(function(r) {
 					var token = $window.sessionStorage['jwt']
 					var newUser = $scope.users.find(x => x._id === r.userId) //find the actually user from the subdocument of prog setting
-					// newUser['settingProgress'] = users
-
+					populateUser(newUser._id)
 					var delIndex = newUser.settingProgress.indexOf($scope.setting._id)
 					newUser.settingProgress.splice(delIndex, 1)
 					$http.put('api/users/' + r.userId, newUser, {
@@ -56,7 +57,7 @@
 						}
 					})
 					.success(function(data){
-						$state.reload()
+						
 					})
 					.error(function(err) {
 						console.log(err)
