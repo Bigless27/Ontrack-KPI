@@ -38,8 +38,6 @@ SettingsSchema.pre('save', function(next) {
 						var prog = new Progress({userId: result._id, name: progSetting.name, type: progSetting.type, subTypes: progSetting.subTypes, settingId: progSetting._id})
 						prog.save(function(err, result){
 							if (err) next(err)
-							console.log(result)
-							next()
 						})
 						})
 					}
@@ -51,26 +49,29 @@ SettingsSchema.pre('save', function(next) {
 
 SettingsSchema.pre('remove', function(next){
 	var progSetting = this
-	User.find({
-		'_id': { $in: 
-				this.users.map(x => x.userId)
-				}
-			}, function(err, docs) {
-				if (err) next(err)
-				docs.forEach(function(user){
-					var setIndex = user.settingProgress.indexOf(progSetting._id)
-					user.settingProgress.splice(setIndex,1)
-					var progIndex = user.progress.indexOf(progSetting._id)
-					user.progress.splice(progIndex, 1)
-					next()
-					user.save(function(err, saved){
-						if(err) next(err)
+	if(this.users.length === 0){
+		next()
+	}
+	else{
+		User.find({
+			'_id': { $in: 
+					this.users.map(x => x.userId)
+					}
+				}, function(err, docs) {
+					if (err) next(err)
+					docs.forEach(function(user){
+						var setIndex = user.settingProgress.indexOf(progSetting._id)
+						user.settingProgress.splice(setIndex,1)
+						var progIndex = user.progress.indexOf(progSetting._id)
+						user.progress.splice(progIndex, 1)
 						next()
+						user.save(function(err, saved){
+							if(err) next(err)
+							next()
+						})
 					})
 				})
-			}, function(err) {
-				next(err)
-	})
+		}
 })
 
 
