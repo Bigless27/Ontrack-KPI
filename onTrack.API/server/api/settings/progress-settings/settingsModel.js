@@ -18,31 +18,31 @@ var SettingsSchema = new Schema({
 	users: [usersSchema]	
 })
 
-SettingsSchema.post('save', function(doc, next) {
-	if(doc.users.length === 0){
+SettingsSchema.pre('save', function(next) {
+	var progSetting = this
+	if(this.users.length === 0){
 		next()
 	}
 	else{
 		User.find({
 			'_id': { $in: 
-					doc.users.map(x => x.userId)
+					this.users.map(x => x.userId)
 				}
 		}, function(err, docs){
 			if (err) next(err)
 			docs.forEach(function(user) {
-				if(!user.settingProgress.map(x => x.toString()).includes(doc._id.toString())){
-					user.settingProgress.push(doc._id)
+				if(!user.settingProgress.map(x => x.toString()).includes(progSetting._id.toString())) {
+					user.settingProgress.push(progSetting._id)
 					user.save(function(err, result) {
 						if (err) return next(err)
-
-						var prog = new Progress({userId: result._id, name: doc.name, type: doc.type, subTypes: doc.subTypes, settingId: doc._id})
+						var prog = new Progress({userId: result._id, name: progSetting.name, type: progSetting.type, subTypes: progSetting.subTypes, settingId: progSetting._id})
 						prog.save(function(err, result){
-							if (err) return next(err)
+							if (err) next(err)
+							console.log(result)
 							next()
 						})
 						})
 					}
-					next()
 				})
 				next()
 			})

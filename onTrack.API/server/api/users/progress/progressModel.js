@@ -7,9 +7,9 @@ var UserProgressSchema = new Schema({
 	name: {type: String, required: true},
 	value: {type: Number, default: 0},
 	userId: {type: Schema.Types.ObjectId, ref: 'user', required: true},
-	types: {type: String, required: true},
+	type: {type: String, required: true},
 	settingId: {type: Schema.Types.ObjectId, ref: 'progresssetting', required: true},
-	subTypes: {type: String, required: true}
+	subTypes: [{type: String}]
 });
 
 UserProgressSchema.post('save', function(doc) {
