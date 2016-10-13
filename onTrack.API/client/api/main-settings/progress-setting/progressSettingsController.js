@@ -48,7 +48,6 @@
 				editRefs.forEach(function(r) {
 					var token = $window.sessionStorage['jwt']
 					var newUser = $scope.users.find(x => x._id === r.userId) //find the actually user from the subdocument of prog setting
-					populateUser(newUser._id)
 					var delIndex = newUser.settingProgress.indexOf($scope.setting._id)
 					newUser.settingProgress.splice(delIndex, 1)
 					$http.put('api/users/' + r.userId, newUser, {
@@ -57,7 +56,7 @@
 						}
 					})
 					.success(function(data){
-						
+						console.log(data)
 					})
 					.error(function(err) {
 						console.log(err)

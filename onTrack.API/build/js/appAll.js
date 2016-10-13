@@ -1237,7 +1237,6 @@
 				editRefs.forEach(function(r) {
 					var token = $window.sessionStorage['jwt']
 					var newUser = $scope.users.find(x => x._id === r.userId) //find the actually user from the subdocument of prog setting
-					populateUser(newUser._id)
 					var delIndex = newUser.settingProgress.indexOf($scope.setting._id)
 					newUser.settingProgress.splice(delIndex, 1)
 					$http.put('api/users/' + r.userId, newUser, {
@@ -1246,7 +1245,7 @@
 						}
 					})
 					.success(function(data){
-						
+						console.log(data)
 					})
 					.error(function(err) {
 						console.log(err)
@@ -1761,6 +1760,44 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('SettingsTypeFormController', ['$scope', '$state', '$window', '$http',
+	 function($scope, $state, $window, $http) {
+
+	 	$scope.err = false
+
+	 	function getSettings(){
+	 		$http.get('api/type-settings')
+	 			.success(function(data){
+	 				$scope.settings = data
+	 			})
+	 			.error(function(err) {
+	 				console.log(err)
+	 			})
+	 	}
+
+	 	$scope.submitSetting = function(setting) {
+	 		var allTypes = $scope.settings.map(s => s.type.toLowerCase())
+	 		if (allTypes.includes(setting.type.toLowerCase())){
+	 			$scope.oops = 'Type is already being used, add a subtype in the view'
+	 			$scope.err = true
+	 		}
+	 		else{
+		 		$http.post('api/type-settings', setting)
+		 			.success(function(data) {
+		 				$scope.typeSettings = data
+		 				$state.reload()
+		 			})
+		 			.error(function(err) {
+		 				console.log(err)
+		 			})
+	 		}
+	 	}
+
+	 	getSettings()
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('SettingsProgressFormController', ['$scope', '$state', '$window', '$http',
 	 function($scope, $state, $window, $http) {
 
@@ -1862,44 +1899,6 @@
 
 
 	 	getUsers()
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('SettingsTypeFormController', ['$scope', '$state', '$window', '$http',
-	 function($scope, $state, $window, $http) {
-
-	 	$scope.err = false
-
-	 	function getSettings(){
-	 		$http.get('api/type-settings')
-	 			.success(function(data){
-	 				$scope.settings = data
-	 			})
-	 			.error(function(err) {
-	 				console.log(err)
-	 			})
-	 	}
-
-	 	$scope.submitSetting = function(setting) {
-	 		var allTypes = $scope.settings.map(s => s.type.toLowerCase())
-	 		if (allTypes.includes(setting.type.toLowerCase())){
-	 			$scope.oops = 'Type is already being used, add a subtype in the view'
-	 			$scope.err = true
-	 		}
-	 		else{
-		 		$http.post('api/type-settings', setting)
-		 			.success(function(data) {
-		 				$scope.typeSettings = data
-		 				$state.reload()
-		 			})
-		 			.error(function(err) {
-		 				console.log(err)
-		 			})
-	 		}
-	 	}
-
-	 	getSettings()
 	}])
 }());
 (function() {

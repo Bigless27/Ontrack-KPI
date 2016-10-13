@@ -38,14 +38,16 @@ SettingsSchema.pre('save', function(next) {
 						var prog = new Progress({userId: result._id, name: progSetting.name, type: progSetting.type, subTypes: progSetting.subTypes, settingId: progSetting._id})
 						prog.save(function(err, result){
 							if (err) next(err)
+							next()
 						})
 						})
-					}
-				})
-				next()
-			})
-		}
+				}
+			next()
+			}
+		)}
+	)}
 })
+
 
 SettingsSchema.pre('remove', function(next){
 	var progSetting = this
