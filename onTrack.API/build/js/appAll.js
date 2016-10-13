@@ -459,28 +459,6 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
-		$scope.signUp = function(user) {
-			$scope.$broadcast('show-errors-check-validity')
-
-			if ($scope.userForm.$invalid){return;}
-			$scope.err = false
-			$http.post('api/users', user)
-				.success(function(data) {
-					$scope.err = false
-					$window.sessionStorage.jwt = data['token']
-					$state.go('main')
-				})
-				.error(function(error) {
-					$scope.err = true
-					$scope.errMessage = error.message
-				})
-		}
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('AddUserController', ['$scope', '$state', '$http', '$window', '$stateParams',
 		function($scope, $state, $http, $window, $stateParams) {
 
@@ -734,6 +712,28 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+		$scope.signUp = function(user) {
+			$scope.$broadcast('show-errors-check-validity')
+
+			if ($scope.userForm.$invalid){return;}
+			$scope.err = false
+			$http.post('api/users', user)
+				.success(function(data) {
+					$scope.err = false
+					$window.sessionStorage.jwt = data['token']
+					$state.go('main')
+				})
+				.error(function(error) {
+					$scope.err = true
+					$scope.errMessage = error.message
+				})
+		}
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('AdminController', ['$scope', '$state', '$http', '$window', '$stateParams',
 		function($scope, $state, $http, $window, $stateParams) {
 		
@@ -805,6 +805,70 @@
 		$scope.optionsList = []
 
 		getUsers()
+
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('ClientFormController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+
+			$scope.errorDisplay = false
+
+			$scope.createClient = function(data){
+				var token = $window.sessionStorage['jwt']
+
+
+				var names = $scope.clients.filter(function(client) {
+					return client.name == data.name
+				})
+
+				if(names.length > 0){
+					$scope.errorDisplay = true
+					$scope.oops = 'Name is already taken!'
+					return
+				}
+				else{
+					$http.post('/api/clients' , data ,{
+						headers: {
+							'Authorization': `Bearer ${token}`
+						}
+					})
+					.success(function(data){
+						var clientId = {'id': data._id + ''}
+						$state.go('client',clientId )
+					})
+					.error(function(err) {
+						$scope.errorDisplay = true
+						$scope.oops = err.message
+					})
+				}
+
+			}
+
+			function getAllUsers() {
+				$http.get('/api/users')
+					.success(function(users){
+						users.forEach(function(user){
+							if(user){
+								$scope.optionsList.push(
+										{firstName: user.firstName, lastName: user.lastName, 
+											email: user.email, fullName: user.firstName + ' ' + user.lastName}
+									)
+							}
+							else{
+								$scope.optionsList = [{name: 'No users'}]
+							}
+						})
+					})
+					.error(function(err){
+						console.log(err)
+					})
+			}
+
+			getAllUsers()
+
+			$scope.optionsList = [];
 
 	}])
 }());
@@ -969,70 +1033,6 @@
   		
 
 		
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('ClientFormController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
-
-			$scope.errorDisplay = false
-
-			$scope.createClient = function(data){
-				var token = $window.sessionStorage['jwt']
-
-
-				var names = $scope.clients.filter(function(client) {
-					return client.name == data.name
-				})
-
-				if(names.length > 0){
-					$scope.errorDisplay = true
-					$scope.oops = 'Name is already taken!'
-					return
-				}
-				else{
-					$http.post('/api/clients' , data ,{
-						headers: {
-							'Authorization': `Bearer ${token}`
-						}
-					})
-					.success(function(data){
-						var clientId = {'id': data._id + ''}
-						$state.go('client',clientId )
-					})
-					.error(function(err) {
-						$scope.errorDisplay = true
-						$scope.oops = err.message
-					})
-				}
-
-			}
-
-			function getAllUsers() {
-				$http.get('/api/users')
-					.success(function(users){
-						users.forEach(function(user){
-							if(user){
-								$scope.optionsList.push(
-										{firstName: user.firstName, lastName: user.lastName, 
-											email: user.email, fullName: user.firstName + ' ' + user.lastName}
-									)
-							}
-							else{
-								$scope.optionsList = [{name: 'No users'}]
-							}
-						})
-					})
-					.error(function(err){
-						console.log(err)
-					})
-			}
-
-			getAllUsers()
-
-			$scope.optionsList = [];
-
 	}])
 }());
 (function() {
@@ -1662,7 +1662,6 @@
 				.success(function(data) {
 					$scope.settings = data
 					setTypes()
-					setSubtype()
 				})
 				.error(function(err){
 					console.log(err)
@@ -1677,18 +1676,25 @@
 
 			}
 
-			function setSubtype() {
-				var subTypeHoler = []
-				var set = $scope.settings.map(function(set) {
-					return set.subTypes
-				})
+			$scope.itemArray = [];
 
-				var flatSet = set.reduce(function(a,b) {
-					return a.concat(b)
-				}).map(function(s){
-					return s.text
+    		$scope.selected = { value: $scope.itemArray[0] };
+
+			$scope.setSubtypes = function() {
+				if(!$scope.kpi.type) return
+				else{
+					var id = 1
+					$scope.subList = []
+					$scope.settings.forEach(function(set){
+						if(set.type === $scope.kpi.type){
+							set.subTypes.forEach(function(sub){
+								$scope.itemArray.push({id: id, name: sub.text})
+								id++	
+							})
+						}
 				})
-				$scope.subTypes = [...new Set(flatSet)]
+			}
+
 
 			}
 			getSettings()
@@ -1698,6 +1704,12 @@
 				$scope.$broadcast('show-errors-check-validity');
 
 				if($scope.kpiForm.$invalid){return;}
+
+				if(kpi.subTypes){
+		 			kpi['subTypes'] = kpi.subTypes.map(x => x.name)
+		 		}
+
+		 		console.log(kpi)
 				var token = $window.sessionStorage['jwt']
 
 				var names = $scope.client.kpis.filter(function(x) {
@@ -1929,7 +1941,7 @@
 			}
 		}
 
-		 $scope.itemArray = [];
+		$scope.itemArray = [];
 
     	$scope.selected = { value: $scope.itemArray[0] };
 
@@ -1937,7 +1949,7 @@
 
 	 	$scope.submitProgressSetting = function(setting) {
 	 		if(setting.subTypes){
-	 			setting['subTypes'] = setting.subTypes.map(x => x.name)
+	 			setting['subTypes'] = setting.subTypes.map(x => {text: x.name})
 	 		}
 	 		$http.post('/api/progress-settings', setting)
 	 			.success(function(data) {

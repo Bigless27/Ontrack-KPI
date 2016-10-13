@@ -11,7 +11,6 @@
 				.success(function(data) {
 					$scope.settings = data
 					setTypes()
-					setSubtype()
 				})
 				.error(function(err){
 					console.log(err)
@@ -26,18 +25,25 @@
 
 			}
 
-			function setSubtype() {
-				var subTypeHoler = []
-				var set = $scope.settings.map(function(set) {
-					return set.subTypes
-				})
+			$scope.itemArray = [];
 
-				var flatSet = set.reduce(function(a,b) {
-					return a.concat(b)
-				}).map(function(s){
-					return s.text
+    		$scope.selected = { value: $scope.itemArray[0] };
+
+			$scope.setSubtypes = function() {
+				if(!$scope.kpi.type) return
+				else{
+					var id = 1
+					$scope.subList = []
+					$scope.settings.forEach(function(set){
+						if(set.type === $scope.kpi.type){
+							set.subTypes.forEach(function(sub){
+								$scope.itemArray.push({id: id, name: sub.text})
+								id++	
+							})
+						}
 				})
-				$scope.subTypes = [...new Set(flatSet)]
+			}
+
 
 			}
 			getSettings()
@@ -47,6 +53,12 @@
 				$scope.$broadcast('show-errors-check-validity');
 
 				if($scope.kpiForm.$invalid){return;}
+
+				if(kpi.subTypes){
+		 			kpi['subTypes'] = kpi.subTypes.map(x => x.name)
+		 		}
+
+		 		console.log(kpi)
 				var token = $window.sessionStorage['jwt']
 
 				var names = $scope.client.kpis.filter(function(x) {
