@@ -58,7 +58,7 @@ exports.post = function(req, res, next) {//check
 
 
 exports.delete = function(req, res, next) {
-  req.activity.remove(function(err, removed) {
+  req.progress.remove(function(err, removed) {
     if (err) {
       next(err);
     } else {

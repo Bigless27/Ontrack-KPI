@@ -67,7 +67,13 @@
 								}
 							})
 							.success(function(data){
-								console.log('updated motaaa fuckaa')
+								$http.delete('api/users/' + data._id + '/progress/' + progId[0])
+									.success(function(data) {
+										$state.reload()
+									})
+									.error(function(err) {
+										console.log(err)
+									})
 							})
 							.error(function(err) {
 								console.log(err)
@@ -78,7 +84,6 @@
 						})
 				})
 			}
-
 			updateSetting(users, 'users')
 		}
 
