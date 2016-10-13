@@ -13,7 +13,6 @@ var UserProgressSchema = new Schema({
 });
 
 UserProgressSchema.post('save', function(doc) {
-	console.log(doc)
 	User.findById(doc.userId)
 		.then(function(user) {
 			if(!user) {

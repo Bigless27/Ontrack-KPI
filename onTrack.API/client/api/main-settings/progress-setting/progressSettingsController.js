@@ -50,17 +50,32 @@
 					var newUser = $scope.users.find(x => x._id === r.userId) //find the actually user from the subdocument of prog setting
 					var delIndex = newUser.settingProgress.indexOf($scope.setting._id)
 					newUser.settingProgress.splice(delIndex, 1)
-					$http.put('api/users/' + r.userId, newUser, {
-						headers: {
-							'Authorization': `Bearer ${token}`
-						}
-					})
-					.success(function(data){
-						console.log(data)
-					})
-					.error(function(err) {
-						console.log(err)
-					})
+					$http.get('api/users/' + r.userId)
+						.success(function(userProgEdit) {
+							var progId = userProgEdit.progress.filter(function(prog) {
+									if(prog.settingId === $scope.setting._id) {
+										return prog
+									}
+							}).map(x => x._id)
+
+							var delProgIndex = newUser.progress.indexOf(progId[0])
+							newUser.progress.splice(delProgIndex, 1)
+
+							$http.put('api/users/' + r.userId, newUser, {
+								headers: {
+									'Authorization': `Bearer ${token}`
+								}
+							})
+							.success(function(data){
+								console.log('updated motaaa fuckaa')
+							})
+							.error(function(err) {
+								console.log(err)
+							})
+						})
+						.error(function(err) {
+							console.log(err)
+						})
 				})
 			}
 

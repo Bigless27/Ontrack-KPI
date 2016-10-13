@@ -40,7 +40,7 @@ SettingsSchema.pre('save', function(next) {
 							if (err) next(err)
 							next()
 						})
-						})
+					})
 				}
 			next()
 			}

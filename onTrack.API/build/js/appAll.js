@@ -1239,17 +1239,32 @@
 					var newUser = $scope.users.find(x => x._id === r.userId) //find the actually user from the subdocument of prog setting
 					var delIndex = newUser.settingProgress.indexOf($scope.setting._id)
 					newUser.settingProgress.splice(delIndex, 1)
-					$http.put('api/users/' + r.userId, newUser, {
-						headers: {
-							'Authorization': `Bearer ${token}`
-						}
-					})
-					.success(function(data){
-						console.log(data)
-					})
-					.error(function(err) {
-						console.log(err)
-					})
+					$http.get('api/users/' + r.userId)
+						.success(function(userProgEdit) {
+							var progId = userProgEdit.progress.filter(function(prog) {
+									if(prog.settingId === $scope.setting._id) {
+										return prog
+									}
+							}).map(x => x._id)
+
+							var delProgIndex = newUser.progress.indexOf(progId[0])
+							newUser.progress.splice(delProgIndex, 1)
+
+							$http.put('api/users/' + r.userId, newUser, {
+								headers: {
+									'Authorization': `Bearer ${token}`
+								}
+							})
+							.success(function(data){
+								console.log('updated motaaa fuckaa')
+							})
+							.error(function(err) {
+								console.log(err)
+							})
+						})
+						.error(function(err) {
+							console.log(err)
+						})
 				})
 			}
 
@@ -1428,6 +1443,37 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('UserFormController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+
+			$scope.errorDisplay = false
+
+			$scope.createUser = function(user) {
+				
+				var duplicate = $scope.users.filter(function(x){
+					return x.email == user.email
+				})
+
+				if (duplicate.length > 0){
+					$scope.oops = 'Email is already taken!'
+					$scope.errorDisplay = true
+					return
+				}
+				else{
+					$http.post('api/users', user)
+						.success(function(data){
+							$state.reload()
+
+						})
+						.error(function(err) {
+							console.log(err)
+						})
+				}
+			}
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('ActivityController', ['$scope', '$state', '$window', '$stateParams', '$http', '$q',
 	 function($scope, $state, $window, $stateParams, $http, $q) {
 
@@ -1592,37 +1638,6 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('UserFormController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
-
-			$scope.errorDisplay = false
-
-			$scope.createUser = function(user) {
-				
-				var duplicate = $scope.users.filter(function(x){
-					return x.email == user.email
-				})
-
-				if (duplicate.length > 0){
-					$scope.oops = 'Email is already taken!'
-					$scope.errorDisplay = true
-					return
-				}
-				else{
-					$http.post('api/users', user)
-						.success(function(data){
-							$state.reload()
-
-						})
-						.error(function(err) {
-							console.log(err)
-						})
-				}
-			}
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('ProgressController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
 		function($scope, $state, $http, $window, $stateParams, $q) {
 			
@@ -1760,44 +1775,6 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('SettingsTypeFormController', ['$scope', '$state', '$window', '$http',
-	 function($scope, $state, $window, $http) {
-
-	 	$scope.err = false
-
-	 	function getSettings(){
-	 		$http.get('api/type-settings')
-	 			.success(function(data){
-	 				$scope.settings = data
-	 			})
-	 			.error(function(err) {
-	 				console.log(err)
-	 			})
-	 	}
-
-	 	$scope.submitSetting = function(setting) {
-	 		var allTypes = $scope.settings.map(s => s.type.toLowerCase())
-	 		if (allTypes.includes(setting.type.toLowerCase())){
-	 			$scope.oops = 'Type is already being used, add a subtype in the view'
-	 			$scope.err = true
-	 		}
-	 		else{
-		 		$http.post('api/type-settings', setting)
-		 			.success(function(data) {
-		 				$scope.typeSettings = data
-		 				$state.reload()
-		 			})
-		 			.error(function(err) {
-		 				console.log(err)
-		 			})
-	 		}
-	 	}
-
-	 	getSettings()
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('SettingsProgressFormController', ['$scope', '$state', '$window', '$http',
 	 function($scope, $state, $window, $http) {
 
@@ -1899,6 +1876,44 @@
 
 
 	 	getUsers()
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('SettingsTypeFormController', ['$scope', '$state', '$window', '$http',
+	 function($scope, $state, $window, $http) {
+
+	 	$scope.err = false
+
+	 	function getSettings(){
+	 		$http.get('api/type-settings')
+	 			.success(function(data){
+	 				$scope.settings = data
+	 			})
+	 			.error(function(err) {
+	 				console.log(err)
+	 			})
+	 	}
+
+	 	$scope.submitSetting = function(setting) {
+	 		var allTypes = $scope.settings.map(s => s.type.toLowerCase())
+	 		if (allTypes.includes(setting.type.toLowerCase())){
+	 			$scope.oops = 'Type is already being used, add a subtype in the view'
+	 			$scope.err = true
+	 		}
+	 		else{
+		 		$http.post('api/type-settings', setting)
+		 			.success(function(data) {
+		 				$scope.typeSettings = data
+		 				$state.reload()
+		 			})
+		 			.error(function(err) {
+		 				console.log(err)
+		 			})
+	 		}
+	 	}
+
+	 	getSettings()
 	}])
 }());
 (function() {
