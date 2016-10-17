@@ -6,7 +6,7 @@
 
 			function getKpiSettings() {
 		 		var d = $q.defer();
-		 		$http.get('api/clients/' + $stateParams.clientId + 
+		 		$http.get('api/clients/' + $stateParams.id + 
 		 			'/kpis/' + $stateParams.kpiId)
 		 			.success(function(kpi) {
 		 				$http.get('api/type-settings')
@@ -16,6 +16,7 @@
 				 				if (kpi.subTypes.length === 0){
 				 					$scope.noSubtypes = true
 				 				}
+				 				console.log($scope.kpi)
 				 				$scope.settings = set
 				 				getUniqueTypes()
 				 				getUniqueSubtypes()
@@ -71,33 +72,33 @@
 		}
 
 
-			$scope.deleteKpi = function() {
-				var token = $window.sessionStorage['jwt']
-				swal({
-				  title: "Are you sure?",
-				  text: "You will not be able to recover this kpi!",
-				  type: "warning",
-				  showCancelButton: true,
-				  confirmButtonColor: "#DD6B55",
-				  confirmButtonText: "Yes, delete it!",
-				  closeOnConfirm: true,
-				  html: false
-				}, function(){
-					$http.delete('/api/clients/' + $stateParams['clientid']
-					 + '/kpis/' + $stateParams['kpiid'], {
-						headers: {
-							'Authorization': `Bearer ${token}`
-						}
-					})
-					.success(function(data){
-						var clientId = {'id': $stateParams['clientid'] + ''}
-						$state.go('client',clientId )
-					})
-					.error(function(err) {
-						console.log(err)
-					})
+		$scope.deleteKpi = function() {
+			var token = $window.sessionStorage['jwt']
+			swal({
+			  title: "Are you sure?",
+			  text: "You will not be able to recover this kpi!",
+			  type: "warning",
+			  showCancelButton: true,
+			  confirmButtonColor: "#DD6B55",
+			  confirmButtonText: "Yes, delete it!",
+			  closeOnConfirm: true,
+			  html: false
+			}, function(){
+				$http.delete('/api/clients/' + $stateParams['id']
+				 + '/kpis/' + $stateParams['kpiId'], {
+					headers: {
+						'Authorization': `Bearer ${token}`
+					}
 				})
-			}
+				.success(function(data){
+					var clientId = {'id': $stateParams['id'] + ''}
+					$state.go('client',clientId )
+				})
+				.error(function(err) {
+					console.log(err)
+				})
+			})
+		}
 
 			$scope.updateName = function(data) {
 				if (data === ''){

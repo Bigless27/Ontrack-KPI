@@ -65,12 +65,12 @@
 						controller: 'AdminController'
 					})
 					.state('kpi', {
-						url: '/client/:clientId/kpis/:kpiId',
+						url: '/client/:id/kpis/:kpiId',
 						templateUrl: 'client/api/client/kpi/kpi-partial.html',
-						controller: 'KPIController'
+						controller: 'KPIController as ctrl'
 					})
 					.state('promotion', {
-						url: '/client/:clientid/promotions/:promoid',
+						url: '/client/:id/promotions/:promoid',
 						templateUrl: 'client/api/client/promotions/promotions-partial.html',
 						controller: 'PromotionController'
 					})

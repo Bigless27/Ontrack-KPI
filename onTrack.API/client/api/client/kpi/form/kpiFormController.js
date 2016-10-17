@@ -30,12 +30,12 @@
     		$scope.selected = { value: $scope.itemArray[0] };
 
 			$scope.setSubtypes = function() {
-				if(!$scope.kpi.type) return
+				if(!$scope.ctrl.kpi.type) return
 				else{
 					var id = 1
 					$scope.subList = []
 					$scope.settings.forEach(function(set){
-						if(set.type === $scope.kpi.type){
+						if(set.type === $scope.ctrl.kpi.type){
 							set.subTypes.forEach(function(sub){
 								$scope.itemArray.push({id: id, name: sub.text})
 								id++	
@@ -50,39 +50,40 @@
 
 
 			$scope.submitKpi = function(kpi) {
-				$scope.$broadcast('show-errors-check-validity');
+				console.log(kpi)
+				// $scope.$broadcast('show-errors-check-validity');
 
-				if($scope.kpiForm.$invalid){return;}
+				// if($scope.kpiForm.$invalid){return;}
+				// console.log(kpi)
+				// if(kpi.subTypes){
+		 	// 		kpi['subTypes'] = kpi.subTypes.map(x => {text:x.name})
+		 	// 	}
 
-				if(kpi.subTypes){
-		 			kpi['subTypes'] = kpi.subTypes.map(x => x.name)
-		 		}
+		 	// 	console.log(kpi)
+				// var token = $window.sessionStorage['jwt']
 
-		 		console.log(kpi)
-				var token = $window.sessionStorage['jwt']
+				// var names = $scope.client.kpis.filter(function(x) {
+				// 	return x.name == kpi.name
+				// })
 
-				var names = $scope.client.kpis.filter(function(x) {
-					return x.name == kpi.name
-				})
-
-				if(names.length > 0){
-					$scope.err = true
-					$scope.oops = 'Name is already taken!'
-					return
-				}
-				else{
-					$http.post('api/clients/' + $stateParams['id'] + '/kpis', kpi ,{
-						headers: {
-							"Authorization": `Bearer ${token}`
-						}
-					})
-					.success(function(data){
-							$state.reload()
-					})
-					.error(function(err){
-						console.log(err)
-					})
-				}
+				// if(names.length > 0){
+				// 	$scope.err = true
+				// 	$scope.oops = 'Name is already taken!'
+				// 	return
+				// }
+				// else{
+				// 	$http.post('api/clients/' + $stateParams['id'] + '/kpis', kpi ,{
+				// 		headers: {
+				// 			"Authorization": `Bearer ${token}`
+				// 		}
+				// 	})
+				// 	.success(function(data){
+				// 			$state.reload()
+				// 	})
+				// 	.error(function(err){
+				// 		console.log(err)
+				// 	})
+				// }
 			}
 	}])
 }());

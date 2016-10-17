@@ -8,7 +8,7 @@
 				<input 
 					name = 'name'
 					type = "text"
-					ng-model = "kpi.name" 
+					ng-model = "ctrl.kpi.name" 
 					class = "form-control"
 					value = 'name' 
 					placeholder = 'enter name'
@@ -26,7 +26,7 @@
 
 				<select 
 					name ='type'
-					ng-model = "kpi.type"
+					ng-model = "ctrl.kpi.type"
 					ng-blur = 'setSubtypes()'
 					ng-options="t for t in types"
 					class = "form-control"
@@ -42,7 +42,7 @@
 			<label for = 'subType'>SubTypes</label>
 			<div class = 'input-group'>
 
-				<ui-select multiple ng-model="kpi.subTypes" theme='bootstrap' style = 'width: 400px;'>
+				<ui-select multiple ng-model="ctrl.kpi.subTypes" theme='bootstrap' style = 'width: 400px;'>
 				    <ui-select-match placeholder = 'select subtype(s)'>
 				        {{$item.name}}
 				    </ui-select-match>
@@ -63,7 +63,7 @@
 					ng-click = 'expression()'
 					name = 'value'
 					type = "value"
-					ng-model = "kpi.value" 
+					ng-model = "ctrl.kpi.value" 
 					class = "form-control"
 					placeholder = "Enter a expression"
 					value = 'value' 

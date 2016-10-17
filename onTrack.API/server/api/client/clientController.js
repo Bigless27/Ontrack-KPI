@@ -3,6 +3,7 @@ var mongoose = require('mongoose')
 var _ = require('lodash');
 
 
+
 exports.params = function(req, res, next, id) {
   Client.findById(id)
     .populate('owner')

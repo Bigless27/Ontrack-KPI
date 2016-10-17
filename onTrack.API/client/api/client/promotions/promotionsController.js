@@ -104,14 +104,14 @@
 				  closeOnConfirm: true,
 				  html: false
 				}, function(){
-					$http.delete('/api/clients/' + $stateParams['clientid']
+					$http.delete('/api/clients/' + $stateParams['id']
 					 + '/promotions/' + $stateParams['promoid'], {
 						headers: {
 							'Authorization': `Bearer ${token}`
 						}
 					})
 					.success(function(data){
-						var clientId = {'id': $stateParams['clientid'] + ''}
+						var clientId = {'id': $stateParams['id'] + ''}
 						$state.go('client',clientId )
 					})
 					.error(function(err) {
