@@ -4,7 +4,7 @@ var Client = require('../clientModel')
 var _ = require('lodash')
 
 var subTypesSchema = new Schema({
-	text: {type: String}
+	name: {type: String}
 })
 
 var KpiSchema = new Schema({

@@ -16,7 +16,6 @@
 				 				if (kpi.subTypes.length === 0){
 				 					$scope.noSubtypes = true
 				 				}
-				 				console.log($scope.kpi)
 				 				$scope.settings = set
 				 				getUniqueTypes()
 				 				getUniqueSubtypes()
@@ -49,14 +48,14 @@
 	 			return x.subTypes.map(function(sub){
 	 				return sub.text
 	 			})
-	 		})
-	 		unUniqueSubtypes = unUniqueSubtypes.reduce(function(a,b){return a.concat(b)})
+	 		}).reduce(function(a,b){return a.concat(b)})
+
+
 	 		var subArr = [...new Set(unUniqueSubtypes)].map(x =>{ 
 	 						var obj = {}
-	 						obj['text'] = x
+	 						obj['name'] = x
 	 						return obj
 	 					})
-
 	 		$scope.subTypes = subArr
 	 	}
 
@@ -142,7 +141,7 @@
 				var token = $window.sessionStorage['jwt']
 				$scope.kpi[field] = data
 
-				$http.put('/api/clients/' + $stateParams.clientId
+				$http.put('/api/clients/' + $stateParams.id
 				 + '/kpis/' + $stateParams.kpiId, $scope.kpi,{
 					headers: {
 						'Authorization': `Bearer ${token}`

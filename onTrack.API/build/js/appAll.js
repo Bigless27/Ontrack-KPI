@@ -386,33 +386,6 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('LoginController', ['$scope', '$state', '$window', '$http',
-	 function($scope, $state, $window, $http) {
-
-			$scope.logUserIn = function(user) {
-				$scope.$broadcast('show-errors-check-validity');
-
-
-				if($scope.userForm.$invalid){return;}
-
-				$scope.err = true
-
-				$http.post('auth/signin', user)
-					.success(function(data) {
-						$scope.err = false
-						$window.sessionStorage.jwt = data['token']
-						$state.go('main')
-					})
-					.error(function(error) {
-						$scope.err = true
-						$scope.errMessage = error
-					})
-			}
-
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('MainController', ['$scope', '$state', '$http', '$window', 
 		function($scope, $state, $http, $window) {
 
@@ -459,24 +432,29 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
-		$scope.signUp = function(user) {
-			$scope.$broadcast('show-errors-check-validity')
+	.controller('LoginController', ['$scope', '$state', '$window', '$http',
+	 function($scope, $state, $window, $http) {
 
-			if ($scope.userForm.$invalid){return;}
-			$scope.err = false
-			$http.post('api/users', user)
-				.success(function(data) {
-					$scope.err = false
-					$window.sessionStorage.jwt = data['token']
-					$state.go('main')
-				})
-				.error(function(error) {
-					$scope.err = true
-					$scope.errMessage = error.message
-				})
-		}
+			$scope.logUserIn = function(user) {
+				$scope.$broadcast('show-errors-check-validity');
+
+
+				if($scope.userForm.$invalid){return;}
+
+				$scope.err = true
+
+				$http.post('auth/signin', user)
+					.success(function(data) {
+						$scope.err = false
+						$window.sessionStorage.jwt = data['token']
+						$state.go('main')
+					})
+					.error(function(error) {
+						$scope.err = true
+						$scope.errMessage = error
+					})
+			}
+
 	}])
 }());
 (function() {
@@ -542,6 +520,28 @@
 	 	loadTypeSettings()
 	 	loadProgressSettings()
 
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+		$scope.signUp = function(user) {
+			$scope.$broadcast('show-errors-check-validity')
+
+			if ($scope.userForm.$invalid){return;}
+			$scope.err = false
+			$http.post('api/users', user)
+				.success(function(data) {
+					$scope.err = false
+					$window.sessionStorage.jwt = data['token']
+					$state.go('main')
+				})
+				.error(function(error) {
+					$scope.err = true
+					$scope.errMessage = error.message
+				})
+		}
 	}])
 }());
 (function() {
@@ -890,7 +890,6 @@
 				 				if (kpi.subTypes.length === 0){
 				 					$scope.noSubtypes = true
 				 				}
-				 				console.log($scope.kpi)
 				 				$scope.settings = set
 				 				getUniqueTypes()
 				 				getUniqueSubtypes()
@@ -923,14 +922,14 @@
 	 			return x.subTypes.map(function(sub){
 	 				return sub.text
 	 			})
-	 		})
-	 		unUniqueSubtypes = unUniqueSubtypes.reduce(function(a,b){return a.concat(b)})
+	 		}).reduce(function(a,b){return a.concat(b)})
+
+
 	 		var subArr = [...new Set(unUniqueSubtypes)].map(x =>{ 
 	 						var obj = {}
-	 						obj['text'] = x
+	 						obj['name'] = x
 	 						return obj
 	 					})
-
 	 		$scope.subTypes = subArr
 	 	}
 
@@ -1016,7 +1015,7 @@
 				var token = $window.sessionStorage['jwt']
 				$scope.kpi[field] = data
 
-				$http.put('/api/clients/' + $stateParams.clientId
+				$http.put('/api/clients/' + $stateParams.id
 				 + '/kpis/' + $stateParams.kpiId, $scope.kpi,{
 					headers: {
 						'Authorization': `Bearer ${token}`
@@ -1677,20 +1676,26 @@
 
 			}
 
-			$scope.itemArray = [];
+			$scope.subTypesList = [];
 
-    		$scope.selected = { value: $scope.itemArray[0] };
+			$scope.typeChecker = false
+
+			$scope.checkType = function(){
+				if(!$scope.kpi.type) {
+					$scope.typeChecker = true
+				}
+			}
+
 
 			$scope.setSubtypes = function() {
-				if(!$scope.ctrl.kpi.type) return
+				$scope.subTypesList = []
+				if(!$scope.kpi.type) return
 				else{
-					var id = 1
-					$scope.subList = []
+					$scope.typeChecker = false
 					$scope.settings.forEach(function(set){
-						if(set.type === $scope.ctrl.kpi.type){
+						if(set.type === $scope.kpi.type){
 							set.subTypes.forEach(function(sub){
-								$scope.itemArray.push({id: id, name: sub.text})
-								id++	
+								$scope.subTypesList.push({name: sub.text})
 							})
 						}
 				})
@@ -1702,16 +1707,10 @@
 
 
 			$scope.submitKpi = function(kpi) {
-				console.log(kpi)
 				$scope.$broadcast('show-errors-check-validity');
 
 				if($scope.kpiForm.$invalid){return;}
-				console.log(kpi)
-				if(kpi.subTypes){
-		 			kpi['subTypes'] = kpi.subTypes.map(x => {text:x.name})
-		 		}
 
-		 		console.log(kpi)
 				var token = $window.sessionStorage['jwt']
 
 				var names = $scope.client.kpis.filter(function(x) {
@@ -1858,10 +1857,19 @@
 
 		getSettings()
 
+		$scope.typeChecker = false
+
+		$scope.checkType = function() {
+			if(!$scope.setting.type) {
+				$scope.typeChecker = true
+			}
+		}
+
 		$scope.setSubtypes = function(){
 			$scope.subTypesList = []
 			if(!$scope.setting.type) return
 			else{
+					$scope.typeChecker = false
 					$scope.typeSettings.forEach(function(set){
 					if(set.type === $scope.setting.type){
 						set.subTypes.forEach(function(sub){

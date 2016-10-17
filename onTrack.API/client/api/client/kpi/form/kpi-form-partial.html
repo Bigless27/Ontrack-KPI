@@ -8,7 +8,7 @@
 				<input 
 					name = 'name'
 					type = "text"
-					ng-model = "ctrl.kpi.name" 
+					ng-model = "kpi.name" 
 					class = "form-control"
 					value = 'name' 
 					placeholder = 'enter name'
@@ -26,7 +26,7 @@
 
 				<select 
 					name ='type'
-					ng-model = "ctrl.kpi.type"
+					ng-model = "kpi.type"
 					ng-blur = 'setSubtypes()'
 					ng-options="t for t in types"
 					class = "form-control"
@@ -41,15 +41,17 @@
 		<div class = 'form-group'>
 			<label for = 'subType'>SubTypes</label>
 			<div class = 'input-group'>
+				<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+				<multiple-autocomplete 
+				  ng-model="kpi.subTypes"
+				  object-property="name"
+				  suggestions-arr="subTypesList"
+				  required = 'true'
+				  ng-click = 'checkType()'>
+				</multiple-autocomplete>
+				</div>
+	      			<p class = 'alert alert-danger' ng-if = 'typeChecker'>Please select a type first</p>
 
-				<ui-select multiple ng-model="ctrl.kpi.subTypes" theme='bootstrap' style = 'width: 400px;'>
-				    <ui-select-match placeholder = 'select subtype(s)'>
-				        {{$item.name}}
-				    </ui-select-match>
-				    <ui-select-choices repeat="item in (itemArray | filter: $select.search) track by item.id">
-				        <span ng-bind="item.name"></span>
-				    </ui-select-choices>
-				</ui-select>
 			</div>
 		</div>
 
@@ -63,7 +65,7 @@
 					ng-click = 'expression()'
 					name = 'value'
 					type = "value"
-					ng-model = "ctrl.kpi.value" 
+					ng-model = "kpi.value" 
 					class = "form-control"
 					placeholder = "Enter a expression"
 					value = 'value' 
@@ -73,6 +75,7 @@
             <p class="help-block" ng-if= "kpiForm.value.$error.required">Value is required</p>
 		</div>
 
+
 		<div id = 'sandbox' ng-if = 'sandbox'>
 			
 		</div>
@@ -80,7 +83,7 @@
 		<p ng-if = 'err'>{{oops}}</p>
 
 
-		<button type = 'button' ng-click = "submitKpi(ctrl.kpi)" class = "btn btn-primary">Submit</button>
+		<button type = 'button' ng-click = "submitKpi(kpi)" class = "btn btn-primary">Submit</button>
 		<div ng-if = '!create' class = 'btn btn-default' ui-sref = 'kpi({id: kpi._id})'>Close</div>
 		<div ng-if = 'create' class = 'btn btn-default' ui-sref = 'client({id: clientId})'>Close</div>
 </form>

@@ -25,20 +25,26 @@
 
 			}
 
-			$scope.itemArray = [];
+			$scope.subTypesList = [];
 
-    		$scope.selected = { value: $scope.itemArray[0] };
+			$scope.typeChecker = false
+
+			$scope.checkType = function(){
+				if(!$scope.kpi.type) {
+					$scope.typeChecker = true
+				}
+			}
+
 
 			$scope.setSubtypes = function() {
-				if(!$scope.ctrl.kpi.type) return
+				$scope.subTypesList = []
+				if(!$scope.kpi.type) return
 				else{
-					var id = 1
-					$scope.subList = []
+					$scope.typeChecker = false
 					$scope.settings.forEach(function(set){
-						if(set.type === $scope.ctrl.kpi.type){
+						if(set.type === $scope.kpi.type){
 							set.subTypes.forEach(function(sub){
-								$scope.itemArray.push({id: id, name: sub.text})
-								id++	
+								$scope.subTypesList.push({name: sub.text})
 							})
 						}
 				})
@@ -50,16 +56,10 @@
 
 
 			$scope.submitKpi = function(kpi) {
-				console.log(kpi)
 				$scope.$broadcast('show-errors-check-validity');
 
 				if($scope.kpiForm.$invalid){return;}
-				console.log(kpi)
-				if(kpi.subTypes){
-		 			kpi['subTypes'] = kpi.subTypes.map(x => {text:x.name})
-		 		}
 
-		 		console.log(kpi)
 				var token = $window.sessionStorage['jwt']
 
 				var names = $scope.client.kpis.filter(function(x) {

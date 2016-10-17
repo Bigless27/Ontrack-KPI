@@ -33,7 +33,7 @@
 				<span ng-show = '!userTags'>
 					<ul ng-show = '!noSubtypes' ng-repeat = 'sub in kpi.subTypes '>
 						<li>
-							{{sub.text}}
+							{{sub.name}}
 						</li>
 					</ul>
 					<span ng-show = 'noSubtypes' class ='label label-danger'>Empty!</span>
@@ -41,8 +41,8 @@
 				<span ng-show = 'userTags' style = 'width: 200px;'>
 					<multiple-autocomplete 
 						ng-model="kpi.subTypes"
-	     				object-property = "text"
-	     				suggestions-arr="subTypes"
+	     				object-property = "name"
+	     				suggestions-arr= "subTypes"
 	     				required = 'true'>
 					</multiple-autocomplete>
 					<span class = 'btn btn-info' ng-click = 'updateSubtypes(kpi.subTypes)'><i class = 'glyphicon glyphicon-ok' aria-hidden = 'true'></i></span>

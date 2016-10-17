@@ -64,10 +64,19 @@
 
 		getSettings()
 
+		$scope.typeChecker = false
+
+		$scope.checkType = function() {
+			if(!$scope.setting.type) {
+				$scope.typeChecker = true
+			}
+		}
+
 		$scope.setSubtypes = function(){
 			$scope.subTypesList = []
 			if(!$scope.setting.type) return
 			else{
+					$scope.typeChecker = false
 					$scope.typeSettings.forEach(function(set){
 					if(set.type === $scope.setting.type){
 						set.subTypes.forEach(function(sub){
