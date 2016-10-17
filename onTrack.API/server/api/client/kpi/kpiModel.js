@@ -18,32 +18,30 @@ var KpiSchema = new Schema({
 
 
 KpiSchema.post('remove', function(doc) {
-	console.log(doc)
 	console.log(Client)
-	Client.findById(doc.clientId)
-		.then(function(client) {
-			if(!client) {
-				console.log('association not deleted')
-			} else {
-				update = client
-				
+	// Client.findById(doc.clientId)
+	// 	.then(function(client) {
+	// 		if(!client) {
+	// 			console.log('association not deleted')
+	// 		} else {
+	// 			update = client
 
-				update.kpis.splice(update.kpis.indexOf(doc._id),1);
+	// 			update.kpis.splice(update.kpis.indexOf(doc._id),1);
 
-				_.merge(client, update)
+	// 			_.merge(client, update)
 
 
-				client.save(function(err, saved) {
-					if (err) {
-						console.log('not saved')
-					} else {
-						console.log('association deleted and saved')
-					}
-				})
-			}
-		}, function(err) {
-			console.log(err)
-		})
+	// 			client.save(function(err, saved) {
+	// 				if (err) {
+	// 					console.log('not saved')
+	// 				} else {
+	// 					console.log('association deleted and saved')
+	// 				}
+	// 			})
+	// 		}
+	// 	}, function(err) {
+	// 		console.log(err)
+	// 	})
 })
 
 
