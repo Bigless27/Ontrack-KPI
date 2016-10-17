@@ -70,7 +70,7 @@
 						controller: 'KPIController as ctrl'
 					})
 					.state('promotion', {
-						url: '/client/:id/promotions/:promoid',
+						url: '/client/:id/promotions/:promoId',
 						templateUrl: 'client/api/client/promotions/promotions-partial.html',
 						controller: 'PromotionController'
 					})
@@ -386,6 +386,33 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('LoginController', ['$scope', '$state', '$window', '$http',
+	 function($scope, $state, $window, $http) {
+
+			$scope.logUserIn = function(user) {
+				$scope.$broadcast('show-errors-check-validity');
+
+
+				if($scope.userForm.$invalid){return;}
+
+				$scope.err = true
+
+				$http.post('auth/signin', user)
+					.success(function(data) {
+						$scope.err = false
+						$window.sessionStorage.jwt = data['token']
+						$state.go('main')
+					})
+					.error(function(error) {
+						$scope.err = true
+						$scope.errMessage = error
+					})
+			}
+
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('MainController', ['$scope', '$state', '$http', '$window', 
 		function($scope, $state, $http, $window) {
 
@@ -428,33 +455,6 @@
 				$state.go('login')
 			}
 		
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('LoginController', ['$scope', '$state', '$window', '$http',
-	 function($scope, $state, $window, $http) {
-
-			$scope.logUserIn = function(user) {
-				$scope.$broadcast('show-errors-check-validity');
-
-
-				if($scope.userForm.$invalid){return;}
-
-				$scope.err = true
-
-				$http.post('auth/signin', user)
-					.success(function(data) {
-						$scope.err = false
-						$window.sessionStorage.jwt = data['token']
-						$state.go('main')
-					})
-					.error(function(error) {
-						$scope.err = true
-						$scope.errMessage = error
-					})
-			}
-
 	}])
 }());
 (function() {
@@ -1112,8 +1112,8 @@
 				var token = $window.sessionStorage['jwt']
 				$scope.promotion[field] = data
 
-				$http.put('/api/clients/' + $stateParams['clientid']
-				 + '/promotions/' + $stateParams['promoid'], $scope.promotion,{
+				$http.put('/api/clients/' + $stateParams.id
+				 + '/promotions/' + $stateParams.promoId, $scope.promotion,{
 					headers: {
 						'Authorization': `Bearer ${token}`
 					}
@@ -1141,8 +1141,8 @@
 				  closeOnConfirm: true,
 				  html: false
 				}, function(){
-					$http.delete('/api/clients/' + $stateParams['id']
-					 + '/promotions/' + $stateParams['promoid'], {
+					$http.delete('/api/clients/' + $stateParams.id
+					 + '/promotions/' + $stateParams.promoId, {
 						headers: {
 							'Authorization': `Bearer ${token}`
 						}
@@ -1159,8 +1159,8 @@
 			}
 
 			function getPromotions(){
-				$http.get('api/clients/' + $stateParams['clientid'] 
-						+ '/promotions/' + $stateParams['promoid'])
+				$http.get('api/clients/' + $stateParams.id 
+						+ '/promotions/' + $stateParams.promoId)
 							.success(function(data) {
 								$scope.promotion = data;
 								$scope.promotion['startDate'] = new Date($scope.promotion.startDate) 

@@ -70,7 +70,7 @@
 						controller: 'KPIController as ctrl'
 					})
 					.state('promotion', {
-						url: '/client/:id/promotions/:promoid',
+						url: '/client/:id/promotions/:promoId',
 						templateUrl: 'client/api/client/promotions/promotions-partial.html',
 						controller: 'PromotionController'
 					})
