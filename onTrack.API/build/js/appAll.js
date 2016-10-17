@@ -459,6 +459,28 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+		$scope.signUp = function(user) {
+			$scope.$broadcast('show-errors-check-validity')
+
+			if ($scope.userForm.$invalid){return;}
+			$scope.err = false
+			$http.post('api/users', user)
+				.success(function(data) {
+					$scope.err = false
+					$window.sessionStorage.jwt = data['token']
+					$state.go('main')
+				})
+				.error(function(error) {
+					$scope.err = true
+					$scope.errMessage = error.message
+				})
+		}
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('MainSettingsController', ['$scope', '$state', '$window', '$http',
 	 function($scope, $state, $window, $http) {
 
@@ -520,28 +542,6 @@
 	 	loadTypeSettings()
 	 	loadProgressSettings()
 
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
-		$scope.signUp = function(user) {
-			$scope.$broadcast('show-errors-check-validity')
-
-			if ($scope.userForm.$invalid){return;}
-			$scope.err = false
-			$http.post('api/users', user)
-				.success(function(data) {
-					$scope.err = false
-					$window.sessionStorage.jwt = data['token']
-					$state.go('main')
-				})
-				.error(function(error) {
-					$scope.err = true
-					$scope.errMessage = error.message
-				})
-		}
 	}])
 }());
 (function() {
@@ -1703,39 +1703,39 @@
 
 			$scope.submitKpi = function(kpi) {
 				console.log(kpi)
-				// $scope.$broadcast('show-errors-check-validity');
+				$scope.$broadcast('show-errors-check-validity');
 
-				// if($scope.kpiForm.$invalid){return;}
-				// console.log(kpi)
-				// if(kpi.subTypes){
-		 	// 		kpi['subTypes'] = kpi.subTypes.map(x => {text:x.name})
-		 	// 	}
+				if($scope.kpiForm.$invalid){return;}
+				console.log(kpi)
+				if(kpi.subTypes){
+		 			kpi['subTypes'] = kpi.subTypes.map(x => {text:x.name})
+		 		}
 
-		 	// 	console.log(kpi)
-				// var token = $window.sessionStorage['jwt']
+		 		console.log(kpi)
+				var token = $window.sessionStorage['jwt']
 
-				// var names = $scope.client.kpis.filter(function(x) {
-				// 	return x.name == kpi.name
-				// })
+				var names = $scope.client.kpis.filter(function(x) {
+					return x.name == kpi.name
+				})
 
-				// if(names.length > 0){
-				// 	$scope.err = true
-				// 	$scope.oops = 'Name is already taken!'
-				// 	return
-				// }
-				// else{
-				// 	$http.post('api/clients/' + $stateParams['id'] + '/kpis', kpi ,{
-				// 		headers: {
-				// 			"Authorization": `Bearer ${token}`
-				// 		}
-				// 	})
-				// 	.success(function(data){
-				// 			$state.reload()
-				// 	})
-				// 	.error(function(err){
-				// 		console.log(err)
-				// 	})
-				// }
+				if(names.length > 0){
+					$scope.err = true
+					$scope.oops = 'Name is already taken!'
+					return
+				}
+				else{
+					$http.post('api/clients/' + $stateParams['id'] + '/kpis', kpi ,{
+						headers: {
+							"Authorization": `Bearer ${token}`
+						}
+					})
+					.success(function(data){
+							$state.reload()
+					})
+					.error(function(err){
+						console.log(err)
+					})
+				}
 			}
 	}])
 }());
@@ -1809,6 +1809,8 @@
 	 		}
 	 	}
 
+	 	$scope.subTypesList = []
+
 	 	$scope.optionsList = []
 
 	 	function getUsers(){
@@ -1857,26 +1859,18 @@
 		getSettings()
 
 		$scope.setSubtypes = function(){
+			$scope.subTypesList = []
 			if(!$scope.setting.type) return
-
 			else{
-					var id = 1
-					$scope.subList = []
 					$scope.typeSettings.forEach(function(set){
 					if(set.type === $scope.setting.type){
 						set.subTypes.forEach(function(sub){
-							$scope.itemArray.push({id: id, name: sub.text})
-							id++	
+							$scope.subTypesList.push({name: sub.text})
 						})
 					}
 				})
 			}
 		}
-
-		$scope.itemArray = [];
-
-    	$scope.selected = { value: $scope.itemArray[0] };
-
 
 
 	 	$scope.submitProgressSetting = function(setting) {

@@ -15,6 +15,8 @@
 	 		}
 	 	}
 
+	 	$scope.subTypesList = []
+
 	 	$scope.optionsList = []
 
 	 	function getUsers(){
@@ -63,26 +65,18 @@
 		getSettings()
 
 		$scope.setSubtypes = function(){
+			$scope.subTypesList = []
 			if(!$scope.setting.type) return
-
 			else{
-					var id = 1
-					$scope.subList = []
 					$scope.typeSettings.forEach(function(set){
 					if(set.type === $scope.setting.type){
 						set.subTypes.forEach(function(sub){
-							$scope.itemArray.push({id: id, name: sub.text})
-							id++	
+							$scope.subTypesList.push({name: sub.text})
 						})
 					}
 				})
 			}
 		}
-
-		$scope.itemArray = [];
-
-    	$scope.selected = { value: $scope.itemArray[0] };
-
 
 
 	 	$scope.submitProgressSetting = function(setting) {

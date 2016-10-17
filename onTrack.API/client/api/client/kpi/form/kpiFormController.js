@@ -51,39 +51,39 @@
 
 			$scope.submitKpi = function(kpi) {
 				console.log(kpi)
-				// $scope.$broadcast('show-errors-check-validity');
+				$scope.$broadcast('show-errors-check-validity');
 
-				// if($scope.kpiForm.$invalid){return;}
-				// console.log(kpi)
-				// if(kpi.subTypes){
-		 	// 		kpi['subTypes'] = kpi.subTypes.map(x => {text:x.name})
-		 	// 	}
+				if($scope.kpiForm.$invalid){return;}
+				console.log(kpi)
+				if(kpi.subTypes){
+		 			kpi['subTypes'] = kpi.subTypes.map(x => {text:x.name})
+		 		}
 
-		 	// 	console.log(kpi)
-				// var token = $window.sessionStorage['jwt']
+		 		console.log(kpi)
+				var token = $window.sessionStorage['jwt']
 
-				// var names = $scope.client.kpis.filter(function(x) {
-				// 	return x.name == kpi.name
-				// })
+				var names = $scope.client.kpis.filter(function(x) {
+					return x.name == kpi.name
+				})
 
-				// if(names.length > 0){
-				// 	$scope.err = true
-				// 	$scope.oops = 'Name is already taken!'
-				// 	return
-				// }
-				// else{
-				// 	$http.post('api/clients/' + $stateParams['id'] + '/kpis', kpi ,{
-				// 		headers: {
-				// 			"Authorization": `Bearer ${token}`
-				// 		}
-				// 	})
-				// 	.success(function(data){
-				// 			$state.reload()
-				// 	})
-				// 	.error(function(err){
-				// 		console.log(err)
-				// 	})
-				// }
+				if(names.length > 0){
+					$scope.err = true
+					$scope.oops = 'Name is already taken!'
+					return
+				}
+				else{
+					$http.post('api/clients/' + $stateParams['id'] + '/kpis', kpi ,{
+						headers: {
+							"Authorization": `Bearer ${token}`
+						}
+					})
+					.success(function(data){
+							$state.reload()
+					})
+					.error(function(err){
+						console.log(err)
+					})
+				}
 			}
 	}])
 }());

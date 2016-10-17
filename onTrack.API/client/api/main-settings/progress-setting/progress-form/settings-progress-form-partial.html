@@ -57,15 +57,23 @@
 		<div class = 'form-group'>
 			<label for = 'subType'>SubTypes</label>
 			<div class = 'input-group'>
-
-				<ui-select multiple ng-model="setting.subTypes" theme='bootstrap' style = 'width: 400px;'>
+				<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+				<multiple-autocomplete 
+				  ng-model="setting.subTypes"
+				  object-property="name"
+				  suggestions-arr="subTypesList"
+				  required = 'true'>
+				</multiple-autocomplete>
+				</div>
+	      			<p class="help-block" ng-if= "userForm.users.$error.required">User is required</p>
+				<!-- <ui-select multiple ng-model="setting.subTypes" theme='bootstrap' style = 'width: 400px;'>
 				    <ui-select-match placeholder = 'select subtype(s)'>
 				        {{$item.name}}
 				    </ui-select-match>
 				    <ui-select-choices repeat="item in (itemArray | filter: $select.search) track by item.id">
 				        <span ng-bind="item.name"></span>
 				    </ui-select-choices>
-				</ui-select>
+				</ui-select> -->
 			</div>
 		</div>
 
