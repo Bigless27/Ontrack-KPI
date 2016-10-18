@@ -186,6 +186,7 @@
 							$scope.noSubtypes = true
 						}
 						$scope.settings = data
+						getProgresses()
 						getUniqueTypes()
 						getUniqueSubtypes()
 					})
@@ -193,6 +194,32 @@
 						console.log(err)
 					})
 			}
+
+			function getProgresses() {
+				$http.get('api/progress-settings')
+					.success(function(progs) {
+						matchProgressToPromotion(progs)
+					})
+					.error(function(err) {
+						console.log(err)
+					})
+			}
+			
+
+			function matchProgressToPromotion(progs) {
+					var matchedTypesProg = progs.filter(x => x.type === $scope.promotion.type)
+					if(!$scope.noSubtypes){
+						var matchedTypesProg = matchedTypesProg.filter(function(prog) {
+							prog.subTypes.includes($scope.promotion.subTypes)
+						})
+					}
+					$scope.promoProgress = matchedTypesProg
+					//this is the progress Setting not just the progress
+					console.log($scope.promoProgress)
+			}
+			//can't get all users becuase it's not populated!!!!! Ahhhh
+
+
 
 			getPromotions()
 

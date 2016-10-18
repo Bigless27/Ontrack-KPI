@@ -386,6 +386,33 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('LoginController', ['$scope', '$state', '$window', '$http',
+	 function($scope, $state, $window, $http) {
+
+			$scope.logUserIn = function(user) {
+				$scope.$broadcast('show-errors-check-validity');
+
+
+				if($scope.userForm.$invalid){return;}
+
+				$scope.err = true
+
+				$http.post('auth/signin', user)
+					.success(function(data) {
+						$scope.err = false
+						$window.sessionStorage.jwt = data['token']
+						$state.go('main')
+					})
+					.error(function(error) {
+						$scope.err = true
+						$scope.errMessage = error
+					})
+			}
+
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('MainController', ['$scope', '$state', '$http', '$window', 
 		function($scope, $state, $http, $window) {
 
@@ -428,33 +455,6 @@
 				$state.go('login')
 			}
 		
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('LoginController', ['$scope', '$state', '$window', '$http',
-	 function($scope, $state, $window, $http) {
-
-			$scope.logUserIn = function(user) {
-				$scope.$broadcast('show-errors-check-validity');
-
-
-				if($scope.userForm.$invalid){return;}
-
-				$scope.err = true
-
-				$http.post('auth/signin', user)
-					.success(function(data) {
-						$scope.err = false
-						$window.sessionStorage.jwt = data['token']
-						$state.go('main')
-					})
-					.error(function(error) {
-						$scope.err = true
-						$scope.errMessage = error
-					})
-			}
-
 	}])
 }());
 (function() {
@@ -1223,6 +1223,7 @@
 							$scope.noSubtypes = true
 						}
 						$scope.settings = data
+						getProgresses()
 						getUniqueTypes()
 						getUniqueSubtypes()
 					})
@@ -1230,6 +1231,32 @@
 						console.log(err)
 					})
 			}
+
+			function getProgresses() {
+				$http.get('api/progress-settings')
+					.success(function(progs) {
+						matchProgressToPromotion(progs)
+					})
+					.error(function(err) {
+						console.log(err)
+					})
+			}
+			
+
+			function matchProgressToPromotion(progs) {
+					var matchedTypesProg = progs.filter(x => x.type === $scope.promotion.type)
+					if(!$scope.noSubtypes){
+						var matchedTypesProg = matchedTypesProg.filter(function(prog) {
+							prog.subTypes.includes($scope.promotion.subTypes)
+						})
+					}
+					$scope.promoProgress = matchedTypesProg
+					//this is the progress Setting not just the progress
+					console.log($scope.promoProgress)
+			}
+			//can't get all users becuase it's not populated!!!!! Ahhhh
+
+
 
 			getPromotions()
 
