@@ -4,10 +4,12 @@
 			<tr>
 				<th>Name</th>
 				<td>{{progress.name}}</td>
+				<td></td>
 			</tr>
 			<tr>
 				<th>Type</th>
 				<td>{{progress.type}}</td>
+				<td></td>
 			</tr>
 			<tr>
 				<th>SubTypes</th>
@@ -18,14 +20,26 @@
 						</li>
 					</ul>
 				</td>
+				<td></td>
 			</tr>
 			<tr>
 				<th>Value</th>
-				<td>{{progress.value}}</td>
+				<td>
+					<span 
+						editable-number = 'progress.value'
+						e-form = 'value' 
+						onbeforesave = 'updateValue($data)'
+						>
+						{{progress.value}}
+					</span>
+				</td>
+				<td>
+					<a href="" ng-click = 'value.$show()' ng-hide = 'value.$visible'>Edit</a>
+				</td>
 			</tr>
 		</table>
 
-		<div ui-sref = 'user({id: progress.userId})' class = 'btn btn-default'>Back</div>
+		<div ui-sref = 'user({id: progressId})' class = 'btn btn-default'>Back</div>
 	</div>
 
 </div>
