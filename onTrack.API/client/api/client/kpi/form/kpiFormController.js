@@ -22,7 +22,6 @@
 				$scope.types = [...new Set(settingsCopy.map(function(set){
 					return set.type
 				}))]
-
 			}
 
 			$scope.subTypesList = [];
@@ -47,10 +46,8 @@
 								$scope.subTypesList.push({name: sub.text})
 							})
 						}
-				})
-			}
-
-
+					})
+				}
 			}
 			getSettings()
 

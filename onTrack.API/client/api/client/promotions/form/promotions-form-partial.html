@@ -30,11 +30,28 @@
 					ng-options="t for t in typeList"
 					class = "form-control"
 					id = "type"
+					ng-blur = 'setSubtypes()'
 					required
 				>
 				</select>
             </div>
            <p class="help-block" ng-if="promotionForm.type.$error.required">The user's type is required</p>
+		</div>
+
+		<div class = 'form-group'>
+			<label for = 'subType'>SubTypes</label>
+			<div class = 'input-group'>
+				<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+				<multiple-autocomplete 
+				  ng-model="promotion.subTypes"
+				  object-property="name"
+				  suggestions-arr="subTypesList"
+				  required = 'true'
+				  ng-click = 'checkType()'>
+				</multiple-autocomplete>
+				</div>
+	      			<p class = 'alert alert-danger' ng-if = 'typeChecker'>Please select a type first</p>
+			</div>
 		</div>
 
 		<div class = "form-group" show-errors>

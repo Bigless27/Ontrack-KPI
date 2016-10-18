@@ -35,6 +35,34 @@
 			</td>
 		</tr>
 		<tr>
+			<th>Subtypes</th>
+			<td>
+				<span ng-show = '!subTags'>
+					<ul ng-show = '!noSubtypes' ng-repeat = 'sub in promotion.subTypes'>
+						<li>
+							{{sub.name}}
+						</li>
+					</ul>
+					<span ng-show = 'noSubtypes' class ='label label-danger'>Empty!</span>
+				</span>
+				<span ng-show = 'subTags' style = 'width: 200px;'>
+					<multiple-autocomplete 
+						ng-model="promotion.subTypes"
+	     				object-property = "name"
+	     				suggestions-arr= "subTypes"
+	     				required = 'true'>
+					</multiple-autocomplete>
+					<span class = 'btn btn-info' ng-click = 'updateSubtypes(promotion.subTypes)'><i class = 'glyphicon glyphicon-ok' aria-hidden = 'true'></i></span>
+					<span class = 'btn btn-danger' ng-click= 'toggleEdit()'><i class = 'glyphicon glyphicon-remove'></i></span>
+				</span>
+			</td>
+			<td>
+				<a ng-click = 'toggleEdit()' ng-show = '!subTags'>
+				Edit
+				</a>
+			</td>
+		</tr>
+		<tr>
 			<th>Completion Value</th>
 			<td>
 				<span 

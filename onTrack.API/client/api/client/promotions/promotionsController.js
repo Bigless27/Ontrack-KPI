@@ -34,6 +34,10 @@
 				return updatePromotion(data, 'type')
 			}
 
+			$scope.updateSubtypes = function(data) {
+				return updatePromotion(data,'subTypes')			
+			}
+
 			$scope.updateCompletionValue = function(data) {
 				var reg = new RegExp('^\\d+$')
 
@@ -121,6 +125,44 @@
 
 			}
 
+			function getUniqueTypes() {
+		 		var typeCopy = $scope.settings
+		 		var unUniqueTypes = typeCopy.map(function(x){
+					return x.type
+				})
+				$scope.typeList = [...new Set(unUniqueTypes)]
+	 		}
+
+		 	function getUniqueSubtypes() {
+		 		var unSetSubtypes = $scope.settings.filter(function(set) {
+		 			return set.type === $scope.promotion.type
+		 		})
+		 		var unUniqueSubtypes = unSetSubtypes.map(function(x){
+		 			return x.subTypes.map(function(sub){
+		 				return sub.text
+		 			})
+		 		}).reduce(function(a,b){return a.concat(b)})
+
+
+		 		var subArr = [...new Set(unUniqueSubtypes)].map(x =>{ 
+		 						var obj = {}
+		 						obj['name'] = x
+		 						return obj
+		 					})
+		 		$scope.subTypes = subArr
+		 	}
+
+			$scope.subTags = false
+
+			$scope.toggleEdit = function() {
+				if($scope.userTags){
+					$scope.subTags = false
+				}
+				else{
+					$scope.subTags = true
+				}
+			}
+
 			function getPromotions(){
 				$http.get('api/clients/' + $stateParams.id 
 						+ '/promotions/' + $stateParams.promoId)
@@ -128,6 +170,7 @@
 								$scope.promotion = data;
 								$scope.promotion['startDate'] = new Date($scope.promotion.startDate) 
 								$scope.promotion['endDate'] =  new Date($scope.promotion.endDate)
+								getTypes()
 							})
 							.error(function(err) {
 								console.log(err);
@@ -138,6 +181,13 @@
 				$http.get('api/type-settings')
 					.success(function(data){
 						$scope.typeList = data.map(x => x.type)
+						$scope.noSubtypes = false
+						if ($scope.promotion.subTypes.length === 0){
+							$scope.noSubtypes = true
+						}
+						$scope.settings = data
+						getUniqueTypes()
+						getUniqueSubtypes()
 					})
 					.error(function(err){
 						console.log(err)
@@ -145,7 +195,6 @@
 			}
 
 			getPromotions()
-			getTypes()
 
 		
 	}])
