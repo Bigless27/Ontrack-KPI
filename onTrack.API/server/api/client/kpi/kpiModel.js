@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var Client = require('../clientModel')
+var Users = require('../../users/userModel')
 var _ = require('lodash')
 
 var subTypesSchema = new Schema({
@@ -15,33 +15,32 @@ var KpiSchema = new Schema({
     clientId: {type: Schema.Types.ObjectId, ref: 'client'}
 });
 
-
-
 KpiSchema.post('remove', function(doc) {
-	console.log(Client)
-	// Client.findById(doc.clientId)
-	// 	.then(function(client) {
-	// 		if(!client) {
-	// 			console.log('association not deleted')
-	// 		} else {
-	// 			update = client
+	//this require here is a patch!!!!! look to refactor better in future
+	var Client = require('../clientModel')
+	Client.findById(doc.clientId)
+		.then(function(client) {
+			if(!client) {
+				console.log('association not deleted')
+			} else {
+				update = client
 
-	// 			update.kpis.splice(update.kpis.indexOf(doc._id),1);
+				update.kpis.splice(update.kpis.indexOf(doc._id),1);
 
-	// 			_.merge(client, update)
+				_.merge(client, update)
 
 
-	// 			client.save(function(err, saved) {
-	// 				if (err) {
-	// 					console.log('not saved')
-	// 				} else {
-	// 					console.log('association deleted and saved')
-	// 				}
-	// 			})
-	// 		}
-	// 	}, function(err) {
-	// 		console.log(err)
-	// 	})
+				client.save(function(err, saved) {
+					if (err) {
+						console.log('not saved')
+					} else {
+						console.log('association deleted and saved')
+					}
+				})
+			}
+		}, function(err) {
+			console.log(err)
+		})
 })
 
 

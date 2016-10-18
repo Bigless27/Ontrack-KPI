@@ -5,7 +5,6 @@ var signToken = require('../../auth/auth').signToken;
 exports.params = function(req, res, next, id) {
 	User.findById(id)
 		.select('-password') // doesn't grab it
-    .populate('activity')
     .populate('progress')
 		.exec()
 		.then(function(user) {

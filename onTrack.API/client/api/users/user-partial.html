@@ -109,17 +109,20 @@
 				<tr>
 					<th>Name</th>
 					<td>
-						<span 
-							editable-text = 'progressname'
-							e-form = 'name'
-							onbeforesave = 'updateProgressName($data)'>
+						<span>
 							{{progress.name || 'empty'}}
 						</span>
 					</td>
 				</tr>
+				<tr>
+					<th>Type</th>
+					<td>
+						{{progress.type || 'empty'}}
+					</td>
+				</tr>
 					<th>Value</th>
 					<td>
-						{{progress.value || 'empty'}}
+						{{progress.value}}
 					</td>
 				</tr>
 			</table>

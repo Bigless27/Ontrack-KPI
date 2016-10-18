@@ -2,8 +2,6 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var _ = require('lodash')
 var User = require('../users/userModel')
-var Kpis = require('./kpi/kpiModel')
-var Promotions = require('./promotions/promotionModel')
 
 var adminSchema = new Schema({
 	email: {type: String},
@@ -46,7 +44,7 @@ ClientSchema.post('save', function(doc) {
 				console.log('err')
 			}
 			else if(user.clientId.indexOf(doc._id) !== -1) {
-				console.log('id already associated with user') //don't push id in twice
+				return console.log('id already associated with user') //don't push id in twice
 			} else{
 				user.clientId.push(doc._id)
 				user.save(function(err){
@@ -64,8 +62,11 @@ ClientSchema.post('save', function(doc) {
 })
 
 ClientSchema.post('remove', function(doc){
-	var kpiIds = doc.kpis.map(k => k._id)
-	var promotionIds = doc.promotions.map(p => p._id)
+	//this require here is a patch!!!!! look to refactor better in future
+	var Kpis = require('./kpi/kpiModel'),
+		Promotions = require('./promotions/promotionModel'),
+		kpiIds = doc.kpis.map(k => k._id),
+		promotionIds = doc.promotions.map(p => p._id)
 
 	Kpis.remove({ _id: {$in: kpiIds}}, function(err) {
 		if(err) console.log(err)
@@ -74,12 +75,10 @@ ClientSchema.post('remove', function(doc){
 
 	Promotions.remove({ _id: {$in: promotionIds}}, function(err) {
 		if(err) console.log(err)
-
 	})
 })
 
 ClientSchema.methods = {
-
 	checkAdmin: function(user) {
 		return  _.includes(this.admins.toString(), user._id)
  	}
