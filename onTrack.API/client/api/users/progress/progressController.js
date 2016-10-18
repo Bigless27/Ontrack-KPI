@@ -7,7 +7,6 @@
 				$http.get('api/users/' + $stateParams.id + '/progress/' + $stateParams.progressId)
 					.success(function(data) {
 						$scope.progress = data
-						console.log($scope.progress)
 					})
 					.error(function(err) {
 						console.log(err)

@@ -3,6 +3,8 @@ var _ = require('lodash');
 
 exports.params = function(req, res, next, id) {
 	Progress.findById(id)
+    .populate('settingId')
+    .exec()
 		.then(function(progress) {
 			if (!progress) {
 				next(new Error('no promoProgress with that id'));
