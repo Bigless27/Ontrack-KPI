@@ -105,21 +105,23 @@
 	<div class = 'col-md-6'>
 		<h2 style = 'display: inline-block'>Progress</h2>		
 		<div ng-repeat = 'progress in user.progress' class = 'table-holder row'>
-			<table class = 'table table-bordered' style = 'width:300px'>
-				<tr>
-					<th>Name</th>
-					<td>
-						<span>
-							{{progress.name || 'empty'}}
-						</span>
-					</td>
-				</tr>
-				<tr>
-					<th>Type</th>
-					<td>
-						{{progress.type || 'empty'}}
-					</td>
-			</table>
+			<div ng-repeat = 'set in user.settingProgress'>
+				<table class = 'table table-bordered' style = 'width:300px'>
+					<tr>
+						<th>Name</th>
+						<td>
+							<span>
+								{{set.name || 'empty'}}
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<th>Type</th>
+						<td>
+							{{set.type || 'empty'}}
+						</td>
+				</table>
+			</div>
 			<div class = 'btn btn-default' ui-sref = 'progress({id: user._id, progressId: progress._id})'>View</div>
 		</div>
 	</div>

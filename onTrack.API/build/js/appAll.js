@@ -703,6 +703,7 @@
 				$http.get('/api/users/' + $stateParams.id)
 					.success(function(data){
 						$scope.user = data
+						console.log($scope.user)
 					})
 					.error(function(err) {
 						console.log(err)
