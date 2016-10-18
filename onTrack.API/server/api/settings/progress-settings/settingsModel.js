@@ -35,7 +35,7 @@ SettingsSchema.pre('save', function(next) {
 					user.settingProgress.push(progSetting._id)
 					user.save(function(err, result) {
 						if (err) return next(err)
-						var prog = new Progress({userId: result._id, name: progSetting.name, type: progSetting.type, subTypes: progSetting.subTypes, settingId: progSetting._id})
+						var prog = new Progress({userId: result._id, settingId: progSetting._id})
 						prog.save(function(err, result){
 							if (err) next(err)
 							next()

@@ -4,12 +4,9 @@ var _ = require('lodash')
 var User = require('../userModel')
 
 var UserProgressSchema = new Schema({
-	name: {type: String, required: true},
 	value: {type: Number, default: 0},
-	type: {type: String, required: true},
 	userId: {type: Schema.Types.ObjectId, ref: 'user', required: true},
-	settingId: {type: Schema.Types.ObjectId, ref: 'progresssetting', required: true},
-	subTypes: [{type: String}]
+	settingId: {type: Schema.Types.ObjectId, ref: 'progresssetting', required: true}
 });
 
 UserProgressSchema.post('save', function(doc) {
