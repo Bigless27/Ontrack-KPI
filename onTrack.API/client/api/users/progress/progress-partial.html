@@ -5,7 +5,27 @@
 				<th>Name</th>
 				<td>{{progress.name}}</td>
 			</tr>
+			<tr>
+				<th>Type</th>
+				<td>{{progress.type}}</td>
+			</tr>
+			<tr>
+				<th>SubTypes</th>
+				<td>
+					<ul ng-repeat = 'sub in progress.subTypes'>
+						<li>
+							{{sub}}
+						</li>
+					</ul>
+				</td>
+			</tr>
+			<tr>
+				<th>Value</th>
+				<td>{{progress.value}}</td>
+			</tr>
 		</table>
+
+		<div ui-sref = 'user({id: progress.userId})' class = 'btn btn-default'>Back</div>
 	</div>
 
 </div>
