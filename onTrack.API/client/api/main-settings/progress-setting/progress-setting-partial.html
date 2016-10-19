@@ -39,12 +39,12 @@
 		<th>Subtypes</th>
 			<td> 
 				<span ng-show = '!subTags'>
-					<ul ng-show = '!noSubtypes' ng-repeat = 'sub in setting.subTypes '>
+					<ul ng-show = '!noSubs' ng-repeat = 'sub in setting.subTypes '>
 						<li>
 							{{sub.name}}
 						</li>
 					</ul>
-					<span ng-show = 'noSubtypes' class ='label label-danger'>Empty!</span>
+					<span ng-show = 'noSubs' class ='label label-danger'>Empty!</span>
 				</span>
 				<span ng-show = 'subTags' style = 'width: 200px;'>
 					<multiple-autocomplete 
