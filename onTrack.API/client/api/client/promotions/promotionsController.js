@@ -155,7 +155,7 @@
 			$scope.subTags = false
 
 			$scope.toggleEdit = function() {
-				if($scope.userTags){
+				if($scope.subTags){
 					$scope.subTags = false
 				}
 				else{
@@ -201,6 +201,7 @@
 				$http.get('api/progress-settings')
 					.success(function(progs) {
 						$scope.promoProgress = matchProgressToPromotion(progs)
+						console.log($scope.promoProgress)
 					})
 					.error(function(err) {
 						console.log(err)
@@ -210,16 +211,16 @@
 			function getUsers() {
 				$http.get('api/users')
 					.success(function(data) {
-						sortUsers(data)
+						// sortUsers(data)
 					})
 					.error(function(err){
 						console.log(err)
 					})
 			}
 
-			function sortUsers(users){
-				users.filter(x => x.progress.filter(x => x.settingId === $scope.promoProgress[0]._id))
-			}
+			// function sortUsers(users){
+			// 	users.filter(x => x.progress.filter(x => x.settingId === $scope.promoProgress._id))
+			// }
 
 
 			function matchProgressToPromotion(progs) {
