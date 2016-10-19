@@ -19,7 +19,7 @@ var subTypesSchema = new Schema({
 var SettingsSchema = new Schema({
 	name: {type: String, required: true},
 	type: {type: String, required: true},
-	subTypes: [usersSchema],
+	subTypes: [subTypesSchema],
 	users: [usersSchema]	
 })
 

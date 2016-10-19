@@ -44,12 +44,8 @@
 		}
 
 		$scope.updateSubtypes = function(data) {
-				var mod = data.map(x => x.name)
-				return updateSetting(mod,'subTypes')			
+				return updateSetting(data,'subTypes')			
 		}
-
-
-
 
 		$scope.updateUsers = function(users) {
 			//This can definetly be made better. Needs to update users and delete users promotions
@@ -175,17 +171,11 @@
 	 					.success(function(set) {
 	 						$scope.noUsers = false
 	 						$scope.noSubs = false
-			 				data['subTypes'] = data.subTypes.map(x =>{ 
-			 					var obj = {}
-			 					obj['name'] = x
-			 					return obj
-			 				})
 			 				$scope.setting = data
-
 			 				if ($scope.setting.users.length === 0){
 			 					$scope.noUsers = true
 			 				}
-			 				else if($scope.setting.users.length === 0){
+			 				else if($scope.setting.subTypes.length === 0){
 			 					$scope.noSubs = true
 			 				}
 			 				$scope.typeSetting = set
