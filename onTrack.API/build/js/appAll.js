@@ -914,6 +914,8 @@
 			$scope.typeList = [...new Set(unUniqueTypes)]
 	 	}
 
+
+
 	 	function getUniqueSubtypes() {
 	 		var unSetSubtypes = $scope.settings.filter(function(set) {
 	 			return set.type === $scope.kpi.type
@@ -1029,10 +1031,7 @@
 				})
 			}
 
-			getKpiSettings()
-  		
-
-		
+			getKpiSettings()	
 	}])
 }());
 (function() {
@@ -1208,11 +1207,13 @@
 								$scope.promotion['startDate'] = new Date($scope.promotion.startDate) 
 								$scope.promotion['endDate'] =  new Date($scope.promotion.endDate)
 								getTypes()
+								getUsers()
 							})
 							.error(function(err) {
 								console.log(err);
 							})
 			}
+
 
 			function getTypes(){
 				$http.get('api/type-settings')
@@ -1235,13 +1236,27 @@
 			function getProgresses() {
 				$http.get('api/progress-settings')
 					.success(function(progs) {
-						matchProgressToPromotion(progs)
+						$scope.promoProgress = matchProgressToPromotion(progs)
 					})
 					.error(function(err) {
 						console.log(err)
 					})
 			}
-			
+
+			function getUsers() {
+				$http.get('api/users')
+					.success(function(data) {
+						sortUsers(data)
+					})
+					.error(function(err){
+						console.log(err)
+					})
+			}
+
+			function sortUsers(users){
+				users.filter(x => x.progress.filter(x => x.settingId === $scope.promoProgress[0]._id))
+			}
+
 
 			function matchProgressToPromotion(progs) {
 					var matchedTypesProg = progs.filter(x => x.type === $scope.promotion.type)
@@ -1250,9 +1265,8 @@
 							prog.subTypes.includes($scope.promotion.subTypes)
 						})
 					}
-					$scope.promoProgress = matchedTypesProg
+					return matchedTypesProg
 					//this is the progress Setting not just the progress
-					console.log($scope.promoProgress)
 			}
 			//can't get all users becuase it's not populated!!!!! Ahhhh
 
@@ -1300,6 +1314,20 @@
 			}
 			updateSetting(name, 'name')
 		}
+
+		$scope.updateType = function(data) {
+			if (data === ''){
+				return 'Type is required'
+			}
+			return updateSetting(data, 'type')
+		}
+
+		$scope.updateSubtypes = function(data) {
+				var mod = data.map(x => x.name)
+				return updateSetting(mod,'subTypes')			
+		}
+
+
 
 
 		$scope.updateUsers = function(users) {
@@ -1394,29 +1422,92 @@
 		}
 
 		$scope.userTags = false
+		$scope.subTags = false
+
+		$scope.toggleEditSubs = function() {
+			if ($scope.subTags) {
+				$scope.subTags = false
+			}
+			else {
+				$scope.subTags = true
+			}
+		}
 
 		$scope.toggleEdit = function() {
-			if($scope.userTags){
+			if ($scope.userTags) {
 				$scope.userTags = false
 			}
-			else{
+			else {
 				$scope.userTags = true
 			}
 		}
 
+		//have type show on edit click
+		$(document).on('click','#progress-type-edit-button', function(){
+			$('#progress-type-edit')[0].click()
+		} )
+
 	 	function getSetting(){
 	 		$http.get('api/progress-settings/' + $stateParams.id)
 	 			.success(function(data){
-	 				$scope.noUsers = false
-	 				$scope.setting = data
-	 				if ($scope.setting.users.length === 0){
-	 					$scope.noUsers = true
-	 				}
-	 				sortInitUsers(data)
+	 				$http.get('api/type-settings')
+	 					.success(function(set) {
+	 						$scope.noUsers = false
+	 						$scope.noSubs = false
+			 				data['subTypes'] = data.subTypes.map(x =>{ 
+			 					var obj = {}
+			 					obj['name'] = x
+			 					return obj
+			 				})
+			 				$scope.setting = data
+
+			 				if ($scope.setting.users.length === 0){
+			 					$scope.noUsers = true
+			 				}
+			 				else if($scope.setting.users.length === 0){
+			 					$scope.noSubs = true
+			 				}
+			 				$scope.typeSetting = set
+			 				getUniqueTypes()
+				 			getUniqueSubtypes()
+			 				sortInitUsers(data)
+
+	 					})
+	 					.error(function(err) {
+	 						console.log(err)
+	 					})
+
 	 			})
 	 			.error(function(err) {
 	 				console.log(err)
 	 			})
+	 	}
+
+	 	function getUniqueTypes() {
+	 		var typeCopy = $scope.typeSetting
+	 		var unUniqueTypes = typeCopy.map(function(x){
+				return x.type
+			})
+			$scope.typeList = [...new Set(unUniqueTypes)]
+	 	}
+
+	 	function getUniqueSubtypes() {
+	 		var unSetSubtypes = $scope.typeSetting.filter(function(set) {
+	 			return set.type === $scope.setting.type
+	 		})
+	 		var unUniqueSubtypes = unSetSubtypes.map(function(x){
+	 			return x.subTypes.map(function(sub){
+	 				return sub.text
+	 			})
+	 		}).reduce(function(a,b){return a.concat(b)})
+
+
+	 		var subArr = [...new Set(unUniqueSubtypes)].map(x =>{ 
+	 						var obj = {}
+	 						obj['name'] = x
+	 						return obj
+	 					})
+	 		$scope.subTypes = subArr
 	 	}
 
 
@@ -2009,9 +2100,6 @@
 
 
 	 	$scope.submitProgressSetting = function(setting) {
-	 		if(setting.subTypes){
-	 			setting['subTypes'] = setting.subTypes.map(x => x.name)
-	 		}
 	 		$http.post('/api/progress-settings', setting)
 	 			.success(function(data) {
 	 				$scope.progressSettings = data

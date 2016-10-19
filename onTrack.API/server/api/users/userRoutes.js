@@ -7,6 +7,7 @@ var checkUser = [auth.decodeToken(), auth.getFreshUser()];
 // for building
 router.param('id', controller.params); // tested
 router.get('/me', checkUser, controller.me);
+router.get('/matchingUsers', controller.matchingUsers)
 
 //nested routes not in use anymore
 	router.use('/:id/activity', require('./activity/activityRoutes'));

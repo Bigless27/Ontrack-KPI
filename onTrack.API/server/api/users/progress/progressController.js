@@ -58,6 +58,18 @@ exports.post = function(req, res, next) {//check
     });
 };
 
+exports.matchingProgress = function(req, res, next){
+  var id = req.query.settingId
+
+  console.log(id)
+  Progress.find({'setitngId': id})
+    .then(function(progress){
+      res.json(progress)
+    }, function(err) {
+      next(err)
+    })
+}
+
 
 exports.delete = function(req, res, next) {
   req.progress.remove(function(err, removed) {

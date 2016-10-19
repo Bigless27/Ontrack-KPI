@@ -171,11 +171,13 @@
 								$scope.promotion['startDate'] = new Date($scope.promotion.startDate) 
 								$scope.promotion['endDate'] =  new Date($scope.promotion.endDate)
 								getTypes()
+								getUsers()
 							})
 							.error(function(err) {
 								console.log(err);
 							})
 			}
+
 
 			function getTypes(){
 				$http.get('api/type-settings')
@@ -198,13 +200,27 @@
 			function getProgresses() {
 				$http.get('api/progress-settings')
 					.success(function(progs) {
-						matchProgressToPromotion(progs)
+						$scope.promoProgress = matchProgressToPromotion(progs)
 					})
 					.error(function(err) {
 						console.log(err)
 					})
 			}
-			
+
+			function getUsers() {
+				$http.get('api/users')
+					.success(function(data) {
+						sortUsers(data)
+					})
+					.error(function(err){
+						console.log(err)
+					})
+			}
+
+			function sortUsers(users){
+				users.filter(x => x.progress.filter(x => x.settingId === $scope.promoProgress[0]._id))
+			}
+
 
 			function matchProgressToPromotion(progs) {
 					var matchedTypesProg = progs.filter(x => x.type === $scope.promotion.type)
@@ -213,9 +229,8 @@
 							prog.subTypes.includes($scope.promotion.subTypes)
 						})
 					}
-					$scope.promoProgress = matchedTypesProg
+					return matchedTypesProg
 					//this is the progress Setting not just the progress
-					console.log($scope.promoProgress)
 			}
 			//can't get all users becuase it's not populated!!!!! Ahhhh
 

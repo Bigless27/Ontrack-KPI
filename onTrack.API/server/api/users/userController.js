@@ -24,6 +24,7 @@ exports.params = function(req, res, next, id) {
 exports.get = function(req, res, next) {
 	User.find({})
 		.select('-password')
+    .populate('progress')
 		.exec()
 		.then(function(users){
 			res.json(users.map(function(user){
@@ -88,9 +89,15 @@ exports.me = function(req, res) {
    res.json(req.user.toJson());
 };
 
-exports.FindUser = function(id) {
-	var user = User.findById(id)
-	return user
+exports.matchingUsers = function(req, res, next) {
+   id = req.query
+   console.log(id)
+   User.find({'type': matchType})
+   .then(function(users) {
+      res.json(users)
+   }, function(err) {
+      next(err)
+   })
 }
 
 function customizer(objValue, srcValue){

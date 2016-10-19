@@ -19,7 +19,51 @@
 		</td>
 	</tr>
 	<tr>
-		<!-- find a library of do it yourself -->
+		<th>Type</th>
+		<td>
+			<span 
+				id = 'progress-type-edit'  
+				style = 'color:black; border:none;'
+				editable-select="setting.type" 
+				e-ng-options="s for s in typeList"
+				onbeforesave = 'updateType($data)'
+			>
+				{{setting.type || 'empty'}}
+			</span>
+		</td>
+		<td>
+			<a href="" id = 'progress-type-edit-button'>Edit</a>
+		</td>
+	</tr>
+	<tr>
+		<th>Subtypes</th>
+			<td> 
+				<span ng-show = '!subTags'>
+					<ul ng-show = '!noSubtypes' ng-repeat = 'sub in setting.subTypes '>
+						<li>
+							{{sub.name}}
+						</li>
+					</ul>
+					<span ng-show = 'noSubtypes' class ='label label-danger'>Empty!</span>
+				</span>
+				<span ng-show = 'subTags' style = 'width: 200px;'>
+					<multiple-autocomplete 
+						ng-model="setting.subTypes"
+	     				object-property = "name"
+	     				suggestions-arr= "subTypes"
+	     				required = 'true'>
+					</multiple-autocomplete>
+					<span class = 'btn btn-info' ng-click = 'updateSubtypes(setting.subTypes)'><i class = 'glyphicon glyphicon-ok' aria-hidden = 'true'></i></span>
+					<span class = 'btn btn-danger' ng-click= 'toggleEditSubs()'><i class = 'glyphicon glyphicon-remove'></i></span>
+				</span>
+			</td>
+			<td>
+				<a ng-click = 'toggleEditSubs()' ng-show = '!subTags'>
+				Edit
+				</a>
+			</td>
+	</tr>
+	<tr>
 		<th>Users</th>
 		<td>
 			<span ng-show = '!userTags'>

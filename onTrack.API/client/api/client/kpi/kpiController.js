@@ -40,6 +40,8 @@
 			$scope.typeList = [...new Set(unUniqueTypes)]
 	 	}
 
+
+
 	 	function getUniqueSubtypes() {
 	 		var unSetSubtypes = $scope.settings.filter(function(set) {
 	 			return set.type === $scope.kpi.type
@@ -155,9 +157,6 @@
 				})
 			}
 
-			getKpiSettings()
-  		
-
-		
+			getKpiSettings()	
 	}])
 }());

@@ -11,10 +11,15 @@ var usersSchema = new Schema({
 	userId: {type: String}
 })
 
+var subTypesSchema = new Schema({
+	name: {type: String}
+})
+
+
 var SettingsSchema = new Schema({
 	name: {type: String, required: true},
 	type: {type: String, required: true},
-	subTypes: [{type: String}],
+	subTypes: [usersSchema],
 	users: [usersSchema]	
 })
 
