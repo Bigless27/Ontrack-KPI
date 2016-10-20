@@ -256,6 +256,15 @@
 					return matchedTypesProg
 					//this is the progress Setting not just the progress
 			}
+
+			$scope.getPercentage = function(x,y) {
+				if (x === 0) {
+					return 0
+				}
+				else {
+				return (x/y * 100).toFixed(2)
+				}
+			}
 			
 
 
