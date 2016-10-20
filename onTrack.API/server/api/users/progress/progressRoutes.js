@@ -2,7 +2,6 @@ var router = require('express').Router();
 var controller = require('./progressController');
 
 router.param('id', controller.params);
-router.get('/matchingProgress', controller.matchingProgress)
 
 router.route('/')
 	.get(controller.get)

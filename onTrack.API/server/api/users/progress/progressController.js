@@ -3,7 +3,6 @@ var _ = require('lodash');
 
 exports.params = function(req, res, next, id) {
 	Progress.findById(id)
-    .populate('settingId')
     .exec()
 		.then(function(progress) {
 			if (!progress) {
@@ -58,17 +57,6 @@ exports.post = function(req, res, next) {//check
     });
 };
 
-exports.matchingProgress = function(req, res, next){
-  var id = req.query.settingId
-
-  console.log(id)
-  Progress.find({'setitngId': id})
-    .then(function(progress){
-      res.json(progress)
-    }, function(err) {
-      next(err)
-    })
-}
 
 
 exports.delete = function(req, res, next) {

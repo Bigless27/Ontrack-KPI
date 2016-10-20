@@ -3,7 +3,6 @@
 	.controller('PromotionController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
 		function($scope, $state, $http, $window, $stateParams, $q) {
 
-
 			//have type show on edit click
 			$(document).on('click','.promotion-startDate-edit-button', function(){
 				$('#promotion-startDate-edit')[0].click()
@@ -171,7 +170,6 @@
 								$scope.promotion['startDate'] = new Date($scope.promotion.startDate) 
 								$scope.promotion['endDate'] =  new Date($scope.promotion.endDate)
 								getTypes()
-								getUsers()
 							})
 							.error(function(err) {
 								console.log(err);
@@ -200,45 +198,69 @@
 			function getProgresses() {
 				$http.get('api/progress-settings')
 					.success(function(progs) {
-						$scope.promoProgress = matchProgressToPromotion(progs)
-						console.log($scope.promoProgress)
+						var matches =  matchProgressToPromotion(progs)
+						$scope.promoProgress = matches
+						getUsers(matches)
 					})
 					.error(function(err) {
 						console.log(err)
 					})
 			}
 
-			function getUsers() {
+			function getUsers(matches) {
+				var usersMatches = matches.map(function(x) {
+					return x._id
+				})
+				//you have the setting Id
+				
 				$http.get('api/users')
 					.success(function(data) {
-						// sortUsers(data)
+						var theUsers = []
+						data.forEach(function(user) {
+							if (user.progress.length > 0) {
+								user.progress.forEach(function(prog) {
+									if(prog.settingId == usersMatches[0]) {
+										user['progress'] = prog
+										theUsers.push(user)
+									}
+								})
+							}
+						})
+						$scope.matchingUsers = theUsers
+						console.log($scope.matchingUsers)
 					})
 					.error(function(err){
 						console.log(err)
 					})
 			}
 
-			// function sortUsers(users){
-			// 	users.filter(x => x.progress.filter(x => x.settingId === $scope.promoProgress._id))
-			// }
-
-
+			// This grabs progress of matching types and subtypes if at anypoint a subtype is matched
+			// Between the Promotion and the progress
 			function matchProgressToPromotion(progs) {
 					var matchedTypesProg = progs.filter(x => x.type === $scope.promotion.type)
-					if(!$scope.noSubtypes){
-						var matchedTypesProg = matchedTypesProg.filter(function(prog) {
-							prog.subTypes.includes($scope.promotion.subTypes)
+					//$scope.noSubtypes applies to the $scope.promotion
+					if (!$scope.noSubtypes){
+						var subMatchArr = []
+						var subTypeStrings = $scope.promotion.subTypes.map(x => x.name)
+						matchedTypesProg.forEach(function(prog) {
+							prog.subTypes.forEach(function(sub) {
+								if (!subMatchArr.includes(prog)) {
+									if (subTypeStrings.includes(sub.name)) {
+											subMatchArr.push(prog)
+									}
+								}
+							})
 						})
+						matchedTypesProg = subMatchArr
 					}
 					return matchedTypesProg
 					//this is the progress Setting not just the progress
 			}
-			//can't get all users becuase it's not populated!!!!! Ahhhh
+			
 
 
 
-			getPromotions()
 
-		
+			getPromotions()		
 	}])
 }());

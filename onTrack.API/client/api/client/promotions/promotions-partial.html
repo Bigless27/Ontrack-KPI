@@ -141,15 +141,15 @@
 	<div class = 'row'>
 		<div class = 'col-sm-8 col-sm-offset-2'>
 			<h2>Users' Progress</h2>
-			<div ng-repeat = 'prog in promoProgress'>
+			<div ng-repeat = 'user in matchingUsers'>
 				<table class = 'table table-bordered'>
 					<tr>
 						<th>User</th>
-						<td>{{prog.users[0].firstName}} {{prog.users[0].lastName}}</td>
+						<td>{{user.firstName}} {{user.lastName}}</td>
 					</tr>
 					<tr>
 						<th>Value</th>
-						<td>{{prog.value}}</td>
+						<td>{{user.progress.value}}</td>
 					</tr>
 
 				</table>

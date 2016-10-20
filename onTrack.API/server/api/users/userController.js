@@ -27,9 +27,7 @@ exports.get = function(req, res, next) {
     .populate('progress')
 		.exec()
 		.then(function(users){
-			res.json(users.map(function(user){
-				return user.toJson();
-			}));
+			res.json(users)
 		}, function(err) {
 			next(err);
 	})
@@ -90,14 +88,14 @@ exports.me = function(req, res) {
 };
 
 exports.matchingUsers = function(req, res, next) {
-   id = req.query
+   id = req.params
    console.log(id)
-   User.find({'type': matchType})
-   .then(function(users) {
-      res.json(users)
-   }, function(err) {
-      next(err)
-   })
+   // User.find({'type': matchType})
+   // .then(function(users) {
+   //    res.json(users)
+   // }, function(err) {
+   //    next(err)
+   // })
 }
 
 function customizer(objValue, srcValue){
