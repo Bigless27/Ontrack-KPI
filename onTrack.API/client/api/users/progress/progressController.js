@@ -7,11 +7,19 @@
 				$http.get('api/users/' + $stateParams.id + '/progress/' + $stateParams.progressId)
 					.success(function(data) {
 						$scope.progress = data
+						$http.get('api/progress-settings/' + data.settingId)
+							.success(function(data){
+								$scope.setting = data
+							})
+							.error(function(err) {
+								console.log(err)
+							})
 					})
 					.error(function(err) {
 						console.log(err)
 					})
 			}
+
 
 			$scope.updateValue = function(data) {
 				if (data < 0) {

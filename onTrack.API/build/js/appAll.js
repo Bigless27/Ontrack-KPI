@@ -386,6 +386,33 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('LoginController', ['$scope', '$state', '$window', '$http',
+	 function($scope, $state, $window, $http) {
+
+			$scope.logUserIn = function(user) {
+				$scope.$broadcast('show-errors-check-validity');
+
+
+				if($scope.userForm.$invalid){return;}
+
+				$scope.err = true
+
+				$http.post('auth/signin', user)
+					.success(function(data) {
+						$scope.err = false
+						$window.sessionStorage.jwt = data['token']
+						$state.go('main')
+					})
+					.error(function(error) {
+						$scope.err = true
+						$scope.errMessage = error
+					})
+			}
+
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('MainController', ['$scope', '$state', '$http', '$window', 
 		function($scope, $state, $http, $window) {
 
@@ -428,33 +455,6 @@
 				$state.go('login')
 			}
 		
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('LoginController', ['$scope', '$state', '$window', '$http',
-	 function($scope, $state, $window, $http) {
-
-			$scope.logUserIn = function(user) {
-				$scope.$broadcast('show-errors-check-validity');
-
-
-				if($scope.userForm.$invalid){return;}
-
-				$scope.err = true
-
-				$http.post('auth/signin', user)
-					.success(function(data) {
-						$scope.err = false
-						$window.sessionStorage.jwt = data['token']
-						$state.go('main')
-					})
-					.error(function(error) {
-						$scope.err = true
-						$scope.errMessage = error
-					})
-			}
-
 	}])
 }());
 (function() {
@@ -1651,74 +1651,6 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('UserFormController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
-
-			$scope.errorDisplay = false
-
-			$scope.createUser = function(user) {
-				
-				var duplicate = $scope.users.filter(function(x){
-					return x.email == user.email
-				})
-
-				if (duplicate.length > 0){
-					$scope.oops = 'Email is already taken!'
-					$scope.errorDisplay = true
-					return
-				}
-				else{
-					$http.post('api/users', user)
-						.success(function(data){
-							$state.reload()
-
-						})
-						.error(function(err) {
-							console.log(err)
-						})
-				}
-			}
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('ProgressController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
-		function($scope, $state, $http, $window, $stateParams, $q) {
-			
-			function getProgress() {
-				$http.get('api/users/' + $stateParams.id + '/progress/' + $stateParams.progressId)
-					.success(function(data) {
-						$scope.progress = data
-					})
-					.error(function(err) {
-						console.log(err)
-					})
-			}
-
-			$scope.updateValue = function(data) {
-				if (data < 0) {
-					return "Value can't be negative"
-				}
-				updateProgress(data)
-			}
-
-			function updateProgress(data) {
-				$scope.progress['value'] = data
-
-				$http.put('api/users/' + $stateParams.id + '/progress/' + $stateParams.progressId, $scope.progress)
-					.error(function(err) {
-						console.log(err)
-					})
-
-			}
-
-			getProgress()
-
-
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('ActivityController', ['$scope', '$state', '$window', '$stateParams', '$http', '$q',
 	 function($scope, $state, $window, $stateParams, $http, $q) {
 
@@ -1877,6 +1809,82 @@
 
 	 	getActivitySettings()
 		
+
+
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('UserFormController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+
+			$scope.errorDisplay = false
+
+			$scope.createUser = function(user) {
+				
+				var duplicate = $scope.users.filter(function(x){
+					return x.email == user.email
+				})
+
+				if (duplicate.length > 0){
+					$scope.oops = 'Email is already taken!'
+					$scope.errorDisplay = true
+					return
+				}
+				else{
+					$http.post('api/users', user)
+						.success(function(data){
+							$state.reload()
+
+						})
+						.error(function(err) {
+							console.log(err)
+						})
+				}
+			}
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('ProgressController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
+		function($scope, $state, $http, $window, $stateParams, $q) {
+			
+			function getProgress() {
+				$http.get('api/users/' + $stateParams.id + '/progress/' + $stateParams.progressId)
+					.success(function(data) {
+						$scope.progress = data
+						$http.get('api/progress-settings/' + data.settingId)
+							.success(function(data){
+								$scope.setting = data
+							})
+							.error(function(err) {
+								console.log(err)
+							})
+					})
+					.error(function(err) {
+						console.log(err)
+					})
+			}
+
+
+			$scope.updateValue = function(data) {
+				if (data < 0) {
+					return "Value can't be negative"
+				}
+				updateProgress(data)
+			}
+
+			function updateProgress(data) {
+				$scope.progress['value'] = data
+
+				$http.put('api/users/' + $stateParams.id + '/progress/' + $stateParams.progressId, $scope.progress)
+					.error(function(err) {
+						console.log(err)
+					})
+
+			}
+
+			getProgress()
 
 
 	}])

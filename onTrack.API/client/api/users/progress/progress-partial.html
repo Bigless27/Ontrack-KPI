@@ -3,18 +3,18 @@
 		<table class = 'table table-striped'>
 			<tr>
 				<th>Name</th>
-				<td>{{progress.settingId.name}}</td>
+				<td>{{setting.name}}</td>
 				<td></td>
 			</tr>
 			<tr>
 				<th>Type</th>
-				<td>{{progress.settingId.type}}</td>
+				<td>{{setting.type}}</td>
 				<td></td>
 			</tr>
 			<tr>
 				<th>SubTypes</th>
 				<td>
-					<ul ng-repeat = 'sub in progress.settingId.subTypes'>
+					<ul ng-repeat = 'sub in setting.subTypes'>
 						<li>
 							{{sub.name}}
 						</li>
