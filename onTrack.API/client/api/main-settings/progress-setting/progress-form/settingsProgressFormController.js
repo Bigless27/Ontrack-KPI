@@ -87,9 +87,7 @@
 			}
 		}
 
-
 	 	$scope.submitProgressSetting = function(setting) {
-	 		console.log(setting)
 	 		$http.post('/api/progress-settings', setting)
 	 			.success(function(data) {
 	 				$scope.progressSettings = data

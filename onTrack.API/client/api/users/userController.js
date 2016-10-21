@@ -67,6 +67,20 @@
 				return updateUser(data, 'dateJoined')
 			}
 
+			$scope.getSettingName = function(id) {
+				var matchSetting = $scope.user.settingProgress.filter(function(set) {
+					return set._id === id
+				})
+				return matchSetting[0].name
+			}
+
+			$scope.getSettingType = function(id) {
+				var matchSetting = $scope.user.settingProgress.filter(function(set) {
+					return set._id === id
+				})
+				return matchSetting[0].type
+			}
+
 			function updateUser(data, field){
 				var d = $q.defer();
 				var token = $window.sessionStorage['jwt']
@@ -88,6 +102,7 @@
 			function getUser() {
 				$http.get('/api/users/' + $stateParams.id)
 					.success(function(data){
+						console.log(data)
 						$scope.user = data
 					})
 					.error(function(err) {
@@ -111,7 +126,6 @@
 						console.log(err)
 					})
 			}
-
 
 			populateTypes()
 			getUser()

@@ -35,7 +35,6 @@ exports.put = function(req, res, next) {// works
 	var update = req.body;
 
 	_.mergeWith(settings, update, customizer);
-	console.log(settings)
 
 	settings.save(function(err, saved) {
 	if (err) {
