@@ -10,7 +10,6 @@ router.get('/me', checkUser, controller.me);
 router.get('/matchingUsers', controller.matchingUsers)
 
 //nested routes not in use anymore
-	router.use('/:id/activity', require('./activity/activityRoutes'));
 	router.use('/:id/progress', require('./progress/progressRoutes'))
 //
 

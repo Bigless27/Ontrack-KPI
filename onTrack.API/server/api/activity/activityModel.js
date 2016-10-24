@@ -1,16 +1,21 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var algorithm = require('../../algorithm')
+var algorithm = require('../algorithm')
 var _ = require('lodash')
-var User = require('../userModel')
+var User = require('../users/userModel')
 
+var usersSchema = new Schema({
+	firstName: {type: String},
+	lastName: {type: String},
+	userId: {type: String} //may need to change type to objectId in the future
+})
 
 var UserActivitySchema = new Schema({
 		type: {type: String, required: true},
 		subType: {type: String},
 		name: {type: String, required: true},
 		value: {type: Number, required: true},
-		userId: {type: Schema.Types.ObjectId, ref: 'user'},
+		users: {usersSchema},
 		date: {type: Date, default: Date.now}
 });
 

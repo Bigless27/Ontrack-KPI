@@ -102,7 +102,6 @@
 			function getUser() {
 				$http.get('/api/users/' + $stateParams.id)
 					.success(function(data){
-						console.log(data)
 						$scope.user = data
 					})
 					.error(function(err) {
@@ -119,8 +118,6 @@
 							return x.type
 						})
 						$scope.typeList = [...new Set(unUniqueTypes)]
-						
-						
 					})
 					.error(function(err) {
 						console.log(err)

@@ -176,7 +176,6 @@
 							})
 			}
 
-
 			function getTypes(){
 				$http.get('api/type-settings')
 					.success(function(data){
@@ -265,10 +264,6 @@
 				return (x/y * 100).toFixed(2)
 				}
 			}
-			
-
-
-
 
 			getPromotions()		
 	}])

@@ -1,6 +1,6 @@
 var Activity = require('./activityModel');
 var _ = require('lodash');
-var algorithm = require('../../algorithm')
+var algorithm = require('../algorithm')
 
 exports.params = function(req, res, next, id) {
 	Activity.findById(id)

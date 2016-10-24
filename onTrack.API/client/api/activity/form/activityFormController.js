@@ -47,6 +47,7 @@
 			 getTypes()
 
 			 $scope.submitActivity = function(activity){
+			 	console.log(activity)
 			 	var token = $window.sessionStorage['jwt']
 			 	activity.userId = []
 			 	activity.userId.push($stateParams['id'])
