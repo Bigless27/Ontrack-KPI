@@ -1,43 +1,6 @@
 <form id = 'edit' name ="activityForm" role = "form" data-toggle = 'validator'>
 		<h1>Activity</h1>
 
-		<div class = "form-group" show-errors>
-			<label for = "type">Type</label>
-			<div class = "input-group">
-				<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-
-				<select 
-					name ='type'
-					ng-blur = 'setSubtypes()'
-					ng-model = "activity.type"
-					ng-options="list for list in typeList"
-					class = "form-control"
-					id = "type"
-					required
-				>
-				</select>
-            </div>
-           <p class="help-block" ng-if="userForm.type.$error.required">The user's type is required</p>
-		</div>
-
-		<div class = "form-group" show-errors>
-			<label for = "type">Subtype</label>
-			<div class = "input-group">
-				<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-
-				<select 
-					name ='subType'
-					ng-model = "activity.subType"
-					
-					ng-options="list.listValue for list in subList track by list.listValue"
-					class = "form-control"
-					id = "type"
-					required
-				>
-				</select>
-            </div>
-           <p class="help-block" ng-if="userForm.subType.$error.required">The user's type is required</p>
-		</div>
 
 		<div class = "form-group" show-errors>
 			<label for = "Name" class = 'control-label'>Name</label>
@@ -54,7 +17,6 @@
             </div>
             <p class="help-block" ng-if= "userForm.value.$error.required">Value is required</p>
 		</div>
-		
 
 		<div class = "form-group" show-errors>
 			<label for = "value" class = 'control-label'>Value</label>
@@ -72,6 +34,58 @@
             </div>
             <p class="help-block" ng-if= "userForm.value.$error.required">Value is required</p>
 		</div>
+
+		<div class = "form-group" show-errors>
+			<label for = "type">Type</label>
+			<div class = "input-group">
+				<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+				<select 
+					name ='type'
+					ng-blur = 'setSubtypes()'
+					ng-model = "activity.type"
+					ng-options="list for list in typeList"
+					class = "form-control"
+					id = "type"
+					required
+				>
+				</select>
+            </div>
+           <p class="help-block" ng-if="userForm.type.$error.required">The user's type is required</p>
+		</div>
+
+		<div class = 'form-group'>
+			<label for = 'subType'>SubTypes</label>
+			<div class = 'input-group'>
+				<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+				<multiple-autocomplete 
+				  ng-model="activity.subTypes"
+				  object-property = "name"
+				  suggestions-arr="subTypesList"
+				  required = 'true'
+				  ng-click = 'checkType()'>
+				</multiple-autocomplete>
+				</div>
+	      			<p class = 'alert alert-danger' ng-if = 'typeChecker'>Please select a type first</p>
+			</div>
+		</div>
+
+		<div class = "form-group">
+			<label id = 'admin-lable'>Assign Users</label>
+			<div class = "input-group">
+				<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+				<multiple-autocomplete 
+				  ng-model="activity.users"
+				  object-property="fullName"
+				  suggestions-arr="optionsList"
+				  required = 'true'>
+				</multiple-autocomplete>
+			</div>
+      			<p class="help-block" ng-if= "userForm.users.$error.required">User is required</p>
+      			<div id = 'user-select-button' class = 'btn btn-info' ng-click ='selectAll()'>
+					Select All
+				</div>
+		</div>
+
 
 		
 			

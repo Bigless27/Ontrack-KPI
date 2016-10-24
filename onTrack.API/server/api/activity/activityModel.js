@@ -10,16 +10,20 @@ var usersSchema = new Schema({
 	userId: {type: String} //may need to change type to objectId in the future
 })
 
-var UserActivitySchema = new Schema({
-		type: {type: String, required: true},
-		subType: {type: String},
+var subTypesSchema = new Schema({
+	name: {type: String}
+})
+
+var ActivitySchema = new Schema({
 		name: {type: String, required: true},
+		type: {type: String, required: true},
+		subTypes: [subTypesSchema],
 		value: {type: Number, required: true},
-		users: {usersSchema},
+		users: [usersSchema],
 		date: {type: Date, default: Date.now}
 });
 
-UserActivitySchema.post('remove', function(doc) {
+ActivitySchema.post('remove', function(doc) {
 	User.findById(doc.userId)
 		.then(function(user) {
 			if(!user) {
@@ -43,7 +47,7 @@ UserActivitySchema.post('remove', function(doc) {
 
 //add delete route
 
-UserActivitySchema.post('save', function(doc) {
+ActivitySchema.post('save', function(doc) {
 	User.findById(doc.userId)
 		.then(function(user) {
 			if(!user) {
@@ -70,4 +74,4 @@ UserActivitySchema.post('save', function(doc) {
 	//algorithm.lookUpPromotions(doc)
 })
 
-module.exports = mongoose.model('useractivity', UserActivitySchema);
+module.exports = mongoose.model('activity', ActivitySchema);

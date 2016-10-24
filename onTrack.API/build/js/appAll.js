@@ -259,17 +259,18 @@
 	.controller('ActivityController', ['$scope', '$state', '$window', '$stateParams', '$http', '$q',
 	 function($scope, $state, $window, $stateParams, $http, $q) {
 
+	 	
+
 	 	function getActivities() {
 	 		$http.get('api/activity')
 	 		 .success(function(data) {
-	 		 	console.log(data)
 	 		 	$scope.activities = data
 	 		 })
 	 		 .error(function(err) {
 	 		 	console.log(err)
 	 		 })
 	 	}
-	 	console.log('hey')
+
 	 	getActivities()
 	}])
 }());
@@ -773,70 +774,108 @@
 	.controller('ActivityFormController', ['$scope', '$state', '$window', '$http', '$stateParams',
 	 function($scope, $state, $window, $http, $stateParams) {
 
-			$scope.userId = $stateParams['id']
+		$scope.selectAll = function(){
+	 		if($scope.activity.users.length < $scope.optionsList.length){
+		 		$scope.activity.users = $scope.optionsList
+		 		$('#user-select-button')[0].innerHTML = 'Clear'
+	 		}
+	 		else{
+	 			$scope.activity.users = []
+	 			$('#user-select-button')[0].innerHTML = 'Select All'
+	 		}
+	 	}
+
+	 	$scope.subTypesList = []
 
 
-			function getTypes() {
-				$http.get('/api/type-settings')
-					.success(function(data) {
-						$scope.settings = data
-						populateLists(data)
-					})
-					.error(function(data) {
-						console.log(data)
-					})
-			}
+	 	$scope.optionsList = []
 
-			function populateLists(data){
-				var listHolder = []
-				data.forEach(function(set) {					
-					listHolder.push(set.type)
-				})
-				$scope.typeList = [...new Set(listHolder)]
-				
-			}
-
-			$scope.setSubtypes = function(){
-				if(!$scope.activity) return
-				else{
-						$scope.settings.forEach(function(set){
-						if(set.type === $scope.activity.type){
-							set.subTypes.forEach(function(sub){
-								$scope.subList.push({listValue: sub.text})	
-							})
+	 	function getUsers(){
+			$http.get('/api/users')
+				.success(function(users) {
+					users.forEach(function(user){
+						if(user){
+							$scope.optionsList.push(
+									{ fullName: user.firstName + ' ' + user.lastName,
+										userId: user._id, firstName: user.firstName,
+										lastName: user.lastName
+									}
+								)
+						}
+						else{
+							$scope.optionsList = [{name: 'No users'}]
 						}
 					})
-				}
-			}
-
-
-			$scope.typeList = []
-
-			$scope.subList = []
-
-			 getTypes()
-
-			 $scope.submitActivity = function(activity){
-			 	console.log(activity)
-			 	var token = $window.sessionStorage['jwt']
-			 	activity.userId = []
-			 	activity.userId.push($stateParams['id'])
-			 	activity['type'] = $scope.activity.type
-			 	activity['subType'] = $scope.activity.subType.listValue
-
-				$http.post('/api/users/' + $stateParams.id + '/activity', activity,{
-					headers: {
-						'Authorization': `Bearer ${token}`
-					}
-				})
-				.success(function(data) {
-					$state.reload()
 				})
 				.error(function(err) {
-					console.log(err)
+					console.log(err);
 				})
-			 }
+		}
 
+		function getTypes() {
+			$http.get('/api/type-settings')
+				.success(function(data) {
+					$scope.settings = data
+					populateLists(data)
+				})
+				.error(function(data) {
+					console.log(data)
+				})
+		}
+
+		function populateLists(data){
+			var listHolder = []
+			data.forEach(function(set) {					
+				listHolder.push(set.type)
+			})
+			$scope.typeList = [...new Set(listHolder)]
+			
+		}
+
+		$scope.typeChecker = false
+
+		$scope.checkType = function() {
+			if(!$scope.activity.type) {
+				$scope.typeChecker = true
+			}
+		}
+
+		$scope.setSubtypes = function(){
+			$scope.subTypesList = []
+			if(!$scope.activity.type) return
+			else{
+					$scope.settings.forEach(function(set){
+					if(set.type === $scope.activity.type){
+						set.subTypes.forEach(function(sub){
+							$scope.subTypesList.push({name: sub.text})	
+						})
+					}
+				})
+			}
+		}
+
+
+		$scope.typeList = []
+
+
+		$scope.submitActivity = function(activity){
+		 	var token = $window.sessionStorage['jwt']
+
+			$http.post('/api/activity', activity,{
+				headers: {
+					'Authorization': `Bearer ${token}`
+				}
+			})
+			.success(function(data) {
+				$state.reload()
+			})
+			.error(function(err) {
+				console.log(err)
+			})
+		}
+
+		getTypes()
+		getUsers()
 	}])
 }());
 (function() {
@@ -2057,6 +2096,84 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('PromotionFormController', ['$scope', '$state', '$http', '$window', '$stateParams',
+		function($scope, $state, $http, $window, $stateParams) {
+
+			$scope.create = true
+			$scope.clientId = $stateParams['id']
+
+			var today = new Date();
+			$scope.minDate = today.toISOString();
+
+
+			function getSettings(){
+				$http.get('api/type-settings')
+					.success(function(data){
+						$scope.settings = data
+						setTypes()
+					})
+					.error(function(err) {
+						console.log(err)
+					})
+			}
+
+			function setTypes() {
+				var unUniqueTypes = $scope.settings.map(function(set){
+					return set.type
+				})
+				$scope.typeList = [...new Set(unUniqueTypes)]
+			}
+
+			$scope.subTypesList = [];
+
+			$scope.typeChecker = false
+
+			$scope.checkType = function(){
+				if(!$scope.promotion.type) {
+					$scope.typeChecker = true
+				}
+			}
+
+			$scope.setSubtypes = function() {
+				$scope.subTypesList = []
+				if(!$scope.promotion.type) return
+				else{
+					$scope.typeChecker = false
+					$scope.settings.forEach(function(set){
+						if(set.type === $scope.promotion.type){
+							set.subTypes.forEach(function(sub){
+								$scope.subTypesList.push({name: sub.text})
+							})
+						}
+					})
+				}
+			}
+
+			getSettings()
+
+			
+			$scope.submitPromotion = function(promotion) {
+				$scope.$broadcast('show-errors-check-validity');
+
+				if($scope.promotionForm.$invalid){return;}
+				var token = $window.sessionStorage['jwt']
+
+				$http.post('api/clients/' + $stateParams['id'] + '/promotions', promotion ,{
+					headers: {
+						"Authorization": `Bearer ${token}`
+					}
+				})
+				.success(function(data){
+						$state.reload()
+				})
+				.error(function(err){
+					console.log(err)
+				})
+			}
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('SettingsProgressFormController', ['$scope', '$state', '$window', '$http',
 	 function($scope, $state, $window, $http) {
 
@@ -2156,84 +2273,6 @@
 	 	}
 
 	 	getUsers()
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('PromotionFormController', ['$scope', '$state', '$http', '$window', '$stateParams',
-		function($scope, $state, $http, $window, $stateParams) {
-
-			$scope.create = true
-			$scope.clientId = $stateParams['id']
-
-			var today = new Date();
-			$scope.minDate = today.toISOString();
-
-
-			function getSettings(){
-				$http.get('api/type-settings')
-					.success(function(data){
-						$scope.settings = data
-						setTypes()
-					})
-					.error(function(err) {
-						console.log(err)
-					})
-			}
-
-			function setTypes() {
-				var unUniqueTypes = $scope.settings.map(function(set){
-					return set.type
-				})
-				$scope.typeList = [...new Set(unUniqueTypes)]
-			}
-
-			$scope.subTypesList = [];
-
-			$scope.typeChecker = false
-
-			$scope.checkType = function(){
-				if(!$scope.promotion.type) {
-					$scope.typeChecker = true
-				}
-			}
-
-			$scope.setSubtypes = function() {
-				$scope.subTypesList = []
-				if(!$scope.promotion.type) return
-				else{
-					$scope.typeChecker = false
-					$scope.settings.forEach(function(set){
-						if(set.type === $scope.promotion.type){
-							set.subTypes.forEach(function(sub){
-								$scope.subTypesList.push({name: sub.text})
-							})
-						}
-					})
-				}
-			}
-
-			getSettings()
-
-			
-			$scope.submitPromotion = function(promotion) {
-				$scope.$broadcast('show-errors-check-validity');
-
-				if($scope.promotionForm.$invalid){return;}
-				var token = $window.sessionStorage['jwt']
-
-				$http.post('api/clients/' + $stateParams['id'] + '/promotions', promotion ,{
-					headers: {
-						"Authorization": `Bearer ${token}`
-					}
-				})
-				.success(function(data){
-						$state.reload()
-				})
-				.error(function(err){
-					console.log(err)
-				})
-			}
 	}])
 }());
 (function() {
