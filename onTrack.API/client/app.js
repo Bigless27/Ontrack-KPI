@@ -79,46 +79,52 @@
 						templateUrl: 'client/api/users/user-partial.html',
 						controller: 'UserController'
 					})
-					.state('user.activityCreate', {
-						templateUrl: 'client/api/users/activity/form/activity-form-partial.html',
-						controller: 'ActivityFormController'
-					})
 					.state('setting', {
 						url: '/settings',
-						templateUrl: 'client/api/main-settings/settings-partial.html',
+						templateUrl: 'client/api/settings/settings-partial.html',
 						controller: 'MainSettingsController'
 					})
 					.state('setting.settingTypeCreate',{
 						url: '/createType',
-						templateUrl: 'client/api/main-settings/type-setting/type-form/settings-type-form-partial.html',
+						templateUrl: 'client/api/settings/type-setting/type-form/settings-type-form-partial.html',
 						controller: 'SettingsTypeFormController'
 					})
 					.state('setting.settingProgressCreate', {
 						url: '/createProgress',
-						templateUrl: 'client/api/main-settings/progress-setting/progress-form/settings-progress-form-partial.html',
+						templateUrl: 'client/api/settings/progress-setting/progress-form/settings-progress-form-partial.html',
 						controller: 'SettingsProgressFormController'
 					})
 					.state('settingProgress', {
 						url: '/progressSetting/:id',
-						templateUrl: 'client/api/main-settings/progress-setting/progress-setting-partial.html',
+						templateUrl: 'client/api/settings/progress-setting/progress-setting-partial.html',
 						controller: "ProgressSettingController"
 					})
 					.state('settingType', {
 						url: '/typeSetting/:id', 
-						templateUrl: 'client/api/main-settings/type-setting/type-setting-partial.html',
+						templateUrl: 'client/api/settings/type-setting/type-setting-partial.html',
 						controller: 'TypeSettingController'
-					})
-					.state('activity', {
-						url: '/users/:id/activity/:activityId',
-						templateUrl: 'client/api/users/activity/activity-partial.html',
-						controller: 'ActivityController'
 					})
 					.state('progress', {
 						url: '/users/:id/progress/:progressId',
 						templateUrl: 'client/api/users/progress/progress-partial.html',
 						controller: 'ProgressController'
 					})
-
+					.state('activity', {
+						url: '/activity',
+						templateUrl: 'client/api/activity/activity-partial.html',
+						controller: 'ActivityController'
+					})
+					.state('activity.create', {
+						url: '/createActivity',
+						templateUrl: 'client/api/activity/form/activity-form-partial.html',
+						controller: 'ActivityFormController'
+					})
+					// look to rename this state to something a little more Restful
+					.state('activityView', {
+						url: '/activity/:id',
+						templateUrl: 'client/api/activity/view/activity-view-partial.html',
+						controller: 'ActivityViewController'
+					})
 			}])
 			.run(function(editableOptions) {
 			  editableOptions.theme = 'bs3'; // bootstrap3 theme. Can be also 'bs2', 'default'

@@ -1,82 +1,18 @@
-<table class = 'table table-striped'>
-	<tr>
-		<th>Name</th>
-		<td>
-			<span 
-				editable-text = 'activity.name'
-					e-form = 'name'
-					onbeforesave = 'updateName($data)'>
-					{{activity.name || 'empty'}}
-				</span>
-			</td>
-			<td>
-				<a href=""  ng-click="name.$show()" ng-hide="name.$visible">Edit</a>
-			</td>
-		</tr>
-		<tr>
-			<th>Type</th>
-			<td>
-				<span 
-					id = 'activity-type-edit'  
-					style = 'color:black; text-decoration:none;'
-					editable-select="activity.type" 
-					e-ng-options="s for s in typeList" onbeforesave = 'updateType($data)'
-				>
-					{{activity.type || 'empty'}}
-				</span>
-			</td>
-			<td>
-				<a href="" id = 'activity-type-edit-button'>Edit</a>
-			</td>
-		</tr>
-		<tr>
-			<th>SubType</th>
-			<td>
-				<span 
-					id = 'activity-subTypes-edit'  
-					style = 'color:black; text-decoration:none;'
-					editable-select="activity.subType" 
-					e-ng-options="s for s in subTypes" onbeforesave = 'updateSubtype($data)'
-				>
-					{{activity.subType || 'empty'}}
-				</span>
-			</td>
-			<td>
-				<a href="" id = 'activity-subTypes-edit-button'>Edit</a>
-			</td>
-		</tr>
-		<tr>
-			<th>Value</th>
-			<td>
-				<span editable-text="activity.value" e-form="value" onbeforesave="updateValue($data)">
-					{{activity.value || 'empty'}}
-				</span>
-			</td>
-			<td>
-				<a href="" ng-click="value.$show()" ng-hide="value.$visible">Edit</a>
-			</td>
-		</tr>
-		<tr>
-			<th>Date</th>
-			<td>
-				<span
-					id = 'activity-date-edit'
-					e-min-year = '2016'
-					e-max-year = '2030'
-					editable-combodate = 'activity.date' 
-					style = 'color:black; border-bottom:none;'
-					onbeforesave = 'updateDate($data)'
-					>
-					{{(activity.date | date:'medium') || 'empty'}}
-				</span>
-			</td>
-			<td>
-				<a href="" id = 'activity-date-edit-button'>Edit</a>
-			</td>
-		</tr>
-	</table>
-</table>
-<span class = 'btn btn-danger' ng-click = 'deleteActivity(activity)'><i class="glyphicon glyphicon-trash" aria-hidden="true"></i></span>
-
-<div class = 'btn btn-default' ui-sref = 'user({id: activity.userId})'>Back</div>
-<div class ></div>
+<div class = 'container'>
+	<div class = 'row'>
+		<h1>Activities</h1>
+		<div class = 'btn btn-info' ui-sref = 'activity.create'>Create Activity</div>
+		<div class = 'btn btn-default'>Back</div>
+	</div>
+	<div class = 'row'>
+		<div ui-view></div>
+	</div>
+	<div class = 'row' ng-repeat = 'act in activities'>
+		<table class = 'table table-bordered' style = 'width: 320px;'>
+			<tr>
+				<th>Name</th>
+				<td>{{act.name}}</td>
+			</tr>
+		</table>
+	</div>
+</div>
