@@ -227,34 +227,34 @@
 							}
 						})
 						$scope.matchingUsers = theUsers
-						console.log($scope.matchingUsers)
 					})
 					.error(function(err){
 						console.log(err)
 					})
 			}
 
-			// This grabs progress of matching types and subtypes if at anypoint a subtype is matched
-			// Between the Promotion and the progress
+			// This grabs progress of matching types and subtypes. The subtypes are only
+			// matched if there is an exact match on them
 			function matchProgressToPromotion(progs) {
-					var matchedTypesProg = progs.filter(x => x.type === $scope.promotion.type)
-					//$scope.noSubtypes applies to the $scope.promotion
-					if (!$scope.noSubtypes){
-						var subMatchArr = []
-						var subTypeStrings = $scope.promotion.subTypes.map(x => x.name)
-						matchedTypesProg.forEach(function(prog) {
-							prog.subTypes.forEach(function(sub) {
-								if (!subMatchArr.includes(prog)) {
-									if (subTypeStrings.includes(sub.name)) {
-											subMatchArr.push(prog)
-									}
+				var matchedTypesProg = progs.filter(x => x.type === $scope.promotion.type)
+				//$scope.noSubtypes applies to the $scope.promotion
+				if (!$scope.noSubtypes){
+					var subMatchArr = []
+					var subTypeStrings = $scope.promotion.subTypes.map(x => x.name)
+					matchedTypesProg.forEach(function(prog) {
+						prog.subTypes.forEach(function(sub) {
+							if (!subMatchArr.includes(prog)) { //this matches the setting to the promotions setting match
+								var progSubsInArr = prog.subTypes.map(x => x.name)
+								if (progSubsInArr.join('') === subTypeStrings.join('')) {
+										subMatchArr.push(prog)
 								}
-							})
+							}
 						})
-						matchedTypesProg = subMatchArr
-					}
-					return matchedTypesProg
-					//this is the progress Setting not just the progress
+					})
+					matchedTypesProg = subMatchArr
+				}
+				return matchedTypesProg
+				//this is the progress Setting not just the progress
 			}
 
 			$scope.getPercentage = function(x,y) {
