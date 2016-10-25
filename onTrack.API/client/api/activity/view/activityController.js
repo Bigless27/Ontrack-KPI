@@ -99,8 +99,16 @@
 			return updateActivity(data, 'type')
 		}
 
+		$scope.subDups = false
+
 		$scope.updateSubtypes = function(data) {
-			return updateActivity(data, 'subType')
+			var names = data.map(x => x._id)
+			if([...new Set(names)].length < names.length) {
+				$scope.subDups = true
+				return
+			}
+			$scope.subDups = false
+			return updateActivity(data, 'subTypes')
 		}
 
 		$scope.updateValue = function(data) {

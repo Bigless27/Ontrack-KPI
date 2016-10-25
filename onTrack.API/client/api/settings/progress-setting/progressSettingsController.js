@@ -43,8 +43,16 @@
 			return updateSetting(data, 'type')
 		}
 
+		$scope.subDups = false
+
 		$scope.updateSubtypes = function(data) {
-				return updateSetting(data,'subTypes')			
+			var names = data.map(x => x._id)
+			if([...new Set(names)].length < names.length) {
+				$scope.subDups = true
+				return
+			}
+			$scope.subDups = false
+			return updateSetting(data, 'subTypes')
 		}
 
 		$scope.updateUsers = function(users) {

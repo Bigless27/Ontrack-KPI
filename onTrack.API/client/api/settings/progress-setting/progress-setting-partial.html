@@ -54,8 +54,9 @@
 	     				required = 'true'>
 					</multiple-autocomplete>
 					<span class = 'btn btn-info' ng-click = 'updateSubtypes(setting.subTypes)'><i class = 'glyphicon glyphicon-ok' aria-hidden = 'true'></i></span>
-					<span class = 'btn btn-danger' ng-click= 'toggleEditSubs()'><i class = 'glyphicon glyphicon-remove'></i></span>
+					<span class = 'btn btn-danger' ng-click= 'toggleEditSubs()' ng-disabled = 'subDups'><i class = 'glyphicon glyphicon-remove'></i></span>
 				</span>
+				<span ng-show = 'subDups' class = 'label label-danger'>Can't have duplicate subTypes!!</span>
 			</td>
 			<td>
 				<a ng-click = 'toggleEditSubs()' ng-show = '!subTags'>

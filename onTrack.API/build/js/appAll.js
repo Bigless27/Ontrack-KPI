@@ -256,53 +256,6 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('ActivityController', ['$scope', '$state', '$window', '$stateParams', '$http', '$q',
-	 function($scope, $state, $window, $stateParams, $http, $q) {
-
-	 	
-
-	 	function getActivities() {
-	 		$http.get('api/activity')
-	 		 .success(function(data) {
-	 		 	$scope.activities = data
-	 		 })
-	 		 .error(function(err) {
-	 		 	console.log(err)
-	 		 })
-	 	}
-
-	 	getActivities()
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('LoginController', ['$scope', '$state', '$window', '$http',
-	 function($scope, $state, $window, $http) {
-
-			$scope.logUserIn = function(user) {
-				$scope.$broadcast('show-errors-check-validity');
-
-
-				if($scope.userForm.$invalid){return;}
-
-				$scope.err = true
-
-				$http.post('auth/signin', user)
-					.success(function(data) {
-						$scope.err = false
-						$window.sessionStorage.jwt = data['token']
-						$state.go('main')
-					})
-					.error(function(error) {
-						$scope.err = true
-						$scope.errMessage = error
-					})
-			}
-
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('ClientController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
 		function($scope, $state, $http, $window, $stateParams, $q) {
 		
@@ -439,6 +392,99 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('ActivityController', ['$scope', '$state', '$window', '$stateParams', '$http', '$q',
+	 function($scope, $state, $window, $stateParams, $http, $q) {
+
+	 	
+
+	 	function getActivities() {
+	 		$http.get('api/activity')
+	 		 .success(function(data) {
+	 		 	$scope.activities = data
+	 		 })
+	 		 .error(function(err) {
+	 		 	console.log(err)
+	 		 })
+	 	}
+
+	 	getActivities()
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('LoginController', ['$scope', '$state', '$window', '$http',
+	 function($scope, $state, $window, $http) {
+
+			$scope.logUserIn = function(user) {
+				$scope.$broadcast('show-errors-check-validity');
+
+
+				if($scope.userForm.$invalid){return;}
+
+				$scope.err = true
+
+				$http.post('auth/signin', user)
+					.success(function(data) {
+						$scope.err = false
+						$window.sessionStorage.jwt = data['token']
+						$state.go('main')
+					})
+					.error(function(error) {
+						$scope.err = true
+						$scope.errMessage = error
+					})
+			}
+
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('MainController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+
+			function getClients() {
+				$http.get('api/clients')
+					.success(function(data) {
+						$scope.clients = data
+					})
+					.error(function(err) {
+						console.log(err);
+					})
+			}
+
+			function getUsers() {
+				$http.get('api/users')
+					.success(function(data) {
+						$scope.users = data
+					})
+					.error(function(err) {
+						console.log(err)
+					})
+			}
+
+			getUsers() 
+			getClients()
+
+			$scope.optionsList = [
+			  {id: 1,  name : "Java"},
+			  {id: 2,  name : "C"},
+			  {id: 3,  name : "C++"},
+			  {id: 4,  name : "AngularJs"},
+			  {id: 5,  name : "JavaScript"}
+			];
+
+
+
+
+			$scope.logout = function() {
+				$window.sessionStorage.clear()
+				$state.go('login')
+			}
+		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('MainSettingsController', ['$scope', '$state', '$window', '$http',
 	 function($scope, $state, $window, $http) {
 
@@ -500,52 +546,6 @@
 	 	loadTypeSettings()
 	 	loadProgressSettings()
 
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('MainController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
-
-			function getClients() {
-				$http.get('api/clients')
-					.success(function(data) {
-						$scope.clients = data
-					})
-					.error(function(err) {
-						console.log(err);
-					})
-			}
-
-			function getUsers() {
-				$http.get('api/users')
-					.success(function(data) {
-						$scope.users = data
-					})
-					.error(function(err) {
-						console.log(err)
-					})
-			}
-
-			getUsers() 
-			getClients()
-
-			$scope.optionsList = [
-			  {id: 1,  name : "Java"},
-			  {id: 2,  name : "C"},
-			  {id: 3,  name : "C++"},
-			  {id: 4,  name : "AngularJs"},
-			  {id: 5,  name : "JavaScript"}
-			];
-
-
-
-
-			$scope.logout = function() {
-				$window.sessionStorage.clear()
-				$state.go('login')
-			}
-		
 	}])
 }());
 (function() {
@@ -767,288 +767,6 @@
 			populateTypes()
 			getUser()
 		
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('ActivityFormController', ['$scope', '$state', '$window', '$http', '$stateParams',
-	 function($scope, $state, $window, $http, $stateParams) {
-
-		$scope.selectAll = function(){
-	 		if($scope.activity.users.length < $scope.optionsList.length){
-		 		$scope.activity.users = $scope.optionsList
-		 		$('#user-select-button')[0].innerHTML = 'Clear'
-	 		}
-	 		else{
-	 			$scope.activity.users = []
-	 			$('#user-select-button')[0].innerHTML = 'Select All'
-	 		}
-	 	}
-
-	 	$scope.subTypesList = []
-
-
-	 	$scope.optionsList = []
-
-	 	function getUsers(){
-			$http.get('/api/users')
-				.success(function(users) {
-					users.forEach(function(user){
-						if(user){
-							$scope.optionsList.push(
-									{ fullName: user.firstName + ' ' + user.lastName,
-										userId: user._id, firstName: user.firstName,
-										lastName: user.lastName
-									}
-								)
-						}
-						else{
-							$scope.optionsList = [{name: 'No users'}]
-						}
-					})
-				})
-				.error(function(err) {
-					console.log(err);
-				})
-		}
-
-		function getTypes() {
-			$http.get('/api/type-settings')
-				.success(function(data) {
-					$scope.settings = data
-					populateLists(data)
-				})
-				.error(function(data) {
-					console.log(data)
-				})
-		}
-
-		function populateLists(data){
-			var listHolder = []
-			data.forEach(function(set) {					
-				listHolder.push(set.type)
-			})
-			$scope.typeList = [...new Set(listHolder)]
-			
-		}
-
-		$scope.typeChecker = false
-
-		$scope.checkType = function() {
-			if(!$scope.activity.type) {
-				$scope.typeChecker = true
-			}
-		}
-
-		$scope.setSubtypes = function(){
-			$scope.subTypesList = []
-			if(!$scope.activity.type) return
-			else{
-					$scope.settings.forEach(function(set){
-					if(set.type === $scope.activity.type){
-						set.subTypes.forEach(function(sub){
-							$scope.subTypesList.push({name: sub.text})	
-						})
-					}
-				})
-			}
-		}
-
-		$scope.typeList = []
-
-		$scope.submitActivity = function(activity){
-		 	var token = $window.sessionStorage['jwt']
-
-			$http.post('/api/activity', activity,{
-				headers: {
-					'Authorization': `Bearer ${token}`
-				}
-			})
-			.success(function(data) {
-				$state.reload()
-			})
-			.error(function(err) {
-				console.log(err)
-			})
-		}
-
-		getTypes()
-		getUsers()
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('ActivityViewController', ['$scope', '$state', '$window', '$stateParams', '$http', '$q',
-	 function($scope, $state, $window, $stateParams, $http, $q) {
-
-
-	 	//Look into doubling the http requests!!! or not idk lol haha 
-	 	function getActivitySettings() {
-	 		var d = $q.defer();
-	 		$http.get('api/activity/' + $stateParams.id)
-	 			.success(function(act) {
-	 				$http.get('api/type-settings')
-			 			.success(function(set){
-			 				$scope.noUsers = false
-			 				$scope.noSubs = false
-			 				$scope.activity = act
-			 				$scope.settings = set
-			 				if($scope.activity.users.length === 0) {
-			 					$scope.noUsers = true
-			 				}
-			 				else if($scope.activity.subTypes.length === 0) {
-			 					$scope.noSubs = true
-			 				}
-
-			 				getUniqueTypes()
-			 				getUniqueSubtypes()
-			 				d.resolve()
-			 			})
-			 			.error(function(err) {
-			 				console.log(err)
-			 				d.reject()
-			 			})
-	 			})
-	 			.error(function(err) {
-	 				console.log(err)
-	 				d.reject()
-	 			})
-	 	}
-
-	 	function getSettings() {
-	 		$http.get('api/type-settings')
-	 			.success(function(data){
-	 				$scope.settings = data
-	 				getUniqueTypes()
-	 				getUniqueSubtypes()
-	 			})
-	 			.error(function(err) {
-	 				console.log(err)
-	 			})
-	 	}
-
-	 	function getUniqueTypes() {
-	 		var unUniqueTypes = $scope.settings.map(function(x){
-				return x.type
-			})
-			$scope.typeList = [...new Set(unUniqueTypes)]
-	 	}
-
-	 	function getUniqueSubtypes() {
-	 		var unSetSubtypes = $scope.settings.filter(function(set) {
-	 			return set.type === $scope.activity.type
-	 		})
-	 		var unUniqueSubtypes = unSetSubtypes.map(function(x){
-	 			return x.subTypes.map(function(sub){
-	 				return sub.text
-	 			})
-	 		}).reduce(function(a,b){return a.concat(b)})
-
-	 		var subArr = [...new Set(unUniqueSubtypes)].map(x =>{ 
-	 						var obj = {}
-	 						obj['name'] = x
-	 						return obj
-	 					})
-	 		$scope.subTypes = subArr
-	 	}
-
- 		$(document).on('click','#activity-type-edit-button', function(){
-			$('#activity-type-edit')[0].click()
-		})
-		.on('click', '#activity-subTypes-edit-button', function() {
-			$('#activity-subTypes-edit')[0].click()
-		})
-		.on('click', '#activity-date-edit-button', function() {
-			$('#activity-date-edit')[0].click()
-		})
-
-		$scope.updateName = function(data) {
-			if(data.length < 2) return 'Name is too short'
-			else if(data === '') return 'Name is required'
-			else if(data.length > 45) return 'Name is too long'
-
-			return updateActivity(data, 'name')
-		}
-
-		$scope.updateType = function(data) {
-			if(data === '') return 'Type is Required'
-			$scope.updateSubtype('empty')
-
-			return updateActivity(data, 'type')
-		}
-
-		$scope.updateSubtypes = function(data) {
-			return updateActivity(data, 'subType')
-		}
-
-		$scope.updateValue = function(data) {
-				var reg = new RegExp('^\\d+$')
-
-				if (data === ''){
-					return 'Value is required'
-				}
-				else if (!reg.test(data)){
-					return 'Value must be an integer'
-				}
-				data = parseInt(data)
-				return updateActivity(data, 'value')
-		}
-
-		$scope.updateDate = function(data) {
-			if(data === '') return 'Date is required'
-			return updateActivity(data, 'date')
-		}
-
-		function updateActivity(data, field){
-				var token = $window.sessionStorage['jwt']
-				$scope.activity[field] = data
-				$http.put('/api/activity/' + $stateParams.id, $scope.activity,					+ $stateParams.activityId, $scope.activity,{
-					headers: {
-						'Authorization': `Bearer ${token}`
-					}
-				})
-				.success(function(data){
-					$state.reload()
-				})
-				.error(function(err) {
-					console.log(err)
-				})
-		}
-
-		$scope.subTags = false
-
-		$scope.toggleEditSubs = function() {
-			if ($scope.subTags) {
-				$scope.subTags = false
-			}
-			else {
-				$scope.subTags = true
-			}
-		}
-
-		$scope.deleteActivity = function(activity) {
-				swal({
-				  title: "Are you sure?",
-				  text: "You will not be able to recover this activity!",
-				  type: "warning",
-				  showCancelButton: true,
-				  confirmButtonColor: "#DD6B55",
-				  confirmButtonText: "Yes, delete it!",
-				  closeOnConfirm: true,
-				  html: false
-				}, function(){
-					$http.delete('api/activity/' + activity._id  )
-					.success(function(data){
-						userId = {'id': $stateParams.id}
-						$state.go('user',userId)
-					})
-					.error(function(err) {
-						console.log(err)
-					})
-				})
-			}
-
-	 	getActivitySettings()
 	}])
 }());
 (function() {
@@ -1355,235 +1073,6 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('ProgressSettingController', ['$scope', '$state', '$window', '$http', '$stateParams',
-	 function($scope, $state, $window, $http, $stateParams) {
-
-	 	$scope.deleteSetting = function() {
-				var token = $window.sessionStorage['jwt']
-				swal({
-				  title: "Are you sure?",
-				  text: "You will not be able to recover this Setting!",
-				  type: "warning",
-				  showCancelButton: true,
-				  confirmButtonColor: "#DD6B55",
-				  confirmButtonText: "Yes, delete it!",
-				  closeOnConfirm: true,
-				  html: false
-				}, function(){
-					$http.delete('/api/progress-settings/'+ $stateParams.id, {
-						headers: {
-							'Authorization': `Bearer ${token}`
-						}
-					})
-					.success(function(data){
-						$state.go('setting')
-					})
-					.error(function(err) {
-						console.log(err)
-					})
-				})
-			}
-
-		$scope.updateName = function(name) {
-			if (name === ''){
-				return 'Name is required'
-			}
-			updateSetting(name, 'name')
-		}
-
-		$scope.updateType = function(data) {
-			if (data === ''){
-				return 'Type is required'
-			}
-			return updateSetting(data, 'type')
-		}
-
-		$scope.updateSubtypes = function(data) {
-				return updateSetting(data,'subTypes')			
-		}
-
-		$scope.updateUsers = function(users) {
-			//This can definetly be made better. Needs to update users and delete users promotions
-			if($scope.setting.users.length > users.length){
-				var editRefs = $scope.setting.users.filter(function(user){
-					if (!users.map(x => x.userId).includes(user.userId)) {
-						return user
-					}
-				})
-				editRefs.forEach(function(r) {
-					var token = $window.sessionStorage['jwt']
-					var newUser = $scope.users.find(x => x._id === r.userId) //find the actually user from the subdocument of prog setting
-					var delIndex = newUser.settingProgress.indexOf($scope.setting._id)
-					newUser.settingProgress.splice(delIndex, 1)
-					$http.get('api/users/' + r.userId)
-						.success(function(userProgEdit) {
-							var progId = userProgEdit.progress.filter(function(prog) {
-									if(prog.settingId === $scope.setting._id) {
-										return prog
-									}
-							}).map(x => x._id)
-
-							var delProgIndex = newUser.progress.indexOf(progId[0])
-							newUser.progress.splice(delProgIndex, 1)
-
-							$http.put('api/users/' + r.userId, newUser, {
-								headers: {
-									'Authorization': `Bearer ${token}`
-								}
-							})
-							.success(function(data){
-								$http.delete('api/users/' + data._id + '/progress/' + progId[0])
-									.success(function(data) {
-										$state.reload()
-									})
-									.error(function(err) {
-										console.log(err)
-									})
-							})
-							.error(function(err) {
-								console.log(err)
-							})
-						})
-						.error(function(err) {
-							console.log(err)
-						})
-				})
-			}
-			updateSetting(users, 'users')
-		}
-
-
-		function updateSetting(data, field){
-			$scope.setting[field] = data
-			$http.put('api/progress-settings/' + $stateParams.id, $scope.setting)
-				.success(function(data){
-					$state.reload()
-				})
-				.error(function(err) {
-					console.log(err)
-				})
-		}
-
-		function getUsers() {
-			$http.get('api/users')
-				.success(function(data) {
-					$scope.users = data
-					sortUsers(data)
-				})
-				.error(function(err) {
-					console.log(err)
-				})
-		}
-
-		function sortUsers(users){
-			var sub = []
-			users.forEach(function(user) {
-				sub.push({userId: user._id, fullName: user.firstName + ' ' + user.lastName,
-							firstName: user.firstName, lastName: user.lastName})
-			})	
-			$scope.optionsList = sub 
-		}
-
-		function sortInitUsers(set){
-			var initMS = []
-			set.users.forEach(function(user) {
-				initMS.push({userId: user.userId, fullName: user.firstName + ' ' + user.lastName,
-							firstName: user.firstName, lastName: user.lastName})
-			})
-			$scope.initUsers = initMS
-		}
-
-		$scope.userTags = false
-		$scope.subTags = false
-
-		$scope.toggleEditSubs = function() {
-			if ($scope.subTags) {
-				$scope.subTags = false
-			}
-			else {
-				$scope.subTags = true
-			}
-		}
-
-		$scope.toggleEdit = function() {
-			if ($scope.userTags) {
-				$scope.userTags = false
-			}
-			else {
-				$scope.userTags = true
-			}
-		}
-
-		//have type show on edit click
-		$(document).on('click','#progress-type-edit-button', function(){
-			$('#progress-type-edit')[0].click()
-		} )
-
-	 	function getSetting(){
-	 		$http.get('api/progress-settings/' + $stateParams.id)
-	 			.success(function(data){
-	 				$http.get('api/type-settings')
-	 					.success(function(set) {
-	 						$scope.noUsers = false
-	 						$scope.noSubs = false
-			 				$scope.setting = data
-			 				if ($scope.setting.users.length === 0){
-			 					$scope.noUsers = true
-			 				}
-			 				else if($scope.setting.subTypes.length === 0){
-			 					$scope.noSubs = true
-			 				}
-			 				$scope.typeSetting = set
-			 				getUniqueTypes()
-				 			getUniqueSubtypes()
-			 				sortInitUsers(data)
-
-	 					})
-	 					.error(function(err) {
-	 						console.log(err)
-	 					})
-
-	 			})
-	 			.error(function(err) {
-	 				console.log(err)
-	 			})
-	 	}
-
-	 	function getUniqueTypes() {
-	 		var typeCopy = $scope.typeSetting
-	 		var unUniqueTypes = typeCopy.map(function(x){
-				return x.type
-			})
-			$scope.typeList = [...new Set(unUniqueTypes)]
-	 	}
-
-	 	function getUniqueSubtypes() {
-	 		var unSetSubtypes = $scope.typeSetting.filter(function(set) {
-	 			return set.type === $scope.setting.type
-	 		})
-	 		var unUniqueSubtypes = unSetSubtypes.map(function(x){
-	 			return x.subTypes.map(function(sub){
-	 				return sub.text
-	 			})
-	 		}).reduce(function(a,b){return a.concat(b)})
-
-
-	 		var subArr = [...new Set(unUniqueSubtypes)].map(x =>{ 
-	 						var obj = {}
-	 						obj['name'] = x
-	 						return obj
-	 					})
-	 		$scope.subTypes = subArr
-	 	}
-
-
-	 	getSetting()
-	 	getUsers()
-
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('PromotionController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
 		function($scope, $state, $http, $window, $stateParams, $q) {
 
@@ -1854,6 +1343,533 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('ActivityFormController', ['$scope', '$state', '$window', '$http', '$stateParams',
+	 function($scope, $state, $window, $http, $stateParams) {
+
+		$scope.selectAll = function(){
+	 		if($scope.activity.users.length < $scope.optionsList.length){
+		 		$scope.activity.users = $scope.optionsList
+		 		$('#user-select-button')[0].innerHTML = 'Clear'
+	 		}
+	 		else{
+	 			$scope.activity.users = []
+	 			$('#user-select-button')[0].innerHTML = 'Select All'
+	 		}
+	 	}
+
+	 	$scope.subTypesList = []
+
+
+	 	$scope.optionsList = []
+
+	 	function getUsers(){
+			$http.get('/api/users')
+				.success(function(users) {
+					users.forEach(function(user){
+						if(user){
+							$scope.optionsList.push(
+									{ fullName: user.firstName + ' ' + user.lastName,
+										userId: user._id, firstName: user.firstName,
+										lastName: user.lastName
+									}
+								)
+						}
+						else{
+							$scope.optionsList = [{name: 'No users'}]
+						}
+					})
+				})
+				.error(function(err) {
+					console.log(err);
+				})
+		}
+
+		function getTypes() {
+			$http.get('/api/type-settings')
+				.success(function(data) {
+					$scope.settings = data
+					populateLists(data)
+				})
+				.error(function(data) {
+					console.log(data)
+				})
+		}
+
+		function populateLists(data){
+			var listHolder = []
+			data.forEach(function(set) {					
+				listHolder.push(set.type)
+			})
+			$scope.typeList = [...new Set(listHolder)]
+			
+		}
+
+		$scope.typeChecker = false
+
+		$scope.checkType = function() {
+			if(!$scope.activity.type) {
+				$scope.typeChecker = true
+			}
+		}
+
+		$scope.setSubtypes = function(){
+			$scope.subTypesList = []
+			if(!$scope.activity.type) return
+			else{
+					$scope.settings.forEach(function(set){
+					if(set.type === $scope.activity.type){
+						set.subTypes.forEach(function(sub){
+							$scope.subTypesList.push({name: sub.text})	
+						})
+					}
+				})
+			}
+		}
+
+		$scope.typeList = []
+
+		$scope.submitActivity = function(activity){
+		 	var token = $window.sessionStorage['jwt']
+
+			$http.post('/api/activity', activity,{
+				headers: {
+					'Authorization': `Bearer ${token}`
+				}
+			})
+			.success(function(data) {
+				$state.reload()
+			})
+			.error(function(err) {
+				console.log(err)
+			})
+		}
+
+		getTypes()
+		getUsers()
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('ActivityViewController', ['$scope', '$state', '$window', '$stateParams', '$http', '$q',
+	 function($scope, $state, $window, $stateParams, $http, $q) {
+
+
+	 	//Look into doubling the http requests!!! or not idk lol haha 
+	 	function getActivitySettings() {
+	 		var d = $q.defer();
+	 		$http.get('api/activity/' + $stateParams.id)
+	 			.success(function(act) {
+	 				$http.get('api/type-settings')
+			 			.success(function(set){
+			 				$scope.noUsers = false
+			 				$scope.noSubs = false
+			 				$scope.activity = act
+			 				$scope.settings = set
+			 				if($scope.activity.users.length === 0) {
+			 					$scope.noUsers = true
+			 				}
+			 				else if($scope.activity.subTypes.length === 0) {
+			 					$scope.noSubs = true
+			 				}
+
+			 				getUniqueTypes()
+			 				getUniqueSubtypes()
+			 				d.resolve()
+			 			})
+			 			.error(function(err) {
+			 				console.log(err)
+			 				d.reject()
+			 			})
+	 			})
+	 			.error(function(err) {
+	 				console.log(err)
+	 				d.reject()
+	 			})
+	 	}
+
+	 	function getSettings() {
+	 		$http.get('api/type-settings')
+	 			.success(function(data){
+	 				$scope.settings = data
+	 				getUniqueTypes()
+	 				getUniqueSubtypes()
+	 			})
+	 			.error(function(err) {
+	 				console.log(err)
+	 			})
+	 	}
+
+	 	function getUniqueTypes() {
+	 		var unUniqueTypes = $scope.settings.map(function(x){
+				return x.type
+			})
+			$scope.typeList = [...new Set(unUniqueTypes)]
+	 	}
+
+	 	function getUniqueSubtypes() {
+	 		var unSetSubtypes = $scope.settings.filter(function(set) {
+	 			return set.type === $scope.activity.type
+	 		})
+	 		var unUniqueSubtypes = unSetSubtypes.map(function(x){
+	 			return x.subTypes.map(function(sub){
+	 				return sub.text
+	 			})
+	 		}).reduce(function(a,b){return a.concat(b)})
+
+	 		var subArr = [...new Set(unUniqueSubtypes)].map(x =>{ 
+	 						var obj = {}
+	 						obj['name'] = x
+	 						return obj
+	 					})
+	 		$scope.subTypes = subArr
+	 	}
+
+ 		$(document).on('click','#activity-type-edit-button', function(){
+			$('#activity-type-edit')[0].click()
+		})
+		.on('click', '#activity-subTypes-edit-button', function() {
+			$('#activity-subTypes-edit')[0].click()
+		})
+		.on('click', '#activity-date-edit-button', function() {
+			$('#activity-date-edit')[0].click()
+		})
+
+		$scope.updateName = function(data) {
+			if(data.length < 2) return 'Name is too short'
+			else if(data === '') return 'Name is required'
+			else if(data.length > 45) return 'Name is too long'
+
+			return updateActivity(data, 'name')
+		}
+
+		$scope.updateType = function(data) {
+			if(data === '') return 'Type is Required'
+			$scope.updateSubtype('empty')
+
+			return updateActivity(data, 'type')
+		}
+
+		$scope.subDups = false
+
+		$scope.updateSubtypes = function(data) {
+			var names = data.map(x => x._id)
+			if([...new Set(names)].length < names.length) {
+				$scope.subDups = true
+				return
+			}
+			$scope.subDups = false
+			return updateActivity(data, 'subTypes')
+		}
+
+		$scope.updateValue = function(data) {
+				var reg = new RegExp('^\\d+$')
+
+				if (data === ''){
+					return 'Value is required'
+				}
+				else if (!reg.test(data)){
+					return 'Value must be an integer'
+				}
+				data = parseInt(data)
+				return updateActivity(data, 'value')
+		}
+
+		$scope.updateDate = function(data) {
+			if(data === '') return 'Date is required'
+			return updateActivity(data, 'date')
+		}
+
+		function updateActivity(data, field){
+				var token = $window.sessionStorage['jwt']
+				$scope.activity[field] = data
+				$http.put('/api/activity/' + $stateParams.id, $scope.activity,					+ $stateParams.activityId, $scope.activity,{
+					headers: {
+						'Authorization': `Bearer ${token}`
+					}
+				})
+				.success(function(data){
+					$state.reload()
+				})
+				.error(function(err) {
+					console.log(err)
+				})
+		}
+
+		$scope.subTags = false
+
+		$scope.toggleEditSubs = function() {
+			if ($scope.subTags) {
+				$scope.subTags = false
+			}
+			else {
+				$scope.subTags = true
+			}
+		}
+
+		$scope.deleteActivity = function(activity) {
+				swal({
+				  title: "Are you sure?",
+				  text: "You will not be able to recover this activity!",
+				  type: "warning",
+				  showCancelButton: true,
+				  confirmButtonColor: "#DD6B55",
+				  confirmButtonText: "Yes, delete it!",
+				  closeOnConfirm: true,
+				  html: false
+				}, function(){
+					$http.delete('api/activity/' + activity._id  )
+					.success(function(data){
+						userId = {'id': $stateParams.id}
+						$state.go('user',userId)
+					})
+					.error(function(err) {
+						console.log(err)
+					})
+				})
+			}
+
+	 	getActivitySettings()
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('ProgressSettingController', ['$scope', '$state', '$window', '$http', '$stateParams',
+	 function($scope, $state, $window, $http, $stateParams) {
+
+	 	$scope.deleteSetting = function() {
+				var token = $window.sessionStorage['jwt']
+				swal({
+				  title: "Are you sure?",
+				  text: "You will not be able to recover this Setting!",
+				  type: "warning",
+				  showCancelButton: true,
+				  confirmButtonColor: "#DD6B55",
+				  confirmButtonText: "Yes, delete it!",
+				  closeOnConfirm: true,
+				  html: false
+				}, function(){
+					$http.delete('/api/progress-settings/'+ $stateParams.id, {
+						headers: {
+							'Authorization': `Bearer ${token}`
+						}
+					})
+					.success(function(data){
+						$state.go('setting')
+					})
+					.error(function(err) {
+						console.log(err)
+					})
+				})
+			}
+
+		$scope.updateName = function(name) {
+			if (name === ''){
+				return 'Name is required'
+			}
+			updateSetting(name, 'name')
+		}
+
+		$scope.updateType = function(data) {
+			if (data === ''){
+				return 'Type is required'
+			}
+			return updateSetting(data, 'type')
+		}
+
+		$scope.subDups = false
+
+		$scope.updateSubtypes = function(data) {
+			var names = data.map(x => x._id)
+			if([...new Set(names)].length < names.length) {
+				$scope.subDups = true
+				return
+			}
+			$scope.subDups = false
+			return updateSetting(data, 'subTypes')
+		}
+
+		$scope.updateUsers = function(users) {
+			//This can definetly be made better. Needs to update users and delete users promotions
+			if($scope.setting.users.length > users.length){
+				var editRefs = $scope.setting.users.filter(function(user){
+					if (!users.map(x => x.userId).includes(user.userId)) {
+						return user
+					}
+				})
+				editRefs.forEach(function(r) {
+					var token = $window.sessionStorage['jwt']
+					var newUser = $scope.users.find(x => x._id === r.userId) //find the actually user from the subdocument of prog setting
+					var delIndex = newUser.settingProgress.indexOf($scope.setting._id)
+					newUser.settingProgress.splice(delIndex, 1)
+					$http.get('api/users/' + r.userId)
+						.success(function(userProgEdit) {
+							var progId = userProgEdit.progress.filter(function(prog) {
+									if(prog.settingId === $scope.setting._id) {
+										return prog
+									}
+							}).map(x => x._id)
+
+							var delProgIndex = newUser.progress.indexOf(progId[0])
+							newUser.progress.splice(delProgIndex, 1)
+
+							$http.put('api/users/' + r.userId, newUser, {
+								headers: {
+									'Authorization': `Bearer ${token}`
+								}
+							})
+							.success(function(data){
+								$http.delete('api/users/' + data._id + '/progress/' + progId[0])
+									.success(function(data) {
+										$state.reload()
+									})
+									.error(function(err) {
+										console.log(err)
+									})
+							})
+							.error(function(err) {
+								console.log(err)
+							})
+						})
+						.error(function(err) {
+							console.log(err)
+						})
+				})
+			}
+			updateSetting(users, 'users')
+		}
+
+
+		function updateSetting(data, field){
+			$scope.setting[field] = data
+			$http.put('api/progress-settings/' + $stateParams.id, $scope.setting)
+				.success(function(data){
+					$state.reload()
+				})
+				.error(function(err) {
+					console.log(err)
+				})
+		}
+
+		function getUsers() {
+			$http.get('api/users')
+				.success(function(data) {
+					$scope.users = data
+					sortUsers(data)
+				})
+				.error(function(err) {
+					console.log(err)
+				})
+		}
+
+		function sortUsers(users){
+			var sub = []
+			users.forEach(function(user) {
+				sub.push({userId: user._id, fullName: user.firstName + ' ' + user.lastName,
+							firstName: user.firstName, lastName: user.lastName})
+			})	
+			$scope.optionsList = sub 
+		}
+
+		function sortInitUsers(set){
+			var initMS = []
+			set.users.forEach(function(user) {
+				initMS.push({userId: user.userId, fullName: user.firstName + ' ' + user.lastName,
+							firstName: user.firstName, lastName: user.lastName})
+			})
+			$scope.initUsers = initMS
+		}
+
+		$scope.userTags = false
+		$scope.subTags = false
+
+		$scope.toggleEditSubs = function() {
+			if ($scope.subTags) {
+				$scope.subTags = false
+			}
+			else {
+				$scope.subTags = true
+			}
+		}
+
+		$scope.toggleEdit = function() {
+			if ($scope.userTags) {
+				$scope.userTags = false
+			}
+			else {
+				$scope.userTags = true
+			}
+		}
+
+		//have type show on edit click
+		$(document).on('click','#progress-type-edit-button', function(){
+			$('#progress-type-edit')[0].click()
+		} )
+
+	 	function getSetting(){
+	 		$http.get('api/progress-settings/' + $stateParams.id)
+	 			.success(function(data){
+	 				$http.get('api/type-settings')
+	 					.success(function(set) {
+	 						$scope.noUsers = false
+	 						$scope.noSubs = false
+			 				$scope.setting = data
+			 				if ($scope.setting.users.length === 0){
+			 					$scope.noUsers = true
+			 				}
+			 				else if($scope.setting.subTypes.length === 0){
+			 					$scope.noSubs = true
+			 				}
+			 				$scope.typeSetting = set
+			 				getUniqueTypes()
+				 			getUniqueSubtypes()
+			 				sortInitUsers(data)
+
+	 					})
+	 					.error(function(err) {
+	 						console.log(err)
+	 					})
+
+	 			})
+	 			.error(function(err) {
+	 				console.log(err)
+	 			})
+	 	}
+
+	 	function getUniqueTypes() {
+	 		var typeCopy = $scope.typeSetting
+	 		var unUniqueTypes = typeCopy.map(function(x){
+				return x.type
+			})
+			$scope.typeList = [...new Set(unUniqueTypes)]
+	 	}
+
+	 	function getUniqueSubtypes() {
+	 		var unSetSubtypes = $scope.typeSetting.filter(function(set) {
+	 			return set.type === $scope.setting.type
+	 		})
+	 		var unUniqueSubtypes = unSetSubtypes.map(function(x){
+	 			return x.subTypes.map(function(sub){
+	 				return sub.text
+	 			})
+	 		}).reduce(function(a,b){return a.concat(b)})
+
+
+	 		var subArr = [...new Set(unUniqueSubtypes)].map(x =>{ 
+	 						var obj = {}
+	 						obj['name'] = x
+	 						return obj
+	 					})
+	 		$scope.subTypes = subArr
+	 	}
+
+
+	 	getSetting()
+	 	getUsers()
+
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('TypeSettingController', ['$scope', '$state', '$window', '$http', '$stateParams',
 	 function($scope, $state, $window, $http, $stateParams) {
 
@@ -2023,6 +2039,84 @@
 			getProgress()
 
 
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('PromotionFormController', ['$scope', '$state', '$http', '$window', '$stateParams',
+		function($scope, $state, $http, $window, $stateParams) {
+
+			$scope.create = true
+			$scope.clientId = $stateParams['id']
+
+			var today = new Date();
+			$scope.minDate = today.toISOString();
+
+
+			function getSettings(){
+				$http.get('api/type-settings')
+					.success(function(data){
+						$scope.settings = data
+						setTypes()
+					})
+					.error(function(err) {
+						console.log(err)
+					})
+			}
+
+			function setTypes() {
+				var unUniqueTypes = $scope.settings.map(function(set){
+					return set.type
+				})
+				$scope.typeList = [...new Set(unUniqueTypes)]
+			}
+
+			$scope.subTypesList = [];
+
+			$scope.typeChecker = false
+
+			$scope.checkType = function(){
+				if(!$scope.promotion.type) {
+					$scope.typeChecker = true
+				}
+			}
+
+			$scope.setSubtypes = function() {
+				$scope.subTypesList = []
+				if(!$scope.promotion.type) return
+				else{
+					$scope.typeChecker = false
+					$scope.settings.forEach(function(set){
+						if(set.type === $scope.promotion.type){
+							set.subTypes.forEach(function(sub){
+								$scope.subTypesList.push({name: sub.text})
+							})
+						}
+					})
+				}
+			}
+
+			getSettings()
+
+			
+			$scope.submitPromotion = function(promotion) {
+				$scope.$broadcast('show-errors-check-validity');
+
+				if($scope.promotionForm.$invalid){return;}
+				var token = $window.sessionStorage['jwt']
+
+				$http.post('api/clients/' + $stateParams['id'] + '/promotions', promotion ,{
+					headers: {
+						"Authorization": `Bearer ${token}`
+					}
+				})
+				.success(function(data){
+						$state.reload()
+				})
+				.error(function(err){
+					console.log(err)
+				})
+			}
 	}])
 }());
 (function() {
@@ -2212,84 +2306,6 @@
 	 	}
 
 	 	getUsers()
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('PromotionFormController', ['$scope', '$state', '$http', '$window', '$stateParams',
-		function($scope, $state, $http, $window, $stateParams) {
-
-			$scope.create = true
-			$scope.clientId = $stateParams['id']
-
-			var today = new Date();
-			$scope.minDate = today.toISOString();
-
-
-			function getSettings(){
-				$http.get('api/type-settings')
-					.success(function(data){
-						$scope.settings = data
-						setTypes()
-					})
-					.error(function(err) {
-						console.log(err)
-					})
-			}
-
-			function setTypes() {
-				var unUniqueTypes = $scope.settings.map(function(set){
-					return set.type
-				})
-				$scope.typeList = [...new Set(unUniqueTypes)]
-			}
-
-			$scope.subTypesList = [];
-
-			$scope.typeChecker = false
-
-			$scope.checkType = function(){
-				if(!$scope.promotion.type) {
-					$scope.typeChecker = true
-				}
-			}
-
-			$scope.setSubtypes = function() {
-				$scope.subTypesList = []
-				if(!$scope.promotion.type) return
-				else{
-					$scope.typeChecker = false
-					$scope.settings.forEach(function(set){
-						if(set.type === $scope.promotion.type){
-							set.subTypes.forEach(function(sub){
-								$scope.subTypesList.push({name: sub.text})
-							})
-						}
-					})
-				}
-			}
-
-			getSettings()
-
-			
-			$scope.submitPromotion = function(promotion) {
-				$scope.$broadcast('show-errors-check-validity');
-
-				if($scope.promotionForm.$invalid){return;}
-				var token = $window.sessionStorage['jwt']
-
-				$http.post('api/clients/' + $stateParams['id'] + '/promotions', promotion ,{
-					headers: {
-						"Authorization": `Bearer ${token}`
-					}
-				})
-				.success(function(data){
-						$state.reload()
-				})
-				.error(function(err){
-					console.log(err)
-				})
-			}
 	}])
 }());
 (function() {
