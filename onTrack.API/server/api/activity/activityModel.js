@@ -80,10 +80,9 @@ ActivitySchema.pre('save', function(next) {
 					this.users.map(x => x.userId)
 			}
 		}, function(err, docs) {
-			console.log
 			if (err) next(err)
 			docs.forEach(function(user) {
-				if(!user.activity.map(x => x.toString().includes(activity._id.toString()))) {
+				if(!user.activity.map(x => x.toString()).includes(activity._id.toString())) {
 					user.activity.push(activity.id)
 					user.save(function(err, result) {
 						if(err) next(err)
@@ -94,29 +93,6 @@ ActivitySchema.pre('save', function(next) {
 			next()
 		})
 	}
-
-	// User.findById(doc.userId)
-	// 	.then(function(user) {
-	// 		if(!user) {
-	// 			console.log('err')
-	// 		}
-	// 		else if(user.activity.indexOf(doc._id) !== -1){
-	// 			console.log('ID already associated with user')
-	// 		}
-	// 		else {
-	// 			user.activity.push(doc._id)
-	// 			user.save(function(err) {
-	// 				if(err) {
-	// 					console.log(err)
-	// 				} else {
-	// 					return
-	// 				}
-	// 			})
-
-	// 		}
-	// 	}, function(err) {
-	// 		console.log(err)
-	// })
 
 	//algorithm.lookUpPromotions(doc)
 })
