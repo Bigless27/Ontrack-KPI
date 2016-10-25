@@ -83,9 +83,7 @@
 			}
 		}
 
-
 		$scope.typeList = []
-
 
 		$scope.submitActivity = function(activity){
 		 	var token = $window.sessionStorage['jwt']

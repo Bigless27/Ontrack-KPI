@@ -18,7 +18,7 @@
 			<td>
 				<span 
 					id = 'activity-type-edit'  
-					style = 'color:black; text-decoration:none;'
+					style = 'color:black; border: none;'
 					editable-select="activity.type" 
 					e-ng-options="s for s in typeList" onbeforesave = 'updateType($data)'
 				>
@@ -30,20 +30,42 @@
 			</td>
 		</tr>
 		<tr>
-			<th>SubType</th>
-			<td>
-				<span 
-					id = 'activity-subTypes-edit'  
-					style = 'color:black; text-decoration:none;'
-					editable-select="activity.subType" 
-					e-ng-options="s for s in subTypes" onbeforesave = 'updateSubtype($data)'
-				>
-					{{activity.subType || 'empty'}}
+			<th>Subtypes</th>
+			<td> 
+				<span ng-show = '!subTags'>
+					<ul ng-show = '!noSubs' ng-repeat = 'sub in activity.subTypes '>
+						<li>
+							{{sub.name}}
+						</li>
+					</ul>
+					<span ng-show = 'noSubs' class ='label label-danger'>Empty!</span>
+				</span>
+				<span ng-show = 'subTags' style = 'width: 200px;'>
+					<multiple-autocomplete 
+						ng-model="activity.subTypes"
+	     				object-property = "name"
+	     				suggestions-arr= "subTypes"
+	     				required = 'true'>
+					</multiple-autocomplete>
+					<span class = 'btn btn-info' ng-click = 'updateSubtypes(activity.subTypes)'><i class = 'glyphicon glyphicon-ok' aria-hidden = 'true'></i></span>
+					<span class = 'btn btn-danger' ng-click= 'toggleEditSubs()'><i class = 'glyphicon glyphicon-remove'></i></span>
 				</span>
 			</td>
 			<td>
-				<a href="" id = 'activity-subTypes-edit-button'>Edit</a>
+				<a ng-click = 'toggleEditSubs()' ng-show = '!subTags'>
+				Edit
+				</a>
 			</td>
+		</tr>
+		<tr>
+			<th>Users</th>
+			<td>
+				<ul ng-repeat = 'user in activity.users'>
+					<li>{{user.firstName}} {{user.lastName}}</li>
+				</ul>
+
+			</td>
+			<td>Edit</td>
 		</tr>
 		<tr>
 			<th>Value</th>
@@ -78,5 +100,5 @@
 </table>
 <span class = 'btn btn-danger' ng-click = 'deleteActivity(activity)'><i class="glyphicon glyphicon-trash" aria-hidden="true"></i></span>
 
-<div class = 'btn btn-default' ui-sref = 'user({id: activity.userId})'>Back</div>
+<div class = 'btn btn-default' ui-sref = 'activity'>Back</div>
 <div class ></div>

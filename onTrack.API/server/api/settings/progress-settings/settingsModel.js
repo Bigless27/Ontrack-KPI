@@ -24,7 +24,7 @@ var SettingsSchema = new Schema({
 
 SettingsSchema.pre('save', function(next) {
 	var progSetting = this
-	if(this.users.length === 0){
+	if (this.users.length === 0) {
 		next()
 	}
 	else{
@@ -32,8 +32,8 @@ SettingsSchema.pre('save', function(next) {
 			'_id': { $in: 
 					this.users.map(x => x.userId)
 				}
-		}, function(err, docs){
-			if (err) next(err)
+		}, function(err, docs) {
+			if (err) next(err)			// below works because there is only one city being pushed in at a time
 			docs.forEach(function(user) {//this only creates a progress if the settingsId isn't already associated witht the user
 				if(!user.settingProgress.map(x => x.toString()).includes(progSetting._id.toString())) { //check if the user is already associated with the progsetting
 					user.settingProgress.push(progSetting._id)
@@ -46,9 +46,9 @@ SettingsSchema.pre('save', function(next) {
 						})
 					})
 				}
+			})
 			next()
-			}
-		)}
+		}
 	)}
 })
 
@@ -58,7 +58,7 @@ SettingsSchema.pre('remove', function(next){
 	if(this.users.length === 0){
 		next()
 	}
-	else{
+	else {
 		User.find({
 			'_id': { $in: 
 					this.users.map(x => x.userId)
@@ -67,10 +67,10 @@ SettingsSchema.pre('remove', function(next){
 					if (err) next(err)
 					docs.forEach(function(user){
 						var setIndex = user.settingProgress.indexOf(progSetting._id)
+						if (setIndex < 0) next(new Error("Setting isn't associated"))
 						user.settingProgress.splice(setIndex,1)
 						var progIndex = user.progress.indexOf(progSetting._id)
 						user.progress.splice(progIndex, 1)
-						next()
 						user.save(function(err, saved){
 							if(err) next(err)
 							next()

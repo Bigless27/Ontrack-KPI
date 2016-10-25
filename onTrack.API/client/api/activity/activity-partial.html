@@ -7,12 +7,29 @@
 	<div class = 'row'>
 		<div ui-view></div>
 	</div>
-	<div class = 'row' ng-repeat = 'act in activities'>
-		<table class = 'table table-bordered' style = 'width: 320px;'>
-			<tr>
-				<th>Name</th>
-				<td>{{act.name}}</td>
-			</tr>
-		</table>
+	<div class = 'row'>
+		<div class = 'col col-md-6' ng-repeat = 'act in activities'>
+			<table class = 'table table-bordered' style = 'width: 320px;'>
+				<tr>
+					<th>Name</th>
+					<td>{{act.name}}</td>
+				</tr>
+				<tr>
+					<th>Type</th>
+					<td>{{act.type}}</td>
+				</tr>
+				<tr>
+					<th>Value</th>
+					<td>{{act.value}}</td>
+				</tr>
+				<span 
+					class = 'btn btn-default' 
+					ui-sref = 'activityView({id: act._id})'
+					style = 'margin-top: 20px'
+					>
+					View
+				</span>
+			</table>
+		</div>
 	</div>
 </div>

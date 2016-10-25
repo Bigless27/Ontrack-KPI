@@ -7,12 +7,21 @@
 	 	//Look into doubling the http requests!!! or not idk lol haha 
 	 	function getActivitySettings() {
 	 		var d = $q.defer();
-	 		$http.get('api/activity/' + $stateParams.activityId)
+	 		$http.get('api/activity/' + $stateParams.id)
 	 			.success(function(act) {
 	 				$http.get('api/type-settings')
 			 			.success(function(set){
+			 				$scope.noUsers = false
+			 				$scope.noSubs = false
 			 				$scope.activity = act
 			 				$scope.settings = set
+			 				if($scope.activity.users.length === 0) {
+			 					$scope.noUsers = true
+			 				}
+			 				else if($scope.activity.subTypes.length === 0) {
+			 					$scope.noSubs = true
+			 				}
+
 			 				getUniqueTypes()
 			 				getUniqueSubtypes()
 			 				d.resolve()
@@ -48,7 +57,6 @@
 	 	}
 
 	 	function getUniqueSubtypes() {
-
 	 		var unSetSubtypes = $scope.settings.filter(function(set) {
 	 			return set.type === $scope.activity.type
 	 		})
@@ -56,9 +64,14 @@
 	 			return x.subTypes.map(function(sub){
 	 				return sub.text
 	 			})
-	 		})
-	 		unUniqueSubtypes = unUniqueSubtypes.reduce(function(a,b){return a.concat(b)})
-	 		$scope.subTypes = [...new Set(unUniqueSubtypes)]
+	 		}).reduce(function(a,b){return a.concat(b)})
+
+	 		var subArr = [...new Set(unUniqueSubtypes)].map(x =>{ 
+	 						var obj = {}
+	 						obj['name'] = x
+	 						return obj
+	 					})
+	 		$scope.subTypes = subArr
 	 	}
 
  		$(document).on('click','#activity-type-edit-button', function(){
@@ -86,9 +99,7 @@
 			return updateActivity(data, 'type')
 		}
 
-		$scope.updateSubtype = function(data) {
-			if(data === '') return 'Subtype is Required'
-
+		$scope.updateSubtypes = function(data) {
 			return updateActivity(data, 'subType')
 		}
 
@@ -111,11 +122,9 @@
 		}
 
 		function updateActivity(data, field){
-				var d = $q.defer();
 				var token = $window.sessionStorage['jwt']
 				$scope.activity[field] = data
-				$http.put('/api/users/' + $stateParams.id + '/activity/' 
-					+ $stateParams.activityId, $scope.activity,{
+				$http.put('/api/activity/' + $stateParams.id, $scope.activity,					+ $stateParams.activityId, $scope.activity,{
 					headers: {
 						'Authorization': `Bearer ${token}`
 					}
@@ -126,8 +135,18 @@
 				.error(function(err) {
 					console.log(err)
 				})
+		}
 
+		$scope.subTags = false
+
+		$scope.toggleEditSubs = function() {
+			if ($scope.subTags) {
+				$scope.subTags = false
 			}
+			else {
+				$scope.subTags = true
+			}
+		}
 
 		$scope.deleteActivity = function(activity) {
 				swal({
