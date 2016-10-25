@@ -158,7 +158,7 @@
 			}
 		}
 
-		$scope.toggleEdit = function() {
+		$scope.toggleEditUsers = function() {
 			if ($scope.userTags) {
 				$scope.userTags = false
 			}

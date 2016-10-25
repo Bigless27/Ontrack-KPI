@@ -80,6 +80,7 @@ ActivitySchema.pre('save', function(next) {
 					this.users.map(x => x.userId)
 			}
 		}, function(err, docs) {
+			console.log
 			if (err) next(err)
 			docs.forEach(function(user) {
 				if(!user.activity.map(x => x.toString().includes(activity._id.toString()))) {
