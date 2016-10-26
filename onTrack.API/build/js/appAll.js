@@ -256,53 +256,6 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('ActivityController', ['$scope', '$state', '$window', '$stateParams', '$http', '$q',
-	 function($scope, $state, $window, $stateParams, $http, $q) {
-
-	 	
-
-	 	function getActivities() {
-	 		$http.get('api/activity')
-	 		 .success(function(data) {
-	 		 	$scope.activities = data
-	 		 })
-	 		 .error(function(err) {
-	 		 	console.log(err)
-	 		 })
-	 	}
-
-	 	getActivities()
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('LoginController', ['$scope', '$state', '$window', '$http',
-	 function($scope, $state, $window, $http) {
-
-			$scope.logUserIn = function(user) {
-				$scope.$broadcast('show-errors-check-validity');
-
-
-				if($scope.userForm.$invalid){return;}
-
-				$scope.err = true
-
-				$http.post('auth/signin', user)
-					.success(function(data) {
-						$scope.err = false
-						$window.sessionStorage.jwt = data['token']
-						$state.go('main')
-					})
-					.error(function(error) {
-						$scope.err = true
-						$scope.errMessage = error
-					})
-			}
-
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('ClientController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
 		function($scope, $state, $http, $window, $stateParams, $q) {
 		
@@ -439,6 +392,99 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('ActivityController', ['$scope', '$state', '$window', '$stateParams', '$http', '$q',
+	 function($scope, $state, $window, $stateParams, $http, $q) {
+
+	 	
+
+	 	function getActivities() {
+	 		$http.get('api/activity')
+	 		 .success(function(data) {
+	 		 	$scope.activities = data
+	 		 })
+	 		 .error(function(err) {
+	 		 	console.log(err)
+	 		 })
+	 	}
+
+	 	getActivities()
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('LoginController', ['$scope', '$state', '$window', '$http',
+	 function($scope, $state, $window, $http) {
+
+			$scope.logUserIn = function(user) {
+				$scope.$broadcast('show-errors-check-validity');
+
+
+				if($scope.userForm.$invalid){return;}
+
+				$scope.err = true
+
+				$http.post('auth/signin', user)
+					.success(function(data) {
+						$scope.err = false
+						$window.sessionStorage.jwt = data['token']
+						$state.go('main')
+					})
+					.error(function(error) {
+						$scope.err = true
+						$scope.errMessage = error
+					})
+			}
+
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('MainController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+
+			function getClients() {
+				$http.get('api/clients')
+					.success(function(data) {
+						$scope.clients = data
+					})
+					.error(function(err) {
+						console.log(err);
+					})
+			}
+
+			function getUsers() {
+				$http.get('api/users')
+					.success(function(data) {
+						$scope.users = data
+					})
+					.error(function(err) {
+						console.log(err)
+					})
+			}
+
+			getUsers() 
+			getClients()
+
+			$scope.optionsList = [
+			  {id: 1,  name : "Java"},
+			  {id: 2,  name : "C"},
+			  {id: 3,  name : "C++"},
+			  {id: 4,  name : "AngularJs"},
+			  {id: 5,  name : "JavaScript"}
+			];
+
+
+
+
+			$scope.logout = function() {
+				$window.sessionStorage.clear()
+				$state.go('login')
+			}
+		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('MainSettingsController', ['$scope', '$state', '$window', '$http',
 	 function($scope, $state, $window, $http) {
 
@@ -522,52 +568,6 @@
 					$scope.errMessage = error.message
 				})
 		}
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('MainController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
-
-			function getClients() {
-				$http.get('api/clients')
-					.success(function(data) {
-						$scope.clients = data
-					})
-					.error(function(err) {
-						console.log(err);
-					})
-			}
-
-			function getUsers() {
-				$http.get('api/users')
-					.success(function(data) {
-						$scope.users = data
-					})
-					.error(function(err) {
-						console.log(err)
-					})
-			}
-
-			getUsers() 
-			getClients()
-
-			$scope.optionsList = [
-			  {id: 1,  name : "Java"},
-			  {id: 2,  name : "C"},
-			  {id: 3,  name : "C++"},
-			  {id: 4,  name : "AngularJs"},
-			  {id: 5,  name : "JavaScript"}
-			];
-
-
-
-
-			$scope.logout = function() {
-				$window.sessionStorage.clear()
-				$state.go('login')
-			}
-		
 	}])
 }());
 (function() {
@@ -767,6 +767,578 @@
 			populateTypes()
 			getUser()
 		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('AdminController', ['$scope', '$state', '$http', '$window', '$stateParams',
+		function($scope, $state, $http, $window, $stateParams) {
+		
+
+
+		$scope.user = {
+
+		  };
+
+		$scope.uncheckAll = function() {
+		    $scope.user.roles = [];
+		};
+
+
+		$scope.add = function(data){
+				var token = $window.sessionStorage['jwt']
+
+				var client = {admins:[]}
+
+
+				$scope.client.admins.forEach(function(user) {
+					client.admins.push({id: user._id, email: user.email, firstName: user.firstName, lastName: user.lastName})
+				})
+
+
+				data.users.forEach(function(user){
+					if (client.admins.filter(function(e){return e.email == user.email}).length === 0) {
+					 	client.admins.push({id:user._id, email: user.email, firstName: user.firstName, lastName: user.lastName})
+					}
+				})
+
+
+				$http.put('/api/clients/' + $stateParams['id'], client, {
+					headers: {
+						'Authorization': `Bearer ${token}`
+					}
+				})
+				.success(function(data) {
+					$state.reload() //look into making this two way bound
+
+				})
+				.error(function(err) {
+					console.log(err)
+				})
+		}
+
+
+
+		function getUsers(){
+			$http.get('/api/users')
+				.success(function(users) {
+					users.forEach(function(user){
+						if(user){
+							$scope.optionsList.push(
+									{firstName: user.firstName, lastName: user.lastName, 
+										email: user.email, fullName: user.firstName + ' ' + user.lastName}
+								)
+						}
+						else{
+							$scope.optionsList = [{name: 'No users'}]
+						}
+					})
+				})
+				.error(function(err) {
+					console.log(err);
+				})
+		}
+
+		$scope.optionsList = []
+
+		getUsers()
+
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('ClientFormController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+
+			$scope.errorDisplay = false
+
+			$scope.createClient = function(data){
+				var token = $window.sessionStorage['jwt']
+
+
+				var names = $scope.clients.filter(function(client) {
+					return client.name == data.name
+				})
+
+				if(names.length > 0){
+					$scope.errorDisplay = true
+					$scope.oops = 'Name is already taken!'
+					return
+				}
+				else{
+					$http.post('/api/clients' , data ,{
+						headers: {
+							'Authorization': `Bearer ${token}`
+						}
+					})
+					.success(function(data){
+						var clientId = {'id': data._id + ''}
+						$state.go('client',clientId )
+					})
+					.error(function(err) {
+						$scope.errorDisplay = true
+						$scope.oops = err.message
+					})
+				}
+
+			}
+
+			function getAllUsers() {
+				$http.get('/api/users')
+					.success(function(users){
+						users.forEach(function(user){
+							if(user){
+								$scope.optionsList.push(
+										{firstName: user.firstName, lastName: user.lastName, 
+											email: user.email, fullName: user.firstName + ' ' + user.lastName}
+									)
+							}
+							else{
+								$scope.optionsList = [{name: 'No users'}]
+							}
+						})
+					})
+					.error(function(err){
+						console.log(err)
+					})
+			}
+
+			getAllUsers()
+
+			$scope.optionsList = [];
+
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('KPIController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
+		function($scope, $state, $http, $window, $stateParams, $q) {
+
+
+			function getKpiSettings() {
+		 		var d = $q.defer();
+		 		$http.get('api/clients/' + $stateParams.id + 
+		 			'/kpis/' + $stateParams.kpiId)
+		 			.success(function(kpi) {
+		 				$http.get('api/type-settings')
+				 			.success(function(set){
+				 				$scope.kpi = kpi
+				 				$scope.noSubtypes = false
+				 				if (kpi.subTypes.length === 0){
+				 					$scope.noSubtypes = true
+				 				}
+				 				$scope.settings = set
+				 				getUniqueTypes()
+				 				getUniqueSubtypes()
+				 				d.resolve()
+				 			})
+				 			.error(function(err) {
+				 				console.log(err)
+				 				d.reject()
+				 			})
+		 			})
+		 			.error(function(err) {
+		 				console.log(err)
+		 				d.reject()
+		 			})
+		 	}
+
+	 	function getUniqueTypes() {
+	 		var typeCopy = $scope.settings
+	 		var unUniqueTypes = typeCopy.map(function(x){
+				return x.type
+			})
+			$scope.typeList = [...new Set(unUniqueTypes)]
+	 	}
+
+
+
+	 	function getUniqueSubtypes() {
+	 		var unSetSubtypes = $scope.settings.filter(function(set) {
+	 			return set.type === $scope.kpi.type
+	 		})
+	 		var unUniqueSubtypes = unSetSubtypes.map(function(x){
+	 			return x.subTypes.map(function(sub){
+	 				return sub.text
+	 			})
+	 		}).reduce(function(a,b){return a.concat(b)})
+
+
+	 		var subArr = [...new Set(unUniqueSubtypes)].map(x =>{ 
+	 						var obj = {}
+	 						obj['name'] = x
+	 						return obj
+	 					})
+	 		$scope.subTypes = subArr
+	 	}
+
+	 	$scope.userTags = false
+
+		$scope.toggleEdit = function() {
+			if($scope.userTags){
+				$scope.userTags = false
+			}
+			else{
+				$scope.userTags = true
+			}
+		}
+
+
+		$scope.deleteKpi = function() {
+			var token = $window.sessionStorage['jwt']
+			swal({
+			  title: "Are you sure?",
+			  text: "You will not be able to recover this kpi!",
+			  type: "warning",
+			  showCancelButton: true,
+			  confirmButtonColor: "#DD6B55",
+			  confirmButtonText: "Yes, delete it!",
+			  closeOnConfirm: true,
+			  html: false
+			}, function(){
+				$http.delete('/api/clients/' + $stateParams['id']
+				 + '/kpis/' + $stateParams['kpiId'], {
+					headers: {
+						'Authorization': `Bearer ${token}`
+					}
+				})
+				.success(function(data){
+					var clientId = {'id': $stateParams['id'] + ''}
+					$state.go('client',clientId )
+				})
+				.error(function(err) {
+					console.log(err)
+				})
+			})
+		}
+
+			$scope.updateName = function(data) {
+				if (data === ''){
+					return 'Name is Required'
+				}
+				else if (data.length < 2){
+					return 'Name must be more than one character'
+				}
+				return updateKpi(data, 'name')
+			}
+
+
+			$scope.updateType = function(data) {
+				if (data === ''){
+					return 'Type is required'
+				}
+				return updateKpi(data, 'type')
+			}
+
+			$scope.updateSubtypes = function(data) {
+				return updateKpi(data,'subTypes')			
+			}
+
+			//have type show on edit click
+			$(document).on('click','#kpi-type-edit-button', function(){
+				$('#kpi-type-edit')[0].click()
+			} )
+			
+
+
+			$scope.updateValue = function(data) {
+				if (data === ''){
+					return 'Value is required'
+				}
+				return updateKpi(data, 'value')
+			}
+
+
+			function updateKpi(data, field){
+				var d = $q.defer();
+				var token = $window.sessionStorage['jwt']
+				$scope.kpi[field] = data
+
+				$http.put('/api/clients/' + $stateParams.id
+				 + '/kpis/' + $stateParams.kpiId, $scope.kpi,{
+					headers: {
+						'Authorization': `Bearer ${token}`
+					}
+				})
+				.success(function(data){
+					$state.reload()
+				})
+				.error(function(err) {
+					console.log(err)
+				})
+			}
+
+			getKpiSettings()	
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('PromotionController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
+		function($scope, $state, $http, $window, $stateParams, $q) {
+
+			//have type show on edit click
+			$(document).on('click','.promotion-startDate-edit-button', function(){
+				$('#promotion-startDate-edit')[0].click()
+			})
+			.on('click','.promotion-endDate-edit-button', function(){
+				$('#promotion-endDate-edit')[0].click()
+			})
+			.on('click', '.promotion-edit-type-button', function(){
+				$('#promotion-type-edit')[0].click()
+			})
+
+
+			$scope.updateName = function(data) {
+				if (data === ''){
+					return 'Name is Required'
+				}
+				else if (data.length < 2){
+					return 'Name must be more than one character'
+				}
+				return updatePromotion(data, 'name')
+			}
+
+
+			$scope.updateType = function(data) {
+				if (data === ''){
+					return 'Type is required'
+				}
+				return updatePromotion(data, 'type')
+			}
+
+			$scope.updateSubtypes = function(data) {
+				return updatePromotion(data,'subTypes')			
+			}
+
+			$scope.updateCompletionValue = function(data) {
+				var reg = new RegExp('^\\d+$')
+
+				if (data === ''){
+					return 'Value is required'
+				}
+				else if (!reg.test(data)){
+					return 'Value must be an integer'
+				}
+				data['completionValue'] = parseInt(data['completionValue'])
+				return updatePromotion(data, 'completionValue')
+			}
+
+			$scope.updateDescription = function(data) {
+				if (data === '') {
+					return 'Description is required'
+				}
+				return updatePromotion(data, 'description')
+			}
+
+			$scope.updateStartDate = function(data) {
+				var today = new Date();
+				  if (data < today.toISOString()) {
+				  	return "Start Date can't be in the past"
+				  }
+				  return updatePromotion(data, 'startDate')
+			}
+
+			$scope.updateEndDate = function(data) {
+				if ($scope.promotion.startDate.toISOString() > data){
+					return 'End date must come after start date'
+				}
+				return updatePromotion(data, 'endDate')
+			}
+
+
+			function updatePromotion(data, field){
+				var d = $q.defer();
+				var token = $window.sessionStorage['jwt']
+				$scope.promotion[field] = data
+
+				$http.put('/api/clients/' + $stateParams.id
+				 + '/promotions/' + $stateParams.promoId, $scope.promotion,{
+					headers: {
+						'Authorization': `Bearer ${token}`
+					}
+				})
+				.success(function(data){
+					$state.reload()
+				})
+				.error(function(err) {
+					console.log(err)
+				})
+
+			}
+
+
+			$scope.deletePromotion = function() {
+				var token = $window.sessionStorage['jwt']
+
+				swal({
+				  title: "Are you sure?",
+				  text: "You will not be able to recover this client!",
+				  type: "warning",
+				  showCancelButton: true,
+				  confirmButtonColor: "#DD6B55",
+				  confirmButtonText: "Yes, delete it!",
+				  closeOnConfirm: true,
+				  html: false
+				}, function(){
+					$http.delete('/api/clients/' + $stateParams.id
+					 + '/promotions/' + $stateParams.promoId, {
+						headers: {
+							'Authorization': `Bearer ${token}`
+						}
+					})
+					.success(function(data){
+						var clientId = {'id': $stateParams['id'] + ''}
+						$state.go('client',clientId )
+					})
+					.error(function(err) {
+						console.log(err)
+					})
+				})
+
+			}
+
+			function getUniqueTypes() {
+		 		var typeCopy = $scope.settings
+		 		var unUniqueTypes = typeCopy.map(function(x){
+					return x.type
+				})
+				$scope.typeList = [...new Set(unUniqueTypes)]
+	 		}
+
+		 	function getUniqueSubtypes() {
+		 		var unSetSubtypes = $scope.settings.filter(function(set) {
+		 			return set.type === $scope.promotion.type
+		 		})
+		 		var unUniqueSubtypes = unSetSubtypes.map(function(x){
+		 			return x.subTypes.map(function(sub){
+		 				return sub.text
+		 			})
+		 		}).reduce(function(a,b){return a.concat(b)})
+
+
+		 		var subArr = [...new Set(unUniqueSubtypes)].map(x =>{ 
+		 						var obj = {}
+		 						obj['name'] = x
+		 						return obj
+		 					})
+		 		$scope.subTypes = subArr
+		 	}
+
+			$scope.subTags = false
+
+			$scope.toggleEdit = function() {
+				if($scope.subTags){
+					$scope.subTags = false
+				}
+				else{
+					$scope.subTags = true
+				}
+			}
+
+			function getPromotions(){
+				$http.get('api/clients/' + $stateParams.id 
+						+ '/promotions/' + $stateParams.promoId)
+							.success(function(data) {
+								$scope.promotion = data;
+								$scope.promotion['startDate'] = new Date($scope.promotion.startDate) 
+								$scope.promotion['endDate'] =  new Date($scope.promotion.endDate)
+								getTypes()
+							})
+							.error(function(err) {
+								console.log(err);
+							})
+			}
+
+			function getTypes(){
+				$http.get('api/type-settings')
+					.success(function(data){
+						$scope.typeList = data.map(x => x.type)
+						$scope.noSubtypes = false
+						if ($scope.promotion.subTypes.length === 0){
+							$scope.noSubtypes = true
+						}
+						$scope.settings = data
+						getProgresses()
+						getUniqueTypes()
+						getUniqueSubtypes()
+					})
+					.error(function(err){
+						console.log(err)
+					})
+			}
+
+			function getProgresses() {
+				$http.get('api/progress-settings')
+					.success(function(progs) {
+						var matches =  matchProgressToPromotion(progs)
+						$scope.promoProgress = matches
+						getUsers(matches)
+					})
+					.error(function(err) {
+						console.log(err)
+					})
+			}
+
+			function getUsers(matches) {
+				var usersMatches = matches.map(function(x) {
+					return x._id
+				})
+				//you have the setting Id
+				
+				$http.get('api/users')
+					.success(function(data) {
+						var theUsers = []
+						data.forEach(function(user) {
+							if (user.progress.length > 0) {
+								user.progress.forEach(function(prog) {
+									if(prog.settingId == usersMatches[0]) {
+										user['progress'] = prog
+										theUsers.push(user)
+									}
+								})
+							}
+						})
+						$scope.matchingUsers = theUsers
+					})
+					.error(function(err){
+						console.log(err)
+					})
+			}
+
+			// This grabs progress of matching types and subtypes. The subtypes are only
+			// matched if there is an exact match on them
+			function matchProgressToPromotion(progs) {
+				var matchedTypesProg = progs.filter(x => x.type === $scope.promotion.type)
+				//$scope.noSubtypes applies to the $scope.promotion
+				if (!$scope.noSubtypes){
+					var subMatchArr = []
+					var subTypeStrings = $scope.promotion.subTypes.map(x => x.name)
+					matchedTypesProg.forEach(function(prog) {
+						prog.subTypes.forEach(function(sub) {
+							if (!subMatchArr.includes(prog)) { //this matches the setting to the promotions setting match
+								var progSubsInArr = prog.subTypes.map(x => x.name)
+								if (progSubsInArr.join('') === subTypeStrings.join('')) {
+										subMatchArr.push(prog)
+								}
+							}
+						})
+					})
+					matchedTypesProg = subMatchArr
+				}
+				return matchedTypesProg
+				//this is the progress Setting not just the progress
+			}
+
+			$scope.getPercentage = function(x,y) {
+				if (x === 0) {
+					return 0
+				}
+				else {
+				return (x/y * 100).toFixed(2)
+				}
+			}
+
+			getPromotions()		
 	}])
 }());
 (function() {
@@ -1076,9 +1648,9 @@
 		}
 
 		$scope.updateUsers = function(users) {
-			console.log('hey')
 			//This can definetly be made better. Needs to update users and delete users promotions
 			if($scope.activity.users.length > users.length) {
+				//this finds out what user has been removed from the activity
 				var editRefs = $scope.activity.users.filter(function(user){
 					if (!users.map(x => x.userId).includes(user.userId)) {
 						return user
@@ -1086,29 +1658,18 @@
 				})
 				editRefs.forEach(function(r) {
 					var token = $window.sessionStorage['jwt']
-					var newUser = $scope.users.find(x => x._id === r.userId) //find the actually user from the subdocument of 
+					var newUser = $scope.users.find(x => x._id === r.userId) //find the actual user from the subdocument of 
 					var delIndex = newUser.activity.indexOf($scope.activity._id)
-					console.log(newUser)
 					newUser.activity.splice(delIndex, 1)
-					console.log(newUser)
-					// $http.put('api/users/' + r.userId, newUser, {
-					// 	headers: {
-					// 		'Authorization': `Bearer ${token}`
-					// 	}
-					// })
-					// 	.success(function(data){
-					// 		// $http.delete('api/users/' + data._id + '/progress/' + progId[0])
-					// 		// 	.success(function(data) {
-					// 		// 		$state.reload()
-					// 		// 	})
-					// 		// 	.error(function(err) {
-					// 		// 		console.log(err)
-					// 		// 	})
-					// 	})
-					// 	.error(function(err) {
-					// 		console.log(err)
-					// 	})
-				})
+					$http.put('api/users/' + r.userId, newUser, {
+						headers: {
+							'Authorization': `Bearer ${token}`
+						}
+					})
+					.error(function(err) {
+						console.log(err)
+					})
+				 })
 			}
 			updateActivity(users, 'users')
 		}
@@ -1136,578 +1697,6 @@
 			}
 		getUsers()
 	 	getActivitySettings()
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('AdminController', ['$scope', '$state', '$http', '$window', '$stateParams',
-		function($scope, $state, $http, $window, $stateParams) {
-		
-
-
-		$scope.user = {
-
-		  };
-
-		$scope.uncheckAll = function() {
-		    $scope.user.roles = [];
-		};
-
-
-		$scope.add = function(data){
-				var token = $window.sessionStorage['jwt']
-
-				var client = {admins:[]}
-
-
-				$scope.client.admins.forEach(function(user) {
-					client.admins.push({id: user._id, email: user.email, firstName: user.firstName, lastName: user.lastName})
-				})
-
-
-				data.users.forEach(function(user){
-					if (client.admins.filter(function(e){return e.email == user.email}).length === 0) {
-					 	client.admins.push({id:user._id, email: user.email, firstName: user.firstName, lastName: user.lastName})
-					}
-				})
-
-
-				$http.put('/api/clients/' + $stateParams['id'], client, {
-					headers: {
-						'Authorization': `Bearer ${token}`
-					}
-				})
-				.success(function(data) {
-					$state.reload() //look into making this two way bound
-
-				})
-				.error(function(err) {
-					console.log(err)
-				})
-		}
-
-
-
-		function getUsers(){
-			$http.get('/api/users')
-				.success(function(users) {
-					users.forEach(function(user){
-						if(user){
-							$scope.optionsList.push(
-									{firstName: user.firstName, lastName: user.lastName, 
-										email: user.email, fullName: user.firstName + ' ' + user.lastName}
-								)
-						}
-						else{
-							$scope.optionsList = [{name: 'No users'}]
-						}
-					})
-				})
-				.error(function(err) {
-					console.log(err);
-				})
-		}
-
-		$scope.optionsList = []
-
-		getUsers()
-
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('KPIController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
-		function($scope, $state, $http, $window, $stateParams, $q) {
-
-
-			function getKpiSettings() {
-		 		var d = $q.defer();
-		 		$http.get('api/clients/' + $stateParams.id + 
-		 			'/kpis/' + $stateParams.kpiId)
-		 			.success(function(kpi) {
-		 				$http.get('api/type-settings')
-				 			.success(function(set){
-				 				$scope.kpi = kpi
-				 				$scope.noSubtypes = false
-				 				if (kpi.subTypes.length === 0){
-				 					$scope.noSubtypes = true
-				 				}
-				 				$scope.settings = set
-				 				getUniqueTypes()
-				 				getUniqueSubtypes()
-				 				d.resolve()
-				 			})
-				 			.error(function(err) {
-				 				console.log(err)
-				 				d.reject()
-				 			})
-		 			})
-		 			.error(function(err) {
-		 				console.log(err)
-		 				d.reject()
-		 			})
-		 	}
-
-	 	function getUniqueTypes() {
-	 		var typeCopy = $scope.settings
-	 		var unUniqueTypes = typeCopy.map(function(x){
-				return x.type
-			})
-			$scope.typeList = [...new Set(unUniqueTypes)]
-	 	}
-
-
-
-	 	function getUniqueSubtypes() {
-	 		var unSetSubtypes = $scope.settings.filter(function(set) {
-	 			return set.type === $scope.kpi.type
-	 		})
-	 		var unUniqueSubtypes = unSetSubtypes.map(function(x){
-	 			return x.subTypes.map(function(sub){
-	 				return sub.text
-	 			})
-	 		}).reduce(function(a,b){return a.concat(b)})
-
-
-	 		var subArr = [...new Set(unUniqueSubtypes)].map(x =>{ 
-	 						var obj = {}
-	 						obj['name'] = x
-	 						return obj
-	 					})
-	 		$scope.subTypes = subArr
-	 	}
-
-	 	$scope.userTags = false
-
-		$scope.toggleEdit = function() {
-			if($scope.userTags){
-				$scope.userTags = false
-			}
-			else{
-				$scope.userTags = true
-			}
-		}
-
-
-		$scope.deleteKpi = function() {
-			var token = $window.sessionStorage['jwt']
-			swal({
-			  title: "Are you sure?",
-			  text: "You will not be able to recover this kpi!",
-			  type: "warning",
-			  showCancelButton: true,
-			  confirmButtonColor: "#DD6B55",
-			  confirmButtonText: "Yes, delete it!",
-			  closeOnConfirm: true,
-			  html: false
-			}, function(){
-				$http.delete('/api/clients/' + $stateParams['id']
-				 + '/kpis/' + $stateParams['kpiId'], {
-					headers: {
-						'Authorization': `Bearer ${token}`
-					}
-				})
-				.success(function(data){
-					var clientId = {'id': $stateParams['id'] + ''}
-					$state.go('client',clientId )
-				})
-				.error(function(err) {
-					console.log(err)
-				})
-			})
-		}
-
-			$scope.updateName = function(data) {
-				if (data === ''){
-					return 'Name is Required'
-				}
-				else if (data.length < 2){
-					return 'Name must be more than one character'
-				}
-				return updateKpi(data, 'name')
-			}
-
-
-			$scope.updateType = function(data) {
-				if (data === ''){
-					return 'Type is required'
-				}
-				return updateKpi(data, 'type')
-			}
-
-			$scope.updateSubtypes = function(data) {
-				return updateKpi(data,'subTypes')			
-			}
-
-			//have type show on edit click
-			$(document).on('click','#kpi-type-edit-button', function(){
-				$('#kpi-type-edit')[0].click()
-			} )
-			
-
-
-			$scope.updateValue = function(data) {
-				if (data === ''){
-					return 'Value is required'
-				}
-				return updateKpi(data, 'value')
-			}
-
-
-			function updateKpi(data, field){
-				var d = $q.defer();
-				var token = $window.sessionStorage['jwt']
-				$scope.kpi[field] = data
-
-				$http.put('/api/clients/' + $stateParams.id
-				 + '/kpis/' + $stateParams.kpiId, $scope.kpi,{
-					headers: {
-						'Authorization': `Bearer ${token}`
-					}
-				})
-				.success(function(data){
-					$state.reload()
-				})
-				.error(function(err) {
-					console.log(err)
-				})
-			}
-
-			getKpiSettings()	
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('ClientFormController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
-
-			$scope.errorDisplay = false
-
-			$scope.createClient = function(data){
-				var token = $window.sessionStorage['jwt']
-
-
-				var names = $scope.clients.filter(function(client) {
-					return client.name == data.name
-				})
-
-				if(names.length > 0){
-					$scope.errorDisplay = true
-					$scope.oops = 'Name is already taken!'
-					return
-				}
-				else{
-					$http.post('/api/clients' , data ,{
-						headers: {
-							'Authorization': `Bearer ${token}`
-						}
-					})
-					.success(function(data){
-						var clientId = {'id': data._id + ''}
-						$state.go('client',clientId )
-					})
-					.error(function(err) {
-						$scope.errorDisplay = true
-						$scope.oops = err.message
-					})
-				}
-
-			}
-
-			function getAllUsers() {
-				$http.get('/api/users')
-					.success(function(users){
-						users.forEach(function(user){
-							if(user){
-								$scope.optionsList.push(
-										{firstName: user.firstName, lastName: user.lastName, 
-											email: user.email, fullName: user.firstName + ' ' + user.lastName}
-									)
-							}
-							else{
-								$scope.optionsList = [{name: 'No users'}]
-							}
-						})
-					})
-					.error(function(err){
-						console.log(err)
-					})
-			}
-
-			getAllUsers()
-
-			$scope.optionsList = [];
-
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('PromotionController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
-		function($scope, $state, $http, $window, $stateParams, $q) {
-
-			//have type show on edit click
-			$(document).on('click','.promotion-startDate-edit-button', function(){
-				$('#promotion-startDate-edit')[0].click()
-			})
-			.on('click','.promotion-endDate-edit-button', function(){
-				$('#promotion-endDate-edit')[0].click()
-			})
-			.on('click', '.promotion-edit-type-button', function(){
-				$('#promotion-type-edit')[0].click()
-			})
-
-
-			$scope.updateName = function(data) {
-				if (data === ''){
-					return 'Name is Required'
-				}
-				else if (data.length < 2){
-					return 'Name must be more than one character'
-				}
-				return updatePromotion(data, 'name')
-			}
-
-
-			$scope.updateType = function(data) {
-				if (data === ''){
-					return 'Type is required'
-				}
-				return updatePromotion(data, 'type')
-			}
-
-			$scope.updateSubtypes = function(data) {
-				return updatePromotion(data,'subTypes')			
-			}
-
-			$scope.updateCompletionValue = function(data) {
-				var reg = new RegExp('^\\d+$')
-
-				if (data === ''){
-					return 'Value is required'
-				}
-				else if (!reg.test(data)){
-					return 'Value must be an integer'
-				}
-				data['completionValue'] = parseInt(data['completionValue'])
-				return updatePromotion(data, 'completionValue')
-			}
-
-			$scope.updateDescription = function(data) {
-				if (data === '') {
-					return 'Description is required'
-				}
-				return updatePromotion(data, 'description')
-			}
-
-			$scope.updateStartDate = function(data) {
-				var today = new Date();
-				  if (data < today.toISOString()) {
-				  	return "Start Date can't be in the past"
-				  }
-				  return updatePromotion(data, 'startDate')
-			}
-
-			$scope.updateEndDate = function(data) {
-				if ($scope.promotion.startDate.toISOString() > data){
-					return 'End date must come after start date'
-				}
-				return updatePromotion(data, 'endDate')
-			}
-
-
-			function updatePromotion(data, field){
-				var d = $q.defer();
-				var token = $window.sessionStorage['jwt']
-				$scope.promotion[field] = data
-
-				$http.put('/api/clients/' + $stateParams.id
-				 + '/promotions/' + $stateParams.promoId, $scope.promotion,{
-					headers: {
-						'Authorization': `Bearer ${token}`
-					}
-				})
-				.success(function(data){
-					$state.reload()
-				})
-				.error(function(err) {
-					console.log(err)
-				})
-
-			}
-
-
-			$scope.deletePromotion = function() {
-				var token = $window.sessionStorage['jwt']
-
-				swal({
-				  title: "Are you sure?",
-				  text: "You will not be able to recover this client!",
-				  type: "warning",
-				  showCancelButton: true,
-				  confirmButtonColor: "#DD6B55",
-				  confirmButtonText: "Yes, delete it!",
-				  closeOnConfirm: true,
-				  html: false
-				}, function(){
-					$http.delete('/api/clients/' + $stateParams.id
-					 + '/promotions/' + $stateParams.promoId, {
-						headers: {
-							'Authorization': `Bearer ${token}`
-						}
-					})
-					.success(function(data){
-						var clientId = {'id': $stateParams['id'] + ''}
-						$state.go('client',clientId )
-					})
-					.error(function(err) {
-						console.log(err)
-					})
-				})
-
-			}
-
-			function getUniqueTypes() {
-		 		var typeCopy = $scope.settings
-		 		var unUniqueTypes = typeCopy.map(function(x){
-					return x.type
-				})
-				$scope.typeList = [...new Set(unUniqueTypes)]
-	 		}
-
-		 	function getUniqueSubtypes() {
-		 		var unSetSubtypes = $scope.settings.filter(function(set) {
-		 			return set.type === $scope.promotion.type
-		 		})
-		 		var unUniqueSubtypes = unSetSubtypes.map(function(x){
-		 			return x.subTypes.map(function(sub){
-		 				return sub.text
-		 			})
-		 		}).reduce(function(a,b){return a.concat(b)})
-
-
-		 		var subArr = [...new Set(unUniqueSubtypes)].map(x =>{ 
-		 						var obj = {}
-		 						obj['name'] = x
-		 						return obj
-		 					})
-		 		$scope.subTypes = subArr
-		 	}
-
-			$scope.subTags = false
-
-			$scope.toggleEdit = function() {
-				if($scope.subTags){
-					$scope.subTags = false
-				}
-				else{
-					$scope.subTags = true
-				}
-			}
-
-			function getPromotions(){
-				$http.get('api/clients/' + $stateParams.id 
-						+ '/promotions/' + $stateParams.promoId)
-							.success(function(data) {
-								$scope.promotion = data;
-								$scope.promotion['startDate'] = new Date($scope.promotion.startDate) 
-								$scope.promotion['endDate'] =  new Date($scope.promotion.endDate)
-								getTypes()
-							})
-							.error(function(err) {
-								console.log(err);
-							})
-			}
-
-			function getTypes(){
-				$http.get('api/type-settings')
-					.success(function(data){
-						$scope.typeList = data.map(x => x.type)
-						$scope.noSubtypes = false
-						if ($scope.promotion.subTypes.length === 0){
-							$scope.noSubtypes = true
-						}
-						$scope.settings = data
-						getProgresses()
-						getUniqueTypes()
-						getUniqueSubtypes()
-					})
-					.error(function(err){
-						console.log(err)
-					})
-			}
-
-			function getProgresses() {
-				$http.get('api/progress-settings')
-					.success(function(progs) {
-						var matches =  matchProgressToPromotion(progs)
-						$scope.promoProgress = matches
-						getUsers(matches)
-					})
-					.error(function(err) {
-						console.log(err)
-					})
-			}
-
-			function getUsers(matches) {
-				var usersMatches = matches.map(function(x) {
-					return x._id
-				})
-				//you have the setting Id
-				
-				$http.get('api/users')
-					.success(function(data) {
-						var theUsers = []
-						data.forEach(function(user) {
-							if (user.progress.length > 0) {
-								user.progress.forEach(function(prog) {
-									if(prog.settingId == usersMatches[0]) {
-										user['progress'] = prog
-										theUsers.push(user)
-									}
-								})
-							}
-						})
-						$scope.matchingUsers = theUsers
-					})
-					.error(function(err){
-						console.log(err)
-					})
-			}
-
-			// This grabs progress of matching types and subtypes. The subtypes are only
-			// matched if there is an exact match on them
-			function matchProgressToPromotion(progs) {
-				var matchedTypesProg = progs.filter(x => x.type === $scope.promotion.type)
-				//$scope.noSubtypes applies to the $scope.promotion
-				if (!$scope.noSubtypes){
-					var subMatchArr = []
-					var subTypeStrings = $scope.promotion.subTypes.map(x => x.name)
-					matchedTypesProg.forEach(function(prog) {
-						prog.subTypes.forEach(function(sub) {
-							if (!subMatchArr.includes(prog)) { //this matches the setting to the promotions setting match
-								var progSubsInArr = prog.subTypes.map(x => x.name)
-								if (progSubsInArr.join('') === subTypeStrings.join('')) {
-										subMatchArr.push(prog)
-								}
-							}
-						})
-					})
-					matchedTypesProg = subMatchArr
-				}
-				return matchedTypesProg
-				//this is the progress Setting not just the progress
-			}
-
-			$scope.getPercentage = function(x,y) {
-				if (x === 0) {
-					return 0
-				}
-				else {
-				return (x/y * 100).toFixed(2)
-				}
-			}
-
-			getPromotions()		
 	}])
 }());
 (function() {
@@ -1778,6 +1767,7 @@
 				editRefs.forEach(function(r) {
 					var token = $window.sessionStorage['jwt']
 					var newUser = $scope.users.find(x => x._id === r.userId) //find the actually user from the subdocument of prog setting
+					console.log(newUser)
 					var delIndex = newUser.settingProgress.indexOf($scope.setting._id)
 					newUser.settingProgress.splice(delIndex, 1)
 					$http.get('api/users/' + r.userId)

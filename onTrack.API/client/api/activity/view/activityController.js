@@ -198,9 +198,9 @@
 		}
 
 		$scope.updateUsers = function(users) {
-			console.log('hey')
 			//This can definetly be made better. Needs to update users and delete users promotions
 			if($scope.activity.users.length > users.length) {
+				//this finds out what user has been removed from the activity
 				var editRefs = $scope.activity.users.filter(function(user){
 					if (!users.map(x => x.userId).includes(user.userId)) {
 						return user
@@ -208,29 +208,18 @@
 				})
 				editRefs.forEach(function(r) {
 					var token = $window.sessionStorage['jwt']
-					var newUser = $scope.users.find(x => x._id === r.userId) //find the actually user from the subdocument of 
+					var newUser = $scope.users.find(x => x._id === r.userId) //find the actual user from the subdocument of 
 					var delIndex = newUser.activity.indexOf($scope.activity._id)
-					console.log(newUser)
 					newUser.activity.splice(delIndex, 1)
-					console.log(newUser)
-					// $http.put('api/users/' + r.userId, newUser, {
-					// 	headers: {
-					// 		'Authorization': `Bearer ${token}`
-					// 	}
-					// })
-					// 	.success(function(data){
-					// 		// $http.delete('api/users/' + data._id + '/progress/' + progId[0])
-					// 		// 	.success(function(data) {
-					// 		// 		$state.reload()
-					// 		// 	})
-					// 		// 	.error(function(err) {
-					// 		// 		console.log(err)
-					// 		// 	})
-					// 	})
-					// 	.error(function(err) {
-					// 		console.log(err)
-					// 	})
-				})
+					$http.put('api/users/' + r.userId, newUser, {
+						headers: {
+							'Authorization': `Bearer ${token}`
+						}
+					})
+					.error(function(err) {
+						console.log(err)
+					})
+				 })
 			}
 			updateActivity(users, 'users')
 		}
