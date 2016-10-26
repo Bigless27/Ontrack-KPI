@@ -55,16 +55,18 @@ SettingsSchema.pre('save', function(next) {
 
 SettingsSchema.pre('remove', function(next){
 	var progSetting = this
+	console.log(progSetting.users.map(x => x.userId))
 	if(this.users.length === 0){
 		next()
 	}
 	else {
 		User.find({
 			'_id': { $in: 
-					this.users.map(x => x.userId)
+					progSetting.users.map(x => x.userId)
 					}
 				}, function(err, docs) {
 					if (err) next(err)
+					if (docs.length < 1) next(new Error("The user associate was deleted but the ref wasn't"))
 					docs.forEach(function(user){
 						var setIndex = user.settingProgress.indexOf(progSetting._id)
 						if (setIndex < 0) next(new Error("Setting isn't associated"))

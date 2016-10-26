@@ -49,7 +49,7 @@ UserSchema.pre('remove', function(next) {
 
 
     
-    Activity.find({'users.userId' : this._id}, function(err, activity) {
+    Activity.find({'users.userId' : delUser._id}, function(err, activity) {
         if (err) next(err)
         if (activity) {
             activity.forEach(function(act) {
@@ -61,6 +61,23 @@ UserSchema.pre('remove', function(next) {
             })
         }
     })
+
+    SettingProgress.find({'users.userId' : delUser._id}, function(err, setProg) {
+        if (err) next(err)
+        if(setProg) {
+            setProg.forEach(function(set) {
+                var delIndex = set.users.map(x => x.userId).indexOf(delUser._id.toString())
+                set.users.splice(delIndex, 1)
+                set.save(function(err) {
+                    if (err) next(err)
+                })
+            })
+        }
+    })
+
+
+
+    // Client.find({'admin.'})
 
     next()
 
