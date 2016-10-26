@@ -6,6 +6,7 @@
 			$scope.errorDisplay = false
 
 			$scope.createClient = function(data){
+				console.log(data)
 				var token = $window.sessionStorage['jwt']
 
 
@@ -33,7 +34,6 @@
 						$scope.oops = err.message
 					})
 				}
-
 			}
 
 			function getAllUsers() {

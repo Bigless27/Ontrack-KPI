@@ -103,8 +103,8 @@ exports.put = function(req, res, next) {
 exports.post = function(req, res, next) {
   var newclient = req.body;
   newclient.owner = req.user
-  newclient.admins = req.user
-  newclient.usersClient = req.user
+  newclient.admins.push(req.user)
+  newclient.usersClient.push(req.user)
 
   Client.create(newclient)
     .then(function(client) {

@@ -6,19 +6,22 @@ var User = require('../users/userModel')
 var adminSchema = new Schema({
 	email: {type: String},
 	firstName: {type: String},
-	lastName: {type: String}
+	lastName: {type: String},
+	userId: {type: String}
 })
 
 var clientUsersSchema = new Schema({
 	email: {type: String},
 	firstName: {type: String},
-	lastName: {type: String}
+	lastName: {type: String},
+	userId: {type: String}
 })
 
 var ownerSchema = new Schema({
 	email: {type: String},
 	firstName: {type: String},
-	lastName: {type: String}
+	lastName: {type: String},
+	userId: {type: String}
 })
 
 
