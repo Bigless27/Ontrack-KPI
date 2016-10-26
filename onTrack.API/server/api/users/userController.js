@@ -87,16 +87,6 @@ exports.me = function(req, res) {
    res.json(req.user.toJson());
 };
 
-exports.matchingUsers = function(req, res, next) {
-   id = req.params
-   console.log(id)
-   // User.find({'type': matchType})
-   // .then(function(users) {
-   //    res.json(users)
-   // }, function(err) {
-   //    next(err)
-   // })
-}
 
 function customizer(objValue, srcValue){
   if(Array.isArray(objValue)){

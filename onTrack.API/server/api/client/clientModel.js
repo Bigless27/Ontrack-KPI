@@ -61,20 +61,19 @@ ClientSchema.post('save', function(doc) {
 		})
 })
 
-ClientSchema.post('remove', function(doc){
-	//this require here is a patch!!!!! look to refactor better in future
+ClientSchema.pre('remove', function(next){
+	//this require here is a patch!!!!! look to refactor better in future from circular dependency
 	var Kpis = require('./kpi/kpiModel'),
 		Promotions = require('./promotions/promotionModel'),
-		kpiIds = doc.kpis.map(k => k._id),
-		promotionIds = doc.promotions.map(p => p._id)
+		kpiIds = this.kpis.map(k => k._id),
+		promotionIds = this.promotions.map(p => p._id)
 
 	Kpis.remove({ _id: {$in: kpiIds}}, function(err) {
-		if(err) console.log(err)
-
+		if(err) next(err)
 	})
 
 	Promotions.remove({ _id: {$in: promotionIds}}, function(err) {
-		if(err) console.log(err)
+		if(err) next(err)
 	})
 })
 

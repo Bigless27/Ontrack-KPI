@@ -2,7 +2,6 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema
 var bcrypt = require('bcrypt') 
 var jwt = require('express-jwt');
-var KPI = require('../client/kpi/kpiModel')
 
 var UserSchema = new Schema({
     email: { type: String, unique: true, required: true, index: true },
@@ -34,6 +33,47 @@ UserSchema.pre('save', function(next) {
 
     this.password = this.encryptPassword(this.password);
     next()
+})
+
+UserSchema.pre('remove', function(next) {
+    // this require here is a patch!!! look to refactor in furture from circular dependency
+    var Client = require('../client/clientModel'),
+        SettingProgress = require('../settings/progress-settings/settingsModel'),
+        Progress = require('./progress/progressModel'),
+        Activity = require('../activity/activityModel')
+
+    // delete all activity refs that this user is associated with
+    // delete all settingProgress this user is associated with
+    // delete all Clients that this user is associated with
+    delUser = this
+
+
+    
+    Activity.find({'users.userId' : this._id}, function(err, activity) {
+        if (err) next(err)
+        if (activity) {
+            activity.forEach(function(act) {
+               var delIndex = act.users.map(x => x.userId).indexOf(delUser._id.toString())
+               act.users.splice(delIndex, 1)
+               act.save(function(err) {
+                if (err) next(err)
+               })
+            })
+        }
+    })
+
+    next()
+
+    // next(new Error('stopper'))
+
+    // Progress.remove({ userId: this._id}, function(err) {
+    //     if (err) next(err)
+    // })
+
+
+
+
+
 })
 
 UserSchema.methods = {
