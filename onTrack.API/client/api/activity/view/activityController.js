@@ -237,8 +237,7 @@
 				}, function(){
 					$http.delete('api/activity/' + activity._id  )
 					.success(function(data){
-						userId = {'id': $stateParams.id}
-						$state.go('user',userId)
+						$state.go('activity')
 					})
 					.error(function(err) {
 						console.log(err)

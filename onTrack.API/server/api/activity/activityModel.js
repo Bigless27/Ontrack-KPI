@@ -34,12 +34,13 @@ ActivitySchema.pre('remove', function(next) {
 					this.users.map(x => x.userId)
 					}
 			}, function(err, docs) {
+
 				if (err) next(err) 
-				docs.forEach(function(users) {
-					var actIndex = user.activity.indexOf(progSetting._id)
+				docs.forEach(function(user) {
+					var actIndex = user.activity.indexOf(activity._id)
 					if (actIndex < 0) next(new Error("activity isn't associated"))
-					user.activty.splice(actIndex, 1)
-					user.saved(function(err, saved) {
+					user.activity.splice(actIndex, 1)
+					user.save(function(err, saved) {
 						if (err) next(err)
 						next()
 					})
