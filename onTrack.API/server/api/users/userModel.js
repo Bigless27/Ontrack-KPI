@@ -75,40 +75,11 @@ UserSchema.pre('remove', function(next) {
         }
     })
 
+    
 
-    // finding by email because including a user id was taking to long
-    // look to include userId in client model in the future
-    Client.find({'admin.email' : delUser._id}, function(err, clients) {
-        if (err) next(err)
-        if (clients) {
-            clients.forEach(function(client) {
-                if(client.owner.map(x => x.userId).indexOf(delUser._id.toString()) < 0) {
-                    client.remove(function(err) {
-                        if (err) next(err)
-                        next()
-                    })
-                }
-                var delIndex = client.usersClient.map(x => x.userId).indexOf(delUser._id.toString())
-                client.usersClient.splice(delIndex, 1)
-                var delIndex = client.admins.map(x => x.userId).indexOf(delUser._id.toString())
-                client.admins.splice(delIndex, 1)
-                client.save()
-            })
-        }
-    })
+
 
     next()
-
-    // next(new Error('stopper'))
-
-    // Progress.remove({ userId: this._id}, function(err) {
-    //     if (err) next(err)
-    // })
-
-
-
-
-
 })
 
 UserSchema.methods = {

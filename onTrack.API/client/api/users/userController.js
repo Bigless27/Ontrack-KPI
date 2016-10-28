@@ -12,16 +12,30 @@
 				  showCancelButton: true,
 				  confirmButtonColor: "#DD6B55",
 				  confirmButtonText: "Yes, delete it!",
-				  closeOnConfirm: true,
 				  html: false
-				}, function(){
-					$http.delete('/api/users/' + $stateParams.id)
-					.success(function(data){
-						$state.go('main' )
-					})
-					.error(function(err) {
-						console.log(err)
-					})
+				}).then(function() {
+					console.log($scope.clientOwners.indexOf($scope.user.email >= 0))
+
+					if ($scope.clientOwners.indexOf($scope.user.email) >= 0) {
+						swal({
+								title: 'User is an owner of a client!',
+								text: 'Please transfer ownership of client before deleting user!',
+								type: 'error'
+							})
+					}
+					else {
+						$http.delete('/api/users/' + $stateParams.id)
+						.success(function(data){
+							swal({
+									title: 'User Deleted',
+									type: 'success'
+								})
+							$state.go('main' )
+						})
+						.error(function(err) {
+							console.log(err)
+						})
+					}
 				})
 			}
 
@@ -103,6 +117,7 @@
 				$http.get('/api/users/' + $stateParams.id)
 					.success(function(data){
 						$scope.user = data
+						getClients()
 					})
 					.error(function(err) {
 						console.log(err)
@@ -118,6 +133,23 @@
 							return x.type
 						})
 						$scope.typeList = [...new Set(unUniqueTypes)]
+					})
+					.error(function(err) {
+						console.log(err)
+					})
+			}
+
+			function getClients() {
+				$http.get('api/clients/findClients/' + $scope.user.email)
+					.success(function(data) {
+						if (data.length > 1) {
+							var owners = data.map(x => x.owner).reduce((a, b) => a.concat(b))
+							$scope.clientOwners = owners.map(x => x.email)
+						}
+						else {
+							$scope.clientOwners = []
+						}
+						
 					})
 					.error(function(err) {
 						console.log(err)

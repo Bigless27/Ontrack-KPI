@@ -135,9 +135,15 @@ exports.delete = function(req, res, next) {
   });
 };
 
-exports.FindClient = function(id) {
-  var client = Client.findById(id)
-  return client
+exports.findClients = function(req, res, next) {
+  var email  = req.params.email
+
+  Client.find({'admins.email' : email}, function(err, clients) {
+    if (err) next(err)
+    res.json(clients)
+  })
+
+
 }
 
 function customizer(objValue, srcValue){
