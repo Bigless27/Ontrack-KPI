@@ -51,7 +51,7 @@ UserSchema.pre('remove', function(next) {
     
     Activity.find({'users.userId' : delUser._id}, function(err, activity) {
         if (err) next(err)
-        if (activity) {
+        if (activity.length > 0) {
             activity.forEach(function(act) {
                var delIndex = act.users.map(x => x.userId).indexOf(delUser._id.toString())
                act.users.splice(delIndex, 1)
@@ -64,7 +64,7 @@ UserSchema.pre('remove', function(next) {
 
     SettingProgress.find({'users.userId' : delUser._id}, function(err, setProg) {
         if (err) next(err)
-        if (setProg) {
+        if (setProg.length > 0) {
             setProg.forEach(function(set) {
                 var delIndex = set.users.map(x => x.userId).indexOf(delUser._id.toString())
                 set.users.splice(delIndex, 1)
@@ -75,9 +75,31 @@ UserSchema.pre('remove', function(next) {
         }
     })
 
-    
+    Client.find({'usersClient.email': delUser.email}, function(err, clients) {
+        if (err) next(err)
+        if (clients.length > 0) {
+            clients.forEach(function(client) {
+                var adminEmails = client.reduceEmailArray('admins', 'email')
+                var userEmails = client.reduceEmailArray('usersClient', 'email')
+  
+                var adminIndex = adminEmails.indexOf(delUser.email)
 
+                var usersIndex = userEmails.indexOf(delUser.email)
+                if (adminIndex >= 0) {
+                    client.admins.splice(adminIndex, 1)
+                }
+                else if(usersIndex >= 0) {
+                    client.usersClient.splice(usersIndex, 1)
+                }
+                client.save(function(err, saved) {
+                    if (err) next(err)
+                })
+            })
+            
+        }
+        
 
+    })
 
     next()
 })

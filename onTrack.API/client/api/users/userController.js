@@ -14,14 +14,13 @@
 				  confirmButtonText: "Yes, delete it!",
 				  html: false
 				}).then(function() {
-					console.log($scope.clientOwners.indexOf($scope.user.email >= 0))
-
 					if ($scope.clientOwners.indexOf($scope.user.email) >= 0) {
 						swal({
 								title: 'User is an owner of a client!',
 								text: 'Please transfer ownership of client before deleting user!',
 								type: 'error'
 							})
+						return
 					}
 					else {
 						$http.delete('/api/users/' + $stateParams.id)
@@ -142,7 +141,7 @@
 			function getClients() {
 				$http.get('api/clients/findClients/' + $scope.user.email)
 					.success(function(data) {
-						if (data.length > 1) {
+						if (data.length > 0) {
 							var owners = data.map(x => x.owner).reduce((a, b) => a.concat(b))
 							$scope.clientOwners = owners.map(x => x.email)
 						}

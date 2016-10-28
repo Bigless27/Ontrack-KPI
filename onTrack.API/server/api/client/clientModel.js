@@ -83,7 +83,13 @@ ClientSchema.pre('remove', function(next){
 ClientSchema.methods = {
 	checkAdmin: function(user) {
 		return  _.includes(this.admins.toString(), user._id)
- 	}
+ 	},
+
+ 	  reduceEmailArray: function(field, param) {
+        return this[field].map(x => x[param])
+                // .reduce((a,b) => a.concat(b)))
+                // .map(x => console.log(x[param]))
+    }
 }
 
 
