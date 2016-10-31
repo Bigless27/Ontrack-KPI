@@ -16,11 +16,12 @@
 	 	</span>
  	</div>
  	<div>
- 		Owner: {{client.owner[0].firstName}} {{client.owner[0].lastName}}
-
-		<span class = 'btn btn-danger' ng-click = 'deleteClient()'>Delete Client</span>
+ 		<span>
+	 		Owner: {{client.owner[0].firstName}} {{client.owner[0].lastName}}
+ 		</span>
+ 		<span ui-sref = 'client.switchOwner'><a href="">Edit</a></span>
  	</div>
-
+		<span class = 'btn btn-danger' ng-click = 'deleteClient()'>Delete Client</span>
  	<div ui-view class = 'create-view'></div>
  </div>
 <div class = 'table-holder'>

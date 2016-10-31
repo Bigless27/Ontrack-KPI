@@ -3,8 +3,6 @@
 	.controller('AdminController', ['$scope', '$state', '$http', '$window', '$stateParams',
 		function($scope, $state, $http, $window, $stateParams) {
 		
-
-
 		$scope.user = {
 
 		  };
@@ -45,8 +43,6 @@
 					console.log(err)
 				})
 		}
-
-
 
 		function getUsers(){
 			$http.get('/api/users')

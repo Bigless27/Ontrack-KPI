@@ -64,6 +64,10 @@
 						templateUrl:'client/api/client/admin/admin-add-partial.html',
 						controller: 'AdminController'
 					})
+					.state('client.switchOwner', {
+						templateUrl: 'client/api/client/owner/owner-partial.html',
+						controller: 'OwnerController'
+					})
 					.state('kpi', {
 						url: '/client/:id/kpis/:kpiId',
 						templateUrl: 'client/api/client/kpi/kpi-partial.html',
@@ -125,6 +129,7 @@
 						templateUrl: 'client/api/activity/view/activity-view-partial.html',
 						controller: 'ActivityViewController'
 					})
+
 			}])
 			.run(function(editableOptions) {
 			  editableOptions.theme = 'bs3'; // bootstrap3 theme. Can be also 'bs2', 'default'

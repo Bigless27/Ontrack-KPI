@@ -1,0 +1,22 @@
+ <div class = "form-group">
+    <label id = 'admin-label'>Transfer Client Ownership</label>
+    <div class = "input-group">
+      <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+      <select 
+          name ='type'
+          ng-model = "user"
+          ng-options="t.fullName for t in optionsList"
+          class = "form-control"
+          id = "type"
+          required
+        >
+        </select>
+    </div>
+<!--     <span ng-show = 'success' class = 'alert alert-success'>Client Ownership Transfered</span> -->
+      <class="help-block" ng-if= "userForm.users.$error.required">Value is required</p>
+</div>
+
+<div id = 'admin-button-container'>
+  <span class = 'btn btn-primary' ng-click = 'transfer(user)'>Transfer</span>
+  <span class = 'btn btn-danger' ui-sref = 'client({id: client._id})'>Close</span>
+</div>

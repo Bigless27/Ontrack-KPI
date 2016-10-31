@@ -129,6 +129,20 @@
 					})
 			}
 
+			function getUsers() {
+				$http.get('api/users')
+					.success(function(data) {
+						$scope.users = []
+						data.forEach(function(){
+							$scope.users.push({name: data.firstName + ' ' + data.lastName})
+						})
+
+					})
+					.error(function(err) {
+						console.log(err)
+					})
+			}
+
 			getClients()
 			getClient()
 
