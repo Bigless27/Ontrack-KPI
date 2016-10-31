@@ -97,7 +97,10 @@
 				.error(function(err) {
 					console.log(err)
 				})
+			}).done(function() {
+				return
 			})
+
 		}
 
 			$scope.updateName = function(data) {
