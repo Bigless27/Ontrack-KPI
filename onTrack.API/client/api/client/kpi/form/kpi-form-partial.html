@@ -46,7 +46,6 @@
 				  ng-model="kpi.subTypes"
 				  object-property="name"
 				  suggestions-arr="subTypesList"
-				  required = 'true'
 				  ng-click = 'checkType()'>
 				</multiple-autocomplete>
 				</div>
@@ -75,14 +74,14 @@
 		</div>
 
 
-		<div id = 'sandbox' ng-if = 'sandbox'>
-			
-		</div>
 
-		<p ng-if = 'err'>{{oops}}</p>
+		<p ng-if = 'err' class = 'alert alert-danger'>{{oops}}</p>
 
 
 		<button type = 'button' ng-click = "submitKpi(kpi)" class = "btn btn-primary">Submit</button>
 		<div ng-if = '!create' class = 'btn btn-default' ui-sref = 'kpi({id: kpi._id})'>Close</div>
 		<div ng-if = 'create' class = 'btn btn-default' ui-sref = 'client({id: clientId})'>Close</div>
 </form>
+		<div id = 'sandbox' ng-if = 'sandbox'>
+			
+		</div>

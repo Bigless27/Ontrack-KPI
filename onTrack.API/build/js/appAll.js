@@ -276,6 +276,33 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('LoginController', ['$scope', '$state', '$window', '$http',
+	 function($scope, $state, $window, $http) {
+
+			$scope.logUserIn = function(user) {
+				$scope.$broadcast('show-errors-check-validity');
+
+
+				if($scope.userForm.$invalid){return;}
+
+				$scope.err = true
+
+				$http.post('auth/signin', user)
+					.success(function(data) {
+						$scope.err = false
+						$window.sessionStorage.jwt = data['token']
+						$state.go('main')
+					})
+					.error(function(error) {
+						$scope.err = true
+						$scope.errMessage = error
+					})
+			}
+
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('ClientController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
 		function($scope, $state, $http, $window, $stateParams, $q) {
 		
@@ -337,6 +364,8 @@
 					.error(function(err) {
 						console.log(err)
 					})
+				}).done(function(){
+					return
 				})
 
 			}
@@ -407,33 +436,6 @@
 			getClient()
 
 		
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('LoginController', ['$scope', '$state', '$window', '$http',
-	 function($scope, $state, $window, $http) {
-
-			$scope.logUserIn = function(user) {
-				$scope.$broadcast('show-errors-check-validity');
-
-
-				if($scope.userForm.$invalid){return;}
-
-				$scope.err = true
-
-				$http.post('auth/signin', user)
-					.success(function(data) {
-						$scope.err = false
-						$window.sessionStorage.jwt = data['token']
-						$state.go('main')
-					})
-					.error(function(error) {
-						$scope.err = true
-						$scope.errMessage = error
-					})
-			}
-
 	}])
 }());
 (function() {
@@ -908,146 +910,6 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('AdminController', ['$scope', '$state', '$http', '$window', '$stateParams',
-		function($scope, $state, $http, $window, $stateParams) {
-		
-
-
-		$scope.user = {
-
-		  };
-
-		$scope.uncheckAll = function() {
-		    $scope.user.roles = [];
-		};
-
-
-		$scope.add = function(data){
-				var token = $window.sessionStorage['jwt']
-
-				var client = {admins:[]}
-
-
-				$scope.client.admins.forEach(function(user) {
-					client.admins.push({id: user._id, email: user.email, firstName: user.firstName, lastName: user.lastName})
-				})
-
-
-				data.users.forEach(function(user){
-					if (client.admins.filter(function(e){return e.email == user.email}).length === 0) {
-					 	client.admins.push({id:user._id, email: user.email, firstName: user.firstName, lastName: user.lastName})
-					}
-				})
-
-
-				$http.put('/api/clients/' + $stateParams['id'], client, {
-					headers: {
-						'Authorization': `Bearer ${token}`
-					}
-				})
-				.success(function(data) {
-					$state.reload() //look into making this two way bound
-
-				})
-				.error(function(err) {
-					console.log(err)
-				})
-		}
-
-
-
-		function getUsers(){
-			$http.get('/api/users')
-				.success(function(users) {
-					users.forEach(function(user){
-						if(user){
-							$scope.optionsList.push(
-									{firstName: user.firstName, lastName: user.lastName, 
-										email: user.email, fullName: user.firstName + ' ' + user.lastName}
-								)
-						}
-						else{
-							$scope.optionsList = [{name: 'No users'}]
-						}
-					})
-				})
-				.error(function(err) {
-					console.log(err);
-				})
-		}
-
-		$scope.optionsList = []
-
-		getUsers()
-
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('ClientFormController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
-
-			$scope.errorDisplay = false
-
-			$scope.createClient = function(data){
-				console.log(data)
-				var token = $window.sessionStorage['jwt']
-
-
-				var names = $scope.clients.filter(function(client) {
-					return client.name == data.name
-				})
-
-				if(names.length > 0){
-					$scope.errorDisplay = true
-					$scope.oops = 'Name is already taken!'
-					return
-				}
-				else{
-					$http.post('/api/clients' , data ,{
-						headers: {
-							'Authorization': `Bearer ${token}`
-						}
-					})
-					.success(function(data){
-						var clientId = {'id': data._id + ''}
-						$state.go('client',clientId )
-					})
-					.error(function(err) {
-						$scope.errorDisplay = true
-						$scope.oops = err.message
-					})
-				}
-			}
-
-			function getAllUsers() {
-				$http.get('/api/users')
-					.success(function(users){
-						users.forEach(function(user){
-							if(user){
-								$scope.optionsList.push(
-										{firstName: user.firstName, lastName: user.lastName, 
-											email: user.email, fullName: user.firstName + ' ' + user.lastName}
-									)
-							}
-							else{
-								$scope.optionsList = [{name: 'No users'}]
-							}
-						})
-					})
-					.error(function(err){
-						console.log(err)
-					})
-			}
-
-			getAllUsers()
-
-			$scope.optionsList = [];
-
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('ActivityViewController', ['$scope', '$state', '$window', '$stateParams', '$http', '$q',
 	 function($scope, $state, $window, $stateParams, $http, $q) {
 
@@ -1290,10 +1152,153 @@
 						console.log(err)
 					})
 				})
+				.done(function() {
+					return
+				})
 		}
 
 		getUsers()
 	 	getActivitySettings()
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('AdminController', ['$scope', '$state', '$http', '$window', '$stateParams',
+		function($scope, $state, $http, $window, $stateParams) {
+		
+
+
+		$scope.user = {
+
+		  };
+
+		$scope.uncheckAll = function() {
+		    $scope.user.roles = [];
+		};
+
+
+		$scope.add = function(data){
+				var token = $window.sessionStorage['jwt']
+
+				var client = {admins:[]}
+
+
+				$scope.client.admins.forEach(function(user) {
+					client.admins.push({id: user._id, email: user.email, firstName: user.firstName, lastName: user.lastName})
+				})
+
+
+				data.users.forEach(function(user){
+					if (client.admins.filter(function(e){return e.email == user.email}).length === 0) {
+					 	client.admins.push({id:user._id, email: user.email, firstName: user.firstName, lastName: user.lastName})
+					}
+				})
+
+
+				$http.put('/api/clients/' + $stateParams['id'], client, {
+					headers: {
+						'Authorization': `Bearer ${token}`
+					}
+				})
+				.success(function(data) {
+					$state.reload() //look into making this two way bound
+
+				})
+				.error(function(err) {
+					console.log(err)
+				})
+		}
+
+
+
+		function getUsers(){
+			$http.get('/api/users')
+				.success(function(users) {
+					users.forEach(function(user){
+						if(user){
+							$scope.optionsList.push(
+									{firstName: user.firstName, lastName: user.lastName, 
+										email: user.email, fullName: user.firstName + ' ' + user.lastName}
+								)
+						}
+						else{
+							$scope.optionsList = [{name: 'No users'}]
+						}
+					})
+				})
+				.error(function(err) {
+					console.log(err);
+				})
+		}
+
+		$scope.optionsList = []
+
+		getUsers()
+
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('ClientFormController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+
+			$scope.errorDisplay = false
+
+			$scope.createClient = function(data){
+				console.log(data)
+				var token = $window.sessionStorage['jwt']
+
+
+				var names = $scope.clients.filter(function(client) {
+					return client.name == data.name
+				})
+
+				if(names.length > 0){
+					$scope.errorDisplay = true
+					$scope.oops = 'Name is already taken!'
+					return
+				}
+				else{
+					$http.post('/api/clients' , data ,{
+						headers: {
+							'Authorization': `Bearer ${token}`
+						}
+					})
+					.success(function(data){
+						var clientId = {'id': data._id + ''}
+						$state.go('client',clientId )
+					})
+					.error(function(err) {
+						$scope.errorDisplay = true
+						$scope.oops = err.message
+					})
+				}
+			}
+
+			function getAllUsers() {
+				$http.get('/api/users')
+					.success(function(users){
+						users.forEach(function(user){
+							if(user){
+								$scope.optionsList.push(
+										{firstName: user.firstName, lastName: user.lastName, 
+											email: user.email, fullName: user.firstName + ' ' + user.lastName}
+									)
+							}
+							else{
+								$scope.optionsList = [{name: 'No users'}]
+							}
+						})
+					})
+					.error(function(err){
+						console.log(err)
+					})
+			}
+
+			getAllUsers()
+
+			$scope.optionsList = [];
+
 	}])
 }());
 (function() {
@@ -1578,6 +1583,8 @@
 					.error(function(err) {
 						console.log(err)
 					})
+				}).done(function() {
+					return
 				})
 
 			}
@@ -1753,6 +1760,8 @@
 					.error(function(err) {
 						console.log(err)
 					})
+				}).done(function() {
+					return
 				})
 			}
 
@@ -2172,7 +2181,6 @@
 				}
 			}
 
-
 			$scope.setSubtypes = function() {
 				$scope.subTypesList = []
 				if(!$scope.kpi.type) return
@@ -2193,7 +2201,7 @@
 			$scope.submitKpi = function(kpi) {
 				$scope.$broadcast('show-errors-check-validity');
 
-				if($scope.kpiForm.$invalid){return;}
+				if ($scope.kpiForm.$invalid){return}
 
 				var token = $window.sessionStorage['jwt']
 
@@ -2201,12 +2209,13 @@
 					return x.name == kpi.name
 				})
 
-				if(names.length > 0){
+				if (names.length > 0) {
 					$scope.err = true
 					$scope.oops = 'Name is already taken!'
 					return
 				}
 				else{
+					console.log('hey')
 					$http.post('api/clients/' + $stateParams['id'] + '/kpis', kpi ,{
 						headers: {
 							"Authorization": `Bearer ${token}`

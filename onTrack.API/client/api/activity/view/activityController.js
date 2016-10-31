@@ -242,6 +242,9 @@
 						console.log(err)
 					})
 				})
+				.done(function() {
+					return
+				})
 		}
 
 		getUsers()

@@ -25,6 +25,8 @@
 					.error(function(err) {
 						console.log(err)
 					})
+				}).done(function() {
+					return
 				})
 			}
 

@@ -34,7 +34,6 @@
 				}
 			}
 
-
 			$scope.setSubtypes = function() {
 				$scope.subTypesList = []
 				if(!$scope.kpi.type) return
@@ -55,7 +54,7 @@
 			$scope.submitKpi = function(kpi) {
 				$scope.$broadcast('show-errors-check-validity');
 
-				if($scope.kpiForm.$invalid){return;}
+				if ($scope.kpiForm.$invalid){return}
 
 				var token = $window.sessionStorage['jwt']
 
@@ -63,12 +62,13 @@
 					return x.name == kpi.name
 				})
 
-				if(names.length > 0){
+				if (names.length > 0) {
 					$scope.err = true
 					$scope.oops = 'Name is already taken!'
 					return
 				}
 				else{
+					console.log('hey')
 					$http.post('api/clients/' + $stateParams['id'] + '/kpis', kpi ,{
 						headers: {
 							"Authorization": `Bearer ${token}`
