@@ -440,6 +440,52 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('MainController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+
+			function getClients() {
+				$http.get('api/clients')
+					.success(function(data) {
+						$scope.clients = data
+					})
+					.error(function(err) {
+						console.log(err);
+					})
+			}
+
+			function getUsers() {
+				$http.get('api/users')
+					.success(function(data) {
+						$scope.users = data
+					})
+					.error(function(err) {
+						console.log(err)
+					})
+			}
+
+			getUsers() 
+			getClients()
+
+			$scope.optionsList = [
+			  {id: 1,  name : "Java"},
+			  {id: 2,  name : "C"},
+			  {id: 3,  name : "C++"},
+			  {id: 4,  name : "AngularJs"},
+			  {id: 5,  name : "JavaScript"}
+			];
+
+
+
+
+			$scope.logout = function() {
+				$window.sessionStorage.clear()
+				$state.go('login')
+			}
+		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('MainSettingsController', ['$scope', '$state', '$window', '$http',
 	 function($scope, $state, $window, $http) {
 
@@ -501,52 +547,6 @@
 	 	loadTypeSettings()
 	 	loadProgressSettings()
 
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('MainController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
-
-			function getClients() {
-				$http.get('api/clients')
-					.success(function(data) {
-						$scope.clients = data
-					})
-					.error(function(err) {
-						console.log(err);
-					})
-			}
-
-			function getUsers() {
-				$http.get('api/users')
-					.success(function(data) {
-						$scope.users = data
-					})
-					.error(function(err) {
-						console.log(err)
-					})
-			}
-
-			getUsers() 
-			getClients()
-
-			$scope.optionsList = [
-			  {id: 1,  name : "Java"},
-			  {id: 2,  name : "C"},
-			  {id: 3,  name : "C++"},
-			  {id: 4,  name : "AngularJs"},
-			  {id: 5,  name : "JavaScript"}
-			];
-
-
-
-
-			$scope.logout = function() {
-				$window.sessionStorage.clear()
-				$state.go('login')
-			}
-		
 	}])
 }());
 (function() {
@@ -803,113 +803,6 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('ActivityFormController', ['$scope', '$state', '$window', '$http', '$stateParams',
-	 function($scope, $state, $window, $http, $stateParams) {
-
-		$scope.selectAll = function(){
-	 		if($scope.activity.users.length < $scope.optionsList.length){
-		 		$scope.activity.users = $scope.optionsList
-		 		$('#user-select-button')[0].innerHTML = 'Clear'
-	 		}
-	 		else{
-	 			$scope.activity.users = []
-	 			$('#user-select-button')[0].innerHTML = 'Select All'
-	 		}
-	 	}
-
-	 	$scope.subTypesList = []
-
-
-	 	$scope.optionsList = []
-
-	 	function getUsers(){
-			$http.get('/api/users')
-				.success(function(users) {
-					users.forEach(function(user){
-						if(user){
-							$scope.optionsList.push(
-									{ fullName: user.firstName + ' ' + user.lastName,
-										userId: user._id, firstName: user.firstName,
-										lastName: user.lastName
-									}
-								)
-						}
-						else{
-							$scope.optionsList = [{name: 'No users'}]
-						}
-					})
-				})
-				.error(function(err) {
-					console.log(err);
-				})
-		}
-
-		function getTypes() {
-			$http.get('/api/type-settings')
-				.success(function(data) {
-					$scope.settings = data
-					populateLists(data)
-				})
-				.error(function(data) {
-					console.log(data)
-				})
-		}
-
-		function populateLists(data){
-			var listHolder = []
-			data.forEach(function(set) {					
-				listHolder.push(set.type)
-			})
-			$scope.typeList = [...new Set(listHolder)]
-			
-		}
-
-		$scope.typeChecker = false
-
-		$scope.checkType = function() {
-			if(!$scope.activity.type) {
-				$scope.typeChecker = true
-			}
-		}
-
-		$scope.setSubtypes = function(){
-			$scope.subTypesList = []
-			if(!$scope.activity.type) return
-			else{
-					$scope.settings.forEach(function(set){
-					if(set.type === $scope.activity.type){
-						set.subTypes.forEach(function(sub){
-							$scope.subTypesList.push({name: sub.text})	
-						})
-					}
-				})
-			}
-		}
-
-		$scope.typeList = []
-
-		$scope.submitActivity = function(activity){
-		 	var token = $window.sessionStorage['jwt']
-
-			$http.post('/api/activity', activity,{
-				headers: {
-					'Authorization': `Bearer ${token}`
-				}
-			})
-			.success(function(data) {
-				$state.reload()
-			})
-			.error(function(err) {
-				console.log(err)
-			})
-		}
-
-		getTypes()
-		getUsers()
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('ActivityViewController', ['$scope', '$state', '$window', '$stateParams', '$http', '$q',
 	 function($scope, $state, $window, $stateParams, $http, $q) {
 
@@ -928,10 +821,9 @@
 			 				if($scope.activity.users.length === 0) {
 			 					$scope.noUsers = true
 			 				}
-			 				else if($scope.activity.subTypes.length === 0) {
+			 				if($scope.activity.subTypes.length === 0) {
 			 					$scope.noSubs = true
 			 				}
-
 			 				getUniqueTypes()
 			 				getUniqueSubtypes()
 			 				sortInitUsers(act)
@@ -1239,6 +1131,113 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('ActivityFormController', ['$scope', '$state', '$window', '$http', '$stateParams',
+	 function($scope, $state, $window, $http, $stateParams) {
+
+		$scope.selectAll = function(){
+	 		if($scope.activity.users.length < $scope.optionsList.length){
+		 		$scope.activity.users = $scope.optionsList
+		 		$('#user-select-button')[0].innerHTML = 'Clear'
+	 		}
+	 		else{
+	 			$scope.activity.users = []
+	 			$('#user-select-button')[0].innerHTML = 'Select All'
+	 		}
+	 	}
+
+	 	$scope.subTypesList = []
+
+
+	 	$scope.optionsList = []
+
+	 	function getUsers(){
+			$http.get('/api/users')
+				.success(function(users) {
+					users.forEach(function(user){
+						if(user){
+							$scope.optionsList.push(
+									{ fullName: user.firstName + ' ' + user.lastName,
+										userId: user._id, firstName: user.firstName,
+										lastName: user.lastName
+									}
+								)
+						}
+						else{
+							$scope.optionsList = [{name: 'No users'}]
+						}
+					})
+				})
+				.error(function(err) {
+					console.log(err);
+				})
+		}
+
+		function getTypes() {
+			$http.get('/api/type-settings')
+				.success(function(data) {
+					$scope.settings = data
+					populateLists(data)
+				})
+				.error(function(data) {
+					console.log(data)
+				})
+		}
+
+		function populateLists(data){
+			var listHolder = []
+			data.forEach(function(set) {					
+				listHolder.push(set.type)
+			})
+			$scope.typeList = [...new Set(listHolder)]
+			
+		}
+
+		$scope.typeChecker = false
+
+		$scope.checkType = function() {
+			if(!$scope.activity.type) {
+				$scope.typeChecker = true
+			}
+		}
+
+		$scope.setSubtypes = function(){
+			$scope.subTypesList = []
+			if(!$scope.activity.type) return
+			else{
+					$scope.settings.forEach(function(set){
+					if(set.type === $scope.activity.type){
+						set.subTypes.forEach(function(sub){
+							$scope.subTypesList.push({name: sub.text})	
+						})
+					}
+				})
+			}
+		}
+
+		$scope.typeList = []
+
+		$scope.submitActivity = function(activity){
+		 	var token = $window.sessionStorage['jwt']
+
+			$http.post('/api/activity', activity,{
+				headers: {
+					'Authorization': `Bearer ${token}`
+				}
+			})
+			.success(function(data) {
+				$state.reload()
+			})
+			.error(function(err) {
+				console.log(err)
+			})
+		}
+
+		getTypes()
+		getUsers()
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('ClientFormController', ['$scope', '$state', '$http', '$window', 
 		function($scope, $state, $http, $window) {
 
@@ -1299,170 +1298,6 @@
 
 			$scope.optionsList = [];
 
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('KPIController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
-		function($scope, $state, $http, $window, $stateParams, $q) {
-
-
-			function getKpiSettings() {
-		 		var d = $q.defer();
-		 		$http.get('api/clients/' + $stateParams.id + 
-		 			'/kpis/' + $stateParams.kpiId)
-		 			.success(function(kpi) {
-		 				$http.get('api/type-settings')
-				 			.success(function(set){
-				 				$scope.kpi = kpi
-				 				$scope.noSubtypes = false
-				 				if (kpi.subTypes.length === 0){
-				 					$scope.noSubtypes = true
-				 				}
-				 				$scope.settings = set
-				 				getUniqueTypes()
-				 				getUniqueSubtypes()
-				 				d.resolve()
-				 			})
-				 			.error(function(err) {
-				 				console.log(err)
-				 				d.reject()
-				 			})
-		 			})
-		 			.error(function(err) {
-		 				console.log(err)
-		 				d.reject()
-		 			})
-		 	}
-
-	 	function getUniqueTypes() {
-	 		var typeCopy = $scope.settings
-	 		var unUniqueTypes = typeCopy.map(function(x){
-				return x.type
-			})
-			$scope.typeList = [...new Set(unUniqueTypes)]
-	 	}
-
-
-
-	 	function getUniqueSubtypes() {
-	 		var unSetSubtypes = $scope.settings.filter(function(set) {
-	 			return set.type === $scope.kpi.type
-	 		})
-	 		var unUniqueSubtypes = unSetSubtypes.map(function(x){
-	 			return x.subTypes.map(function(sub){
-	 				return sub.text
-	 			})
-	 		}).reduce(function(a,b){return a.concat(b)})
-
-
-	 		var subArr = [...new Set(unUniqueSubtypes)].map(x =>{ 
-	 						var obj = {}
-	 						obj['name'] = x
-	 						return obj
-	 					})
-	 		$scope.subTypes = subArr
-	 	}
-
-	 	$scope.userTags = false
-
-		$scope.toggleEdit = function() {
-			if($scope.userTags){
-				$scope.userTags = false
-			}
-			else{
-				$scope.userTags = true
-			}
-		}
-
-
-		$scope.deleteKpi = function() {
-			var token = $window.sessionStorage['jwt']
-			swal({
-			  title: "Are you sure?",
-			  text: "You will not be able to recover this kpi!",
-			  type: "warning",
-			  showCancelButton: true,
-			  confirmButtonColor: "#DD6B55",
-			  confirmButtonText: "Yes, delete it!",
-			  html: false
-			}).then(function(){
-				$http.delete('/api/clients/' + $stateParams['id']
-				 + '/kpis/' + $stateParams['kpiId'], {
-					headers: {
-						'Authorization': `Bearer ${token}`
-					}
-				})
-				.success(function(data){
-					var clientId = {'id': $stateParams['id'] + ''}
-					$state.go('client',clientId )
-				})
-				.error(function(err) {
-					console.log(err)
-				})
-			}).done(function() {
-				return
-			})
-
-		}
-
-			$scope.updateName = function(data) {
-				if (data === ''){
-					return 'Name is Required'
-				}
-				else if (data.length < 2){
-					return 'Name must be more than one character'
-				}
-				return updateKpi(data, 'name')
-			}
-
-
-			$scope.updateType = function(data) {
-				if (data === ''){
-					return 'Type is required'
-				}
-				return updateKpi(data, 'type')
-			}
-
-			$scope.updateSubtypes = function(data) {
-				return updateKpi(data,'subTypes')			
-			}
-
-			//have type show on edit click
-			$(document).on('click','#kpi-type-edit-button', function(){
-				$('#kpi-type-edit')[0].click()
-			} )
-			
-
-
-			$scope.updateValue = function(data) {
-				if (data === ''){
-					return 'Value is required'
-				}
-				return updateKpi(data, 'value')
-			}
-
-
-			function updateKpi(data, field){
-				var d = $q.defer();
-				var token = $window.sessionStorage['jwt']
-				$scope.kpi[field] = data
-
-				$http.put('/api/clients/' + $stateParams.id
-				 + '/kpis/' + $stateParams.kpiId, $scope.kpi,{
-					headers: {
-						'Authorization': `Bearer ${token}`
-					}
-				})
-				.success(function(data){
-					$state.reload()
-				})
-				.error(function(err) {
-					console.log(err)
-				})
-			}
-
-			getKpiSettings()	
 	}])
 }());
 (function() {
@@ -1734,6 +1569,170 @@
 			}
 
 			getPromotions()		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('KPIController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
+		function($scope, $state, $http, $window, $stateParams, $q) {
+
+
+			function getKpiSettings() {
+		 		var d = $q.defer();
+		 		$http.get('api/clients/' + $stateParams.id + 
+		 			'/kpis/' + $stateParams.kpiId)
+		 			.success(function(kpi) {
+		 				$http.get('api/type-settings')
+				 			.success(function(set){
+				 				$scope.kpi = kpi
+				 				$scope.noSubtypes = false
+				 				if (kpi.subTypes.length === 0){
+				 					$scope.noSubtypes = true
+				 				}
+				 				$scope.settings = set
+				 				getUniqueTypes()
+				 				getUniqueSubtypes()
+				 				d.resolve()
+				 			})
+				 			.error(function(err) {
+				 				console.log(err)
+				 				d.reject()
+				 			})
+		 			})
+		 			.error(function(err) {
+		 				console.log(err)
+		 				d.reject()
+		 			})
+		 	}
+
+	 	function getUniqueTypes() {
+	 		var typeCopy = $scope.settings
+	 		var unUniqueTypes = typeCopy.map(function(x){
+				return x.type
+			})
+			$scope.typeList = [...new Set(unUniqueTypes)]
+	 	}
+
+
+
+	 	function getUniqueSubtypes() {
+	 		var unSetSubtypes = $scope.settings.filter(function(set) {
+	 			return set.type === $scope.kpi.type
+	 		})
+	 		var unUniqueSubtypes = unSetSubtypes.map(function(x){
+	 			return x.subTypes.map(function(sub){
+	 				return sub.text
+	 			})
+	 		}).reduce(function(a,b){return a.concat(b)})
+
+
+	 		var subArr = [...new Set(unUniqueSubtypes)].map(x =>{ 
+	 						var obj = {}
+	 						obj['name'] = x
+	 						return obj
+	 					})
+	 		$scope.subTypes = subArr
+	 	}
+
+	 	$scope.userTags = false
+
+		$scope.toggleEdit = function() {
+			if($scope.userTags){
+				$scope.userTags = false
+			}
+			else{
+				$scope.userTags = true
+			}
+		}
+
+
+		$scope.deleteKpi = function() {
+			var token = $window.sessionStorage['jwt']
+			swal({
+			  title: "Are you sure?",
+			  text: "You will not be able to recover this kpi!",
+			  type: "warning",
+			  showCancelButton: true,
+			  confirmButtonColor: "#DD6B55",
+			  confirmButtonText: "Yes, delete it!",
+			  html: false
+			}).then(function(){
+				$http.delete('/api/clients/' + $stateParams['id']
+				 + '/kpis/' + $stateParams['kpiId'], {
+					headers: {
+						'Authorization': `Bearer ${token}`
+					}
+				})
+				.success(function(data){
+					var clientId = {'id': $stateParams['id'] + ''}
+					$state.go('client',clientId )
+				})
+				.error(function(err) {
+					console.log(err)
+				})
+			}).done(function() {
+				return
+			})
+
+		}
+
+			$scope.updateName = function(data) {
+				if (data === ''){
+					return 'Name is Required'
+				}
+				else if (data.length < 2){
+					return 'Name must be more than one character'
+				}
+				return updateKpi(data, 'name')
+			}
+
+
+			$scope.updateType = function(data) {
+				if (data === ''){
+					return 'Type is required'
+				}
+				return updateKpi(data, 'type')
+			}
+
+			$scope.updateSubtypes = function(data) {
+				return updateKpi(data,'subTypes')			
+			}
+
+			//have type show on edit click
+			$(document).on('click','#kpi-type-edit-button', function(){
+				$('#kpi-type-edit')[0].click()
+			} )
+			
+
+
+			$scope.updateValue = function(data) {
+				if (data === ''){
+					return 'Value is required'
+				}
+				return updateKpi(data, 'value')
+			}
+
+
+			function updateKpi(data, field){
+				var d = $q.defer();
+				var token = $window.sessionStorage['jwt']
+				$scope.kpi[field] = data
+
+				$http.put('/api/clients/' + $stateParams.id
+				 + '/kpis/' + $stateParams.kpiId, $scope.kpi,{
+					headers: {
+						'Authorization': `Bearer ${token}`
+					}
+				})
+				.success(function(data){
+					$state.reload()
+				})
+				.error(function(err) {
+					console.log(err)
+				})
+			}
+
+			getKpiSettings()	
 	}])
 }());
 (function() {

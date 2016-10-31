@@ -18,10 +18,9 @@
 			 				if($scope.activity.users.length === 0) {
 			 					$scope.noUsers = true
 			 				}
-			 				else if($scope.activity.subTypes.length === 0) {
+			 				if($scope.activity.subTypes.length === 0) {
 			 					$scope.noSubs = true
 			 				}
-
 			 				getUniqueTypes()
 			 				getUniqueSubtypes()
 			 				sortInitUsers(act)
