@@ -276,6 +276,33 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('LoginController', ['$scope', '$state', '$window', '$http',
+	 function($scope, $state, $window, $http) {
+
+			$scope.logUserIn = function(user) {
+				$scope.$broadcast('show-errors-check-validity');
+
+
+				if($scope.userForm.$invalid){return;}
+
+				$scope.err = true
+
+				$http.post('auth/signin', user)
+					.success(function(data) {
+						$scope.err = false
+						$window.sessionStorage.jwt = data['token']
+						$state.go('main')
+					})
+					.error(function(error) {
+						$scope.err = true
+						$scope.errMessage = error
+					})
+			}
+
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('ClientController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
 		function($scope, $state, $http, $window, $stateParams, $q) {
 		
@@ -323,9 +350,8 @@
 				  showCancelButton: true,
 				  confirmButtonColor: "#DD6B55",
 				  confirmButtonText: "Yes, delete it!",
-				  closeOnConfirm: true,
 				  html: false
-				}, function(){
+				}).then(function(){
 					$http.delete('/api/clients/' + $stateParams['id'],
 					 {
 						headers: {
@@ -412,29 +438,48 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('LoginController', ['$scope', '$state', '$window', '$http',
-	 function($scope, $state, $window, $http) {
+	.controller('MainController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
 
-			$scope.logUserIn = function(user) {
-				$scope.$broadcast('show-errors-check-validity');
-
-
-				if($scope.userForm.$invalid){return;}
-
-				$scope.err = true
-
-				$http.post('auth/signin', user)
+			function getClients() {
+				$http.get('api/clients')
 					.success(function(data) {
-						$scope.err = false
-						$window.sessionStorage.jwt = data['token']
-						$state.go('main')
+						$scope.clients = data
 					})
-					.error(function(error) {
-						$scope.err = true
-						$scope.errMessage = error
+					.error(function(err) {
+						console.log(err);
 					})
 			}
 
+			function getUsers() {
+				$http.get('api/users')
+					.success(function(data) {
+						$scope.users = data
+					})
+					.error(function(err) {
+						console.log(err)
+					})
+			}
+
+			getUsers() 
+			getClients()
+
+			$scope.optionsList = [
+			  {id: 1,  name : "Java"},
+			  {id: 2,  name : "C"},
+			  {id: 3,  name : "C++"},
+			  {id: 4,  name : "AngularJs"},
+			  {id: 5,  name : "JavaScript"}
+			];
+
+
+
+
+			$scope.logout = function() {
+				$window.sessionStorage.clear()
+				$state.go('login')
+			}
+		
 	}])
 }());
 (function() {
@@ -500,52 +545,6 @@
 	 	loadTypeSettings()
 	 	loadProgressSettings()
 
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('MainController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
-
-			function getClients() {
-				$http.get('api/clients')
-					.success(function(data) {
-						$scope.clients = data
-					})
-					.error(function(err) {
-						console.log(err);
-					})
-			}
-
-			function getUsers() {
-				$http.get('api/users')
-					.success(function(data) {
-						$scope.users = data
-					})
-					.error(function(err) {
-						console.log(err)
-					})
-			}
-
-			getUsers() 
-			getClients()
-
-			$scope.optionsList = [
-			  {id: 1,  name : "Java"},
-			  {id: 2,  name : "C"},
-			  {id: 3,  name : "C++"},
-			  {id: 4,  name : "AngularJs"},
-			  {id: 5,  name : "JavaScript"}
-			];
-
-
-
-
-			$scope.logout = function() {
-				$window.sessionStorage.clear()
-				$state.go('login')
-			}
-		
 	}])
 }());
 (function() {
