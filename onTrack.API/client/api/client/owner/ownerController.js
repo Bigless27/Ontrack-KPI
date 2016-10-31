@@ -60,10 +60,13 @@
 								}
 							}
 							else{
-								$scope.optionsList = [{name: 'No users'}]
+								$scope.optionsList = [{fullName: 'No Users, only admins can be owners'}]
 							}
 						})
-						getUsers()
+						if ($scope.optionsList.length == 0) {
+							$scope.optionsList = [{fullName: 'No Users, only admins can be owners'}]	
+						}
+						// getUsers()
 					})
 					.error(function(err) {
 						console.log(err)
