@@ -14,7 +14,7 @@
 				  confirmButtonText: "Yes, delete it!",
 				  closeOnConfirm: true,
 				  html: false
-				}, function(){
+				}).then(function(){
 					$http.delete('/api/type-settings/'+ $stateParams.id, {
 						headers: {
 							'Authorization': `Bearer ${token}`

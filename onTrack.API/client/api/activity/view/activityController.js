@@ -232,9 +232,8 @@
 				  showCancelButton: true,
 				  confirmButtonColor: "#DD6B55",
 				  confirmButtonText: "Yes, delete it!",
-				  closeOnConfirm: true,
 				  html: false
-				}, function(){
+				}).then(function(){
 					$http.delete('api/activity/' + activity._id  )
 					.success(function(data){
 						$state.go('activity')
@@ -243,7 +242,8 @@
 						console.log(err)
 					})
 				})
-			}
+		}
+
 		getUsers()
 	 	getActivitySettings()
 	}])

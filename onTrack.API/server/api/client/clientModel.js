@@ -78,7 +78,6 @@ ClientSchema.pre('remove', function(next){
 	Promotions.remove({ _id: {$in: promotionIds}}, function(err) {
 		if(err) next(err)
 	})
-
 	next()
 })
 
@@ -87,7 +86,7 @@ ClientSchema.methods = {
 		return  _.includes(this.admins.toString(), user._id)
  	},
 
- 	  reduceEmailArray: function(field, param) {
+ 	reduceEmailArray: function(field, param) {
         return this[field].map(x => x[param])
     }
 }

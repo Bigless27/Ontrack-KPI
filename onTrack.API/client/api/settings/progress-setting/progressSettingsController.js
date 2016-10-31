@@ -12,9 +12,8 @@
 				  showCancelButton: true,
 				  confirmButtonColor: "#DD6B55",
 				  confirmButtonText: "Yes, delete it!",
-				  closeOnConfirm: true,
 				  html: false
-				}, function(){
+				}).then(function(){
 					$http.delete('/api/progress-settings/'+ $stateParams.id, {
 						headers: {
 							'Authorization': `Bearer ${token}`
