@@ -104,9 +104,8 @@
 				  showCancelButton: true,
 				  confirmButtonColor: "#DD6B55",
 				  confirmButtonText: "Yes, delete it!",
-				  closeOnConfirm: true,
 				  html: false
-				}, function(){
+				}).then(function(){
 					$http.delete('/api/clients/' + $stateParams.id
 					 + '/promotions/' + $stateParams.promoId, {
 						headers: {

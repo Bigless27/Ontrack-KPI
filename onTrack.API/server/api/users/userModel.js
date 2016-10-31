@@ -47,8 +47,6 @@ UserSchema.pre('remove', function(next) {
     // delete all Clients that this user is associated with
     delUser = this
 
-
-    
     Activity.find({'users.userId' : delUser._id}, function(err, activity) {
         if (err) next(err)
         if (activity.length > 0) {
