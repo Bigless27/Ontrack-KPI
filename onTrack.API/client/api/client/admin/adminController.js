@@ -45,7 +45,6 @@
 		}
 
 		function getUsers(){
-			console.log($scope.client)
 			var userEmails = $scope.client.admins.map(x => x.email)
 			$http.get('/api/users')
 				.success(function(users) {
