@@ -243,10 +243,14 @@
 					var subTypeStrings = $scope.promotion.subTypes.map(x => x.name)
 					matchedTypesProg.forEach(function(prog) {
 						prog.subTypes.forEach(function(sub) {
-							if (!subMatchArr.includes(prog)) { //this matches the setting to the promotions setting match
+							console.log(subMatchArr)
+							console.log(prog)
+							console.log(sub)
+							if (!subMatchArr.includes(prog)) { //this matches the setting to the promotions setting match, keeps it from being pushed in twice
 								var progSubsInArr = prog.subTypes.map(x => x.name)
-								if (progSubsInArr.join('') === subTypeStrings.join('')) {
-										subMatchArr.push(prog)
+
+								if (subTypeStrings.includes(sub.name)) { // any subtype is matched include that promotion
+									subMatchArr.push(prog)
 								}
 							}
 						})
