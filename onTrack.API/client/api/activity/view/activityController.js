@@ -99,8 +99,10 @@
 		}
 
 		$scope.updateType = function(data) {
-			if(data === '') return 'Type is Required'
-			$scope.updateSubtype('empty')
+			if (data === '') return 'Type is Required'
+			else if (($scope.activity.type == data)) {
+					return 
+			}
 
 			return updateActivity(data, 'type')
 		}
@@ -144,7 +146,12 @@
 					}
 				})
 				.success(function(data){
-					$state.reload()
+					if (field == 'type') {
+						$scope.updateSubtypes([])
+					}
+					else {
+						$state.reload()
+					}
 				})
 				.error(function(err) {
 					console.log(err)
