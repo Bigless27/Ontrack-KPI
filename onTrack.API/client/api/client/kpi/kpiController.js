@@ -40,24 +40,17 @@
 			$scope.typeList = [...new Set(unUniqueTypes)]
 	 	}
 
-
-
 	 	function getUniqueSubtypes() {
-	 		var unSetSubtypes = $scope.settings.filter(function(set) {
-	 			return set.type === $scope.kpi.type
+		 	var unSetSubtypes = $scope.settings.filter(function(set) {
+			 	return set.type === $scope.kpi.type
+			 })
+	 		var subTypeStrings = $scope.kpi.subTypes.map(x => x.name)
+	 		var subArr = []
+	 		unSetSubtypes[0].subTypes.forEach(function(sub) {
+	 				if (!subTypeStrings.includes(sub.text)){
+		 				subArr.push({name: sub.text})
+	 				}
 	 		})
-	 		var unUniqueSubtypes = unSetSubtypes.map(function(x){
-	 			return x.subTypes.map(function(sub){
-	 				return sub.text
-	 			})
-	 		}).reduce(function(a,b){return a.concat(b)})
-
-
-	 		var subArr = [...new Set(unUniqueSubtypes)].map(x =>{ 
-	 						var obj = {}
-	 						obj['name'] = x
-	 						return obj
-	 					})
 	 		$scope.subTypes = subArr
 	 	}
 
@@ -70,6 +63,16 @@
 			else{
 				$scope.userTags = true
 			}
+		}
+
+		$scope.afterRemoveItem = function(item) {
+			var subStrings = $scope.subTypes.map(x => x.name)
+	 		if (subStrings.includes(item.name)) {
+	 			return
+	 		}
+	 		else{
+		 		$scope.subTypes.push({name: item.name})
+	 		}
 		}
 
 
