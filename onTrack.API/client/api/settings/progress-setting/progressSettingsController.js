@@ -41,6 +41,9 @@
 			if (data === ''){
 				return 'Type is required'
 			}
+			else if (($scope.setting.type == data)) {
+				return 
+			}
 			return updateSetting(data, 'type')
 		}
 
@@ -112,7 +115,12 @@
 			$scope.setting[field] = data
 			$http.put('api/progress-settings/' + $stateParams.id, $scope.setting)
 				.success(function(data){
-					$state.reload()
+					if (field == 'type') {
+						$scope.updateSubtypes([])
+					}
+					else {
+						$state.reload()
+					}
 				})
 				.error(function(err) {
 					console.log(err)
