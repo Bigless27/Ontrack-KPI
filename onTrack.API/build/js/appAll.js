@@ -281,6 +281,33 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('LoginController', ['$scope', '$state', '$window', '$http',
+	 function($scope, $state, $window, $http) {
+
+			$scope.logUserIn = function(user) {
+				$scope.$broadcast('show-errors-check-validity');
+
+
+				if($scope.userForm.$invalid){return;}
+
+				$scope.err = true
+
+				$http.post('auth/signin', user)
+					.success(function(data) {
+						$scope.err = false
+						$window.sessionStorage.jwt = data['token']
+						$state.go('main')
+					})
+					.error(function(error) {
+						$scope.err = true
+						$scope.errMessage = error
+					})
+			}
+
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('ClientController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
 		function($scope, $state, $http, $window, $stateParams, $q) {
 		
@@ -428,33 +455,6 @@
 			getClient()
 
 		
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('LoginController', ['$scope', '$state', '$window', '$http',
-	 function($scope, $state, $window, $http) {
-
-			$scope.logUserIn = function(user) {
-				$scope.$broadcast('show-errors-check-validity');
-
-
-				if($scope.userForm.$invalid){return;}
-
-				$scope.err = true
-
-				$http.post('auth/signin', user)
-					.success(function(data) {
-						$scope.err = false
-						$window.sessionStorage.jwt = data['token']
-						$state.go('main')
-					})
-					.error(function(error) {
-						$scope.err = true
-						$scope.errMessage = error
-					})
-			}
-
 	}])
 }());
 (function() {
@@ -2064,20 +2064,25 @@
 	 		var unSetSubtypes = $scope.typeSetting.filter(function(set) {
 	 			return set.type === $scope.setting.type
 	 		})
-	 		var unUniqueSubtypes = unSetSubtypes.map(function(x){
-	 			return x.subTypes.map(function(sub){
-	 				return sub.text
-	 			})
-	 		}).reduce(function(a,b){return a.concat(b)})
-
-
-	 		var subArr = [...new Set(unUniqueSubtypes)].map(x =>{ 
-	 						var obj = {}
-	 						obj['name'] = x
-	 						return obj
-	 					})
+	 		var subTypeStrings = $scope.setting.subTypes.map(x => x.name)
+	 		var subArr = []
+	 		unSetSubtypes[0].subTypes.forEach(function(sub) {
+	 				if (!subTypeStrings.includes(sub.text)){
+		 				subArr.push({name: sub.text})
+	 				}
+	 		})
 	 		$scope.subTypes = subArr
 	 	}
+
+	 	$scope.afterRemoveItem = function(item) {
+		 		var subStrings = $scope.subTypes.map(x => x.name)
+		 		if (subStrings.includes(item.name)) {
+		 			return
+		 		}
+		 		else{
+			 		$scope.subTypes.push({name: item.name})
+		 		}
+		 	}
 
 
 	 	getSetting()
