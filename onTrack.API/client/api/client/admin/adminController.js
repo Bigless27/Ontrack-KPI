@@ -45,14 +45,18 @@
 		}
 
 		function getUsers(){
+			console.log($scope.client)
+			var userEmails = $scope.client.admins.map(x => x.email)
 			$http.get('/api/users')
 				.success(function(users) {
 					users.forEach(function(user){
 						if(user){
-							$scope.optionsList.push(
-									{firstName: user.firstName, lastName: user.lastName, 
-										email: user.email, fullName: user.firstName + ' ' + user.lastName}
-								)
+							if(!userEmails.includes(user.email)) {
+								$scope.optionsList.push(
+										{firstName: user.firstName, lastName: user.lastName, 
+											email: user.email, fullName: user.firstName + ' ' + user.lastName}
+									)
+							}
 						}
 						else{
 							$scope.optionsList = [{name: 'No users'}]
