@@ -32,16 +32,8 @@
 				}
 				return updatePromotion(data, 'type')
 			}
-			$scope.subErr = false
+
 			$scope.updateSubtypes = function(data) {
-				var subs = data.map(x => x.name)
-
-				$scope.subErr = false
-				if ([...new Set(subs)].length < data.length)  {
-					$scope.subErr = true
-					return
-				}
-
 				return updatePromotion(data,'subTypes')			
 			}
 
@@ -148,13 +140,21 @@
 		 		var subTypeStrings = $scope.promotion.subTypes.map(x => x.name)
 		 		var subArr = []
 		 		unSetSubtypes[0].subTypes.forEach(function(sub) {
-		 				subArr.push({name: sub.text})
+		 				if (!subTypeStrings.includes(sub.text)){
+			 				subArr.push({name: sub.text})
+		 				}
 		 		})
 		 		$scope.subTypes = subArr
 		 	}
 
-		 	$scope.beforeRemoveItem = function(item) {
-		 		console.log(item)
+		 	$scope.afterRemoveItem = function(item) {
+		 		var subStrings = $scope.subTypes.map(x => x.name)
+		 		if (subStrings.includes(item.name)) {
+		 			return
+		 		}
+		 		else{
+			 		$scope.subTypes.push({name: item.name})
+		 		}
 		 	}
 
 			$scope.subTags = false

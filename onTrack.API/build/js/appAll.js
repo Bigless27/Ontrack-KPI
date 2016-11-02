@@ -281,6 +281,33 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('LoginController', ['$scope', '$state', '$window', '$http',
+	 function($scope, $state, $window, $http) {
+
+			$scope.logUserIn = function(user) {
+				$scope.$broadcast('show-errors-check-validity');
+
+
+				if($scope.userForm.$invalid){return;}
+
+				$scope.err = true
+
+				$http.post('auth/signin', user)
+					.success(function(data) {
+						$scope.err = false
+						$window.sessionStorage.jwt = data['token']
+						$state.go('main')
+					})
+					.error(function(error) {
+						$scope.err = true
+						$scope.errMessage = error
+					})
+			}
+
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('ClientController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
 		function($scope, $state, $http, $window, $stateParams, $q) {
 		
@@ -428,33 +455,6 @@
 			getClient()
 
 		
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('LoginController', ['$scope', '$state', '$window', '$http',
-	 function($scope, $state, $window, $http) {
-
-			$scope.logUserIn = function(user) {
-				$scope.$broadcast('show-errors-check-validity');
-
-
-				if($scope.userForm.$invalid){return;}
-
-				$scope.err = true
-
-				$http.post('auth/signin', user)
-					.success(function(data) {
-						$scope.err = false
-						$window.sessionStorage.jwt = data['token']
-						$state.go('main')
-					})
-					.error(function(error) {
-						$scope.err = true
-						$scope.errMessage = error
-					})
-			}
-
 	}])
 }());
 (function() {
@@ -1594,16 +1594,8 @@
 				}
 				return updatePromotion(data, 'type')
 			}
-			$scope.subErr = false
+
 			$scope.updateSubtypes = function(data) {
-				var subs = data.map(x => x.name)
-
-				$scope.subErr = false
-				if ([...new Set(subs)].length < data.length)  {
-					$scope.subErr = true
-					return
-				}
-
 				return updatePromotion(data,'subTypes')			
 			}
 
@@ -1710,13 +1702,21 @@
 		 		var subTypeStrings = $scope.promotion.subTypes.map(x => x.name)
 		 		var subArr = []
 		 		unSetSubtypes[0].subTypes.forEach(function(sub) {
-		 				subArr.push({name: sub.text})
+		 				if (!subTypeStrings.includes(sub.text)){
+			 				subArr.push({name: sub.text})
+		 				}
 		 		})
 		 		$scope.subTypes = subArr
 		 	}
 
-		 	$scope.beforeRemoveItem = function(item) {
-		 		console.log(item)
+		 	$scope.afterRemoveItem = function(item) {
+		 		var subStrings = $scope.subTypes.map(x => x.name)
+		 		if (subStrings.includes(item.name)) {
+		 			return
+		 		}
+		 		else{
+			 		$scope.subTypes.push({name: item.name})
+		 		}
 		 	}
 
 			$scope.subTags = false
@@ -2175,37 +2175,6 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('UserFormController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
-
-			$scope.errorDisplay = false
-
-			$scope.createUser = function(user) {
-				
-				var duplicate = $scope.users.filter(function(x){
-					return x.email == user.email
-				})
-
-				if (duplicate.length > 0){
-					$scope.oops = 'Email is already taken!'
-					$scope.errorDisplay = true
-					return
-				}
-				else{
-					$http.post('api/users', user)
-						.success(function(data){
-							$state.reload()
-
-						})
-						.error(function(err) {
-							console.log(err)
-						})
-				}
-			}
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('ProgressController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
 		function($scope, $state, $http, $window, $stateParams, $q) {
 			
@@ -2247,6 +2216,37 @@
 			getProgress()
 
 
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('UserFormController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+
+			$scope.errorDisplay = false
+
+			$scope.createUser = function(user) {
+				
+				var duplicate = $scope.users.filter(function(x){
+					return x.email == user.email
+				})
+
+				if (duplicate.length > 0){
+					$scope.oops = 'Email is already taken!'
+					$scope.errorDisplay = true
+					return
+				}
+				else{
+					$http.post('api/users', user)
+						.success(function(data){
+							$state.reload()
+
+						})
+						.error(function(err) {
+							console.log(err)
+						})
+				}
+			}
 	}])
 }());
 (function() {

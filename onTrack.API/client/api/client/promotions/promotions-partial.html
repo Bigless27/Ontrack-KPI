@@ -51,13 +51,12 @@
 									ng-model="promotion.subTypes"
 				     				object-property = "name"
 				     				suggestions-arr= "subTypes"
-				     				before-remove-item = 'beforeRemoveItem'
+				     				after-remove-item='afterRemoveItem'
 				     				>
 								</multiple-autocomplete>
 								<span class = 'btn btn-info' ng-click = 'updateSubtypes(promotion.subTypes)'><i class = 'glyphicon glyphicon-ok' aria-hidden = 'true'></i></span>
 								<span class = 'btn btn-danger' ng-click= 'toggleEdit()'><i class = 'glyphicon glyphicon-remove'></i></span>
 							</span>
-							<div class = 'alert alert-danger' ng-show = 'subErr'>No Duplicates</div>
 						</td>
 						<td>
 							<a ng-click = 'toggleEdit()' ng-show = '!subTags'>
