@@ -825,6 +825,113 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('ActivityFormController', ['$scope', '$state', '$window', '$http', '$stateParams',
+	 function($scope, $state, $window, $http, $stateParams) {
+
+		$scope.selectAll = function(){
+	 		if($scope.activity.users.length < $scope.optionsList.length){
+		 		$scope.activity.users = $scope.optionsList
+		 		$('#user-select-button')[0].innerHTML = 'Clear'
+	 		}
+	 		else{
+	 			$scope.activity.users = []
+	 			$('#user-select-button')[0].innerHTML = 'Select All'
+	 		}
+	 	}
+
+	 	$scope.subTypesList = []
+
+
+	 	$scope.optionsList = []
+
+	 	function getUsers(){
+			$http.get('/api/users')
+				.success(function(users) {
+					users.forEach(function(user){
+						if(user){
+							$scope.optionsList.push(
+									{ fullName: user.firstName + ' ' + user.lastName,
+										userId: user._id, firstName: user.firstName,
+										lastName: user.lastName
+									}
+								)
+						}
+						else{
+							$scope.optionsList = [{name: 'No users'}]
+						}
+					})
+				})
+				.error(function(err) {
+					console.log(err);
+				})
+		}
+
+		function getTypes() {
+			$http.get('/api/type-settings')
+				.success(function(data) {
+					$scope.settings = data
+					populateLists(data)
+				})
+				.error(function(data) {
+					console.log(data)
+				})
+		}
+
+		function populateLists(data){
+			var listHolder = []
+			data.forEach(function(set) {					
+				listHolder.push(set.type)
+			})
+			$scope.typeList = [...new Set(listHolder)]
+			
+		}
+
+		$scope.typeChecker = false
+
+		$scope.checkType = function() {
+			if(!$scope.activity.type) {
+				$scope.typeChecker = true
+			}
+		}
+
+		$scope.setSubtypes = function(){
+			$scope.subTypesList = []
+			if(!$scope.activity.type) return
+			else{
+					$scope.settings.forEach(function(set){
+					if(set.type === $scope.activity.type){
+						set.subTypes.forEach(function(sub){
+							$scope.subTypesList.push({name: sub.text})	
+						})
+					}
+				})
+			}
+		}
+
+		$scope.typeList = []
+
+		$scope.submitActivity = function(activity){
+		 	var token = $window.sessionStorage['jwt']
+
+			$http.post('/api/activity', activity,{
+				headers: {
+					'Authorization': `Bearer ${token}`
+				}
+			})
+			.success(function(data) {
+				$state.reload()
+			})
+			.error(function(err) {
+				console.log(err)
+			})
+		}
+
+		getTypes()
+		getUsers()
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('ActivityViewController', ['$scope', '$state', '$window', '$stateParams', '$http', '$q',
 	 function($scope, $state, $window, $stateParams, $http, $q) {
 
@@ -883,21 +990,27 @@
 
 	 	function getUniqueSubtypes() {
 	 		var unSetSubtypes = $scope.settings.filter(function(set) {
-	 			return set.type === $scope.activity.type
-	 		})
-	 		var unUniqueSubtypes = unSetSubtypes.map(function(x){
-	 			return x.subTypes.map(function(sub){
-	 				return sub.text
-	 			})
-	 		}).reduce(function(a,b){return a.concat(b)})
-
-	 		var subArr = [...new Set(unUniqueSubtypes)].map(x =>{ 
-	 						var obj = {}
-	 						obj['name'] = x
-	 						return obj
-	 					})
-	 		$scope.subTypes = subArr
+		 			return set.type === $scope.activity.type
+		 		})
+		 		var subTypeStrings = $scope.activity.subTypes.map(x => x.name)
+		 		var subArr = []
+		 		unSetSubtypes[0].subTypes.forEach(function(sub) {
+		 				if (!subTypeStrings.includes(sub.text)){
+			 				subArr.push({name: sub.text})
+		 				}
+		 		})
+		 		$scope.subTypes = subArr
 	 	}
+
+	 	$scope.afterRemoveItem = function(item) {
+	 		var subStrings = $scope.subTypes.map(x => x.name)
+	 		if (subStrings.includes(item.name)) {
+	 			return
+	 		}
+	 		else{
+		 		$scope.subTypes.push({name: item.name})
+	 		}
+		 }
 
  		$(document).on('click','#activity-type-edit-button', function(){
 			$('#activity-type-edit')[0].click()
@@ -1073,113 +1186,6 @@
 
 		getUsers()
 	 	getActivitySettings()
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('ActivityFormController', ['$scope', '$state', '$window', '$http', '$stateParams',
-	 function($scope, $state, $window, $http, $stateParams) {
-
-		$scope.selectAll = function(){
-	 		if($scope.activity.users.length < $scope.optionsList.length){
-		 		$scope.activity.users = $scope.optionsList
-		 		$('#user-select-button')[0].innerHTML = 'Clear'
-	 		}
-	 		else{
-	 			$scope.activity.users = []
-	 			$('#user-select-button')[0].innerHTML = 'Select All'
-	 		}
-	 	}
-
-	 	$scope.subTypesList = []
-
-
-	 	$scope.optionsList = []
-
-	 	function getUsers(){
-			$http.get('/api/users')
-				.success(function(users) {
-					users.forEach(function(user){
-						if(user){
-							$scope.optionsList.push(
-									{ fullName: user.firstName + ' ' + user.lastName,
-										userId: user._id, firstName: user.firstName,
-										lastName: user.lastName
-									}
-								)
-						}
-						else{
-							$scope.optionsList = [{name: 'No users'}]
-						}
-					})
-				})
-				.error(function(err) {
-					console.log(err);
-				})
-		}
-
-		function getTypes() {
-			$http.get('/api/type-settings')
-				.success(function(data) {
-					$scope.settings = data
-					populateLists(data)
-				})
-				.error(function(data) {
-					console.log(data)
-				})
-		}
-
-		function populateLists(data){
-			var listHolder = []
-			data.forEach(function(set) {					
-				listHolder.push(set.type)
-			})
-			$scope.typeList = [...new Set(listHolder)]
-			
-		}
-
-		$scope.typeChecker = false
-
-		$scope.checkType = function() {
-			if(!$scope.activity.type) {
-				$scope.typeChecker = true
-			}
-		}
-
-		$scope.setSubtypes = function(){
-			$scope.subTypesList = []
-			if(!$scope.activity.type) return
-			else{
-					$scope.settings.forEach(function(set){
-					if(set.type === $scope.activity.type){
-						set.subTypes.forEach(function(sub){
-							$scope.subTypesList.push({name: sub.text})	
-						})
-					}
-				})
-			}
-		}
-
-		$scope.typeList = []
-
-		$scope.submitActivity = function(activity){
-		 	var token = $window.sessionStorage['jwt']
-
-			$http.post('/api/activity', activity,{
-				headers: {
-					'Authorization': `Bearer ${token}`
-				}
-			})
-			.success(function(data) {
-				$state.reload()
-			})
-			.error(function(err) {
-				console.log(err)
-			})
-		}
-
-		getTypes()
-		getUsers()
 	}])
 }());
 (function() {
