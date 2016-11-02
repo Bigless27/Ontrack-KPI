@@ -1594,8 +1594,16 @@
 				}
 				return updatePromotion(data, 'type')
 			}
-
+			$scope.subErr = false
 			$scope.updateSubtypes = function(data) {
+				var subs = data.map(x => x.name)
+
+				$scope.subErr = false
+				if ([...new Set(subs)].length < data.length)  {
+					$scope.subErr = true
+					return
+				}
+
 				return updatePromotion(data,'subTypes')			
 			}
 
@@ -1699,19 +1707,16 @@
 		 		var unSetSubtypes = $scope.settings.filter(function(set) {
 		 			return set.type === $scope.promotion.type
 		 		})
-		 		var unUniqueSubtypes = unSetSubtypes.map(function(x){
-		 			return x.subTypes.map(function(sub){
-		 				return sub.text
-		 			})
-		 		}).reduce(function(a,b){return a.concat(b)})
-
-
-		 		var subArr = [...new Set(unUniqueSubtypes)].map(x =>{ 
-		 						var obj = {}
-		 						obj['name'] = x
-		 						return obj
-		 					})
+		 		var subTypeStrings = $scope.promotion.subTypes.map(x => x.name)
+		 		var subArr = []
+		 		unSetSubtypes[0].subTypes.forEach(function(sub) {
+		 				subArr.push({name: sub.text})
+		 		})
 		 		$scope.subTypes = subArr
+		 	}
+
+		 	$scope.beforeRemoveItem = function(item) {
+		 		console.log(item)
 		 	}
 
 			$scope.subTags = false
@@ -1805,9 +1810,6 @@
 					var subTypeStrings = $scope.promotion.subTypes.map(x => x.name)
 					matchedTypesProg.forEach(function(prog) {
 						prog.subTypes.forEach(function(sub) {
-							console.log(subMatchArr)
-							console.log(prog)
-							console.log(sub)
 							if (!subMatchArr.includes(prog)) { //this matches the setting to the promotions setting match, keeps it from being pushed in twice
 								var progSubsInArr = prog.subTypes.map(x => x.name)
 
