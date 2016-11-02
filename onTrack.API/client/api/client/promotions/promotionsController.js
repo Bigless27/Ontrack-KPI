@@ -30,6 +30,9 @@
 				if (data === ''){
 					return 'Type is required'
 				}
+				else if (($scope.promotion.type == data)) {
+					return 
+				}
 				return updatePromotion(data, 'type')
 			}
 
@@ -85,7 +88,12 @@
 					}
 				})
 				.success(function(data){
-					$state.reload()
+					if (field == 'type') {
+						$scope.updateSubtypes([])
+					}
+					else {
+						$state.reload()
+					}
 				})
 				.error(function(err) {
 					console.log(err)
