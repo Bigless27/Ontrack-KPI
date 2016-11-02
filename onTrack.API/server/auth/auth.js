@@ -85,6 +85,19 @@ exports.verifyUser = function() {
 	};
 };
 
+exports.deleteLoggedIn = function() {
+	return function(req, res, next) {
+		if (req.params.id == req.user._id) {
+			req.loggedIn = true
+			next()
+		}
+		else {
+			req.loggedIn = false
+			next()
+		}
+	}
+}
+
 // util method to sign tokens on signup
 exports.signToken = function(id) {
 	return jwt.sign(

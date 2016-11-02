@@ -12,7 +12,7 @@ exports.params = function(req, res, next, id) {
 			if (!user) {
 				next(new Error('No user with that id'));
 			} else {
-				req.user = user;
+				req.userParam = user;
 				next();
 			}
 		}, function(err) {
@@ -36,13 +36,13 @@ exports.get = function(req, res, next) {
 
 
 exports.getOne = function(req, res, next) {
-	var user = req.user.toJson();
+	var user = req.userParam.toJson();
 	res.json(user);
 };
 
 
 exports.put = function(req, res, next) {
-  var user = req.user;
+  var user = req.userParam;
 
   var update = req.body;
 
@@ -74,17 +74,17 @@ exports.post = function(req, res, next) {
 };
 
 exports.delete = function(req, res, next) {
-  req.user.remove(function(err, removed) {
+  req.userParam.remove(function(err, removed) {
     if (err) {
       next(err);
     } else {
-      res.json(removed.toJson());
+      res.json(req.loggedIn);
     }
   });
 };
 
 exports.me = function(req, res) {
-   res.json(req.user.toJson());
+   res.json(req.userParam.toJson());
 };
 
 

@@ -23,13 +23,24 @@
 						return
 					}
 					else {
-						$http.delete('/api/users/' + $stateParams.id)
+						var token = $window.sessionStorage['jwt']
+						$http.delete('/api/users/' + $stateParams.id, {
+							headers: {
+								'Authorization' : `Bearer ${token}`
+							}
+						})
 						.success(function(data){
 							swal({
 									title: 'User Deleted',
 									type: 'success'
 								})
-							$state.go('main' )
+							if (data) {
+								$window.sessionStorage.clear()
+								$state.go('login')
+							}
+							else {	
+								$state.go('main')
+							}
 						})
 						.error(function(err) {
 							console.log(err)

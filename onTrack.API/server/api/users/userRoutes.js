@@ -1,6 +1,7 @@
 var router = require('express').Router();
 var controller = require('./userController');
 var auth = require('../../auth/auth');
+
 var checkUser = [auth.decodeToken(), auth.getFreshUser()];
 
 // setup boilerplate route jsut to satisfy a request
@@ -20,6 +21,6 @@ router.route('/')
 router.route('/:id')
   .get(controller.getOne)// tested
   .put(controller.put)// tested
-  .delete(controller.delete)// tested
+  .delete(checkUser, auth.deleteLoggedIn(), controller.delete)// tested
 
 module.exports = router;
