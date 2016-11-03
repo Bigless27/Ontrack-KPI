@@ -75,7 +75,6 @@
 	 		}
 		}
 
-
 		$scope.deleteKpi = function() {
 			var token = $window.sessionStorage['jwt']
 			swal({
