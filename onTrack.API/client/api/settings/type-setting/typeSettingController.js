@@ -48,7 +48,6 @@
 				updateSetting(sub, 'subTypes')
 			}
 
-
 			function updateSetting(data, field){
 				var token = $window.sessionStorage['jwt']
 				$scope.setting[field] = data
@@ -64,18 +63,6 @@
 					console.log(err)
 				})
 			}
-
-			//make this work!
-			$scope.clickMe = function(){
-				
-
-
-			}
-
-			function getCbUsers(cb){
-
-			}
-
 
 	 		function getSetting(){
 	 			$http.get('api/type-settings/' + $stateParams.id)

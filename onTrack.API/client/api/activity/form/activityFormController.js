@@ -41,6 +41,21 @@
 				})
 		}
 
+		function getClients() {
+			$http.get('/api/clients')
+				.success(function(data) {
+					console.log(data)
+					$scope.clients = data.map(x => x.name)
+				})
+				.error(function(err) {
+
+				})
+		}
+
+		$scope.updateClients = function(types) {
+
+		}
+
 		function getTypes() {
 			$http.get('/api/type-settings')
 				.success(function(data) {
@@ -100,8 +115,11 @@
 				console.log(err)
 			})
 		}
+		// get rid of the request to get a user and just use the one available in a client
+
 
 		getTypes()
 		getUsers()
+		getClients()
 	}])
 }());

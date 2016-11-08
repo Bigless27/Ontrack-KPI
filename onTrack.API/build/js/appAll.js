@@ -1,6 +1,6 @@
 (function() {
 	angular.module('onTrack', ['ui.router', 'ui.bootstrap.showErrors', 'multipleSelect', 'xeditable', 'ngTagsInput', 'ui.select', 
-		'ngSanitize'])
+		'ngSanitize', 'autocomplete'])
 	.config(['$stateProvider', '$urlRouterProvider', 'showErrorsConfigProvider',
 			function($stateProvider, $urlRouterProvider, showErrorsConfigProvider) {
 
@@ -281,6 +281,33 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('LoginController', ['$scope', '$state', '$window', '$http',
+	 function($scope, $state, $window, $http) {
+
+			$scope.logUserIn = function(user) {
+				$scope.$broadcast('show-errors-check-validity');
+
+
+				if($scope.userForm.$invalid){return;}
+
+				$scope.err = true
+
+				$http.post('auth/signin', user)
+					.success(function(data) {
+						$scope.err = false
+						$window.sessionStorage.jwt = data['token']
+						$state.go('main')
+					})
+					.error(function(error) {
+						$scope.err = true
+						$scope.errMessage = error
+					})
+			}
+
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('MainController', ['$scope', '$state', '$http', '$window', 
 		function($scope, $state, $http, $window) {
 
@@ -323,55 +350,6 @@
 				$state.go('login')
 			}
 		
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('LoginController', ['$scope', '$state', '$window', '$http',
-	 function($scope, $state, $window, $http) {
-
-			$scope.logUserIn = function(user) {
-				$scope.$broadcast('show-errors-check-validity');
-
-
-				if($scope.userForm.$invalid){return;}
-
-				$scope.err = true
-
-				$http.post('auth/signin', user)
-					.success(function(data) {
-						$scope.err = false
-						$window.sessionStorage.jwt = data['token']
-						$state.go('main')
-					})
-					.error(function(error) {
-						$scope.err = true
-						$scope.errMessage = error
-					})
-			}
-
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
-		$scope.signUp = function(user) {
-			$scope.$broadcast('show-errors-check-validity')
-
-			if ($scope.userForm.$invalid){return;}
-			$scope.err = false
-			$http.post('api/users', user)
-				.success(function(data) {
-					$scope.err = false
-					$window.sessionStorage.jwt = data['token']
-					$state.go('main')
-				})
-				.error(function(error) {
-					$scope.err = true
-					$scope.errMessage = error.message
-				})
-		}
 	}])
 }());
 (function() {
@@ -437,6 +415,28 @@
 	 	loadTypeSettings()
 	 	loadProgressSettings()
 
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+		$scope.signUp = function(user) {
+			$scope.$broadcast('show-errors-check-validity')
+
+			if ($scope.userForm.$invalid){return;}
+			$scope.err = false
+			$http.post('api/users', user)
+				.success(function(data) {
+					$scope.err = false
+					$window.sessionStorage.jwt = data['token']
+					$state.go('main')
+				})
+				.error(function(error) {
+					$scope.err = true
+					$scope.errMessage = error.message
+				})
+		}
 	}])
 }());
 (function() {
@@ -840,113 +840,6 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('ActivityFormController', ['$scope', '$state', '$window', '$http', '$stateParams',
-	 function($scope, $state, $window, $http, $stateParams) {
-
-		$scope.selectAll = function(){
-	 		if($scope.activity.users.length < $scope.optionsList.length){
-		 		$scope.activity.users = $scope.optionsList
-		 		$('#user-select-button')[0].innerHTML = 'Clear'
-	 		}
-	 		else{
-	 			$scope.activity.users = []
-	 			$('#user-select-button')[0].innerHTML = 'Select All'
-	 		}
-	 	}
-
-	 	$scope.subTypesList = []
-
-
-	 	$scope.optionsList = []
-
-	 	function getUsers(){
-			$http.get('/api/users')
-				.success(function(users) {
-					users.forEach(function(user){
-						if(user){
-							$scope.optionsList.push(
-									{ fullName: user.firstName + ' ' + user.lastName,
-										userId: user._id, firstName: user.firstName,
-										lastName: user.lastName
-									}
-								)
-						}
-						else{
-							$scope.optionsList = [{name: 'No users'}]
-						}
-					})
-				})
-				.error(function(err) {
-					console.log(err);
-				})
-		}
-
-		function getTypes() {
-			$http.get('/api/type-settings')
-				.success(function(data) {
-					$scope.settings = data
-					populateLists(data)
-				})
-				.error(function(data) {
-					console.log(data)
-				})
-		}
-
-		function populateLists(data){
-			var listHolder = []
-			data.forEach(function(set) {					
-				listHolder.push(set.type)
-			})
-			$scope.typeList = [...new Set(listHolder)]
-			
-		}
-
-		$scope.typeChecker = false
-
-		$scope.checkType = function() {
-			if(!$scope.activity.type) {
-				$scope.typeChecker = true
-			}
-		}
-
-		$scope.setSubtypes = function(){
-			$scope.subTypesList = []
-			if(!$scope.activity.type) return
-			else{
-					$scope.settings.forEach(function(set){
-					if(set.type === $scope.activity.type){
-						set.subTypes.forEach(function(sub){
-							$scope.subTypesList.push({name: sub.text})	
-						})
-					}
-				})
-			}
-		}
-
-		$scope.typeList = []
-
-		$scope.submitActivity = function(activity){
-		 	var token = $window.sessionStorage['jwt']
-
-			$http.post('/api/activity', activity,{
-				headers: {
-					'Authorization': `Bearer ${token}`
-				}
-			})
-			.success(function(data) {
-				$state.reload()
-			})
-			.error(function(err) {
-				console.log(err)
-			})
-		}
-
-		getTypes()
-		getUsers()
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('ActivityViewController', ['$scope', '$state', '$window', '$stateParams', '$http', '$q',
 	 function($scope, $state, $window, $stateParams, $http, $q) {
 
@@ -1208,6 +1101,131 @@
 
 		getUsers()
 	 	getActivitySettings()
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('ActivityFormController', ['$scope', '$state', '$window', '$http', '$stateParams',
+	 function($scope, $state, $window, $http, $stateParams) {
+
+		$scope.selectAll = function(){
+	 		if($scope.activity.users.length < $scope.optionsList.length){
+		 		$scope.activity.users = $scope.optionsList
+		 		$('#user-select-button')[0].innerHTML = 'Clear'
+	 		}
+	 		else{
+	 			$scope.activity.users = []
+	 			$('#user-select-button')[0].innerHTML = 'Select All'
+	 		}
+	 	}
+
+	 	$scope.subTypesList = []
+
+
+	 	$scope.optionsList = []
+
+	 	function getUsers(){
+			$http.get('/api/users')
+				.success(function(users) {
+					users.forEach(function(user){
+						if(user){
+							$scope.optionsList.push(
+									{ fullName: user.firstName + ' ' + user.lastName,
+										userId: user._id, firstName: user.firstName,
+										lastName: user.lastName
+									}
+								)
+						}
+						else{
+							$scope.optionsList = [{name: 'No users'}]
+						}
+					})
+				})
+				.error(function(err) {
+					console.log(err);
+				})
+		}
+
+		function getClients() {
+			$http.get('/api/clients')
+				.success(function(data) {
+					console.log(data)
+					$scope.clients = data.map(x => x.name)
+				})
+				.error(function(err) {
+
+				})
+		}
+
+		$scope.updateClients = function(types) {
+
+		}
+
+		function getTypes() {
+			$http.get('/api/type-settings')
+				.success(function(data) {
+					$scope.settings = data
+					populateLists(data)
+				})
+				.error(function(data) {
+					console.log(data)
+				})
+		}
+
+		function populateLists(data){
+			var listHolder = []
+			data.forEach(function(set) {					
+				listHolder.push(set.type)
+			})
+			$scope.typeList = [...new Set(listHolder)]
+			
+		}
+
+		$scope.typeChecker = false
+
+		$scope.checkType = function() {
+			if(!$scope.activity.type) {
+				$scope.typeChecker = true
+			}
+		}
+
+		$scope.setSubtypes = function(){
+			$scope.subTypesList = []
+			if(!$scope.activity.type) return
+			else{
+					$scope.settings.forEach(function(set){
+					if(set.type === $scope.activity.type){
+						set.subTypes.forEach(function(sub){
+							$scope.subTypesList.push({name: sub.text})	
+						})
+					}
+				})
+			}
+		}
+
+		$scope.typeList = []
+
+		$scope.submitActivity = function(activity){
+		 	var token = $window.sessionStorage['jwt']
+
+			$http.post('/api/activity', activity,{
+				headers: {
+					'Authorization': `Bearer ${token}`
+				}
+			})
+			.success(function(data) {
+				$state.reload()
+			})
+			.error(function(err) {
+				console.log(err)
+			})
+		}
+		// get rid of the request to get a user and just use the one available in a client
+
+
+		getTypes()
+		getUsers()
+		getClients()
 	}])
 }());
 (function() {
@@ -1503,7 +1521,6 @@
 				updateSetting(sub, 'subTypes')
 			}
 
-
 			function updateSetting(data, field){
 				var token = $window.sessionStorage['jwt']
 				$scope.setting[field] = data
@@ -1519,18 +1536,6 @@
 					console.log(err)
 				})
 			}
-
-			//make this work!
-			$scope.clickMe = function(){
-				
-
-
-			}
-
-			function getCbUsers(cb){
-
-			}
-
 
 	 		function getSetting(){
 	 			$http.get('api/type-settings/' + $stateParams.id)
@@ -1694,7 +1699,6 @@
 	.controller('KPIController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
 		function($scope, $state, $http, $window, $stateParams, $q) {
 
-
 			function getKpiSettings() {
 		 		var d = $q.defer();
 		 		$http.get('api/clients/' + $stateParams.id + 
@@ -1796,73 +1800,151 @@
 
 		}
 
-			$scope.updateName = function(data) {
-				if (data === ''){
-					return 'Name is Required'
-				}
-				else if (data.length < 2){
-					return 'Name must be more than one character'
-				}
-				return updateKpi(data, 'name')
+		$scope.updateName = function(data) {
+			if (data === ''){
+				return 'Name is Required'
 			}
-
-
-			$scope.updateType = function(data) {
-				if (data === ''){
-					return 'Type is required'
-				}
-				else if (($scope.kpi.type == data)) {
-					return 
-				}
-				return updateKpi(data, 'type')
+			else if (data.length < 2){
+				return 'Name must be more than one character'
 			}
+			return updateKpi(data, 'name')
+		}
 
-			$scope.updateSubtypes = function(data) {
-				return updateKpi(data,'subTypes')			
+
+		$scope.updateType = function(data) {
+			if (data === ''){
+				return 'Type is required'
 			}
+			else if (($scope.kpi.type == data)) {
+				return 
+			}
+			return updateKpi(data, 'type')
+		}
 
-			//have type show on edit click
-			$(document).on('click','#kpi-type-edit-button', function(){
-				$('#kpi-type-edit')[0].click()
-			} )
-			
+		$scope.updateSubtypes = function(data) {
+			return updateKpi(data,'subTypes')			
+		}
+
+		//have type show on edit click
+		$(document).on('click','#kpi-type-edit-button', function(){
+			$('#kpi-type-edit')[0].click()
+		} )
+		
 
 
-			$scope.updateValue = function(data) {
-				if (data === ''){
-					return 'Value is required'
+		$scope.updateValue = function(data) {
+			if (data === ''){
+				return 'Value is required'
+			}
+			return updateKpi(data, 'value')
+		}
+
+
+		function updateKpi(data, field){
+			var d = $q.defer();
+			var token = $window.sessionStorage['jwt']
+			$scope.kpi[field] = data
+
+			$http.put('/api/clients/' + $stateParams.id
+			 + '/kpis/' + $stateParams.kpiId, $scope.kpi,{
+				headers: {
+					'Authorization': `Bearer ${token}`
 				}
-				return updateKpi(data, 'value')
-			}
+			})
+			.success(function(data){
+				if (field == 'type') {
+					$scope.updateSubtypes([])
+				}
+				else {
+					$state.reload()
+				}
+			})
+			.error(function(err) {
+				console.log(err)
+			})
+		}
 
+		getKpiSettings()	
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('OwnerController', ['$scope', '$state', '$http', '$window', '$stateParams', 
+		function($scope, $state, $http, $window, $stateParams) {
 
-			function updateKpi(data, field){
-				var d = $q.defer();
+			$scope.optionsList = []
+			$scope.success = false
+
+			$scope.transfer = function(data) {
 				var token = $window.sessionStorage['jwt']
-				$scope.kpi[field] = data
+				$scope.client['owner'] = [data]
 
-				$http.put('/api/clients/' + $stateParams.id
-				 + '/kpis/' + $stateParams.kpiId, $scope.kpi,{
+				$http.put('api/clients/' + $stateParams.id, $scope.client, {
 					headers: {
 						'Authorization': `Bearer ${token}`
 					}
 				})
-				.success(function(data){
-					if (field == 'type') {
-						$scope.updateSubtypes([])
-					}
-					else {
-						$state.reload()
-					}
+				.success(function(data) {
+					$state.reload()
 				})
 				.error(function(err) {
 					console.log(err)
-				})
+				}) 
 			}
 
-			getKpiSettings()	
-	}])
-}());
+			// function getUsers() {
+			// 	$http.get('api/users')
+			// 		.success(function(users) {
+			// 			users.forEach(function(user){
+			// 				if(user){
+			// 					if (user.email !== $scope.client.owner[0].email){
+			// 						$scope.optionsList.push(
+			// 								{firstName: user.firstName, lastName: user.lastName, userId: user._id, 
+			// 									email: user.email, fullName: user.firstName + ' ' + user.lastName}
+			// 						)
+			// 					}
+			// 				}
+			// 				else{
+			// 					$scope.optionsList = [{name: 'No users'}]
+			// 				}
+			// 			})
+			// 		})
+			// 		.error(function(err) {
+			// 			console.log(err)
+			// 		})
+			// }
+
+			function getClient() {
+				$http.get('api/clients/' + $stateParams.id)
+					.success(function(data) {
+						$scope.client = data
+
+						data.admins.forEach(function(user){
+							if(user){
+								if (user.email !== $scope.client.owner[0].email){
+									$scope.optionsList.push(
+											{firstName: user.firstName, lastName: user.lastName, userId: user._id, 
+												email: user.email, fullName: user.firstName + ' ' + user.lastName}
+									)
+								}
+							}
+							else{
+								$scope.optionsList = [{fullName: 'No Users, only admins can be owners'}]
+							}
+						})
+						if ($scope.optionsList.length == 0) {
+							$scope.optionsList = [{fullName: 'No Users, only admins can be owners'}]	
+						}
+						// getUsers()
+					})
+					.error(function(err) {
+						console.log(err)
+					})
+			}
+
+			getClient()
+		}])
+} ());
 (function() {
 	angular.module('onTrack')
 	.controller('PromotionController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
@@ -2150,84 +2232,6 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('OwnerController', ['$scope', '$state', '$http', '$window', '$stateParams', 
-		function($scope, $state, $http, $window, $stateParams) {
-
-			$scope.optionsList = []
-			$scope.success = false
-
-			$scope.transfer = function(data) {
-				var token = $window.sessionStorage['jwt']
-				$scope.client['owner'] = [data]
-
-				$http.put('api/clients/' + $stateParams.id, $scope.client, {
-					headers: {
-						'Authorization': `Bearer ${token}`
-					}
-				})
-				.success(function(data) {
-					$state.reload()
-				})
-				.error(function(err) {
-					console.log(err)
-				}) 
-			}
-
-			// function getUsers() {
-			// 	$http.get('api/users')
-			// 		.success(function(users) {
-			// 			users.forEach(function(user){
-			// 				if(user){
-			// 					if (user.email !== $scope.client.owner[0].email){
-			// 						$scope.optionsList.push(
-			// 								{firstName: user.firstName, lastName: user.lastName, userId: user._id, 
-			// 									email: user.email, fullName: user.firstName + ' ' + user.lastName}
-			// 						)
-			// 					}
-			// 				}
-			// 				else{
-			// 					$scope.optionsList = [{name: 'No users'}]
-			// 				}
-			// 			})
-			// 		})
-			// 		.error(function(err) {
-			// 			console.log(err)
-			// 		})
-			// }
-
-			function getClient() {
-				$http.get('api/clients/' + $stateParams.id)
-					.success(function(data) {
-						$scope.client = data
-
-						data.admins.forEach(function(user){
-							if(user){
-								if (user.email !== $scope.client.owner[0].email){
-									$scope.optionsList.push(
-											{firstName: user.firstName, lastName: user.lastName, userId: user._id, 
-												email: user.email, fullName: user.firstName + ' ' + user.lastName}
-									)
-								}
-							}
-							else{
-								$scope.optionsList = [{fullName: 'No Users, only admins can be owners'}]
-							}
-						})
-						if ($scope.optionsList.length == 0) {
-							$scope.optionsList = [{fullName: 'No Users, only admins can be owners'}]	
-						}
-						// getUsers()
-					})
-					.error(function(err) {
-						console.log(err)
-					})
-			}
-
-			getClient()
-		}])
-} ());
-(function() {
-	angular.module('onTrack')
 	.controller('UserFormController', ['$scope', '$state', '$http', '$window', 
 		function($scope, $state, $http, $window) {
 
@@ -2302,6 +2306,373 @@
 
 	}])
 }());
+var app = angular.module('app', ['autocomplete']);
+
+// the service that retrieves some movie title from an url
+app.factory('MovieRetriever', function($http, $q, $timeout){
+  var MovieRetriever = new Object();
+
+  MovieRetriever.getmovies = function(i) {
+    var moviedata = $q.defer();
+    var movies;
+
+    var someMovies = ["The Wolverine", "The Smurfs 2", "The Mortal Instruments: City of Bones", "Drinking Buddies", "All the Boys Love Mandy Lane", "The Act Of Killing", "Red 2", "Jobs", "Getaway", "Red Obsession", "2 Guns", "The World's End", "Planes", "Paranoia", "The To Do List", "Man of Steel"];
+
+    var moreMovies = ["The Wolverine", "The Smurfs 2", "The Mortal Instruments: City of Bones", "Drinking Buddies", "All the Boys Love Mandy Lane", "The Act Of Killing", "Red 2", "Jobs", "Getaway", "Red Obsession", "2 Guns", "The World's End", "Planes", "Paranoia", "The To Do List", "Man of Steel", "The Way Way Back", "Before Midnight", "Only God Forgives", "I Give It a Year", "The Heat", "Pacific Rim", "Pacific Rim", "Kevin Hart: Let Me Explain", "A Hijacking", "Maniac", "After Earth", "The Purge", "Much Ado About Nothing", "Europa Report", "Stuck in Love", "We Steal Secrets: The Story Of Wikileaks", "The Croods", "This Is the End", "The Frozen Ground", "Turbo", "Blackfish", "Frances Ha", "Prince Avalanche", "The Attack", "Grown Ups 2", "White House Down", "Lovelace", "Girl Most Likely", "Parkland", "Passion", "Monsters University", "R.I.P.D.", "Byzantium", "The Conjuring", "The Internship"]
+
+    if(i && i.indexOf('T')!=-1)
+      movies=moreMovies;
+    else
+      movies=moreMovies;
+
+    $timeout(function(){
+      moviedata.resolve(movies);
+    },1000);
+
+    return moviedata.promise
+  }
+
+  return MovieRetriever;
+});
+
+app.controller('MyCtrl', function($scope, MovieRetriever){
+
+  $scope.movies = MovieRetriever.getmovies("...");
+  $scope.movies.then(function(data){
+    $scope.movies = data;
+  });
+
+  $scope.getmovies = function(){
+    return $scope.movies;
+  }
+
+  $scope.doSomething = function(typedthings){
+    console.log("Do something like reload data with this: " + typedthings );
+    $scope.newmovies = MovieRetriever.getmovies(typedthings);
+    $scope.newmovies.then(function(data){
+      $scope.movies = data;
+    });
+  }
+
+  $scope.doSomethingElse = function(suggestion){
+    console.log("Suggestion selected: " + suggestion );
+  }
+
+});
+
+/* --- Made by justgoscha and licensed under MIT license --- */
+
+var app = angular.module('autocomplete', []);
+
+app.directive('autocomplete', function() {
+  var index = -1;
+
+  return {
+    restrict: 'E',
+    scope: {
+      searchParam: '=ngModel',
+      suggestions: '=data',
+      onType: '=onType',
+      onSelect: '=onSelect',
+      autocompleteRequired: '=',
+      noAutoSort: '=noAutoSort'
+    },
+    controller: ['$scope', function($scope){
+      // the index of the suggestions that's currently selected
+      $scope.selectedIndex = -1;
+
+      $scope.initLock = true;
+
+      // set new index
+      $scope.setIndex = function(i){
+        $scope.selectedIndex = parseInt(i);
+      };
+
+      this.setIndex = function(i){
+        $scope.setIndex(i);
+        $scope.$apply();
+      };
+
+      $scope.getIndex = function(i){
+        return $scope.selectedIndex;
+      };
+
+      // watches if the parameter filter should be changed
+      var watching = true;
+
+      // autocompleting drop down on/off
+      $scope.completing = false;
+
+      // starts autocompleting on typing in something
+      $scope.$watch('searchParam', function(newValue, oldValue){
+
+        if (oldValue === newValue || (!oldValue && $scope.initLock)) {
+          return;
+        }
+
+        if(watching && typeof $scope.searchParam !== 'undefined' && $scope.searchParam !== null) {
+          $scope.completing = true;
+          $scope.searchFilter = $scope.searchParam;
+          $scope.selectedIndex = -1;
+        }
+
+        // function thats passed to on-type attribute gets executed
+        if($scope.onType)
+          $scope.onType($scope.searchParam);
+      });
+
+      // for hovering over suggestions
+      this.preSelect = function(suggestion){
+
+        watching = false;
+
+        // this line determines if it is shown
+        // in the input field before it's selected:
+        //$scope.searchParam = suggestion;
+
+        $scope.$apply();
+        watching = true;
+
+      };
+
+      $scope.preSelect = this.preSelect;
+
+      this.preSelectOff = function(){
+        watching = true;
+      };
+
+      $scope.preSelectOff = this.preSelectOff;
+
+      // selecting a suggestion with RIGHT ARROW or ENTER
+      $scope.select = function(suggestion){
+        if(suggestion){
+          $scope.searchParam = suggestion;
+          $scope.searchFilter = suggestion;
+          if($scope.onSelect)
+            $scope.onSelect(suggestion);
+        }
+        watching = false;
+        $scope.completing = false;
+        setTimeout(function(){watching = true;},1000);
+        $scope.setIndex(-1);
+      };
+
+
+    }],
+    link: function(scope, element, attrs){
+        console.log(scope.noAutoSort)
+
+      setTimeout(function() {
+        scope.initLock = false;
+        scope.$apply();
+      }, 250);
+
+      var attr = '';
+
+      // Default atts
+      scope.attrs = {
+        "placeholder": "start typing...",
+        "class": "",
+        "id": "",
+        "inputclass": "",
+        "inputid": ""
+      };
+
+      for (var a in attrs) {
+        attr = a.replace('attr', '').toLowerCase();
+        // add attribute overriding defaults
+        // and preventing duplication
+        if (a.indexOf('attr') === 0) {
+          scope.attrs[attr] = attrs[a];
+        }
+      }
+
+      if (attrs.clickActivation) {
+        element[0].onclick = function(e){
+          if(!scope.searchParam){
+            setTimeout(function() {
+              scope.completing = true;
+              scope.$apply();
+            }, 200);
+          }
+        };
+      }
+
+      var key = {left: 37, up: 38, right: 39, down: 40 , enter: 13, esc: 27, tab: 9};
+
+      document.addEventListener("keydown", function(e){
+        var keycode = e.keyCode || e.which;
+
+        switch (keycode){
+          case key.esc:
+            // disable suggestions on escape
+            scope.select();
+            scope.setIndex(-1);
+            scope.$apply();
+            e.preventDefault();
+        }
+      }, true);
+
+      document.addEventListener("blur", function(e){
+        // disable suggestions on blur
+        // we do a timeout to prevent hiding it before a click event is registered
+        setTimeout(function() {
+          scope.select();
+          scope.setIndex(-1);
+          scope.$apply();
+        }, 150);
+      }, true);
+
+      element[0].addEventListener("keydown",function (e){
+        var keycode = e.keyCode || e.which;
+
+        var l = angular.element(this).find('li').length;
+
+        // this allows submitting forms by pressing Enter in the autocompleted field
+        if(!scope.completing || l == 0) return;
+
+        // implementation of the up and down movement in the list of suggestions
+        switch (keycode){
+          case key.up:
+
+            index = scope.getIndex()-1;
+            if(index<-1){
+              index = l-1;
+            } else if (index >= l ){
+              index = -1;
+              scope.setIndex(index);
+              scope.preSelectOff();
+              break;
+            }
+            scope.setIndex(index);
+
+            if(index!==-1)
+              scope.preSelect(angular.element(angular.element(this).find('li')[index]).text());
+
+            scope.$apply();
+
+            break;
+          case key.down:
+            index = scope.getIndex()+1;
+            if(index<-1){
+              index = l-1;
+            } else if (index >= l ){
+              index = -1;
+              scope.setIndex(index);
+              scope.preSelectOff();
+              scope.$apply();
+              break;
+            }
+            scope.setIndex(index);
+
+            if(index!==-1)
+              scope.preSelect(angular.element(angular.element(this).find('li')[index]).text());
+
+            break;
+          case key.left:
+            break;
+          case key.right:
+          case key.enter:
+          case key.tab:
+
+            index = scope.getIndex();
+            // scope.preSelectOff();
+            if(index !== -1) {
+              scope.select(angular.element(angular.element(this).find('li')[index]).text());
+              if(keycode == key.enter) {
+                e.preventDefault();
+              }
+            } else {
+              if(keycode == key.enter) {
+                scope.select();
+              }
+            }
+            scope.setIndex(-1);
+            scope.$apply();
+
+            break;
+          case key.esc:
+            // disable suggestions on escape
+            scope.select();
+            scope.setIndex(-1);
+            scope.$apply();
+            e.preventDefault();
+            break;
+          default:
+            return;
+        }
+
+      });
+    },
+    template: '\
+        <div class="autocomplete {{ attrs.class }}" id="{{ attrs.id }}">\
+          <input\
+            type="text"\
+            ng-model="searchParam"\
+            placeholder="{{ attrs.placeholder }}"\
+            class="{{ attrs.inputclass }}"\
+            tabindex="{{ attrs.tabindex }}"\
+            id="{{ attrs.inputid }}"\
+            name="{{ attrs.name }}"\
+            ng-required="{{ autocompleteRequired }}" />\
+          <ul ng-if="!noAutoSort" ng-show="completing && (suggestions | filter:searchFilter).length > 0">\
+            <li\
+              suggestion\
+              ng-repeat="suggestion in suggestions | filter:searchFilter | orderBy:\'toString()\' track by $index"\
+              index="{{ $index }}"\
+              val="{{ suggestion }}"\
+              ng-class="{ active: ($index === selectedIndex) }"\
+              ng-click="select(suggestion)"\
+              ng-bind-html="suggestion | highlight:searchParam"></li>\
+          </ul>\
+          <ul ng-if="noAutoSort" ng-show="completing && (suggestions | filter:searchFilter).length > 0">\
+            <li\
+              suggestion\
+              ng-repeat="suggestion in suggestions | filter:searchFilter track by $index"\
+              index="{{ $index }}"\
+              val="{{ suggestion }}"\
+              ng-class="{ active: ($index === selectedIndex) }"\
+              ng-click="select(suggestion)"\
+              ng-bind-html="suggestion | highlight:searchParam"></li>\
+          </ul>\
+        </div>'
+  };
+});
+
+app.filter('highlight', ['$sce', function ($sce) {
+  return function (input, searchParam) {
+    if (typeof input === 'function') return '';
+    if (searchParam) {
+      var words = '(' +
+            searchParam.split(/\ /).join(' |') + '|' +
+            searchParam.split(/\ /).join('|') +
+          ')',
+          exp = new RegExp(words, 'gi');
+      if (words.length) {
+        input = input.replace(exp, "<span class=\"highlight\">$1</span>");
+      }
+    }
+    return $sce.trustAsHtml(input);
+  };
+}]);
+
+app.directive('suggestion', function(){
+  return {
+    restrict: 'A',
+    require: '^autocomplete', // ^look for controller on parents element
+    link: function(scope, element, attrs, autoCtrl){
+      element.bind('mouseenter', function() {
+        autoCtrl.preSelect(attrs.val);
+        autoCtrl.setIndex(attrs.index);
+      });
+
+      element.bind('mouseleave', function() {
+        autoCtrl.preSelectOff();
+      });
+    }
+  };
+});
+
 (function() {
 	angular.module('onTrack')
 	.controller('SettingsProgressFormController', ['$scope', '$state', '$window', '$http',

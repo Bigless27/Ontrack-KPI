@@ -1,7 +1,14 @@
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy
 var FacebookStrategy = require('passport-facebook').Strategy;
 var User = require('../../api/users/userModel')
-var configAuth = require('./oauth');
+var config = require('../../config/config')
+if (config.env !== 'production') {
+	var configAuth = require('./DevOauth');
+}
+else {
+	var configAuth = require('./ProdOauth')
+}
+
 
 module.exports = function(passport) {
 

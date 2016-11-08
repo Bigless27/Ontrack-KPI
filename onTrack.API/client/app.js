@@ -1,6 +1,6 @@
 (function() {
 	angular.module('onTrack', ['ui.router', 'ui.bootstrap.showErrors', 'multipleSelect', 'xeditable', 'ngTagsInput', 'ui.select', 
-		'ngSanitize'])
+		'ngSanitize', 'autocomplete'])
 	.config(['$stateProvider', '$urlRouterProvider', 'showErrorsConfigProvider',
 			function($stateProvider, $urlRouterProvider, showErrorsConfigProvider) {
 

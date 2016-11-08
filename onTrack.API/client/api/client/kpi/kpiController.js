@@ -3,7 +3,6 @@
 	.controller('KPIController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
 		function($scope, $state, $http, $window, $stateParams, $q) {
 
-
 			function getKpiSettings() {
 		 		var d = $q.defer();
 		 		$http.get('api/clients/' + $stateParams.id + 
@@ -105,70 +104,70 @@
 
 		}
 
-			$scope.updateName = function(data) {
-				if (data === ''){
-					return 'Name is Required'
-				}
-				else if (data.length < 2){
-					return 'Name must be more than one character'
-				}
-				return updateKpi(data, 'name')
+		$scope.updateName = function(data) {
+			if (data === ''){
+				return 'Name is Required'
 			}
+			else if (data.length < 2){
+				return 'Name must be more than one character'
+			}
+			return updateKpi(data, 'name')
+		}
 
 
-			$scope.updateType = function(data) {
-				if (data === ''){
-					return 'Type is required'
+		$scope.updateType = function(data) {
+			if (data === ''){
+				return 'Type is required'
+			}
+			else if (($scope.kpi.type == data)) {
+				return 
+			}
+			return updateKpi(data, 'type')
+		}
+
+		$scope.updateSubtypes = function(data) {
+			return updateKpi(data,'subTypes')			
+		}
+
+		//have type show on edit click
+		$(document).on('click','#kpi-type-edit-button', function(){
+			$('#kpi-type-edit')[0].click()
+		} )
+		
+
+
+		$scope.updateValue = function(data) {
+			if (data === ''){
+				return 'Value is required'
+			}
+			return updateKpi(data, 'value')
+		}
+
+
+		function updateKpi(data, field){
+			var d = $q.defer();
+			var token = $window.sessionStorage['jwt']
+			$scope.kpi[field] = data
+
+			$http.put('/api/clients/' + $stateParams.id
+			 + '/kpis/' + $stateParams.kpiId, $scope.kpi,{
+				headers: {
+					'Authorization': `Bearer ${token}`
 				}
-				else if (($scope.kpi.type == data)) {
-					return 
+			})
+			.success(function(data){
+				if (field == 'type') {
+					$scope.updateSubtypes([])
 				}
-				return updateKpi(data, 'type')
-			}
-
-			$scope.updateSubtypes = function(data) {
-				return updateKpi(data,'subTypes')			
-			}
-
-			//have type show on edit click
-			$(document).on('click','#kpi-type-edit-button', function(){
-				$('#kpi-type-edit')[0].click()
-			} )
-			
-
-
-			$scope.updateValue = function(data) {
-				if (data === ''){
-					return 'Value is required'
+				else {
+					$state.reload()
 				}
-				return updateKpi(data, 'value')
-			}
+			})
+			.error(function(err) {
+				console.log(err)
+			})
+		}
 
-
-			function updateKpi(data, field){
-				var d = $q.defer();
-				var token = $window.sessionStorage['jwt']
-				$scope.kpi[field] = data
-
-				$http.put('/api/clients/' + $stateParams.id
-				 + '/kpis/' + $stateParams.kpiId, $scope.kpi,{
-					headers: {
-						'Authorization': `Bearer ${token}`
-					}
-				})
-				.success(function(data){
-					if (field == 'type') {
-						$scope.updateSubtypes([])
-					}
-					else {
-						$state.reload()
-					}
-				})
-				.error(function(err) {
-					console.log(err)
-				})
-			}
-
-			getKpiSettings()	
+		getKpiSettings()	
 	}])
 }());
