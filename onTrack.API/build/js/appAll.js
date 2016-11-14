@@ -281,33 +281,6 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('LoginController', ['$scope', '$state', '$window', '$http',
-	 function($scope, $state, $window, $http) {
-
-			$scope.logUserIn = function(user) {
-				$scope.$broadcast('show-errors-check-validity');
-
-
-				if($scope.userForm.$invalid){return;}
-
-				$scope.err = true
-
-				$http.post('auth/signin', user)
-					.success(function(data) {
-						$scope.err = false
-						$window.sessionStorage.jwt = data['token']
-						$state.go('main')
-					})
-					.error(function(error) {
-						$scope.err = true
-						$scope.errMessage = error
-					})
-			}
-
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('ClientController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
 		function($scope, $state, $http, $window, $stateParams, $q) {
 		
@@ -455,6 +428,33 @@
 			getClient()
 
 		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('LoginController', ['$scope', '$state', '$window', '$http',
+	 function($scope, $state, $window, $http) {
+
+			$scope.logUserIn = function(user) {
+				$scope.$broadcast('show-errors-check-validity');
+
+
+				if($scope.userForm.$invalid){return;}
+
+				$scope.err = true
+
+				$http.post('auth/signin', user)
+					.success(function(data) {
+						$scope.err = false
+						$window.sessionStorage.jwt = data['token']
+						$state.go('main')
+					})
+					.error(function(error) {
+						$scope.err = true
+						$scope.errMessage = error
+					})
+			}
+
 	}])
 }());
 (function() {
@@ -1044,10 +1044,24 @@
 	 		if (subStrings.includes(item.name)) {
 	 			return
 	 		}
-	 		else{
+	 		else {
 		 		$scope.subTypes.push({name: item.name})
 	 		}
 		 }
+
+		 // come back to this later
+		 // $scope.afterRemoveClient = function(item) {
+		 // 	console.log(item)
+		 // 	var clientStrings = $scope.clients.map(x => x.name)
+		 // 	if (clientStrings.includes(item.name)) {
+		 // 		return
+		 // 	}
+		 // 	else {
+		 // 		$scope.clients.push({name: item.name, clientId: item._id})
+		 // 	}
+		 // }
+
+
 
  		$(document).on('click','#activity-type-edit-button', function(){
 			$('#activity-type-edit')[0].click()
@@ -1150,6 +1164,10 @@
 		$scope.clientTags = false
 
 		$scope.toggleEditClients = function() {
+			if($scope.clientErr) {
+				$scope.clientErrMessage = 'Please update client to have atleast one client!'
+				return
+			}
 			if ($scope.clientTags) {
 				$scope.clientTags = false
 			}
@@ -1157,8 +1175,6 @@
 				$scope.clientTags = true
 			}
 		}
-
-
 
 		function sortUsers(users){
 			var sub = []
@@ -1215,15 +1231,17 @@
 			}
 			updateActivity(users, 'users')
 		}
+
+
 		$scope.clientErr = false
+
 		$scope.updateClients = function(clients) {
 			if (clients.length === 0) {
 				$scope.clientErr = true
 				$scope.clientErrMessage = 'A client is required!'
 				return 
 			}
-			return updateActivity(data, 'subTypes')
-			
+			return updateActivity(clients, 'subTypes')
 		}
 
 		$scope.deleteActivity = function(activity) {
