@@ -15,10 +15,10 @@
 			 				$scope.noSubs = false
 			 				$scope.activity = act
 			 				$scope.settings = set
-			 				if($scope.activity.users.length === 0) {
+			 				if ($scope.activity.users.length === 0) {
 			 					$scope.noUsers = true
 			 				}
-			 				if($scope.activity.subTypes.length === 0) {
+			 				if ($scope.activity.subTypes.length === 0) {
 			 					$scope.noSubs = true
 			 				}
 			 				getUniqueTypes()
@@ -46,6 +46,16 @@
 	 			})
 	 			.error(function(err) {
 	 				console.log(err)
+	 			})
+	 	}
+
+	 	function getClients() {
+	 		$http.get('api/clients') 
+	 			.success(function(data) {
+	 				$scope.clients = data;
+	 			})
+	 			.error(function(err) {
+	 				console.log(err);
 	 			})
 	 	}
 
@@ -178,6 +188,17 @@
 			}
 		}
 
+		$scope.clientTags = false
+
+		$scope.toggleEditClients = function() {
+			if ($scope.clientTags) {
+				$scope.clientTags = false
+			}
+			else {
+				$scope.clientTags = true
+			}
+		}
+
 
 
 		function sortUsers(users){
@@ -235,6 +256,16 @@
 			}
 			updateActivity(users, 'users')
 		}
+		$scope.clientErr = false
+		$scope.updateClients = function(clients) {
+			if (clients.length === 0) {
+				$scope.clientErr = true
+				$scope.clientErrMessage = 'A client is required!'
+				return 
+			}
+			return updateActivity(data, 'subTypes')
+			
+		}
 
 		$scope.deleteActivity = function(activity) {
 				swal({
@@ -260,6 +291,7 @@
 		}
 
 		getUsers()
+		getClients()
 	 	getActivitySettings()
 	}])
 }());

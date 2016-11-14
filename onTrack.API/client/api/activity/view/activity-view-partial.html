@@ -89,6 +89,33 @@
 			</td>
 		</tr>
 		<tr>
+			<th>Clients</th>
+			<td>
+				<span ng-show = '!clientTags'>
+					<ul ng-repeat = 'client in activity.clients'>
+						<li>{{client.name}}</li>
+					</ul>
+				</span>
+				<span ng-show = 'clientTags' style = 'width: 200px;'>
+					<multiple-autocomplete 
+						ng-model="newClients"
+	     				object-property = "name"
+	     				suggestions-arr="clients"
+	     				required = 'true'>
+					</multiple-autocomplete>
+					<span class = 'btn btn-info' ng-click = 'updateClients(newClients)'><i class = 'glyphicon glyphicon-ok' aria-hidden = 'true'></i></span>
+					<span class = 'btn btn-danger' ng-click= 'toggleEditClients()'><i class = 'glyphicon glyphicon-remove'></i></span>
+				</span>
+				<span class = 'label label-danger' ng-show = 'clientErr'>
+					{{clientErrMessage}}
+				</span>
+			</td>
+			<td>
+				<a ng-click = "toggleEditClients()" ng-show = "!clientTags">Edit</a>
+				
+			</td>
+		</tr>
+		<tr>
 			<th>Value</th>
 			<td>
 				<span editable-text="activity.value" e-form="value" onbeforesave="updateValue($data)">

@@ -26,7 +26,7 @@ var ActivitySchema = new Schema({
 		value: {type: Number, required: true},
 		users: [usersSchema],
 		date: {type: Date, default: Date.now},
-		client: [clientsSchema]
+		clients: [clientsSchema]
 });
 
 ActivitySchema.pre('remove', function(next) {

@@ -112,7 +112,6 @@
 		}
 		// get rid of the request to get a user and just use the one available in a client
 
-
 		getTypes()
 		getUsers()
 		getClients()
