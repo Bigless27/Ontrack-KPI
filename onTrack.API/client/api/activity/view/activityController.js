@@ -24,6 +24,7 @@
 			 				getUniqueTypes()
 			 				getUniqueSubtypes()
 			 				sortInitUsers(act)
+			 				getClients()
 			 				d.resolve()
 			 			})
 			 			.error(function(err) {
@@ -52,7 +53,15 @@
 	 	function getClients() {
 	 		$http.get('api/clients') 
 	 			.success(function(data) {
-	 				$scope.clients = data;
+	 				var combined = [...data, ...$scope.activity.clients]
+
+	 				var clientChoices = combined.filter(function(obj, i, arr) {
+	 					if (arr.filter(x => x.name === obj.name).length < 2) {
+	 						return obj
+	 					}
+	 				})
+						 				
+	 				$scope.clients  = clientChoices
 	 			})
 	 			.error(function(err) {
 	 				console.log(err);
@@ -90,17 +99,16 @@
 	 		}
 		 }
 
-		 // come back to this later
-		 // $scope.afterRemoveClient = function(item) {
-		 // 	console.log(item)
-		 // 	var clientStrings = $scope.clients.map(x => x.name)
-		 // 	if (clientStrings.includes(item.name)) {
-		 // 		return
-		 // 	}
-		 // 	else {
-		 // 		$scope.clients.push({name: item.name, clientId: item._id})
-		 // 	}
-		 // }
+		 //come back to this later
+		 $scope.afterRemoveClient = function(item) {
+		 	var clientStrings = $scope.clients.map(x => x.name)
+		 	if (clientStrings.includes(item.name)) {
+		 		return
+		 	}
+		 	else {
+		 		$scope.clients.push({name: item.name, clientId: item._id})
+		 	}
+		 }
 
 
 
@@ -144,16 +152,16 @@
 		}
 
 		$scope.updateValue = function(data) {
-				var reg = new RegExp('^\\d+$')
+			var reg = new RegExp('^\\d+$')
 
-				if (data === ''){
-					return 'Value is required'
-				}
-				else if (!reg.test(data)){
-					return 'Value must be an integer'
-				}
-				data = parseInt(data)
-				return updateActivity(data, 'value')
+			if (data === ''){
+				return 'Value is required'
+			}
+			else if (!reg.test(data)){
+				return 'Value must be an integer'
+			}
+			data = parseInt(data)
+			return updateActivity(data, 'value')
 		}
 
 		$scope.updateDate = function(data) {
@@ -206,7 +214,7 @@
 
 		$scope.toggleEditClients = function() {
 			if($scope.clientErr) {
-				$scope.clientErrMessage = 'Please update client to have atleast one client!'
+				$scope.clientErrMessage = 'Please update client to have at least one client!'
 				return
 			}
 			if ($scope.clientTags) {
@@ -282,7 +290,7 @@
 				$scope.clientErrMessage = 'A client is required!'
 				return 
 			}
-			return updateActivity(clients, 'subTypes')
+			return updateActivity(clients, 'clients')
 		}
 
 		$scope.deleteActivity = function(activity) {
@@ -309,7 +317,6 @@
 		}
 
 		getUsers()
-		getClients()
 	 	getActivitySettings()
 	}])
 }());
