@@ -14,6 +14,11 @@ var subTypesSchema = new Schema({
 	name: {type: String}
 })
 
+var clientsSchema = new Schema({
+	name: {type: String},
+	clientId: {type: String}
+})
+
 var ActivitySchema = new Schema({
 		name: {type: String, required: true},
 		type: {type: String, required: true},
@@ -21,7 +26,7 @@ var ActivitySchema = new Schema({
 		value: {type: Number, required: true},
 		users: [usersSchema],
 		date: {type: Date, default: Date.now},
-		client: {type: String, required: true}
+		client: [clientsSchema]
 });
 
 ActivitySchema.pre('remove', function(next) {
@@ -48,25 +53,6 @@ ActivitySchema.pre('remove', function(next) {
 				})
 			})
 	}
-	// User.findById(doc.userId)
-	// 	.then(function(user) {
-	// 		if(!user) {
-	// 			console.log('association not deleted')
-	// 		} else {
-	// 			var update = user
-				
-	// 			update.activity.splice(update.activity.indexOf(doc._id),1);
-	// 			_.merge(user, update)
-
-	// 			user.save(function(err, saved) {
-	// 				if (err) {
-	// 					console.log('not saved')
-	// 				} else {
-	// 					console.log('association deleted and saved')
-	// 				}
-	// 			})
-	// 		}
-	// 	})
 })
 
 //add delete route
@@ -95,7 +81,6 @@ ActivitySchema.pre('save', function(next) {
 			next()
 		})
 	}
-
 	//algorithm.lookUpPromotions(doc)
 })
 

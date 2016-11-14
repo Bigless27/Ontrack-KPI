@@ -44,16 +44,11 @@
 		function getClients() {
 			$http.get('/api/clients')
 				.success(function(data) {
-					console.log(data)
-					$scope.clients = data.map(x => x.name)
+					$scope.clients = data
 				})
 				.error(function(err) {
 
 				})
-		}
-
-		$scope.updateClients = function(types) {
-
 		}
 
 		function getTypes() {
