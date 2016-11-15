@@ -15,20 +15,27 @@
 		$scope.add = function(data){
 				var token = $window.sessionStorage['jwt']
 
-				var client = {admins:[], usersClient:[]}
+				var client = {admins:[], users:[]}
 
 				$scope.client.admins.forEach(function(user) {
 					client.admins.push({id: user._id, email: user.email, firstName: user.firstName, lastName: user.lastName})
 				})
 
-				// $scope.client.users.forEach(function())
+				$scope.client.users.forEach(function(user) {
+					client.users.push({id: user._id, email: user.email, firstName: user.firstName, lastName: user.lastName})
+				})
 
 
 				data.users.forEach(function(user){
 					if (client.admins.filter(function(e){return e.email == user.email}).length === 0) {
 					 	client.admins.push({id:user._id, email: user.email, firstName: user.firstName, lastName: user.lastName})
 					}
+					if(client.users.filter(function(e){return e.email == user.email}).length === 0) {
+						client.users.push({id:user._id, email: user.email, firstName: user.firstName, lastName: user.lastName})
+					}
 				})
+
+				console.log(client)
 
 
 				$http.put('/api/clients/' + $stateParams['id'], client, {
