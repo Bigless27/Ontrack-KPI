@@ -17,10 +17,11 @@
 
 				var client = {admins:[], usersClient:[]}
 
-
 				$scope.client.admins.forEach(function(user) {
 					client.admins.push({id: user._id, email: user.email, firstName: user.firstName, lastName: user.lastName})
 				})
+
+				// $scope.client.users.forEach(function())
 
 
 				data.users.forEach(function(user){
@@ -28,8 +29,6 @@
 					 	client.admins.push({id:user._id, email: user.email, firstName: user.firstName, lastName: user.lastName})
 					}
 				})
-
-				console.log(client)
 
 
 				$http.put('/api/clients/' + $stateParams['id'], client, {
@@ -47,11 +46,11 @@
 		}
 
 		function getUsers(){
-			var userEmails = $scope.client.admins.map(x => x.email)
 			$http.get('/api/users')
 				.success(function(users) {
 					users.forEach(function(user){
 						if(user){
+							var userEmails = $scope.client.admins.map(x => x.email)
 							if(!userEmails.includes(user.email)) {
 								$scope.optionsList.push(
 										{firstName: user.firstName, lastName: user.lastName, 
