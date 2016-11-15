@@ -505,28 +505,6 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
-		$scope.signUp = function(user) {
-			$scope.$broadcast('show-errors-check-validity')
-
-			if ($scope.userForm.$invalid){return;}
-			$scope.err = false
-			$http.post('api/users', user)
-				.success(function(data) {
-					$scope.err = false
-					$window.sessionStorage.jwt = data['token']
-					$state.go('main')
-				})
-				.error(function(error) {
-					$scope.err = true
-					$scope.errMessage = error.message
-				})
-		}
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('MainSettingsController', ['$scope', '$state', '$window', '$http',
 	 function($scope, $state, $window, $http) {
 
@@ -588,6 +566,28 @@
 	 	loadTypeSettings()
 	 	loadProgressSettings()
 
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+		$scope.signUp = function(user) {
+			$scope.$broadcast('show-errors-check-validity')
+
+			if ($scope.userForm.$invalid){return;}
+			$scope.err = false
+			$http.post('api/users', user)
+				.success(function(data) {
+					$scope.err = false
+					$window.sessionStorage.jwt = data['token']
+					$state.go('main')
+				})
+				.error(function(error) {
+					$scope.err = true
+					$scope.errMessage = error.message
+				})
+		}
 	}])
 }());
 (function() {
@@ -840,6 +840,124 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('ActivityFormController', ['$scope', '$state', '$window', '$http', '$stateParams',
+	 function($scope, $state, $window, $http, $stateParams) {
+
+		$scope.selectAll = function(){
+	 		if($scope.activity.users.length < $scope.optionsList.length){
+		 		$scope.activity.users = $scope.optionsList
+		 		$('#user-select-button')[0].innerHTML = 'Clear'
+	 		}
+	 		else{
+	 			$scope.activity.users = []
+	 			$('#user-select-button')[0].innerHTML = 'Select All'
+	 		}
+	 	}
+
+	 	$scope.subTypesList = []
+
+	 	$scope.optionsList = []
+
+	 	function getUsers(){
+			$http.get('/api/users')
+				.success(function(users) {
+					users.forEach(function(user){
+						if(user){
+							$scope.optionsList.push(
+									{ fullName: user.firstName + ' ' + user.lastName,
+										userId: user._id, firstName: user.firstName,
+										lastName: user.lastName
+									}
+								)
+						}
+						else{
+							$scope.optionsList = [{name: 'No users'}]
+						}
+					})
+				})
+				.error(function(err) {
+					console.log(err);
+				})
+		}
+
+		function getClients() {
+			$http.get('/api/clients')
+				.success(function(data) {
+					$scope.clients = data
+				})
+				.error(function(err) {
+
+				})
+		}
+
+		function getTypes() {
+			$http.get('/api/type-settings')
+				.success(function(data) {
+					$scope.settings = data
+					populateLists(data)
+				})
+				.error(function(data) {
+					console.log(data)
+				})
+		}
+
+		function populateLists(data){
+			var listHolder = []
+			data.forEach(function(set) {					
+				listHolder.push(set.type)
+			})
+			$scope.typeList = [...new Set(listHolder)]
+			
+		}
+
+		$scope.typeChecker = false
+
+		$scope.checkType = function() {
+			if(!$scope.activity.type) {
+				$scope.typeChecker = true
+			}
+		}
+
+		$scope.setSubtypes = function(){
+			$scope.subTypesList = []
+			if(!$scope.activity.type) return
+			else{
+					$scope.settings.forEach(function(set){
+					if(set.type === $scope.activity.type){
+						set.subTypes.forEach(function(sub){
+							$scope.subTypesList.push({name: sub.text})	
+						})
+					}
+				})
+			}
+		}
+
+		$scope.typeList = []
+
+		$scope.submitActivity = function(activity){
+		 	var token = $window.sessionStorage['jwt']
+
+			$http.post('/api/activity', activity,{
+				headers: {
+					'Authorization': `Bearer ${token}`
+				}
+			})
+			.success(function(data) {
+				$state.reload()
+			})
+			.error(function(err) {
+				console.log(err)
+			})
+		}
+		// get rid of the request to get a user and just use the one available in a client
+
+		getTypes()
+		getUsers()
+		getClients()
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('ActivityViewController', ['$scope', '$state', '$window', '$stateParams', '$http', '$q',
 	 function($scope, $state, $window, $stateParams, $http, $q) {
 
@@ -894,13 +1012,11 @@
 	 		$http.get('api/clients') 
 	 			.success(function(data) {
 	 				var combined = [...data, ...$scope.activity.clients]
-
 	 				var clientChoices = combined.filter(function(obj, i, arr) {
 	 					if (arr.filter(x => x.name === obj.name).length < 2) {
 	 						return obj
 	 					}
-	 				})
-						 				
+	 				}) 				
 	 				$scope.clients  = clientChoices
 	 			})
 	 			.error(function(err) {
@@ -939,7 +1055,6 @@
 	 		}
 		 }
 
-		 //come back to this later
 		 $scope.afterRemoveClient = function(item) {
 		 	var clientStrings = $scope.clients.map(x => x.name)
 		 	if (clientStrings.includes(item.name)) {
@@ -1162,125 +1277,6 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('ActivityFormController', ['$scope', '$state', '$window', '$http', '$stateParams',
-	 function($scope, $state, $window, $http, $stateParams) {
-
-		$scope.selectAll = function(){
-	 		if($scope.activity.users.length < $scope.optionsList.length){
-		 		$scope.activity.users = $scope.optionsList
-		 		$('#user-select-button')[0].innerHTML = 'Clear'
-	 		}
-	 		else{
-	 			$scope.activity.users = []
-	 			$('#user-select-button')[0].innerHTML = 'Select All'
-	 		}
-	 	}
-
-	 	$scope.subTypesList = []
-
-
-	 	$scope.optionsList = []
-
-	 	function getUsers(){
-			$http.get('/api/users')
-				.success(function(users) {
-					users.forEach(function(user){
-						if(user){
-							$scope.optionsList.push(
-									{ fullName: user.firstName + ' ' + user.lastName,
-										userId: user._id, firstName: user.firstName,
-										lastName: user.lastName
-									}
-								)
-						}
-						else{
-							$scope.optionsList = [{name: 'No users'}]
-						}
-					})
-				})
-				.error(function(err) {
-					console.log(err);
-				})
-		}
-
-		function getClients() {
-			$http.get('/api/clients')
-				.success(function(data) {
-					$scope.clients = data
-				})
-				.error(function(err) {
-
-				})
-		}
-
-		function getTypes() {
-			$http.get('/api/type-settings')
-				.success(function(data) {
-					$scope.settings = data
-					populateLists(data)
-				})
-				.error(function(data) {
-					console.log(data)
-				})
-		}
-
-		function populateLists(data){
-			var listHolder = []
-			data.forEach(function(set) {					
-				listHolder.push(set.type)
-			})
-			$scope.typeList = [...new Set(listHolder)]
-			
-		}
-
-		$scope.typeChecker = false
-
-		$scope.checkType = function() {
-			if(!$scope.activity.type) {
-				$scope.typeChecker = true
-			}
-		}
-
-		$scope.setSubtypes = function(){
-			$scope.subTypesList = []
-			if(!$scope.activity.type) return
-			else{
-					$scope.settings.forEach(function(set){
-					if(set.type === $scope.activity.type){
-						set.subTypes.forEach(function(sub){
-							$scope.subTypesList.push({name: sub.text})	
-						})
-					}
-				})
-			}
-		}
-
-		$scope.typeList = []
-
-		$scope.submitActivity = function(activity){
-		 	var token = $window.sessionStorage['jwt']
-
-			$http.post('/api/activity', activity,{
-				headers: {
-					'Authorization': `Bearer ${token}`
-				}
-			})
-			.success(function(data) {
-				$state.reload()
-			})
-			.error(function(err) {
-				console.log(err)
-			})
-		}
-		// get rid of the request to get a user and just use the one available in a client
-
-		getTypes()
-		getUsers()
-		getClients()
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('AdminController', ['$scope', '$state', '$http', '$window', '$stateParams',
 		function($scope, $state, $http, $window, $stateParams) {
 		
@@ -1296,7 +1292,7 @@
 		$scope.add = function(data){
 				var token = $window.sessionStorage['jwt']
 
-				var client = {admins:[]}
+				var client = {admins:[], usersClient:[]}
 
 
 				$scope.client.admins.forEach(function(user) {
@@ -1309,6 +1305,8 @@
 					 	client.admins.push({id:user._id, email: user.email, firstName: user.firstName, lastName: user.lastName})
 					}
 				})
+
+				console.log(client)
 
 
 				$http.put('/api/clients/' + $stateParams['id'], client, {
@@ -1879,30 +1877,23 @@
 					})
 			}
 
-			function getProgresses() {
-				$http.get('api/progress-settings')
-					.success(function(progs) {
-						var matches =  matchProgressToPromotion(progs)
-						$scope.promoProgress = matches
-						getUsers(matches)
-					})
-					.error(function(err) {
-						console.log(err)
-					})
-			}
 
-			function getUsers(matches) {
+			//this below needs to be refactored to grab the users from the client!
+
+			function getClients(matches) {
 				var usersMatches = matches.map(function(x) {
 					return x._id
 				})
 				//you have the setting Id
 				
-				$http.get('api/users')
+				$http.get('api/clients/' + $stateParams.id)
 					.success(function(data) {
 						var theUsers = []
-						data.forEach(function(user) {
+						data.usersClient.forEach(function(user) {
+							console.log(user)
 							if (user.progress.length > 0) {
 								user.progress.forEach(function(prog) {
+									console.log(prog)
 									if(prog.settingId == usersMatches[0]) {
 										user['progress'] = prog
 										theUsers.push(user)
@@ -1917,29 +1908,43 @@
 					})
 			}
 
+			function getProgresses() {
+				$http.get('api/progress-settings')
+					.success(function(progs) {
+						var matches =  matchProgressToPromotion(progs)
+						getClients(matches)
+					})
+					.error(function(err) {
+						console.log(err)
+					})
+			}
+
 			// This grabs progress of matching types and subtypes. The subtypes are only
 			// matched if there is an exact match on them
 			function matchProgressToPromotion(progs) {
 				var matchedTypesProg = progs.filter(x => x.type === $scope.promotion.type)
 				//$scope.noSubtypes applies to the $scope.promotion
-				if (!$scope.noSubtypes){
-					var subMatchArr = []
-					var subTypeStrings = $scope.promotion.subTypes.map(x => x.name)
-					matchedTypesProg.forEach(function(prog) {
+				
+				var subMatchArr = []
+				matchedTypesProg.forEach(function(prog) {
+					if (!$scope.noSubtypes) {
+						var subTypeStrings = $scope.promotion.subTypes.map(x => x.name) //sub types of promotions
 						prog.subTypes.forEach(function(sub) {
 							if (!subMatchArr.includes(prog)) { //this matches the setting to the promotions setting match, keeps it from being pushed in twice
 								var progSubsInArr = prog.subTypes.map(x => x.name)
-
 								if (subTypeStrings.includes(sub.name)) { // any subtype is matched include that promotion
 									subMatchArr.push(prog)
 								}
 							}
 						})
-					})
-					matchedTypesProg = subMatchArr
-				}
-				return matchedTypesProg
-				//this is the progress Setting not just the progress
+
+					}
+					else{
+						prog.push(subMatchArr)
+					}
+
+				})
+				return subMatchArr
 			}
 
 			$scope.getPercentage = function(x,y) {

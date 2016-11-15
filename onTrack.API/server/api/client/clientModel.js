@@ -10,7 +10,7 @@ var adminSchema = new Schema({
 	userId: {type: String}
 })
 
-var clientUsersSchema = new Schema({
+var usersSchema = new Schema({
 	email: {type: String},
 	firstName: {type: String},
 	lastName: {type: String},
@@ -27,7 +27,7 @@ var ownerSchema = new Schema({
 
 var ClientSchema = new Schema({
 	name: {type: String, required: true, unique: true},
-	usersClient: [clientUsersSchema],
+	users: [usersSchema],
 	startDate: {type: Date},
 	endDate: {type: Date},
 	promotions: [{type: Schema.Types.ObjectId, ref: 'promotion'}],

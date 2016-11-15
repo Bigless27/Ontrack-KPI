@@ -208,30 +208,23 @@
 					})
 			}
 
-			function getProgresses() {
-				$http.get('api/progress-settings')
-					.success(function(progs) {
-						var matches =  matchProgressToPromotion(progs)
-						$scope.promoProgress = matches
-						getUsers(matches)
-					})
-					.error(function(err) {
-						console.log(err)
-					})
-			}
 
-			function getUsers(matches) {
+			//this below needs to be refactored to grab the users from the client!
+
+			function getClients(matches) {
 				var usersMatches = matches.map(function(x) {
 					return x._id
 				})
 				//you have the setting Id
 				
-				$http.get('api/users')
+				$http.get('api/clients/' + $stateParams.id)
 					.success(function(data) {
 						var theUsers = []
-						data.forEach(function(user) {
+						data.usersClient.forEach(function(user) {
+							console.log(user)
 							if (user.progress.length > 0) {
 								user.progress.forEach(function(prog) {
+									console.log(prog)
 									if(prog.settingId == usersMatches[0]) {
 										user['progress'] = prog
 										theUsers.push(user)
@@ -246,29 +239,43 @@
 					})
 			}
 
+			function getProgresses() {
+				$http.get('api/progress-settings')
+					.success(function(progs) {
+						var matches =  matchProgressToPromotion(progs)
+						getClients(matches)
+					})
+					.error(function(err) {
+						console.log(err)
+					})
+			}
+
 			// This grabs progress of matching types and subtypes. The subtypes are only
 			// matched if there is an exact match on them
 			function matchProgressToPromotion(progs) {
 				var matchedTypesProg = progs.filter(x => x.type === $scope.promotion.type)
 				//$scope.noSubtypes applies to the $scope.promotion
-				if (!$scope.noSubtypes){
-					var subMatchArr = []
-					var subTypeStrings = $scope.promotion.subTypes.map(x => x.name)
-					matchedTypesProg.forEach(function(prog) {
+				
+				var subMatchArr = []
+				matchedTypesProg.forEach(function(prog) {
+					if (!$scope.noSubtypes) {
+						var subTypeStrings = $scope.promotion.subTypes.map(x => x.name) //sub types of promotions
 						prog.subTypes.forEach(function(sub) {
 							if (!subMatchArr.includes(prog)) { //this matches the setting to the promotions setting match, keeps it from being pushed in twice
 								var progSubsInArr = prog.subTypes.map(x => x.name)
-
 								if (subTypeStrings.includes(sub.name)) { // any subtype is matched include that promotion
 									subMatchArr.push(prog)
 								}
 							}
 						})
-					})
-					matchedTypesProg = subMatchArr
-				}
-				return matchedTypesProg
-				//this is the progress Setting not just the progress
+
+					}
+					else{
+						prog.push(subMatchArr)
+					}
+
+				})
+				return subMatchArr
 			}
 
 			$scope.getPercentage = function(x,y) {

@@ -16,7 +16,6 @@
 
 	 	$scope.subTypesList = []
 
-
 	 	$scope.optionsList = []
 
 	 	function getUsers(){

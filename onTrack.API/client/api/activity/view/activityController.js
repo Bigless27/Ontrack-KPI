@@ -54,13 +54,11 @@
 	 		$http.get('api/clients') 
 	 			.success(function(data) {
 	 				var combined = [...data, ...$scope.activity.clients]
-
 	 				var clientChoices = combined.filter(function(obj, i, arr) {
 	 					if (arr.filter(x => x.name === obj.name).length < 2) {
 	 						return obj
 	 					}
-	 				})
-						 				
+	 				}) 				
 	 				$scope.clients  = clientChoices
 	 			})
 	 			.error(function(err) {
@@ -99,7 +97,6 @@
 	 		}
 		 }
 
-		 //come back to this later
 		 $scope.afterRemoveClient = function(item) {
 		 	var clientStrings = $scope.clients.map(x => x.name)
 		 	if (clientStrings.includes(item.name)) {

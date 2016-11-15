@@ -15,7 +15,7 @@
 		$scope.add = function(data){
 				var token = $window.sessionStorage['jwt']
 
-				var client = {admins:[]}
+				var client = {admins:[], usersClient:[]}
 
 
 				$scope.client.admins.forEach(function(user) {
@@ -28,6 +28,8 @@
 					 	client.admins.push({id:user._id, email: user.email, firstName: user.firstName, lastName: user.lastName})
 					}
 				})
+
+				console.log(client)
 
 
 				$http.put('/api/clients/' + $stateParams['id'], client, {
