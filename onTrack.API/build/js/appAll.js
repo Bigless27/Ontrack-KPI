@@ -1283,6 +1283,71 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('ClientFormController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+
+			$scope.errorDisplay = false
+
+			$scope.createClient = function(data){
+				var token = $window.sessionStorage['jwt']
+
+				console.log(data)
+
+
+				var names = $scope.clients.filter(function(client) {
+					return client.name == data.name
+				})
+
+				if(names.length > 0){
+					$scope.errorDisplay = true
+					$scope.oops = 'Name is already taken!'
+					return
+				}
+				else {
+					$http.post('/api/clients' , data ,{
+						headers: {
+							'Authorization': `Bearer ${token}`
+						}
+					})
+					.success(function(data){
+						var clientId = {'id': data._id + ''}
+						$state.go('client',clientId )
+					})
+					.error(function(err) {
+						$scope.errorDisplay = true
+						$scope.oops = err.message
+					})
+				}
+			}
+
+			function getAllUsers() {
+				$http.get('/api/users')
+					.success(function(users){
+						users.forEach(function(user){
+							if(user){
+								$scope.optionsList.push(
+										{firstName: user.firstName, lastName: user.lastName, 
+											email: user.email, fullName: user.firstName + ' ' + user.lastName}
+									)
+							}
+							else{
+								$scope.optionsList = [{name: 'No users'}]
+							}
+						})
+					})
+					.error(function(err){
+						console.log(err)
+					})
+			}
+
+			getAllUsers()
+
+			$scope.optionsList = [];
+
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('AdminController', ['$scope', '$state', '$http', '$window', '$stateParams',
 		function($scope, $state, $http, $window, $stateParams) {
 		
@@ -1359,71 +1424,6 @@
 		$scope.optionsList = []
 
 		getUsers()
-
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('ClientFormController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
-
-			$scope.errorDisplay = false
-
-			$scope.createClient = function(data){
-				var token = $window.sessionStorage['jwt']
-
-				console.log(data)
-
-
-				var names = $scope.clients.filter(function(client) {
-					return client.name == data.name
-				})
-
-				if(names.length > 0){
-					$scope.errorDisplay = true
-					$scope.oops = 'Name is already taken!'
-					return
-				}
-				else {
-					$http.post('/api/clients' , data ,{
-						headers: {
-							'Authorization': `Bearer ${token}`
-						}
-					})
-					.success(function(data){
-						var clientId = {'id': data._id + ''}
-						$state.go('client',clientId )
-					})
-					.error(function(err) {
-						$scope.errorDisplay = true
-						$scope.oops = err.message
-					})
-				}
-			}
-
-			function getAllUsers() {
-				$http.get('/api/users')
-					.success(function(users){
-						users.forEach(function(user){
-							if(user){
-								$scope.optionsList.push(
-										{firstName: user.firstName, lastName: user.lastName, 
-											email: user.email, fullName: user.firstName + ' ' + user.lastName}
-									)
-							}
-							else{
-								$scope.optionsList = [{name: 'No users'}]
-							}
-						})
-					})
-					.error(function(err){
-						console.log(err)
-					})
-			}
-
-			getAllUsers()
-
-			$scope.optionsList = [];
 
 	}])
 }());
@@ -1755,7 +1755,6 @@
 				return updatePromotion(data, 'endDate')
 			}
 
-
 			function updatePromotion(data, field){
 				var d = $q.defer();
 				var token = $window.sessionStorage['jwt']
@@ -1810,7 +1809,6 @@
 				}).done(function() {
 					return
 				})
-
 			}
 
 			function getUniqueTypes() {
@@ -1892,10 +1890,7 @@
 			//this below needs to be refactored to grab the users from the client!
 
 			function getClients(matches) {
-
-
 				//you have the setting Id
-
 				$http.get('api/clients/' + $stateParams.id)
 					.success(function(data) {
 						var theUsers = []
@@ -1903,28 +1898,35 @@
 							//match the user's email to the mathcing progress email
 
 							matches.forEach(function(prog) {
-								console.log(prog.users.map(x => x.email))
-								console.log(user.email)
 								if (prog.users.map(x => x.email).includes(user.email)) {
-									theUser.push(prog)
+									theUsers.push(prog.users)
 								}
 							})
 								
 						})
-						console.log(theUsers)
-						$scope.matchingUsers = theUsers
+						var usersQuery = theUsers.reduce((x,y) => {x.concat(y)})
 					})
 					.error(function(err){
 						console.log(err)
 					})
 			}
 
+			function findUsers() {
+				$http.get('api/users/findUsers/' + $stateParams.id)
+					.success(function(data) {
+						console.log(data)
+					})
+					.error(function(err) {
+
+					})
+			}
+
 			function getProgresses() {
 				$http.get('api/progress-settings')
 					.success(function(progs) {
+						findUsers()
 						var matches =  matchProgressToPromotion(progs)
-						console.log(matches)
-						getClients(matches)
+						
 					})
 					.error(function(err) {
 						console.log(err)
@@ -1949,7 +1951,6 @@
 								}
 							}
 						})
-
 					}
 					else{
 						subMatchArr.push(prog)

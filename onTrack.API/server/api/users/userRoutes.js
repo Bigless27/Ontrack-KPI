@@ -13,6 +13,8 @@ router.get('/me', checkUser, controller.me);
 	router.use('/:id/progress', require('./progress/progressRoutes'))
 //
 
+router.route('/findUsers/:clientId')
+	.get(controller.findUsers)
 
 router.route('/')
   .get(controller.get)// tested

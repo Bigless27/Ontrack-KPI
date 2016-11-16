@@ -53,7 +53,6 @@ exports.post = function(req, res, next) {//check
     .then(function(activity) {
       res.json(activity)
     }, function(err) {
-      console.log(err)
       next(err);
     });
 };

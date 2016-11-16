@@ -75,7 +75,6 @@
 				return updatePromotion(data, 'endDate')
 			}
 
-
 			function updatePromotion(data, field){
 				var d = $q.defer();
 				var token = $window.sessionStorage['jwt']
@@ -130,7 +129,6 @@
 				}).done(function() {
 					return
 				})
-
 			}
 
 			function getUniqueTypes() {
@@ -212,10 +210,7 @@
 			//this below needs to be refactored to grab the users from the client!
 
 			function getClients(matches) {
-
-
 				//you have the setting Id
-
 				$http.get('api/clients/' + $stateParams.id)
 					.success(function(data) {
 						var theUsers = []
@@ -223,28 +218,35 @@
 							//match the user's email to the mathcing progress email
 
 							matches.forEach(function(prog) {
-								console.log(prog.users.map(x => x.email))
-								console.log(user.email)
 								if (prog.users.map(x => x.email).includes(user.email)) {
-									theUser.push(prog)
+									theUsers.push(prog.users)
 								}
 							})
 								
 						})
-						console.log(theUsers)
-						$scope.matchingUsers = theUsers
+						var usersQuery = theUsers.reduce((x,y) => {x.concat(y)})
 					})
 					.error(function(err){
 						console.log(err)
 					})
 			}
 
+			function findUsers() {
+				$http.get('api/users/findUsers/' + $stateParams.id)
+					.success(function(data) {
+						console.log(data)
+					})
+					.error(function(err) {
+
+					})
+			}
+
 			function getProgresses() {
 				$http.get('api/progress-settings')
 					.success(function(progs) {
+						findUsers()
 						var matches =  matchProgressToPromotion(progs)
-						console.log(matches)
-						getClients(matches)
+						
 					})
 					.error(function(err) {
 						console.log(err)
@@ -269,7 +271,6 @@
 								}
 							}
 						})
-
 					}
 					else{
 						subMatchArr.push(prog)

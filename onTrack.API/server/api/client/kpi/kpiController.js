@@ -81,8 +81,6 @@ exports.delete = function(req, res, next) {
 }
 
 function customizer(objValue, srcValue){
-		console.log(objValue)
-		console.log(srcValue)
 	if(Array.isArray(objValue)){
 		if(objValue.length > srcValue.length){
 			return objValue = srcValue
