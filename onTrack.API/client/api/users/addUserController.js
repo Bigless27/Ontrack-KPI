@@ -6,11 +6,11 @@
 		$scope.add = function(data){
 			var token = $window.sessionStorage['jwt']
 
-			var client = {usersClient:[]}
+			var client = {users:[]}
 
 			// push users active back in
-			$scope.client.usersClient.forEach(function(user) {
-				client.usersClient.push({id: user._id, email: user.email, firstName: user.firstName, lastName: user.lastName})
+			$scope.client.users.forEach(function(user) {
+				client.users.push({id: user._id, email: user.email, firstName: user.firstName, lastName: user.lastName})
 			})
 
 			// check duplicates
@@ -38,7 +38,7 @@
 
 
 		function getUsers(){
-			var userEmails = $scope.client.usersClient.map(x => x.email)
+			var userEmails = $scope.client.users.map(x => x.email)
 
 			$http.get('/api/users')
 				.success(function(users) {
