@@ -15,8 +15,8 @@
 
 			// check duplicates
 			data.users.forEach(function(user){
-				if (client.usersClient.filter(function(e){return e.email == user.email}).length === 0) {
-				 	client.usersClient.push({id:user._id, email: user.email, firstName: user.firstName, lastName: user.lastName})
+				if (client.users.filter(function(e){return e.email == user.email}).length === 0) {
+				 	client.users.push({id:user._id, email: user.email, firstName: user.firstName, lastName: user.lastName})
 				}
 			})
 
@@ -64,9 +64,6 @@
 		$scope.optionsList = []
 
 		getUsers()
-
-
-
 		
 	}])
 }());

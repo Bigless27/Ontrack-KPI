@@ -35,8 +35,6 @@
 					}
 				})
 
-				console.log(client)
-
 
 				$http.put('/api/clients/' + $stateParams['id'], client, {
 					headers: {

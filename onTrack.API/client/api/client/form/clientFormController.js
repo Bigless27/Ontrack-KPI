@@ -6,8 +6,9 @@
 			$scope.errorDisplay = false
 
 			$scope.createClient = function(data){
-				console.log(data)
 				var token = $window.sessionStorage['jwt']
+
+				console.log(data)
 
 
 				var names = $scope.clients.filter(function(client) {
@@ -19,7 +20,7 @@
 					$scope.oops = 'Name is already taken!'
 					return
 				}
-				else{
+				else {
 					$http.post('/api/clients' , data ,{
 						headers: {
 							'Authorization': `Bearer ${token}`

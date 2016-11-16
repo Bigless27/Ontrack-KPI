@@ -220,7 +220,7 @@
 				$http.get('api/clients/' + $stateParams.id)
 					.success(function(data) {
 						var theUsers = []
-						data.usersClient.forEach(function(user) {
+						data.users.forEach(function(user) {
 							console.log(user)
 							if (user.progress.length > 0) {
 								user.progress.forEach(function(prog) {

@@ -60,10 +60,10 @@ exports.updateUsersClient = function(req, res, next) {
 
   var update = req.body
 
-  var i = client.usersClient.length
+  var i = client.users.length
 
   while(i--){
-    var ad = client.usersClient[i]
+    var ad = client.users[i]
     if(ad._id.toString() === update._id.toString()){
       ad.remove()
     }
@@ -104,7 +104,7 @@ exports.post = function(req, res, next) {
   var newclient = req.body;
   newclient.owner = req.user
   newclient.admins.push(req.user)
-  newclient.usersClient.push(req.user)
+  newclient.users.push(req.user)
 
   Client.create(newclient)
     .then(function(client) {

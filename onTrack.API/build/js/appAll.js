@@ -305,17 +305,31 @@
 			$scope.removeUser = function(user) {
 				var token = $window.sessionStorage['jwt']
 
-				$http.put('/api/clients/' + $stateParams['id'] + '/updateUser', user, {
+				console.log(user)
+
+
+				$http.put('/api/clients/' + $stateParams.id + '/updateAdmin', user, {
 					headers: {
 						'Authorization': `Bearer ${token}`
 					}
 				})
-				.success(function(data){
-					$scope.client = data
+				.success(function(data) {
+					$http.put('/api/clients/' + $stateParams.id + '/updateUser', user, {
+						headers: {
+							'Authorization': `Bearer ${token}`
+						}
+					})
+					.success(function(data) {
+						$scope.client = data
+					})
+					.error(function(err) {
+						console.log(err)
+					})
 				})
 				.error(function(err) {
 					console.log(err)
 				})
+
 			}
 
 			$scope.deleteClient = function() {
@@ -482,8 +496,6 @@
 					})
 			}
 
-			getUsers() 
-			getClients()
 
 			$scope.optionsList = [
 			  {id: 1,  name : "Java"},
@@ -493,36 +505,13 @@
 			  {id: 5,  name : "JavaScript"}
 			];
 
-
-
-
 			$scope.logout = function() {
 				$window.sessionStorage.clear()
 				$state.go('login')
 			}
 		
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
-		$scope.signUp = function(user) {
-			$scope.$broadcast('show-errors-check-validity')
-
-			if ($scope.userForm.$invalid){return;}
-			$scope.err = false
-			$http.post('api/users', user)
-				.success(function(data) {
-					$scope.err = false
-					$window.sessionStorage.jwt = data['token']
-					$state.go('main')
-				})
-				.error(function(error) {
-					$scope.err = true
-					$scope.errMessage = error.message
-				})
-		}
+			getUsers() 
+			getClients()
 	}])
 }());
 (function() {
@@ -592,6 +581,28 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+		$scope.signUp = function(user) {
+			$scope.$broadcast('show-errors-check-validity')
+
+			if ($scope.userForm.$invalid){return;}
+			$scope.err = false
+			$http.post('api/users', user)
+				.success(function(data) {
+					$scope.err = false
+					$window.sessionStorage.jwt = data['token']
+					$state.go('main')
+				})
+				.error(function(error) {
+					$scope.err = true
+					$scope.errMessage = error.message
+				})
+		}
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('AddUserController', ['$scope', '$state', '$http', '$window', '$stateParams',
 		function($scope, $state, $http, $window, $stateParams) {
 
@@ -607,8 +618,8 @@
 
 			// check duplicates
 			data.users.forEach(function(user){
-				if (client.usersClient.filter(function(e){return e.email == user.email}).length === 0) {
-				 	client.usersClient.push({id:user._id, email: user.email, firstName: user.firstName, lastName: user.lastName})
+				if (client.users.filter(function(e){return e.email == user.email}).length === 0) {
+				 	client.users.push({id:user._id, email: user.email, firstName: user.firstName, lastName: user.lastName})
 				}
 			})
 
@@ -656,9 +667,6 @@
 		$scope.optionsList = []
 
 		getUsers()
-
-
-
 		
 	}])
 }());
@@ -1312,8 +1320,6 @@
 					}
 				})
 
-				console.log(client)
-
 
 				$http.put('/api/clients/' + $stateParams['id'], client, {
 					headers: {
@@ -1366,8 +1372,9 @@
 			$scope.errorDisplay = false
 
 			$scope.createClient = function(data){
-				console.log(data)
 				var token = $window.sessionStorage['jwt']
+
+				console.log(data)
 
 
 				var names = $scope.clients.filter(function(client) {
@@ -1379,7 +1386,7 @@
 					$scope.oops = 'Name is already taken!'
 					return
 				}
-				else{
+				else {
 					$http.post('/api/clients' , data ,{
 						headers: {
 							'Authorization': `Bearer ${token}`
@@ -1895,7 +1902,7 @@
 				$http.get('api/clients/' + $stateParams.id)
 					.success(function(data) {
 						var theUsers = []
-						data.usersClient.forEach(function(user) {
+						data.users.forEach(function(user) {
 							console.log(user)
 							if (user.progress.length > 0) {
 								user.progress.forEach(function(prog) {
@@ -2294,6 +2301,37 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('UserFormController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+
+			$scope.errorDisplay = false
+
+			$scope.createUser = function(user) {
+				
+				var duplicate = $scope.users.filter(function(x){
+					return x.email == user.email
+				})
+
+				if (duplicate.length > 0){
+					$scope.oops = 'Email is already taken!'
+					$scope.errorDisplay = true
+					return
+				}
+				else{
+					$http.post('api/users', user)
+						.success(function(data){
+							$state.reload()
+
+						})
+						.error(function(err) {
+							console.log(err)
+						})
+				}
+			}
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('ProgressController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
 		function($scope, $state, $http, $window, $stateParams, $q) {
 			
@@ -2335,37 +2373,6 @@
 			getProgress()
 
 
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('UserFormController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
-
-			$scope.errorDisplay = false
-
-			$scope.createUser = function(user) {
-				
-				var duplicate = $scope.users.filter(function(x){
-					return x.email == user.email
-				})
-
-				if (duplicate.length > 0){
-					$scope.oops = 'Email is already taken!'
-					$scope.errorDisplay = true
-					return
-				}
-				else{
-					$http.post('api/users', user)
-						.success(function(data){
-							$state.reload()
-
-						})
-						.error(function(err) {
-							console.log(err)
-						})
-				}
-			}
 	}])
 }());
 var app = angular.module('app', ['autocomplete']);

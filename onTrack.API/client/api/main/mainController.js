@@ -23,8 +23,6 @@
 					})
 			}
 
-			getUsers() 
-			getClients()
 
 			$scope.optionsList = [
 			  {id: 1,  name : "Java"},
@@ -34,13 +32,12 @@
 			  {id: 5,  name : "JavaScript"}
 			];
 
-
-
-
 			$scope.logout = function() {
 				$window.sessionStorage.clear()
 				$state.go('login')
 			}
 		
+			getUsers() 
+			getClients()
 	}])
 }());
