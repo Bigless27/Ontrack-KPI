@@ -38,11 +38,8 @@ exports.updateAdmin = function(req, res, next) {
 
   var i = client.admins.length
 
-  console.log(client)
-  console.log(update)
   var updatedClient = updateAdminsUsers('admins', client, update)
 
-  console.log(updatedClient)
   updatedClient.save(function(err, saved) {
     if (err) {
       next(err);
@@ -60,8 +57,6 @@ exports.updateUsersClient = function(req, res, next) {
   var i = client.users.length
 
   var updatedClient = updateAdminsUsers('users', client, update)
-
-  console.log(updatedClient)
 
   updatedClient.save(function(err, saved) {
     if (err) {
@@ -84,8 +79,6 @@ function updateAdminsUsers(param, client, update) {
   }
 
   return client
-
-  console.log(client)
 }
 
 

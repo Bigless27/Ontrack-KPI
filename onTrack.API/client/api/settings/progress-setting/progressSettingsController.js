@@ -132,7 +132,7 @@
 		function sortUsers(users){
 			var sub = []
 			users.forEach(function(user) {
-				sub.push({userId: user._id, fullName: user.firstName + ' ' + user.lastName,
+				sub.push({userId: user._id, fullName: user.firstName + ' ' + user.lastName, email: user.email,
 							firstName: user.firstName, lastName: user.lastName})
 			})	
 			$scope.optionsList = sub 

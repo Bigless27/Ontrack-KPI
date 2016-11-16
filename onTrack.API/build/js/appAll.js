@@ -514,6 +514,71 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('MainSettingsController', ['$scope', '$state', '$window', '$http',
+	 function($scope, $state, $window, $http) {
+
+	 	$scope.selectAll = function(){
+	 		if($scope.user.users.length < $scope.optionsList.length){
+		 		$scope.user.users = $scope.optionsList
+		 		$('#user-select-button')[0].innerHTML = 'Clear'
+	 		}
+	 		else{
+	 			$scope.user.users = []
+	 			$('#user-select-button')[0].innerHTML = 'Select All'
+	 		}
+	 	}
+
+	 	$scope.optionsList = []
+
+	 	function getUsers(){
+			$http.get('/api/users')
+				.success(function(users) {
+					users.forEach(function(user){
+						if(user){
+							$scope.optionsList.push(
+									{firstName: user.firstName, lastName: user.lastName, 
+										email: user.email, fullName: user.firstName + ' ' + user.lastName}
+								)
+						}
+						else{
+							$scope.optionsList = [{name: 'No users'}]
+						}
+					})
+				})
+				.error(function(err) {
+					console.log(err);
+				})
+		}
+
+	 	function loadTypeSettings(){
+		 	 $http.get('api/type-settings')
+		 		.success(function(data) {
+		 			$scope.typeSettings = data
+		 		})
+		 		.error(function(err) {
+		 			console.log(err)
+		 		})
+	 	}
+
+	 	function loadProgressSettings(){
+	 		$http.get('api/progress-settings')
+	 			.success(function(data) {
+	 				$scope.progressSettings = data
+	 			})
+	 			.error(function(err) {
+	 				console.log(err)
+	 			})
+	 	}
+
+
+	 	getUsers()
+	 	loadTypeSettings()
+	 	loadProgressSettings()
+
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
 		function($scope, $state, $http, $window) {
 		$scope.signUp = function(user) {
@@ -777,71 +842,6 @@
 			populateTypes()
 			getUser()
 		
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('MainSettingsController', ['$scope', '$state', '$window', '$http',
-	 function($scope, $state, $window, $http) {
-
-	 	$scope.selectAll = function(){
-	 		if($scope.user.users.length < $scope.optionsList.length){
-		 		$scope.user.users = $scope.optionsList
-		 		$('#user-select-button')[0].innerHTML = 'Clear'
-	 		}
-	 		else{
-	 			$scope.user.users = []
-	 			$('#user-select-button')[0].innerHTML = 'Select All'
-	 		}
-	 	}
-
-	 	$scope.optionsList = []
-
-	 	function getUsers(){
-			$http.get('/api/users')
-				.success(function(users) {
-					users.forEach(function(user){
-						if(user){
-							$scope.optionsList.push(
-									{firstName: user.firstName, lastName: user.lastName, 
-										email: user.email, fullName: user.firstName + ' ' + user.lastName}
-								)
-						}
-						else{
-							$scope.optionsList = [{name: 'No users'}]
-						}
-					})
-				})
-				.error(function(err) {
-					console.log(err);
-				})
-		}
-
-	 	function loadTypeSettings(){
-		 	 $http.get('api/type-settings')
-		 		.success(function(data) {
-		 			$scope.typeSettings = data
-		 		})
-		 		.error(function(err) {
-		 			console.log(err)
-		 		})
-	 	}
-
-	 	function loadProgressSettings(){
-	 		$http.get('api/progress-settings')
-	 			.success(function(data) {
-	 				$scope.progressSettings = data
-	 			})
-	 			.error(function(err) {
-	 				console.log(err)
-	 			})
-	 	}
-
-
-	 	getUsers()
-	 	loadTypeSettings()
-	 	loadProgressSettings()
-
 	}])
 }());
 (function() {
@@ -1892,26 +1892,26 @@
 			//this below needs to be refactored to grab the users from the client!
 
 			function getClients(matches) {
-				var usersMatches = matches.map(function(x) {
-					return x._id
-				})
+
+
 				//you have the setting Id
-				
+
 				$http.get('api/clients/' + $stateParams.id)
 					.success(function(data) {
 						var theUsers = []
 						data.users.forEach(function(user) {
-							console.log(user)
-							if (user.progress.length > 0) {
-								user.progress.forEach(function(prog) {
-									console.log(prog)
-									if(prog.settingId == usersMatches[0]) {
-										user['progress'] = prog
-										theUsers.push(user)
-									}
-								})
-							}
+							//match the user's email to the mathcing progress email
+
+							matches.forEach(function(prog) {
+								console.log(prog.users.map(x => x.email))
+								console.log(user.email)
+								if (prog.users.map(x => x.email).includes(user.email)) {
+									theUser.push(prog)
+								}
+							})
+								
 						})
+						console.log(theUsers)
 						$scope.matchingUsers = theUsers
 					})
 					.error(function(err){
@@ -1923,6 +1923,7 @@
 				$http.get('api/progress-settings')
 					.success(function(progs) {
 						var matches =  matchProgressToPromotion(progs)
+						console.log(matches)
 						getClients(matches)
 					})
 					.error(function(err) {
@@ -1951,7 +1952,7 @@
 
 					}
 					else{
-						prog.push(subMatchArr)
+						subMatchArr.push(prog)
 					}
 
 				})
@@ -1968,82 +1969,6 @@
 			}
 
 			getPromotions()		
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('UserFormController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
-
-			$scope.errorDisplay = false
-
-			$scope.createUser = function(user) {
-				
-				var duplicate = $scope.users.filter(function(x){
-					return x.email == user.email
-				})
-
-				if (duplicate.length > 0){
-					$scope.oops = 'Email is already taken!'
-					$scope.errorDisplay = true
-					return
-				}
-				else{
-					$http.post('api/users', user)
-						.success(function(data){
-							$state.reload()
-
-						})
-						.error(function(err) {
-							console.log(err)
-						})
-				}
-			}
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('ProgressController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
-		function($scope, $state, $http, $window, $stateParams, $q) {
-			
-			function getProgress() {
-				$http.get('api/users/' + $stateParams.id + '/progress/' + $stateParams.progressId)
-					.success(function(data) {
-						$scope.progress = data
-						$http.get('api/progress-settings/' + data.settingId)
-							.success(function(data){
-								$scope.setting = data
-							})
-							.error(function(err) {
-								console.log(err)
-							})
-					})
-					.error(function(err) {
-						console.log(err)
-					})
-			}
-
-
-			$scope.updateValue = function(data) {
-				if (data < 0) {
-					return "Value can't be negative"
-				}
-				updateProgress(data)
-			}
-
-			function updateProgress(data) {
-				$scope.progress['value'] = data
-
-				$http.put('api/users/' + $stateParams.id + '/progress/' + $stateParams.progressId, $scope.progress)
-					.error(function(err) {
-						console.log(err)
-					})
-
-			}
-
-			getProgress()
-
-
 	}])
 }());
 (function() {
@@ -2180,7 +2105,7 @@
 		function sortUsers(users){
 			var sub = []
 			users.forEach(function(user) {
-				sub.push({userId: user._id, fullName: user.firstName + ' ' + user.lastName,
+				sub.push({userId: user._id, fullName: user.firstName + ' ' + user.lastName, email: user.email,
 							firstName: user.firstName, lastName: user.lastName})
 			})	
 			$scope.optionsList = sub 
@@ -2370,6 +2295,82 @@
 	 		}
 
 	 		getSetting()
+
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('UserFormController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+
+			$scope.errorDisplay = false
+
+			$scope.createUser = function(user) {
+				
+				var duplicate = $scope.users.filter(function(x){
+					return x.email == user.email
+				})
+
+				if (duplicate.length > 0){
+					$scope.oops = 'Email is already taken!'
+					$scope.errorDisplay = true
+					return
+				}
+				else{
+					$http.post('api/users', user)
+						.success(function(data){
+							$state.reload()
+
+						})
+						.error(function(err) {
+							console.log(err)
+						})
+				}
+			}
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('ProgressController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
+		function($scope, $state, $http, $window, $stateParams, $q) {
+			
+			function getProgress() {
+				$http.get('api/users/' + $stateParams.id + '/progress/' + $stateParams.progressId)
+					.success(function(data) {
+						$scope.progress = data
+						$http.get('api/progress-settings/' + data.settingId)
+							.success(function(data){
+								$scope.setting = data
+							})
+							.error(function(err) {
+								console.log(err)
+							})
+					})
+					.error(function(err) {
+						console.log(err)
+					})
+			}
+
+
+			$scope.updateValue = function(data) {
+				if (data < 0) {
+					return "Value can't be negative"
+				}
+				updateProgress(data)
+			}
+
+			function updateProgress(data) {
+				$scope.progress['value'] = data
+
+				$http.put('api/users/' + $stateParams.id + '/progress/' + $stateParams.progressId, $scope.progress)
+					.error(function(err) {
+						console.log(err)
+					})
+
+			}
+
+			getProgress()
+
 
 	}])
 }());
@@ -2931,7 +2932,7 @@ app.directive('suggestion', function(){
 					users.forEach(function(user){
 						if(user){
 							$scope.optionsList.push(
-									{ fullName: user.firstName + ' ' + user.lastName,
+									{ fullName: user.firstName + ' ' + user.lastName, email: user.email,
 										userId: user._id, firstName: user.firstName,
 										lastName: user.lastName
 									}

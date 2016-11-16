@@ -25,7 +25,7 @@
 					users.forEach(function(user){
 						if(user){
 							$scope.optionsList.push(
-									{ fullName: user.firstName + ' ' + user.lastName,
+									{ fullName: user.firstName + ' ' + user.lastName, email: user.email,
 										userId: user._id, firstName: user.firstName,
 										lastName: user.lastName
 									}

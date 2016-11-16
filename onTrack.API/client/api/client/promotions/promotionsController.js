@@ -212,26 +212,26 @@
 			//this below needs to be refactored to grab the users from the client!
 
 			function getClients(matches) {
-				var usersMatches = matches.map(function(x) {
-					return x._id
-				})
+
+
 				//you have the setting Id
-				
+
 				$http.get('api/clients/' + $stateParams.id)
 					.success(function(data) {
 						var theUsers = []
 						data.users.forEach(function(user) {
-							console.log(user)
-							if (user.progress.length > 0) {
-								user.progress.forEach(function(prog) {
-									console.log(prog)
-									if(prog.settingId == usersMatches[0]) {
-										user['progress'] = prog
-										theUsers.push(user)
-									}
-								})
-							}
+							//match the user's email to the mathcing progress email
+
+							matches.forEach(function(prog) {
+								console.log(prog.users.map(x => x.email))
+								console.log(user.email)
+								if (prog.users.map(x => x.email).includes(user.email)) {
+									theUser.push(prog)
+								}
+							})
+								
 						})
+						console.log(theUsers)
 						$scope.matchingUsers = theUsers
 					})
 					.error(function(err){
@@ -243,6 +243,7 @@
 				$http.get('api/progress-settings')
 					.success(function(progs) {
 						var matches =  matchProgressToPromotion(progs)
+						console.log(matches)
 						getClients(matches)
 					})
 					.error(function(err) {
@@ -271,7 +272,7 @@
 
 					}
 					else{
-						prog.push(subMatchArr)
+						subMatchArr.push(prog)
 					}
 
 				})

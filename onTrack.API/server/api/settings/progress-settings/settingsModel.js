@@ -8,6 +8,7 @@ var Progress = require('../../users/progress/progressModel')
 var usersSchema = new Schema({
 	firstName: {type: String},
 	lastName: {type: String},
+	email: {type: String},
 	userId: {type: String} //may need to change type to objectId in the future
 })
 
