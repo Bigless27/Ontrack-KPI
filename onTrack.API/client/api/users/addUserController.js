@@ -38,12 +38,12 @@
 
 
 		function getUsers(){
-			var userEmails = $scope.client.users.map(x => x.email)
 
 			$http.get('/api/users')
 				.success(function(users) {
 					users.forEach(function(user){
 						if(user){
+							var userEmails = $scope.client.users.map(x => x.email)
 							if(!userEmails.includes(user.email)) {
 								$scope.optionsList.push(
 										{firstName: user.firstName, lastName: user.lastName, 

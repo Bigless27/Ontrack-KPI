@@ -24,30 +24,28 @@
 			$scope.removeUser = function(user) {
 				var token = $window.sessionStorage['jwt']
 
-				console.log(user)
-
-
-				$http.put('/api/clients/' + $stateParams.id + '/updateAdmin', user, {
-					headers: {
-						'Authorization': `Bearer ${token}`
-					}
-				})
-				.success(function(data) {
-					$http.put('/api/clients/' + $stateParams.id + '/updateUser', user, {
+				$http.put('/api/clients/' + $stateParams.id + '/updateAdmin', user , {
 						headers: {
 							'Authorization': `Bearer ${token}`
 						}
 					})
 					.success(function(data) {
-						$scope.client = data
+						$http.put('/api/clients/' + $stateParams.id + '/updateUser', user, {
+								headers: {
+									'Authorization': `Bearer ${token}`
+								}
+							})
+							.success(function(data) {
+								$scope.client = data
+							})
+							.error(function(err) {
+								console.log(err)
+						})
 					})
 					.error(function(err) {
 						console.log(err)
-					})
 				})
-				.error(function(err) {
-					console.log(err)
-				})
+
 
 			}
 

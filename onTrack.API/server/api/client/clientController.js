@@ -38,15 +38,12 @@ exports.updateAdmin = function(req, res, next) {
 
   var i = client.admins.length
 
+  console.log(client)
+  console.log(update)
+  var updatedClient = updateAdminsUsers('admins', client, update)
 
-  while(i--){
-    var ad = client.admins[i]
-    if(ad._id.toString() === update._id.toString()){
-      ad.remove()
-    }
-  }
-
-  client.save(function(err, saved) {
+  console.log(updatedClient)
+  updatedClient.save(function(err, saved) {
     if (err) {
       next(err);
     } else {
@@ -62,20 +59,33 @@ exports.updateUsersClient = function(req, res, next) {
 
   var i = client.users.length
 
-  while(i--){
-    var ad = client.users[i]
-    if(ad._id.toString() === update._id.toString()){
-      ad.remove()
-    }
-  }
+  var updatedClient = updateAdminsUsers('users', client, update)
 
-  client.save(function(err, saved) {
+  console.log(updatedClient)
+
+  updatedClient.save(function(err, saved) {
     if (err) {
       next(err);
     } else {
       res.json(saved);
     }
   })
+}
+
+function updateAdminsUsers(param, client, update) {
+  
+  var i = client[param].length
+
+  while(i--){
+    var ad = client[param][i]
+    if (ad.email.toString() === update.email.toString()){
+      ad.remove()
+    }
+  }
+
+  return client
+
+  console.log(client)
 }
 
 
