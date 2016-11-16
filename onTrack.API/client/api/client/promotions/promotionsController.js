@@ -216,7 +216,6 @@
 						var theUsers = []
 						data.users.forEach(function(user) {
 							//match the user's email to the mathcing progress email
-
 							matches.forEach(function(prog) {
 								if (prog.users.map(x => x.email).includes(user.email)) {
 									theUsers.push(prog.users)
@@ -234,10 +233,13 @@
 			function findUsers() {
 				$http.get('api/users/findUsers/' + $stateParams.id)
 					.success(function(data) {
+						$scope.clientUsers = data
 						console.log(data)
+						var a = data.map(x => x.progress)
+						console.log(a)
 					})
 					.error(function(err) {
-
+						console.log(err)
 					})
 			}
 
@@ -245,7 +247,7 @@
 				$http.get('api/progress-settings')
 					.success(function(progs) {
 						findUsers()
-						var matches =  matchProgressToPromotion(progs)
+						// var matches =  matchProgressToPromotion(progs)
 						
 					})
 					.error(function(err) {

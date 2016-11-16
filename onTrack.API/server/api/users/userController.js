@@ -27,12 +27,14 @@ exports.findUsers = function(req, res, next) {
   arr.push(id)
   User.find({
     'clientId': {$in: arr}
-  }).limit(90).exec(function(err, docs) {
-    if (err) next(err)
-    console.log(docs)
-    res.json(docs)
   })
-
+    .limit(90)
+    .populate('progress')
+    .populate('settingProgress')
+    .exec(function(err, docs) {
+      if (err) next(err)
+      res.json(docs)
+    })
 }
 
 exports.get = function(req, res, next) {

@@ -1283,71 +1283,6 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('ClientFormController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
-
-			$scope.errorDisplay = false
-
-			$scope.createClient = function(data){
-				var token = $window.sessionStorage['jwt']
-
-				console.log(data)
-
-
-				var names = $scope.clients.filter(function(client) {
-					return client.name == data.name
-				})
-
-				if(names.length > 0){
-					$scope.errorDisplay = true
-					$scope.oops = 'Name is already taken!'
-					return
-				}
-				else {
-					$http.post('/api/clients' , data ,{
-						headers: {
-							'Authorization': `Bearer ${token}`
-						}
-					})
-					.success(function(data){
-						var clientId = {'id': data._id + ''}
-						$state.go('client',clientId )
-					})
-					.error(function(err) {
-						$scope.errorDisplay = true
-						$scope.oops = err.message
-					})
-				}
-			}
-
-			function getAllUsers() {
-				$http.get('/api/users')
-					.success(function(users){
-						users.forEach(function(user){
-							if(user){
-								$scope.optionsList.push(
-										{firstName: user.firstName, lastName: user.lastName, 
-											email: user.email, fullName: user.firstName + ' ' + user.lastName}
-									)
-							}
-							else{
-								$scope.optionsList = [{name: 'No users'}]
-							}
-						})
-					})
-					.error(function(err){
-						console.log(err)
-					})
-			}
-
-			getAllUsers()
-
-			$scope.optionsList = [];
-
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('AdminController', ['$scope', '$state', '$http', '$window', '$stateParams',
 		function($scope, $state, $http, $window, $stateParams) {
 		
@@ -1424,6 +1359,71 @@
 		$scope.optionsList = []
 
 		getUsers()
+
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('ClientFormController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+
+			$scope.errorDisplay = false
+
+			$scope.createClient = function(data){
+				var token = $window.sessionStorage['jwt']
+
+				console.log(data)
+
+
+				var names = $scope.clients.filter(function(client) {
+					return client.name == data.name
+				})
+
+				if(names.length > 0){
+					$scope.errorDisplay = true
+					$scope.oops = 'Name is already taken!'
+					return
+				}
+				else {
+					$http.post('/api/clients' , data ,{
+						headers: {
+							'Authorization': `Bearer ${token}`
+						}
+					})
+					.success(function(data){
+						var clientId = {'id': data._id + ''}
+						$state.go('client',clientId )
+					})
+					.error(function(err) {
+						$scope.errorDisplay = true
+						$scope.oops = err.message
+					})
+				}
+			}
+
+			function getAllUsers() {
+				$http.get('/api/users')
+					.success(function(users){
+						users.forEach(function(user){
+							if(user){
+								$scope.optionsList.push(
+										{firstName: user.firstName, lastName: user.lastName, 
+											email: user.email, fullName: user.firstName + ' ' + user.lastName}
+									)
+							}
+							else{
+								$scope.optionsList = [{name: 'No users'}]
+							}
+						})
+					})
+					.error(function(err){
+						console.log(err)
+					})
+			}
+
+			getAllUsers()
+
+			$scope.optionsList = [];
 
 	}])
 }());
@@ -1896,7 +1896,6 @@
 						var theUsers = []
 						data.users.forEach(function(user) {
 							//match the user's email to the mathcing progress email
-
 							matches.forEach(function(prog) {
 								if (prog.users.map(x => x.email).includes(user.email)) {
 									theUsers.push(prog.users)
@@ -1914,10 +1913,13 @@
 			function findUsers() {
 				$http.get('api/users/findUsers/' + $stateParams.id)
 					.success(function(data) {
+						$scope.clientUsers = data
 						console.log(data)
+						var a = data.map(x => x.progress)
+						console.log(a)
 					})
 					.error(function(err) {
-
+						console.log(err)
 					})
 			}
 
@@ -1925,7 +1927,7 @@
 				$http.get('api/progress-settings')
 					.success(function(progs) {
 						findUsers()
-						var matches =  matchProgressToPromotion(progs)
+						// var matches =  matchProgressToPromotion(progs)
 						
 					})
 					.error(function(err) {
@@ -2908,6 +2910,44 @@ app.directive('suggestion', function(){
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('SettingsTypeFormController', ['$scope', '$state', '$window', '$http',
+	 function($scope, $state, $window, $http) {
+
+	 	$scope.err = false
+
+	 	function getSettings(){
+	 		$http.get('api/type-settings')
+	 			.success(function(data){
+	 				$scope.settings = data
+	 			})
+	 			.error(function(err) {
+	 				console.log(err)
+	 			})
+	 	}
+
+	 	$scope.submitSetting = function(setting) {
+	 		var allTypes = $scope.settings.map(s => s.type.toLowerCase())
+	 		if (allTypes.includes(setting.type.toLowerCase())){
+	 			$scope.oops = 'Type is already being used, add a subtype in the view'
+	 			$scope.err = true
+	 		}
+	 		else{
+		 		$http.post('api/type-settings', setting)
+		 			.success(function(data) {
+		 				$scope.typeSettings = data
+		 				$state.reload()
+		 			})
+		 			.error(function(err) {
+		 				console.log(err)
+		 			})
+	 		}
+	 	}
+
+	 	getSettings()
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('SettingsProgressFormController', ['$scope', '$state', '$window', '$http',
 	 function($scope, $state, $window, $http) {
 
@@ -3007,43 +3047,5 @@ app.directive('suggestion', function(){
 	 	}
 
 	 	getUsers()
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('SettingsTypeFormController', ['$scope', '$state', '$window', '$http',
-	 function($scope, $state, $window, $http) {
-
-	 	$scope.err = false
-
-	 	function getSettings(){
-	 		$http.get('api/type-settings')
-	 			.success(function(data){
-	 				$scope.settings = data
-	 			})
-	 			.error(function(err) {
-	 				console.log(err)
-	 			})
-	 	}
-
-	 	$scope.submitSetting = function(setting) {
-	 		var allTypes = $scope.settings.map(s => s.type.toLowerCase())
-	 		if (allTypes.includes(setting.type.toLowerCase())){
-	 			$scope.oops = 'Type is already being used, add a subtype in the view'
-	 			$scope.err = true
-	 		}
-	 		else{
-		 		$http.post('api/type-settings', setting)
-		 			.success(function(data) {
-		 				$scope.typeSettings = data
-		 				$state.reload()
-		 			})
-		 			.error(function(err) {
-		 				console.log(err)
-		 			})
-	 		}
-	 	}
-
-	 	getSettings()
 	}])
 }());
