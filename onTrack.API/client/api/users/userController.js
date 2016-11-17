@@ -95,6 +95,7 @@
 			}
 
 			$scope.getSettingName = function(id) {
+				console.log($scope.user)
 				var matchSetting = $scope.user.settingProgress.filter(function(set) {
 					return set._id === id
 				})
@@ -105,6 +106,7 @@
 				var matchSetting = $scope.user.settingProgress.filter(function(set) {
 					return set._id === id
 				})
+				console.log(matchSetting)
 				return matchSetting[0].type
 			}
 

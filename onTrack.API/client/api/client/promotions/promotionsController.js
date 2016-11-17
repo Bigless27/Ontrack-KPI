@@ -233,10 +233,10 @@
 			function findUsers() {
 				$http.get('api/users/findUsers/' + $stateParams.id)
 					.success(function(data) {
-						$scope.clientUsers = data
 						console.log(data)
-						var a = data.map(x => x.progress)
-						console.log(a)
+
+						$scope.matchingUsers = matchProgressToPromotion(data)
+						console.log($scope.matchingUsers)
 					})
 					.error(function(err) {
 						console.log(err)
@@ -247,7 +247,6 @@
 				$http.get('api/progress-settings')
 					.success(function(progs) {
 						findUsers()
-						// var matches =  matchProgressToPromotion(progs)
 						
 					})
 					.error(function(err) {
@@ -257,29 +256,38 @@
 
 			// This grabs progress of matching types and subtypes. The subtypes are only
 			// matched if there is an exact match on them
-			function matchProgressToPromotion(progs) {
-				var matchedTypesProg = progs.filter(x => x.type === $scope.promotion.type)
-				//$scope.noSubtypes applies to the $scope.promotion
-				
+			function matchProgressToPromotion(users) {
+
 				var subMatchArr = []
-				matchedTypesProg.forEach(function(prog) {
+
+				var matchedTypesUsers = users.filter((user) => {return user.settingProgress.filter(prog =>  prog.type == $scope.promotion.type)})
+				matchedTypesUsers.forEach(function(user) {
+					user['settingProgress'] = user.settingProgress.filter(set => set.type === $scope.promotion.type)
+					subMatchArr.push(user)
+				})
+				
+				// var matchedTypesUsers = users.filter((user) => {return user.settingProgress.filter(prog =>  prog.type == $scope.promotion.type)})
+				// // The above filters the users the have a progress of a matched type!
+				var theProgresses = []
+
+				subMatchArr.forEach(function(user) {
 					if (!$scope.noSubtypes) {
-						var subTypeStrings = $scope.promotion.subTypes.map(x => x.name) //sub types of promotions
-						prog.subTypes.forEach(function(sub) {
-							if (!subMatchArr.includes(prog)) { //this matches the setting to the promotions setting match, keeps it from being pushed in twice
-								var progSubsInArr = prog.subTypes.map(x => x.name)
-								if (subTypeStrings.includes(sub.name)) { // any subtype is matched include that promotion
-									subMatchArr.push(prog)
+						user.settingProgress[0].subTypes.forEach(function(sub){
+							if (sub) {
+								if ($scope.promotion.subTypes.includes(sub.name)) {
+									theProgress.push(user)
 								}
 							}
 						})
 					}
-					else{
-						subMatchArr.push(prog)
+					else {
+						var matchedProg = user.progress.filter(prog => prog.settingId === user.settingProgress[0]._id)
+						user['progress'] = matchedProg
+						theProgresses.push(user)
+						
 					}
-
 				})
-				return subMatchArr
+				return theProgresses
 			}
 
 			$scope.getPercentage = function(x,y) {

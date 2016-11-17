@@ -765,6 +765,7 @@
 			}
 
 			$scope.getSettingName = function(id) {
+				console.log($scope.user)
 				var matchSetting = $scope.user.settingProgress.filter(function(set) {
 					return set._id === id
 				})
@@ -775,6 +776,7 @@
 				var matchSetting = $scope.user.settingProgress.filter(function(set) {
 					return set._id === id
 				})
+				console.log(matchSetting)
 				return matchSetting[0].type
 			}
 
@@ -1913,10 +1915,10 @@
 			function findUsers() {
 				$http.get('api/users/findUsers/' + $stateParams.id)
 					.success(function(data) {
-						$scope.clientUsers = data
 						console.log(data)
-						var a = data.map(x => x.progress)
-						console.log(a)
+
+						$scope.matchingUsers = matchProgressToPromotion(data)
+						console.log($scope.matchingUsers)
 					})
 					.error(function(err) {
 						console.log(err)
@@ -1927,7 +1929,6 @@
 				$http.get('api/progress-settings')
 					.success(function(progs) {
 						findUsers()
-						// var matches =  matchProgressToPromotion(progs)
 						
 					})
 					.error(function(err) {
@@ -1937,29 +1938,38 @@
 
 			// This grabs progress of matching types and subtypes. The subtypes are only
 			// matched if there is an exact match on them
-			function matchProgressToPromotion(progs) {
-				var matchedTypesProg = progs.filter(x => x.type === $scope.promotion.type)
-				//$scope.noSubtypes applies to the $scope.promotion
-				
+			function matchProgressToPromotion(users) {
+
 				var subMatchArr = []
-				matchedTypesProg.forEach(function(prog) {
+
+				var matchedTypesUsers = users.filter((user) => {return user.settingProgress.filter(prog =>  prog.type == $scope.promotion.type)})
+				matchedTypesUsers.forEach(function(user) {
+					user['settingProgress'] = user.settingProgress.filter(set => set.type === $scope.promotion.type)
+					subMatchArr.push(user)
+				})
+				
+				// var matchedTypesUsers = users.filter((user) => {return user.settingProgress.filter(prog =>  prog.type == $scope.promotion.type)})
+				// // The above filters the users the have a progress of a matched type!
+				var theProgresses = []
+
+				subMatchArr.forEach(function(user) {
 					if (!$scope.noSubtypes) {
-						var subTypeStrings = $scope.promotion.subTypes.map(x => x.name) //sub types of promotions
-						prog.subTypes.forEach(function(sub) {
-							if (!subMatchArr.includes(prog)) { //this matches the setting to the promotions setting match, keeps it from being pushed in twice
-								var progSubsInArr = prog.subTypes.map(x => x.name)
-								if (subTypeStrings.includes(sub.name)) { // any subtype is matched include that promotion
-									subMatchArr.push(prog)
+						user.settingProgress[0].subTypes.forEach(function(sub){
+							if (sub) {
+								if ($scope.promotion.subTypes.includes(sub.name)) {
+									theProgress.push(user)
 								}
 							}
 						})
 					}
-					else{
-						subMatchArr.push(prog)
+					else {
+						var matchedProg = user.progress.filter(prog => prog.settingId === user.settingProgress[0]._id)
+						user['progress'] = matchedProg
+						theProgresses.push(user)
+						
 					}
-
 				})
-				return subMatchArr
+				return theProgresses
 			}
 
 			$scope.getPercentage = function(x,y) {
@@ -2910,44 +2920,6 @@ app.directive('suggestion', function(){
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('SettingsTypeFormController', ['$scope', '$state', '$window', '$http',
-	 function($scope, $state, $window, $http) {
-
-	 	$scope.err = false
-
-	 	function getSettings(){
-	 		$http.get('api/type-settings')
-	 			.success(function(data){
-	 				$scope.settings = data
-	 			})
-	 			.error(function(err) {
-	 				console.log(err)
-	 			})
-	 	}
-
-	 	$scope.submitSetting = function(setting) {
-	 		var allTypes = $scope.settings.map(s => s.type.toLowerCase())
-	 		if (allTypes.includes(setting.type.toLowerCase())){
-	 			$scope.oops = 'Type is already being used, add a subtype in the view'
-	 			$scope.err = true
-	 		}
-	 		else{
-		 		$http.post('api/type-settings', setting)
-		 			.success(function(data) {
-		 				$scope.typeSettings = data
-		 				$state.reload()
-		 			})
-		 			.error(function(err) {
-		 				console.log(err)
-		 			})
-	 		}
-	 	}
-
-	 	getSettings()
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('SettingsProgressFormController', ['$scope', '$state', '$window', '$http',
 	 function($scope, $state, $window, $http) {
 
@@ -3047,5 +3019,43 @@ app.directive('suggestion', function(){
 	 	}
 
 	 	getUsers()
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('SettingsTypeFormController', ['$scope', '$state', '$window', '$http',
+	 function($scope, $state, $window, $http) {
+
+	 	$scope.err = false
+
+	 	function getSettings(){
+	 		$http.get('api/type-settings')
+	 			.success(function(data){
+	 				$scope.settings = data
+	 			})
+	 			.error(function(err) {
+	 				console.log(err)
+	 			})
+	 	}
+
+	 	$scope.submitSetting = function(setting) {
+	 		var allTypes = $scope.settings.map(s => s.type.toLowerCase())
+	 		if (allTypes.includes(setting.type.toLowerCase())){
+	 			$scope.oops = 'Type is already being used, add a subtype in the view'
+	 			$scope.err = true
+	 		}
+	 		else{
+		 		$http.post('api/type-settings', setting)
+		 			.success(function(data) {
+		 				$scope.typeSettings = data
+		 				$state.reload()
+		 			})
+		 			.error(function(err) {
+		 				console.log(err)
+		 			})
+	 		}
+	 	}
+
+	 	getSettings()
 	}])
 }());

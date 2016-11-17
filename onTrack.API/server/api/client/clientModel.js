@@ -37,9 +37,6 @@ var ClientSchema = new Schema({
 	settings: [{type: Schema.Types.ObjectId, ref: 'clientSettings'}]
 })
 
-
-
-
 ClientSchema.post('save', function(doc) {
 	User.findById(doc.owner[0]._id)
 		.then(function(user) {
@@ -47,7 +44,7 @@ ClientSchema.post('save', function(doc) {
 				console.log('err')
 			}
 			else if(user.clientId.indexOf(doc._id) !== -1) {
-				return console.log('id already associated with user') //don't push id in twice
+				return 
 			} else{
 				user.clientId.push(doc._id)
 				user.save(function(err){
