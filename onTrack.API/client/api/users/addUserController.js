@@ -20,7 +20,6 @@
 				}
 			})
 
-
 			$http.put('/api/clients/' + $stateParams['id'], client, {
 				headers: {
 					'Authorization': `Bearer ${token}`

@@ -71,7 +71,7 @@ ActivitySchema.pre('save', function(next) {
 			if (err) next(err)
 			docs.forEach(function(user) {
 				if(!user.activity.map(x => x.toString()).includes(activity._id.toString())) {
-					user.activity.push(activity.id)
+					user.activity.push(activity._id)
 					user.save(function(err, result) {
 						if(err) next(err)
 						next()

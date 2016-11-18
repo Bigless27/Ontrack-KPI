@@ -37,29 +37,51 @@ var ClientSchema = new Schema({
 	settings: [{type: Schema.Types.ObjectId, ref: 'clientSettings'}]
 })
 
-ClientSchema.post('save', function(doc) {
-	User.findById(doc.owner[0]._id)
-		.then(function(user) {
-			if(!user) {
-				console.log('err')
-			}
-			else if(user.clientId.indexOf(doc._id) !== -1) {
-				return 
-			} else{
-				user.clientId.push(doc._id)
-				user.save(function(err){
-					if(err) {
-						console.log(err)
-					} else {
-						console.log('saved')
-					}
+ClientSchema.pre('save', function(next) {
+	var client = this
+	var userEmails = this.users.map(x => x.email)
+	User.find({
+		'email' : {$in: userEmails}
+	}, function(err, docs) {
+		if (err) next(err) 
+		docs.forEach(function(user) {
+			if (!user.clientId.map(x => x.toString()).includes(client._id)) {
+				console.log('here')
+				user.clientId.push(client._id)
+				user.save(function(err, result) {
+					if(err) next(err)
+					next()
 				})
 			}
-
-		}, function(err) {
-			return err
 		})
+	})
+	next()
 })
+
+// ClientSchema.post('save', function(doc) {
+// 	console.log(doc)
+// 	User.findById(doc.owner[0]._id)
+// 		.then(function(user) {
+// 			if(!user) {
+// 				console.log('err')
+// 			}
+// 			else if(user.clientId.indexOf(doc._id) !== -1) {
+// 				return console.log('it hits?')
+// 			} else{
+// 				user.clientId.push(doc._id)
+// 				user.save(function(err){
+// 					if(err) {
+// 						console.log(err)
+// 					} else {
+// 						console.log('saved')
+// 					}
+// 				})
+// 			}
+
+// 		}, function(err) {
+// 			return err
+// 		})
+// })
 
 ClientSchema.pre('remove', function(next){
 	//this require here is a patch!!!!! look to refactor better in future from circular dependency
