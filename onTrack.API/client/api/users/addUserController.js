@@ -36,6 +36,17 @@
 
 
 
+		function getClient() {
+			$http.get('/api/clients/' + $stateParams.id)
+				.success(function(data) {
+					$scope.client = data	
+					getUsers()
+				})
+				.error(function(err) {
+					console.log(err)
+				})
+		}
+
 		function getUsers(){
 
 			$http.get('/api/users')
@@ -62,7 +73,7 @@
 
 		$scope.optionsList = []
 
-		getUsers()
+		getClient()
 		
 	}])
 }());
