@@ -58,7 +58,6 @@ exports.updateUsersClient = function(req, res, next) {
 
   var updatedClient = updateAdminsUsers('users', client, update)
 
-  
 
   updatedClient.save(function(err, saved) {
     if (err) {

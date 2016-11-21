@@ -3,8 +3,6 @@
 	.controller('ClientController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
 		function($scope, $state, $http, $window, $stateParams, $q) {
 		
-		
-
 			$scope.removeAdmin = function(admin) {
 				var token = $window.sessionStorage['jwt']
 

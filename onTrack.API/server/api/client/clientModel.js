@@ -39,8 +39,8 @@ var ClientSchema = new Schema({
 
 ClientSchema.pre('save', function(next) {
 	var client = this
-	console.log(client)
 	var userEmails = this.users.map(x => x.email)
+	console.log(userEmails)
 	User.find({
 		'email' : {$in: userEmails}
 	}, function(err, docs) {
@@ -53,6 +53,11 @@ ClientSchema.pre('save', function(next) {
 					next()
 				})
 			}
+			// since this remove is after the add the client id wont err out when it's first being added
+			// console.log(userEmails)
+			// console.log(user.email)
+			// console.log(!userEmails.includes(user.email))
+
 
 		})
 	})
@@ -65,7 +70,20 @@ ClientSchema.pre('remove', function(next){
 		Promotions = require('./promotions/promotionModel'),
 		kpiIds = this.kpis.map(k => k._id),
 		promotionIds = this.promotions.map(p => p._id),
-		clientId = this.clientId
+		clientId = this.clientId,
+		userEmails = this.users.map(x => x.email)
+
+	User.find({
+		'email':  {$in: userEmails} 
+	}, function(err,docs) {
+		docs.forEach(function(user) {
+			var i = user.clientId.indexOf(clientId)
+			user.clientId.splice(i, 1)
+			user.save(function(err) {
+				if (err) next(err)
+			})
+		})
+	})
 
 	Kpis.remove({ _id: {$in: kpiIds}}, function(err) {
 		if(err) next(err)
