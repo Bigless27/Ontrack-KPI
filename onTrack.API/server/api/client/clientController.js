@@ -1,4 +1,5 @@
 var Client = require('./clientModel');
+var User = require('../users/userModel')
 var mongoose = require('mongoose')
 var _ = require('lodash');
 
@@ -55,8 +56,33 @@ exports.removeUsersClient = function(req, res, next) {
   var update = req.body
 
   var i = client.users.length
+  var clientCopy = _.cloneDeep(client)
+
 
   var updatedClient = removeAdminsUsers('users', client, update)
+ 
+
+  var updatedClientUserEmails = updatedClient.users.map(x => x.email)
+
+  var userToUpdate = clientCopy.users.filter(function(user) {
+    return !updatedClientUserEmails.includes(user.email.toString())
+  })
+
+  //find comes back in an array. Look to use find one in future maybe
+  User.find({'email': userToUpdate[0].email}, function(err, user) {
+    if(err) next(err)
+    var i = user[0].clientId.indexOf(client._id)
+    user[0].clientId.splice(i, 1)
+
+    user[0].save(function(err, saved) {
+      if (err) {
+        next(err)
+      }
+    })
+
+  }, function(err) {
+    next(err)
+  })
 
   updatedClient.save(function(err, saved) {
     if (err) {
@@ -86,7 +112,6 @@ exports.put = function(req, res, next) {
   //   next(new Error('Not authorized!!'));
   //   return;
   // }
-  console.log('ji')
   var client = req.client;
 
   var update = req.body;

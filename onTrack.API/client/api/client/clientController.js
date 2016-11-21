@@ -44,8 +44,6 @@
 					.error(function(err) {
 						console.log(err)
 				})
-
-
 			}
 
 			$scope.deleteClient = function() {
@@ -75,7 +73,6 @@
 				}).done(function(){
 					return
 				})
-
 			}
 
 			$scope.logout = function() {
