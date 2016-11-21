@@ -39,56 +39,33 @@ var ClientSchema = new Schema({
 
 ClientSchema.pre('save', function(next) {
 	var client = this
+	console.log(client)
 	var userEmails = this.users.map(x => x.email)
 	User.find({
 		'email' : {$in: userEmails}
 	}, function(err, docs) {
 		if (err) next(err) 
 		docs.forEach(function(user) {
-			if (!user.clientId.map(x => x.toString()).includes(client._id)) {
-				console.log('here')
+			if (!user.clientId.map(x => x.toString()).includes(client._id.toString())) { // if the ID isn't already there then push it in
 				user.clientId.push(client._id)
 				user.save(function(err, result) {
 					if(err) next(err)
 					next()
 				})
 			}
+
 		})
 	})
 	next()
 })
-
-// ClientSchema.post('save', function(doc) {
-// 	console.log(doc)
-// 	User.findById(doc.owner[0]._id)
-// 		.then(function(user) {
-// 			if(!user) {
-// 				console.log('err')
-// 			}
-// 			else if(user.clientId.indexOf(doc._id) !== -1) {
-// 				return console.log('it hits?')
-// 			} else{
-// 				user.clientId.push(doc._id)
-// 				user.save(function(err){
-// 					if(err) {
-// 						console.log(err)
-// 					} else {
-// 						console.log('saved')
-// 					}
-// 				})
-// 			}
-
-// 		}, function(err) {
-// 			return err
-// 		})
-// })
 
 ClientSchema.pre('remove', function(next){
 	//this require here is a patch!!!!! look to refactor better in future from circular dependency
 	var Kpis = require('./kpi/kpiModel'),
 		Promotions = require('./promotions/promotionModel'),
 		kpiIds = this.kpis.map(k => k._id),
-		promotionIds = this.promotions.map(p => p._id)
+		promotionIds = this.promotions.map(p => p._id),
+		clientId = this.clientId
 
 	Kpis.remove({ _id: {$in: kpiIds}}, function(err) {
 		if(err) next(err)

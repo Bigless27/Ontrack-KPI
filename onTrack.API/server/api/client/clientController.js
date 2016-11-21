@@ -58,6 +58,8 @@ exports.updateUsersClient = function(req, res, next) {
 
   var updatedClient = updateAdminsUsers('users', client, update)
 
+  
+
   updatedClient.save(function(err, saved) {
     if (err) {
       next(err);
@@ -68,7 +70,6 @@ exports.updateUsersClient = function(req, res, next) {
 }
 
 function updateAdminsUsers(param, client, update) {
-  
   var i = client[param].length
 
   while(i--){

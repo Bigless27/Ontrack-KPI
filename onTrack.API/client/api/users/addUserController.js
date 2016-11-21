@@ -48,7 +48,6 @@
 		}
 
 		function getUsers(){
-
 			$http.get('/api/users')
 				.success(function(users) {
 					users.forEach(function(user){

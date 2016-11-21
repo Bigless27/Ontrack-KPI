@@ -22,6 +22,7 @@
 			}
 
 			$scope.removeUser = function(user) {
+				//this automatically makes two requests. Check to see if you need to. If not then only issue one update
 				var token = $window.sessionStorage['jwt']
 
 				$http.put('/api/clients/' + $stateParams.id + '/updateAdmin', user , {
