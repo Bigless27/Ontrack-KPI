@@ -19,11 +19,11 @@ router.route('/')
 router.route('/findClients/:email')
 	.get(controller.findClients)
 
-router.route('/:id/updateAdmin')
-	.put(checkUser, controller.updateAdmin)
+router.route('/:id/removeAdmin')
+	.put(checkUser, controller.removeAdmin)
 
-router.route('/:id/updateUser')
-	.put(checkUser, controller.updateUsersClient)
+router.route('/:id/removeUser')
+	.put(checkUser, controller.removeUsersClient)
 
 router.route('/:id')
   .get(controller.getOne)// Tested

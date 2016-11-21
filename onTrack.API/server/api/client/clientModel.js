@@ -40,7 +40,6 @@ var ClientSchema = new Schema({
 ClientSchema.pre('save', function(next) {
 	var client = this
 	var userEmails = this.users.map(x => x.email)
-	console.log(userEmails)
 	User.find({
 		'email' : {$in: userEmails}
 	}, function(err, docs) {

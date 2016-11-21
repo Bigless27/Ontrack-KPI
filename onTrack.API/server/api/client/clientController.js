@@ -31,14 +31,14 @@ exports.getOne = function(req, res, next) {
 	res.json(client)
 }
 
-exports.updateAdmin = function(req, res, next) {
+exports.removeAdmin = function(req, res, next) {
   var client = req.client
 
   var update = req.body
 
   var i = client.admins.length
 
-  var updatedClient = updateAdminsUsers('admins', client, update)
+  var updatedClient = removeAdminsUsers('admins', client, update)
 
   updatedClient.save(function(err, saved) {
     if (err) {
@@ -49,15 +49,14 @@ exports.updateAdmin = function(req, res, next) {
   })
 }
 
-exports.updateUsersClient = function(req, res, next) {
+exports.removeUsersClient = function(req, res, next) {
   var client = req.client
 
   var update = req.body
 
   var i = client.users.length
 
-  var updatedClient = updateAdminsUsers('users', client, update)
-
+  var updatedClient = removeAdminsUsers('users', client, update)
 
   updatedClient.save(function(err, saved) {
     if (err) {
@@ -68,7 +67,7 @@ exports.updateUsersClient = function(req, res, next) {
   })
 }
 
-function updateAdminsUsers(param, client, update) {
+function removeAdminsUsers(param, client, update) {
   var i = client[param].length
 
   while(i--){
@@ -87,6 +86,7 @@ exports.put = function(req, res, next) {
   //   next(new Error('Not authorized!!'));
   //   return;
   // }
+  console.log('ji')
   var client = req.client;
 
   var update = req.body;

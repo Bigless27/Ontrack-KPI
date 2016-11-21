@@ -6,7 +6,7 @@
 			$scope.removeAdmin = function(admin) {
 				var token = $window.sessionStorage['jwt']
 
-				$http.put('/api/clients/' + $stateParams['id'] + '/updateAdmin', admin, {
+				$http.put('/api/clients/' + $stateParams['id'] + '/removeAdmin', admin, {
 					headers: {
 						'Authorization': `Bearer ${token}`
 					}
@@ -23,13 +23,13 @@
 				//this automatically makes two requests. Check to see if you need to. If not then only issue one update
 				var token = $window.sessionStorage['jwt']
 
-				$http.put('/api/clients/' + $stateParams.id + '/updateAdmin', user , {
+				$http.put('/api/clients/' + $stateParams.id + '/removeAdmin', user , {
 						headers: {
 							'Authorization': `Bearer ${token}`
 						}
 					})
 					.success(function(data) {
-						$http.put('/api/clients/' + $stateParams.id + '/updateUser', user, {
+						$http.put('/api/clients/' + $stateParams.id + '/removeUser', user, {
 								headers: {
 									'Authorization': `Bearer ${token}`
 								}
