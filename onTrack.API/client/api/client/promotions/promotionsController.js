@@ -233,8 +233,6 @@
 			function findUsers() {
 				$http.get('api/users/findUsers/' + $stateParams.id)
 					.success(function(data) {
-						console.log(data)
-
 						$scope.matchingUsers = matchProgressToPromotion(data)
 						console.log($scope.matchingUsers)
 					})
@@ -263,7 +261,9 @@
 				var matchedTypesUsers = users.filter((user) => {return user.settingProgress.filter(prog =>  prog.type == $scope.promotion.type)})
 				matchedTypesUsers.forEach(function(user) {
 					user['settingProgress'] = user.settingProgress.filter(set => set.type === $scope.promotion.type)
-					subMatchArr.push(user)
+					if (user.settingProgress.length > 0) {
+						subMatchArr.push(user)
+					}
 				})
 				
 				// var matchedTypesUsers = users.filter((user) => {return user.settingProgress.filter(prog =>  prog.type == $scope.promotion.type)})
@@ -275,7 +275,7 @@
 						user.settingProgress[0].subTypes.forEach(function(sub){
 							if (sub) {
 								if ($scope.promotion.subTypes.includes(sub.name)) {
-									theProgress.push(user)
+									theProgresses.push(user)
 								}
 							}
 						})
