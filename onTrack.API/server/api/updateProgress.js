@@ -1,4 +1,4 @@
-var ClientCtrl = require('./client/clientController');
+// var ClientCtrl = require('./client/clientController');
 var UserCtrl = require('./users/userController');
 var math = require('mathjs');
 var _ = require('lodash');

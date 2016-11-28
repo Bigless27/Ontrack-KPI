@@ -1,6 +1,5 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var Client = require('../../client/clientModel');
 var _ = require('lodash');
 
 

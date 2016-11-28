@@ -22,11 +22,11 @@ exports.params = function(req, res, next, id) {
 
 exports.findUsers = function(req, res, next) {
   var arr = []
-  var id = req.params.clientId
+  var id = req.params.teamId
 
   arr.push(id)
   User.find({
-    'clientId': {$in: arr}
+    'teamId': {$in: arr}
   })
     .limit(90)
     .populate('progress')

@@ -1,6 +1,5 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var Client = require('../../client/clientModel');
 var _ = require('lodash');
 var User = require('../../users/userModel')
 var Progress = require('../../users/progress/progressModel')
@@ -56,7 +55,6 @@ SettingsSchema.pre('save', function(next) {
 
 SettingsSchema.pre('remove', function(next){
 	var progSetting = this
-	console.log(progSetting.users.map(x => x.userId))
 	if(this.users.length === 0){
 		next()
 	}

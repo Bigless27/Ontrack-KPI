@@ -1,6 +1,5 @@
 var router = require('express').Router({mergeParams: true});
 var controller = require('./settingsController');
-var client = require('../../../middleware/customMiddleware')
 
 
 //changed from setting id

@@ -1,17 +1,17 @@
 var router = require('express').Router({mergeParams: true});
 var controller = require('./kpiController');
-var client = require('../../../middleware/customMiddleware')
+var team = require('../../../middleware/customMiddleware')
 
 
 router.param('kpiId', controller.params);
 
 router.route('/')
 	.get(controller.get)
-	.post(client.getClient(), controller.post)
+	.post(team.getTeam(), controller.post)
 
 router.route('/:kpiId')
 	.get(controller.getOne)
-	.put(client.getClient(), controller.put)
+	.put(team.getTeam(), controller.put)
 	.delete(controller.delete);
 
 

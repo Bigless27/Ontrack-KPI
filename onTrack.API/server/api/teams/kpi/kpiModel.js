@@ -12,25 +12,25 @@ var KpiSchema = new Schema({
     type: { type: String, required: true },
     subTypes: [subTypesSchema],
     value: { type: String, required: true },
-    clientId: {type: Schema.Types.ObjectId, ref: 'client'}
+    teamId: {type: Schema.Types.ObjectId, ref: 'team'}
 });
 
 KpiSchema.post('remove', function(doc) {
 	//this require here is a patch!!!!! look to refactor better in future
-	var Client = require('../clientModel')
-	Client.findById(doc.clientId)
-		.then(function(client) {
-			if(!client) {
+	var Team = require('../teamModel')
+	Team.findById(doc.teamId)
+		.then(function(team) {
+			if(!team) {
 				console.log('association not deleted')
 			} else {
-				update = client
+				update = team
 
 				update.kpis.splice(update.kpis.indexOf(doc._id),1);
 
-				_.merge(client, update)
+				_.merge(team, update)
 
 
-				client.save(function(err, saved) {
+				team.save(function(err, saved) {
 					if (err) {
 						console.log('not saved')
 					} else {

@@ -1,17 +1,17 @@
 var config = require('../config/config');
-var Client = require('../api/client/clientModel')
+var Team = require('../api/teams/teamModel')
 var User = require('../api/users/userModel')
 var _ = require('lodash')
 
-exports.getClient = function() {
+exports.getTeam = function() {
 	return function(req, res, next) {
 	
-	 	Client.findById(req.params.id)
-	 		.then(function(client) {
-	 			if (!client) {
-	 				res.status(401).send('No Client');
+	 	Team.findById(req.params.id)
+	 		.then(function(team) {
+	 			if (!team) {
+	 				res.status(401).send('No Team');
 	 			} else {
-	 				req.client = client;
+	 				req.team = team;
 	 				next();
 	 			}
 	 		},function(err) {
@@ -20,17 +20,17 @@ exports.getClient = function() {
 	}
 }
 
-exports.getClientPromo = function() {
+exports.getTeamPromo = function() {
 	return function(req, res, next) {
 
-		Client.findById(req.params.id)
+		Team.findById(req.params.id)
 			.populate('promotions')
-			.exec(function(err, client) {
+			.exec(function(err, team) {
 				if (err) {
-					res.status(401).send('Error finding client')
+					res.status(401).send('Error finding team')
 				} else {
-					console.log(client)
-					res.client = client
+					console.log(team)
+					res.team = team
 					next();
 				}
 			})

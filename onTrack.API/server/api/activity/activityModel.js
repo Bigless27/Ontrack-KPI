@@ -14,9 +14,9 @@ var subTypesSchema = new Schema({
 	name: {type: String}
 })
 
-var clientsSchema = new Schema({
+var teamsSchema = new Schema({
 	name: {type: String},
-	clientId: {type: String}
+	teamId: {type: String}
 })
 
 var ActivitySchema = new Schema({
@@ -26,7 +26,7 @@ var ActivitySchema = new Schema({
 		value: {type: Number, required: true},
 		users: [usersSchema],
 		date: {type: Date, default: Date.now},
-		clients: [clientsSchema]
+		teams: [teamsSchema]
 });
 
 ActivitySchema.pre('remove', function(next) {

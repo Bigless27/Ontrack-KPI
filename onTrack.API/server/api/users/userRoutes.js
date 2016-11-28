@@ -13,7 +13,7 @@ router.get('/me', checkUser, controller.me);
 	router.use('/:id/progress', require('./progress/progressRoutes'))
 //
 
-router.route('/findUsers/:clientId')
+router.route('/findUsers/:teamId')
 	.get(controller.findUsers)
 
 router.route('/')

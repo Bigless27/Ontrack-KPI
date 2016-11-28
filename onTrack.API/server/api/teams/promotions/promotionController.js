@@ -1,6 +1,6 @@
 var Promotion = require('./promotionModel');
 var Progress = require('../../users/progress/progressModel')
-var Client = require('../clientModel')
+var Team = require('../teamModel')
 var _ = require('lodash');
 
 exports.params = function(req, res, next, id) {
@@ -19,13 +19,13 @@ exports.params = function(req, res, next, id) {
 
 exports.get = function(req, res, next) {
 	
-	Client.findById(req.params.id)
+	Team.findById(req.params.id)
 			.populate('promotions')
-			.exec(function(err, client) {
+			.exec(function(err, team) {
 				if (err) {
-					res.status(401).send('Error finding client')
+					res.status(401).send('Error finding team')
 				} else {
-					res.json(client.promotions)
+					res.json(team.promotions)
 			}
 		})
 };
@@ -40,14 +40,14 @@ exports.post = function(req, res, next) { //yup
 
 	var newpromotion = req.body;
 	
-	newpromotion.clientId = req.client._id
+	newpromotion.teamId = req.team._id
 
 	Promotion.create(newpromotion)
 		.then(function(promotion) {
-			var updatedClient = req.client
-			updatedClient.promotions.push(promotion._id);
+			var updatedTeam = req.team
+			updatedTeam.promotions.push(promotion._id);
 
-			updatedClient.save(function(err, saved) {
+			updatedTeam.save(function(err, saved) {
 				if(err) {
 					next(err)
 				} else {

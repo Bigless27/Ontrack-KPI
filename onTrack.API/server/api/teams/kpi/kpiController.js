@@ -32,14 +32,14 @@ exports.getOne = function(req, res, next) {
 
 exports.post = function(req, res, next) {
 	var newkpi = req.body;
-	newkpi.clientId = req.client._id
+	newkpi.teamId = req.team._id
 
 	KPI.create(newkpi)
 		.then(function(kpi) {
-			var updatedClient = req.client
-			updatedClient.kpis.push(kpi._id)
+			var updatedTeam = req.team
+			updatedTeam.kpis.push(kpi._id)
 
-			updatedClient.save(function(err, saved) {
+			updatedTeam.save(function(err, saved) {
 				if(err) {
 					next(err);
 				} else {

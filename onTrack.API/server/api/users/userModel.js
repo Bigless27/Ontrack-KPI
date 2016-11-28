@@ -5,7 +5,7 @@ var jwt = require('express-jwt');
 
 var UserSchema = new Schema({
     email: { type: String, unique: true, required: true, index: true },
-    clientId: [{type: Schema.Types.ObjectId, ref: 'client'}],
+    teamId: [{type: Schema.Types.ObjectId, ref: 'team'}],
     password: { type: String},
     firstName: { type: String },
     lastName: { type: String },
@@ -37,14 +37,14 @@ UserSchema.pre('save', function(next) {
 
 UserSchema.pre('remove', function(next) {
     // this require here is a patch!!! look to refactor in furture from circular dependency
-    var Client = require('../client/clientModel'),
+    var Client = require('../team/teamModel'),
         SettingProgress = require('../settings/progress-settings/settingsModel'),
         Progress = require('./progress/progressModel'),
         Activity = require('../activity/activityModel')
 
     // delete all activity refs that this user is associated with
     // delete all settingProgress this user is associated with
-    // delete all Clients that this user is associated with
+    // delete all teams that this user is associated with
     delUser = this
 
     Activity.find({'users.userId' : delUser._id}, function(err, activity) {
@@ -73,23 +73,23 @@ UserSchema.pre('remove', function(next) {
         }
     })
 
-    Client.find({'usersClient.email': delUser.email}, function(err, clients) {
+    Team.find({'usersTeam.email': delUser.email}, function(err, teams) {
         if (err) next(err)
-        if (clients.length > 0) {
-            clients.forEach(function(client) {
-                var adminEmails = client.reduceEmailArray('admins', 'email')
-                var userEmails = client.reduceEmailArray('usersClient', 'email')
+        if (teams.length > 0) {
+            teams.forEach(function(team) {
+                var adminEmails = team.reduceEmailArray('admins', 'email')
+                var userEmails = team.reduceEmailArray('usersTeam', 'email')
   
                 var adminIndex = adminEmails.indexOf(delUser.email)
 
                 var usersIndex = userEmails.indexOf(delUser.email)
                 if (adminIndex >= 0) {
-                    client.admins.splice(adminIndex, 1)
+                    team.admins.splice(adminIndex, 1)
                 }
                 else if(usersIndex >= 0) {
-                    client.usersClient.splice(usersIndex, 1)
+                    team.usersTeam.splice(usersIndex, 1)
                 }
-                client.save(function(err, saved) {
+                team.save(function(err, saved) {
                     if (err) next(err)
                 })
             })

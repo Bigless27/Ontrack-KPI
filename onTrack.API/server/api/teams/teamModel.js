@@ -25,7 +25,7 @@ var ownerSchema = new Schema({
 })
 
 
-var ClientSchema = new Schema({
+var TeamSchema = new Schema({
 	name: {type: String, required: true, unique: true},
 	users: [usersSchema],
 	startDate: {type: Date},
@@ -34,25 +34,25 @@ var ClientSchema = new Schema({
 	kpis: [{type: Schema.Types.ObjectId, ref: 'kpi'}],
 	owner: [ownerSchema],
 	admins: [adminSchema],
-	settings: [{type: Schema.Types.ObjectId, ref: 'clientSettings'}]
+	settings: [{type: Schema.Types.ObjectId, ref: 'teamSettings'}]
 })
 
-ClientSchema.pre('save', function(next) {
-	var client = this
+TeamSchema.pre('save', function(next) {
+	var team = this
 	var userEmails = this.users.map(x => x.email)
 	User.find({
 		'email' : {$in: userEmails}
 	}, function(err, docs) {
 		if (err) next(err) 
 		docs.forEach(function(user) {
-			if (!user.clientId.map(x => x.toString()).includes(client._id.toString())) { // if the ID isn't already there then push it in
-				user.clientId.push(client._id)
+			if (!user.teamId.map(x => x.toString()).includes(team._id.toString())) { // if the ID isn't already there then push it in
+				user.teamId.push(team._id)
 				user.save(function(err, result) {
 					if(err) next(err)
 					next()
 				})
 			}
-			// since this remove is after the add the client id wont err out when it's first being added
+			// since this remove is after the add the team id wont err out when it's first being added
 			// console.log(userEmails)
 			// console.log(user.email)
 			// console.log(!userEmails.includes(user.email))
@@ -63,21 +63,21 @@ ClientSchema.pre('save', function(next) {
 	next()
 })
 
-ClientSchema.pre('remove', function(next){
+TeamSchema.pre('remove', function(next){
 	//this require here is a patch!!!!! look to refactor better in future from circular dependency
 	var Kpis = require('./kpi/kpiModel'),
 		Promotions = require('./promotions/promotionModel'),
 		kpiIds = this.kpis.map(k => k._id),
 		promotionIds = this.promotions.map(p => p._id),
-		clientId = this.clientId,
+		teamId = this.teamId,
 		userEmails = this.users.map(x => x.email)
 
 	User.find({
 		'email':  {$in: userEmails} 
 	}, function(err,docs) {
 		docs.forEach(function(user) {
-			var i = user.clientId.indexOf(clientId)
-			user.clientId.splice(i, 1)
+			var i = user.teamId.indexOf(teamId)
+			user.teamId.splice(i, 1)
 			user.save(function(err) {
 				if (err) next(err)
 			})
@@ -94,7 +94,7 @@ ClientSchema.pre('remove', function(next){
 	next()
 })
 
-ClientSchema.methods = {
+TeamSchema.methods = {
 	checkAdmin: function(user) {
 		return  _.includes(this.admins.toString(), user._id)
  	},
@@ -105,4 +105,4 @@ ClientSchema.methods = {
 }
 
 
-module.exports = mongoose.model('client', ClientSchema)
+module.exports = mongoose.model('team', TeamSchema)
