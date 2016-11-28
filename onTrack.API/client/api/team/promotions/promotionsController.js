@@ -80,7 +80,7 @@
 				var token = $window.sessionStorage['jwt']
 				$scope.promotion[field] = data
 
-				$http.put('/api/clients/' + $stateParams.id
+				$http.put('/api/teams/' + $stateParams.id
 				 + '/promotions/' + $stateParams.promoId, $scope.promotion,{
 					headers: {
 						'Authorization': `Bearer ${token}`
@@ -106,22 +106,22 @@
 
 				swal({
 				  title: "Are you sure?",
-				  text: "You will not be able to recover this client!",
+				  text: "You will not be able to recover this team!",
 				  type: "warning",
 				  showCancelButton: true,
 				  confirmButtonColor: "#DD6B55",
 				  confirmButtonText: "Yes, delete it!",
 				  html: false
 				}).then(function(){
-					$http.delete('/api/clients/' + $stateParams.id
+					$http.delete('/api/teams/' + $stateParams.id
 					 + '/promotions/' + $stateParams.promoId, {
 						headers: {
 							'Authorization': `Bearer ${token}`
 						}
 					})
 					.success(function(data){
-						var clientId = {'id': $stateParams['id'] + ''}
-						$state.go('client',clientId )
+						var teamId = {'id': $stateParams['id'] + ''}
+						$state.go('team',teamId )
 					})
 					.error(function(err) {
 						console.log(err)
@@ -175,7 +175,7 @@
 			}
 
 			function getPromotions(){
-				$http.get('api/clients/' + $stateParams.id 
+				$http.get('api/teams/' + $stateParams.id 
 						+ '/promotions/' + $stateParams.promoId)
 							.success(function(data) {
 								$scope.promotion = data;
@@ -207,11 +207,11 @@
 			}
 
 
-			//this below needs to be refactored to grab the users from the client!
+			//this below needs to be refactored to grab the users from the team!
 
-			function getClients(matches) {
+			function getTeams(matches) {
 				//you have the setting Id
-				$http.get('api/clients/' + $stateParams.id)
+				$http.get('api/teams/' + $stateParams.id)
 					.success(function(data) {
 						var theUsers = []
 						data.users.forEach(function(user) {
@@ -234,7 +234,6 @@
 				$http.get('api/users/findUsers/' + $stateParams.id)
 					.success(function(data) {
 						$scope.matchingUsers = matchProgressToPromotion(data)
-						console.log($scope.matchingUsers)
 					})
 					.error(function(err) {
 						console.log(err)

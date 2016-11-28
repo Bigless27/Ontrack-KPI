@@ -24,7 +24,7 @@
 			 				getUniqueTypes()
 			 				getUniqueSubtypes()
 			 				sortInitUsers(act)
-			 				getClients()
+			 				getTeams()
 			 				d.resolve()
 			 			})
 			 			.error(function(err) {
@@ -50,16 +50,16 @@
 	 			})
 	 	}
 
-	 	function getClients() {
-	 		$http.get('api/clients') 
+	 	function getTeams() {
+	 		$http.get('api/teams') 
 	 			.success(function(data) {
-	 				var combined = [...data, ...$scope.activity.clients]
-	 				var clientChoices = combined.filter(function(obj, i, arr) {
+	 				var combined = [...data, ...$scope.activity.teams]
+	 				var teamChoices = combined.filter(function(obj, i, arr) {
 	 					if (arr.filter(x => x.name === obj.name).length < 2) {
 	 						return obj
 	 					}
 	 				}) 				
-	 				$scope.clients  = clientChoices
+	 				$scope.teams  = teamChoices
 	 			})
 	 			.error(function(err) {
 	 				console.log(err);
@@ -97,13 +97,13 @@
 	 		}
 		 }
 
-		 $scope.afterRemoveClient = function(item) {
-		 	var clientStrings = $scope.clients.map(x => x.name)
-		 	if (clientStrings.includes(item.name)) {
+		 $scope.afterRemoveTeam = function(item) {
+		 	var teamStrings = $scope.teams.map(x => x.name)
+		 	if (teamStrings.includes(item.name)) {
 		 		return
 		 	}
 		 	else {
-		 		$scope.clients.push({name: item.name, clientId: item._id})
+		 		$scope.teams.push({name: item.name, teamId: item._id})
 		 	}
 		 }
 
@@ -169,7 +169,7 @@
 		function updateActivity(data, field){
 				var token = $window.sessionStorage['jwt']
 				$scope.activity[field] = data
-				$http.put('/api/activity/' + $stateParams.id, $scope.activity,					+ $stateParams.activityId, $scope.activity,{
+				$http.put('/api/activity/' + $stateParams.id, $scope.activity,{
 					headers: {
 						'Authorization': `Bearer ${token}`
 					}
@@ -207,18 +207,18 @@
 			}
 		}
 
-		$scope.clientTags = false
+		$scope.TeamTags = false
 
-		$scope.toggleEditClients = function() {
-			if($scope.clientErr) {
-				$scope.clientErrMessage = 'Please update client to have at least one client!'
+		$scope.toggleEditTeams = function() {
+			if($scope.teamErr) {
+				$scope.teamErrMessage = 'Please update team to have at least one team!'
 				return
 			}
-			if ($scope.clientTags) {
-				$scope.clientTags = false
+			if ($scope.teamTags) {
+				$scope.teamTags = false
 			}
 			else {
-				$scope.clientTags = true
+				$scope.teamTags = true
 			}
 		}
 
@@ -279,15 +279,15 @@
 		}
 
 
-		$scope.clientErr = false
+		$scope.teamErr = false
 
-		$scope.updateClients = function(clients) {
-			if (clients.length === 0) {
-				$scope.clientErr = true
-				$scope.clientErrMessage = 'A client is required!'
+		$scope.updateTeams = function(teams) {
+			if (teams.length === 0) {
+				$scope.teamErr = true
+				$scope.teamErrMessage = 'A team is required!'
 				return 
 			}
-			return updateActivity(clients, 'clients')
+			return updateActivity(teams, 'teams')
 		}
 
 		$scope.deleteActivity = function(activity) {

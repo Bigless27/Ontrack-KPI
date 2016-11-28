@@ -6,21 +6,21 @@
 		$scope.add = function(data){
 			var token = $window.sessionStorage['jwt']
 
-			var client = {users:[]}
+			var team = {users:[]}
 
 			// push users active back in
-			$scope.client.users.forEach(function(user) {
-				client.users.push({id: user._id, email: user.email, firstName: user.firstName, lastName: user.lastName})
+			$scope.team.users.forEach(function(user) {
+				team.users.push({id: user._id, email: user.email, firstName: user.firstName, lastName: user.lastName})
 			})
 
 			// check duplicates
 			data.users.forEach(function(user){
-				if (client.users.filter(function(e){return e.email == user.email}).length === 0) {
-				 	client.users.push({id:user._id, email: user.email, firstName: user.firstName, lastName: user.lastName})
+				if (team.users.filter(function(e){return e.email == user.email}).length === 0) {
+				 	team.users.push({id:user._id, email: user.email, firstName: user.firstName, lastName: user.lastName})
 				}
 			})
 
-			$http.put('/api/clients/' + $stateParams['id'], client, {
+			$http.put('/api/teams/' + $stateParams['id'], team, {
 				headers: {
 					'Authorization': `Bearer ${token}`
 				}
@@ -36,10 +36,10 @@
 
 
 
-		function getClient() {
-			$http.get('/api/clients/' + $stateParams.id)
+		function getTeam() {
+			$http.get('/api/teams/' + $stateParams.id)
 				.success(function(data) {
-					$scope.client = data	
+					$scope.team = data	
 					getUsers()
 				})
 				.error(function(err) {
@@ -52,7 +52,7 @@
 				.success(function(users) {
 					users.forEach(function(user){
 						if(user){
-							var userEmails = $scope.client.users.map(x => x.email)
+							var userEmails = $scope.team.users.map(x => x.email)
 							if(!userEmails.includes(user.email)) {
 								$scope.optionsList.push(
 										{firstName: user.firstName, lastName: user.lastName, 
@@ -72,7 +72,7 @@
 
 		$scope.optionsList = []
 
-		getClient()
+		getTeam()
 		
 	}])
 }());

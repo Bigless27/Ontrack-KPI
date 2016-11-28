@@ -89,30 +89,30 @@
 			</td>
 		</tr>
 		<tr>
-			<th>Clients</th>
+			<th>Teamss</th>
 			<td>
-				<span ng-show = '!clientTags'>
-					<ul ng-repeat = 'client in activity.clients'>
-						<li>{{client.name}}</li>
+				<span ng-show = '!teamTags'>
+					<ul ng-repeat = 'team in activity.teams'>
+						<li>{{team.name}}</li>
 					</ul>
 				</span>
-				<span ng-show = 'clientTags' style = 'width: 200px;'>
+				<span ng-show = 'teamTags' style = 'width: 200px;'>
 					<multiple-autocomplete 
-						ng-model="activity.clients"
+						ng-model="activity.teams"
 	     				object-property = "name"
-	     				after-remove-item = 'afterRemoveClient'
-	     				suggestions-arr="clients"
+	     				after-remove-item = 'afterRemoveTeam'
+	     				suggestions-arr="teams"
 	     				required = 'true'>
 					</multiple-autocomplete>
-					<span class = 'btn btn-info' ng-click = 'updateClients(activity.clients)'><i class = 'glyphicon glyphicon-ok' aria-hidden = 'true'></i></span>
-					<span class = 'btn btn-danger' ng-click= 'toggleEditClients()'><i class = 'glyphicon glyphicon-remove'></i></span>
+					<span class = 'btn btn-info' ng-click = 'updateTeams(activity.teams)'><i class = 'glyphicon glyphicon-ok' aria-hidden = 'true'></i></span>
+					<span class = 'btn btn-danger' ng-click= 'toggleEditTeams()'><i class = 'glyphicon glyphicon-remove'></i></span>
 				</span>
-				<span class = 'label label-danger' ng-show = 'clientErr'>
-					{{clientErrMessage}}
+				<span class = 'label label-danger' ng-show = 'teamErr'>
+					{{teamErrMessage}}
 				</span>
 			</td>
 			<td>
-				<a ng-click = "toggleEditClients()" ng-show = "!clientTags">Edit</a>
+				<a ng-click = "toggleEditTeams()" ng-show = "!teamTags">Edit</a>
 				
 			</td>
 		</tr>

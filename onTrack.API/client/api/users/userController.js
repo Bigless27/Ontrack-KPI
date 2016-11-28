@@ -3,7 +3,6 @@
 	.controller('UserController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
 		function($scope, $state, $http, $window, $stateParams, $q) {
 
-
 			$scope.deleteUser = function() {
 				swal({
 				  title: "Are you sure?",
@@ -14,10 +13,10 @@
 				  confirmButtonText: "Yes, delete it!",
 				  html: false
 				}).then(function() {
-					if ($scope.clientOwners.indexOf($scope.user.email) >= 0) {
+					if ($scope.teamOwners.indexOf($scope.user.email) >= 0) {
 						swal({
-								title: 'User is an owner of a client!',
-								text: 'Please transfer ownership of client before deleting user!',
+								title: 'User is an owner of a team!',
+								text: 'Please transfer ownership of team before deleting user!',
 								type: 'error'
 							})
 						return
@@ -95,7 +94,6 @@
 			}
 
 			$scope.getSettingName = function(id) {
-				console.log($scope.user)
 				var matchSetting = $scope.user.settingProgress.filter(function(set) {
 					return set._id === id
 				})
@@ -106,7 +104,6 @@
 				var matchSetting = $scope.user.settingProgress.filter(function(set) {
 					return set._id === id
 				})
-				console.log(matchSetting)
 				return matchSetting[0].type
 			}
 
@@ -132,7 +129,7 @@
 				$http.get('/api/users/' + $stateParams.id)
 					.success(function(data){
 						$scope.user = data
-						getClients()
+						getTeams()
 					})
 					.error(function(err) {
 						console.log(err)
@@ -154,15 +151,15 @@
 					})
 			}
 
-			function getClients() {
-				$http.get('api/clients/findClients/' + $scope.user.email)
+			function getTeams() {
+				$http.get('api/teams/findTeams/' + $scope.user.email)
 					.success(function(data) {
 						if (data.length > 0) {
 							var owners = data.map(x => x.owner).reduce((a, b) => a.concat(b))
-							$scope.clientOwners = owners.map(x => x.email)
+							$scope.teamOwners = owners.map(x => x.email)
 						}
 						else {
-							$scope.clientOwners = []
+							$scope.teamOwners = []
 						}
 						
 					})

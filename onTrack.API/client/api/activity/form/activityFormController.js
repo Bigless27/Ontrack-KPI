@@ -40,10 +40,10 @@
 				})
 		}
 
-		function getClients() {
-			$http.get('/api/clients')
+		function getTeams() {
+			$http.get('/api/teams')
 				.success(function(data) {
-					$scope.clients = data
+					$scope.teams = data
 				})
 				.error(function(err) {
 
@@ -109,10 +109,10 @@
 				console.log(err)
 			})
 		}
-		// get rid of the request to get a user and just use the one available in a client
+		// get rid of the request to get a user and just use the one available in a team
 
 		getTypes()
 		getUsers()
-		getClients()
+		getTeams()
 	}])
 }());

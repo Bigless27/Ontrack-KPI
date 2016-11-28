@@ -1,18 +1,15 @@
 (function() {
 	angular.module('onTrack')
-	.controller('ClientFormController', ['$scope', '$state', '$http', '$window', 
+	.controller('TeamFormController', ['$scope', '$state', '$http', '$window', 
 		function($scope, $state, $http, $window) {
 
 			$scope.errorDisplay = false
 
-			$scope.createClient = function(data){
+			$scope.createTeam = function(data){
 				var token = $window.sessionStorage['jwt']
 
-				console.log(data)
-
-
-				var names = $scope.clients.filter(function(client) {
-					return client.name == data.name
+				var names = $scope.teams.filter(function(team) {
+					return team.name == data.name
 				})
 
 				if(names.length > 0){
@@ -21,14 +18,14 @@
 					return
 				}
 				else {
-					$http.post('/api/clients' , data ,{
+					$http.post('/api/teams' , data ,{
 						headers: {
 							'Authorization': `Bearer ${token}`
 						}
 					})
 					.success(function(data){
-						var clientId = {'id': data._id + ''}
-						$state.go('client',clientId )
+						var teamId = {'id': data._id + ''}
+						$state.go('team',teamId )
 					})
 					.error(function(err) {
 						$scope.errorDisplay = true

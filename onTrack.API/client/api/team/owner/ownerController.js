@@ -8,9 +8,9 @@
 
 			$scope.transfer = function(data) {
 				var token = $window.sessionStorage['jwt']
-				$scope.client['owner'] = [data]
+				$scope.team['owner'] = [data]
 
-				$http.put('api/clients/' + $stateParams.id, $scope.client, {
+				$http.put('api/teams/' + $stateParams.id, $scope.team, {
 					headers: {
 						'Authorization': `Bearer ${token}`
 					}
@@ -28,7 +28,7 @@
 			// 		.success(function(users) {
 			// 			users.forEach(function(user){
 			// 				if(user){
-			// 					if (user.email !== $scope.client.owner[0].email){
+			// 					if (user.email !== $scope.team.owner[0].email){
 			// 						$scope.optionsList.push(
 			// 								{firstName: user.firstName, lastName: user.lastName, userId: user._id, 
 			// 									email: user.email, fullName: user.firstName + ' ' + user.lastName}
@@ -45,14 +45,14 @@
 			// 		})
 			// }
 
-			function getClient() {
-				$http.get('api/clients/' + $stateParams.id)
+			function getTeam() {
+				$http.get('api/teams/' + $stateParams.id)
 					.success(function(data) {
-						$scope.client = data
+						$scope.team = data
 
 						data.admins.forEach(function(user){
 							if(user){
-								if (user.email !== $scope.client.owner[0].email){
+								if (user.email !== $scope.team.owner[0].email){
 									$scope.optionsList.push(
 											{firstName: user.firstName, lastName: user.lastName, userId: user._id, 
 												email: user.email, fullName: user.firstName + ' ' + user.lastName}
@@ -73,6 +73,6 @@
 					})
 			}
 
-			getClient()
+			getTeam()
 		}])
 } ());

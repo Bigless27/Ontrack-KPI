@@ -31,51 +31,51 @@
 							}
 						}]
 					})
-					.state('main.createClient', {
-						url: '/createClient',
-						templateUrl: 'client/api/client/form/client-form-partial.html',
-						controller: 'ClientFormController'
+					.state('main.createTeam', {
+						url: '/createTeam',
+						templateUrl: 'client/api/team/form/team-form-partial.html',
+						controller: 'TeamFormController'
 					})
 					.state('main.createUser', {
 						url: '/createUser',
 						templateUrl: 'client/api/users/form/user-form-partial.html',
 						controller: 'UserFormController'
 					})
-					.state('client', {
-						url: '/client/:id',
-						templateUrl: 'client/api/client/client-partial.html',
-						controller: 'ClientController'
+					.state('team', {
+						url: '/team/:id',
+						templateUrl: 'client/api/team/team-partial.html',
+						controller: 'TeamController'
 					})
-					.state('client.kpiCreate', {
+					.state('team.kpiCreate', {
 						url: '/kpi/:id',
-						templateUrl: 'client/api/client/kpi/form/kpi-form-partial.html',
+						templateUrl: 'client/api/team/kpi/form/kpi-form-partial.html',
 						controller: 'KPIFormController'
 					})
-					.state('client.promotionCreate', {
-						url: '/client/:id',
-						templateUrl: 'client/api/client/promotions/form/promotions-form-partial.html',
+					.state('team.promotionCreate', {
+						url: '/team/:id',
+						templateUrl: 'client/api/team/promotions/form/promotions-form-partial.html',
 						controller: 'PromotionFormController'
 					})
-					.state('client.addUser', {
-						templateUrl:'client/api/client/admin/admin-add-partial.html',
+					.state('team.addUser', {
+						templateUrl:'client/api/team/admin/admin-add-partial.html',
 						controller: 'AddUserController'
 					})
-					.state('client.addAdmin', {
-						templateUrl:'client/api/client/admin/admin-add-partial.html',
+					.state('team.addAdmin', {
+						templateUrl:'client/api/team/admin/admin-add-partial.html',
 						controller: 'AdminController'
 					})
-					.state('client.switchOwner', {
-						templateUrl: 'client/api/client/owner/owner-partial.html',
+					.state('team.switchOwner', {
+						templateUrl: 'client/api/team/owner/owner-partial.html',
 						controller: 'OwnerController'
 					})
 					.state('kpi', {
-						url: '/client/:id/kpis/:kpiId',
-						templateUrl: 'client/api/client/kpi/kpi-partial.html',
+						url: '/team/:id/kpis/:kpiId',
+						templateUrl: 'client/api/team/kpi/kpi-partial.html',
 						controller: 'KPIController as ctrl'
 					})
 					.state('promotion', {
-						url: '/client/:id/promotions/:promoId',
-						templateUrl: 'client/api/client/promotions/promotions-partial.html',
+						url: '/team/:id/promotions/:promoId',
+						templateUrl: 'client/api/team/promotions/promotions-partial.html',
 						controller: 'PromotionController'
 					})
 					.state('user', {

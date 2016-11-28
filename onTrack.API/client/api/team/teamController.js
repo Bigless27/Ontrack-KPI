@@ -1,18 +1,18 @@
 (function() {
 	angular.module('onTrack')
-	.controller('ClientController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
+	.controller('TeamController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
 		function($scope, $state, $http, $window, $stateParams, $q) {
 		
 			$scope.removeAdmin = function(admin) {
 				var token = $window.sessionStorage['jwt']
 
-				$http.put('/api/clients/' + $stateParams['id'] + '/removeAdmin', admin, {
+				$http.put('/api/teamss/' + $stateParams['id'] + '/removeAdmin', admin, {
 					headers: {
 						'Authorization': `Bearer ${token}`
 					}
 				})
 				.success(function(data){
-					$scope.client = data
+					$scope.team = data
 				})
 				.error(function(err) {
 					console.log(err)
@@ -23,19 +23,19 @@
 				//this automatically makes two requests. Check to see if you need to. If not then only issue one update
 				var token = $window.sessionStorage['jwt']
 
-				$http.put('/api/clients/' + $stateParams.id + '/removeAdmin', user , {
+				$http.put('/api/teams/' + $stateParams.id + '/removeAdmin', user , {
 						headers: {
 							'Authorization': `Bearer ${token}`
 						}
 					})
 					.success(function(data) {
-						$http.put('/api/clients/' + $stateParams.id + '/removeUser', user, {
+						$http.put('/api/teams/' + $stateParams.id + '/removeUser', user, {
 								headers: {
 									'Authorization': `Bearer ${token}`
 								}
 							})
 							.success(function(data) {
-								$scope.client = data
+								$scope.team = data
 							})
 							.error(function(err) {
 								console.log(err)
@@ -46,19 +46,19 @@
 				})
 			}
 
-			$scope.deleteClient = function() {
+			$scope.deleteTeam = function() {
 				var token = $window.sessionStorage['jwt']
 
 				swal({
 				  title: "Are you sure?",
-				  text: "You will not be able to recover this client!",
+				  text: "You will not be able to recover this team!",
 				  type: "warning",
 				  showCancelButton: true,
 				  confirmButtonColor: "#DD6B55",
 				  confirmButtonText: "Yes, delete it!",
 				  html: false
 				}).then(function(){
-					$http.delete('/api/clients/' + $stateParams['id'],
+					$http.delete('/api/teams/' + $stateParams['id'],
 					 {
 						headers: {
 							'Authorization': `Bearer ${token}`
@@ -88,21 +88,21 @@
 				if($scope.nameArr.includes(data)){
 					return 'Name is already taken'
 				}
-				return updateClient(data, 'name')
+				return updateTeam(data, 'name')
 			}
 
-			function updateClient(data, field) {
+			function updateTeam(data, field) {
 				var d = $q.defer();
 				var token = $window.sessionStorage['jwt']
-				$scope.client[field] = data
+				$scope.team[field] = data
 
-				$http.put('/api/clients/' + $stateParams['id'], $scope.client,{
+				$http.put('/api/teams/' + $stateParams['id'], $scope.team,{
 					headers: {
 						'Authorization': `Bearer ${token}`
 					}
 				})
 				.success(function(data){
-					var params = {clientid: $stateParams['clientid'], kpiid: $stateParams['kpiid'] }
+					var params = {Teamid: $stateParams['Teamid'], kpiid: $stateParams['kpiid'] }
 					$state.reload()
 				})
 				.error(function(err) {
@@ -113,22 +113,22 @@
 
 
 
-			function getClient(){
-				$http.get('/api/clients/' + $stateParams['id'])
+			function getTeam(){
+				$http.get('/api/teams/' + $stateParams['id'])
 					.success(function(data) {
-						$scope.client = data
+						$scope.team = data
 					})
 					.error(function(err) {
 						console.log(err);
 					})
 			}
 
-			function getClients() {
-				$http.get('api/clients')
+			function getTeams() {
+				$http.get('api/teams')
 					.success(function(data) {
 						$scope.nameArr = []
-						data.forEach(function(client){
-							$scope.nameArr.push(client.name)
+						data.forEach(function(team){
+							$scope.nameArr.push(team.name)
 						})
 
 					})
@@ -151,8 +151,8 @@
 					})
 			}
 
-			getClients()
-			getClient()
+			getTeams()
+			getTeam()
 
 		
 	}])

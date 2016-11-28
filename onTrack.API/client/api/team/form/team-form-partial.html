@@ -1,5 +1,5 @@
 <form name ="userForm" role = "form" data-toggle = 'validator'>
-		<h1>Create a Client</h1>
+		<h1>Create a Team</h1>
 		<p style = 'font-size:14px;'>*You are automatically added as an admin and a user</p>
 
 		<div class = "form-group" show-errors style = 'width: 400px'>
@@ -50,6 +50,6 @@
 
     	<p ng-if = 'errorDisplay'>{{oops}}</p>
 
-		<button type = 'button' ng-click = "createClient(user)" class = "btn btn-primary">Submit</button>
+		<button type = 'button' ng-click = "createTeam(user)" class = "btn btn-primary">Submit</button>
 		<div  class = 'btn btn-default' ui-sref = 'main'>Close</div>
 </form>

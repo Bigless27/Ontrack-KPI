@@ -3,10 +3,10 @@
 	.controller('MainController', ['$scope', '$state', '$http', '$window', 
 		function($scope, $state, $http, $window) {
 
-			function getClients() {
-				$http.get('api/clients')
+			function getTeams() {
+				$http.get('api/teams')
 					.success(function(data) {
-						$scope.clients = data
+						$scope.teams = data
 					})
 					.error(function(err) {
 						console.log(err);
@@ -23,21 +23,12 @@
 					})
 			}
 
-
-			$scope.optionsList = [
-			  {id: 1,  name : "Java"},
-			  {id: 2,  name : "C"},
-			  {id: 3,  name : "C++"},
-			  {id: 4,  name : "AngularJs"},
-			  {id: 5,  name : "JavaScript"}
-			];
-
 			$scope.logout = function() {
 				$window.sessionStorage.clear()
 				$state.go('login')
 			}
 		
 			getUsers() 
-			getClients()
+			getTeams()
 	}])
 }());

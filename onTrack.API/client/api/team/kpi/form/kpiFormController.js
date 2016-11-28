@@ -4,7 +4,7 @@
 		function($scope, $state, $http, $window, $stateParams) {
 			$scope.create = true
 			$scope.err = false
-			$scope.clientId = $stateParams['id']
+			$scope.teamId = $stateParams['id']
 
 			function getSettings() {
 			$http.get('api/type-settings')
@@ -58,7 +58,7 @@
 
 				var token = $window.sessionStorage['jwt']
 
-				var names = $scope.client.kpis.filter(function(x) {
+				var names = $scope.team.kpis.filter(function(x) {
 					return x.name == kpi.name
 				})
 
@@ -68,8 +68,7 @@
 					return
 				}
 				else{
-					console.log('hey')
-					$http.post('api/clients/' + $stateParams['id'] + '/kpis', kpi ,{
+					$http.post('api/teams/' + $stateParams['id'] + '/kpis', kpi ,{
 						headers: {
 							"Authorization": `Bearer ${token}`
 						}

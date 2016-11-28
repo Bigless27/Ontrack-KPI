@@ -5,7 +5,7 @@
 
 			function getKpiSettings() {
 		 		var d = $q.defer();
-		 		$http.get('api/clients/' + $stateParams.id + 
+		 		$http.get('api/teams/' + $stateParams.id + 
 		 			'/kpis/' + $stateParams.kpiId)
 		 			.success(function(kpi) {
 		 				$http.get('api/type-settings')
@@ -85,15 +85,15 @@
 			  confirmButtonText: "Yes, delete it!",
 			  html: false
 			}).then(function(){
-				$http.delete('/api/clients/' + $stateParams['id']
+				$http.delete('/api/teams/' + $stateParams['id']
 				 + '/kpis/' + $stateParams['kpiId'], {
 					headers: {
 						'Authorization': `Bearer ${token}`
 					}
 				})
 				.success(function(data){
-					var clientId = {'id': $stateParams['id'] + ''}
-					$state.go('client',clientId )
+					var teamId = {'id': $stateParams['id'] + ''}
+					$state.go('team',teamId )
 				})
 				.error(function(err) {
 					console.log(err)
@@ -149,7 +149,7 @@
 			var token = $window.sessionStorage['jwt']
 			$scope.kpi[field] = data
 
-			$http.put('/api/clients/' + $stateParams.id
+			$http.put('/api/teams/' + $stateParams.id
 			 + '/kpis/' + $stateParams.kpiId, $scope.kpi,{
 				headers: {
 					'Authorization': `Bearer ${token}`

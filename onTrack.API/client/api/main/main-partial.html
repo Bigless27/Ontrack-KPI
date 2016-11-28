@@ -11,13 +11,13 @@
 
  <div class =  'row'>
  	<div class = 'col-sm-6'>
-	 	<h2 class = 'card-title'>My Clients</h2>
-	 	<ul ng-repeat = 'client in clients'>
+	 	<h2 class = 'card-title'>My Teams</h2>
+	 	<ul ng-repeat = 'team in teams'>
 	 		<li>
-	 			<a ui-sref = 'client({id: client._id})'>{{client.name}}</a>
+	 			<a ui-sref = 'team({id: team._id})'>{{team.name}}</a>
 	 		</li>
 	 	</ul>
-	 	<div ui-sref = 'main.createClient' class = 'btn btn-default'> Create Client</div>
+	 	<div ui-sref = 'main.createTeam' class = 'btn btn-default'> Create Team</div>
 	 	
  	</div>
 

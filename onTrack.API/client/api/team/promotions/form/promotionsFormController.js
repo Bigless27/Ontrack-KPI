@@ -4,7 +4,7 @@
 		function($scope, $state, $http, $window, $stateParams) {
 
 			$scope.create = true
-			$scope.clientId = $stateParams['id']
+			$scope.teamId = $stateParams['id']
 
 			var today = new Date();
 			$scope.minDate = today.toISOString();
@@ -62,7 +62,7 @@
 				if($scope.promotionForm.$invalid){return;}
 				var token = $window.sessionStorage['jwt']
 
-				$http.post('api/clients/' + $stateParams['id'] + '/promotions', promotion ,{
+				$http.post('api/teams/' + $stateParams['id'] + '/promotions', promotion ,{
 					headers: {
 						"Authorization": `Bearer ${token}`
 					}

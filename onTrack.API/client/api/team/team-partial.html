@@ -1,14 +1,14 @@
 <nav class="navbar navbar-inverse">
-	<h1>Client View</h1>
+	<h1>Team View</h1>
 	<div class = 'btn btn-default' ui-sref = 'main'>Back</div>
 	<div class = 'btn btn-danger' ng-click = 'logout()'>Logout</div>
 </nav>
 
- <div id = "client-mission-control">
+ <div id = "team-mission-control">
  	<div style = 'padding: 10px 5px'>
 	 	<span>
 		 	<h2 style = 'display:inline;'>
-		 		<span editable-text="client.name" e-form="name" onbeforesave="updateName($data)">{{client.name || 'empty'}}</span>
+		 		<span editable-text="team.name" e-form="name" onbeforesave="updateName($data)">{{team.name || 'empty'}}</span>
 		 	</h2>
 		 <span>
 			 	<a href="" ng-click="name.$show()" ng-hide="name.$visible">Edit</a>
@@ -17,11 +17,11 @@
  	</div>
  	<div>
  		<span>
-	 		Owner: {{client.owner[0].firstName}} {{client.owner[0].lastName}}
+	 		Owner: {{team.owner[0].firstName}} {{team.owner[0].lastName}}
  		</span>
- 		<span ui-sref = 'client.switchOwner'><a href="">Edit</a></span>
+ 		<span ui-sref = 'team.switchOwner'><a href="">Edit</a></span>
  	</div>
-		<span class = 'btn btn-danger' ng-click = 'deleteClient()'>Delete Client</span>
+		<span class = 'btn btn-danger' ng-click = 'deleteTeam()'>Delete Team</span>
  	<div ui-view class = 'create-view'></div>
  </div>
 <div class = 'table-holder'>
@@ -29,7 +29,7 @@
  		<thead>
  			<tr class ='active'><th>Admin(s)</th></tr>
  		</thead>
- 		<tbody ng-repeat = 'admin in client.admins'>
+ 		<tbody ng-repeat = 'admin in team.admins'>
  			<tr class = 'info'>
  				<td>{{admin.firstName}} {{admin.lastName}}
   					<span class = 'btn btn-danger' ng-click = "removeAdmin(admin)" style = 'float: right;'>X</span>
@@ -39,7 +39,7 @@
  		</tbody>
  		<tr class = 'active'>
  			<td>
- 				<div ui-sref = 'client.addAdmin' class = 'btn btn-primary'>Add Admin</div>
+ 				<div ui-sref = 'team.addAdmin' class = 'btn btn-primary'>Add Admin</div>
  			</td>
  		</tr>
  	</table>
@@ -49,16 +49,16 @@
  		<thead>
  			<tr class ='active'><th>KPI(s)</th></tr>
  		</thead>
- 		<tbody ng-repeat = 'kpi in client.kpis'>
+ 		<tbody ng-repeat = 'kpi in team.kpis'>
  			<tr class = 'info'>
  				<td>
- 					<a ui-sref ='kpi({id: client._id ,kpiId: kpi._id})'>{{kpi.name}}</a>
+ 					<a ui-sref ='kpi({id: team._id ,kpiId: kpi._id})'>{{kpi.name}}</a>
  				</td>
  			</tr>
  		</tbody>
  		<tr class = 'active'>
  			<td>
- 				<div ui-sref = 'client.kpiCreate' class = 'btn btn-primary'>Create KPI</div>
+ 				<div ui-sref = 'team.kpiCreate' class = 'btn btn-primary'>Create KPI</div>
  			</td>
  		</tr>
  	</table>
@@ -67,16 +67,16 @@
  		<thead>
  			<tr class ='active'><th>Promotions</th></tr>
  		</thead>
- 		<tbody ng-repeat = 'promotion in client.promotions'>
+ 		<tbody ng-repeat = 'promotion in team.promotions'>
  			<tr class = 'info'>
  				<td>
- 					<a ui-sref = 'promotion({id: client._id, promoId: promotion._id})'>{{promotion.name}}</a>
+ 					<a ui-sref = 'promotion({id: team._id, promoId: promotion._id})'>{{promotion.name}}</a>
  				</td>
  			</tr>
  		</tbody>
  		<tr class = 'active'>
  			<td>
- 				<div ui-sref = 'client.promotionCreate' class = 'btn btn-primary'>Create Promotion</div>
+ 				<div ui-sref = 'team.promotionCreate' class = 'btn btn-primary'>Create Promotion</div>
  			</td>
  		</tr>
  	</table>
@@ -85,7 +85,7 @@
  		<thead>
  			<tr class ='active'><th>Users</th></tr>
  		</thead>
- 		<tbody ng-repeat = 'user in client.users'>
+ 		<tbody ng-repeat = 'user in team.users'>
  			<tr class = 'info'>
  				<td>
  					{{user.firstName}} {{user.lastName}}
@@ -95,7 +95,7 @@
  		</tbody>
  		<tr>
  			<td class = 'active'>
- 				<div ui-sref = 'client.addUser' class = 'btn btn-primary'>Add User</div>
+ 				<div ui-sref = 'team.addUser' class = 'btn btn-primary'>Add User</div>
  			</td>
  		</tr>
  	</table>
