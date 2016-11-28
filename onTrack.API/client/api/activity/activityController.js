@@ -4,7 +4,6 @@
 	 function($scope, $state, $window, $stateParams, $http, $q) {
 
 	 	
-
 	 	function getActivities() {
 	 		$http.get('api/activity')
 	 		 .success(function(data) {
