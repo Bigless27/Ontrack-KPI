@@ -18,12 +18,14 @@ var subTypesSchema = new Schema({
 	name: {type: String}
 })
 
-
 var PromotionSchema = new Schema({
 	name: {type: String, required: true, index: true},
 	type: {type: String, required: true},
 	subTypes: [subTypesSchema],
 	kpis: [kpiSchema],
+	reward: [{type: String}],
+	achievementRule: {type: String},
+	goals: [{}],
 	completionValue: {type: Number, required: true},
 	teamId: {type: Schema.Types.ObjectId, ref: 'team'},
 	owner: {type: Schema.Types.ObjectId, ref: 'user'},

@@ -19,7 +19,6 @@ exports.params = function(req, res, next, id) {
 };
 
 exports.get = function(req, res, next) {
-	
 	Team.findById(req.params.id)
 			.populate('promotions')
 			.exec(function(err, team) {
