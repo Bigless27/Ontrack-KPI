@@ -1,6 +1,7 @@
 var User = require('./userModel');
 var _ = require('lodash');
 var signToken = require('../../auth/auth').signToken;
+var customizer = require('../updateCustomizer')
 
 exports.params = function(req, res, next, id) {
 	User.findById(id)
@@ -62,7 +63,7 @@ exports.put = function(req, res, next) {
 
   var update = req.body;
 
-  _.mergeWith(user, update, customizer);
+  _.mergeWith(user, update, customizer.custom);
 
   user.save(function(err, saved) {
     if (err) {
@@ -104,13 +105,14 @@ exports.me = function(req, res) {
 };
 
 
-function customizer(objValue, srcValue){
-  if(Array.isArray(objValue)){
-    if(objValue.length > srcValue.length){
-      return objValue = srcValue
-    }
-  }
-}
+// function custom(objValue, srcValue){
+//   console.log('hey')
+//   if(Array.isArray(objValue)){
+//     if(objValue.length > srcValue.length){
+//       return objValue = srcValue
+//     }
+//   }
+// }
 
 
 
