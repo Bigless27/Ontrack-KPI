@@ -1,6 +1,7 @@
 var Settings = require('./settingsModel');
 var  _ = require('lodash');
 var mongoose = require('mongoose')
+var customizer = require('../../updateCustomizer')
 
 
 
@@ -34,7 +35,7 @@ exports.put = function(req, res, next) {// works
 
 	var update = req.body;
 
-	_.mergeWith(settings, update, customizer);
+	_.mergeWith(settings, update, customizer.custom);
 
 	settings.save(function(err, saved) {
 	if (err) {
@@ -65,15 +66,3 @@ exports.delete = function(req, res, next) { //works
 		}
 	})
 }
-
-function customizer(objValue, srcValue){
-	if(Array.isArray(objValue)){
-		if(objValue.length > srcValue.length){
-			return objValue = srcValue
-		}
-	}
-}
-
-
-
-

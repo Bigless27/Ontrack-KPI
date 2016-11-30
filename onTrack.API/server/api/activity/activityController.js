@@ -1,6 +1,7 @@
 var Activity = require('./activityModel');
 var _ = require('lodash');
 var algorithm = require('../algorithm')
+var customizer = require('../updateCustomizer')
 
 exports.params = function(req, res, next, id) {
 	Activity.findById(id)
@@ -36,7 +37,7 @@ exports.put = function(req, res, next) {
 
   var update = req.body;
 
-  _.mergeWith(activity, update, customizer);
+  _.mergeWith(activity, update, customizer.custom);
 
   activity.save(function(err, saved) {
     if (err) {
@@ -67,17 +68,3 @@ exports.delete = function(req, res, next) {
     }
   });
 };
-
-function customizer(objValue, srcValue){
-  if(Array.isArray(objValue)){
-    if(objValue.length > srcValue.length){
-      return objValue = srcValue
-    }
-  }
-}
-
-
-
-
-
-

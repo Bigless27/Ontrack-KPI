@@ -2,6 +2,7 @@ var Promotion = require('./promotionModel');
 var Progress = require('../../users/progress/progressModel')
 var Team = require('../teamModel')
 var _ = require('lodash');
+var customizer = require('../../updateCustomizer')
 
 exports.params = function(req, res, next, id) {
 	Promotion.findById(id)
@@ -67,7 +68,7 @@ exports.put = function(req, res, next) {// works
 
 	var update = req.body;
 
-	_.mergeWith(promotion, update, customizer);
+	_.mergeWith(promotion, update, customizer.custom);
 
 	promotion.save(function(err, saved) {
 	if (err) {
@@ -88,16 +89,3 @@ exports.delete = function(req, res, next) { //works
 		}
 	})
 }
-
-function customizer(objValue, srcValue){
-	if(Array.isArray(objValue)){
-		if(objValue.length > srcValue.length){
-			return objValue = srcValue
-		}
-	}
-}
-
-
-
-
-

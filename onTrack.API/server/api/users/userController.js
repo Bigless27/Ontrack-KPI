@@ -103,17 +103,3 @@ exports.delete = function(req, res, next) {
 exports.me = function(req, res) {
    res.json(req.userParam.toJson());
 };
-
-
-// function custom(objValue, srcValue){
-//   console.log('hey')
-//   if(Array.isArray(objValue)){
-//     if(objValue.length > srcValue.length){
-//       return objValue = srcValue
-//     }
-//   }
-// }
-
-
-
-

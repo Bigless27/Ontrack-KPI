@@ -1,5 +1,6 @@
 var KPI = require('./kpiModel');
 var _ = require('lodash');
+var customizer = require('../../updateCustomizer')
 
 exports.params = function(req, res, next, id) {
 	KPI.findById(id)
@@ -58,7 +59,7 @@ exports.put = function(req, res, next) {
 
 	var update = req.body;
 
-	_.mergeWith(kpi, update, customizer);
+	_.mergeWith(kpi, update, customizer.custom);
 
 	kpi.save(function(err, saved) {
 		if (err) {
@@ -79,13 +80,4 @@ exports.delete = function(req, res, next) {
 		}
 	})
 }
-
-function customizer(objValue, srcValue){
-	if(Array.isArray(objValue)){
-		if(objValue.length > srcValue.length){
-			return objValue = srcValue
-		}
-	}
-}
-
 

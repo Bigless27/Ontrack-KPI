@@ -1,5 +1,6 @@
 var Progress = require('./progressModel');
 var _ = require('lodash');
+var customizer = require('../../updateCustomizer')
 
 exports.params = function(req, res, next, id) {
 	Progress.findById(id)
@@ -35,7 +36,7 @@ exports.put = function(req, res, next) {
 
   var update = req.body;
 
-  _.mergeWith(progress, update, customizer);
+  _.mergeWith(progress, update, customizer.custom);
 
   progress.save(function(err, saved) {
     if (err) {
@@ -68,13 +69,3 @@ exports.delete = function(req, res, next) {
     }
   });
 };
-
-function customizer(objValue, srcValue){
-  if(Array.isArray(objValue)){
-    if(objValue.length > srcValue.length){
-      return objValue = srcValue
-    }
-  }
-}
-
-

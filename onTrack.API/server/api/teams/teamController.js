@@ -2,8 +2,7 @@ var Team = require('./teamModel');
 var User = require('../users/userModel')
 var mongoose = require('mongoose')
 var _ = require('lodash');
-
-
+var customizer = require('../updateCustomizer')
 
 exports.params = function(req, res, next, id) {
   Team.findById(id)
@@ -117,7 +116,7 @@ exports.put = function(req, res, next) {
   var update = req.body;
 
 
-  _.mergeWith(team, update, customizer);
+  _.mergeWith(team, update, customizer.custom);
 
   team.save(function(err, saved) {
     if (err) {
@@ -173,23 +172,3 @@ exports.findTeams = function(req, res, next) {
 
 
 }
-
-function customizer(objValue, srcValue){
-  if(Array.isArray(objValue)){
-    if(objValue.length > srcValue.length){
-      return objValue = srcValue
-    }
-  }
-}
-
-
-
-
-
-
-
-
-
-
-
-
