@@ -58,8 +58,6 @@ exports.post = function(req, res, next) {//check
     });
 };
 
-
-
 exports.delete = function(req, res, next) {
   req.progress.remove(function(err, removed) {
     if (err) {
