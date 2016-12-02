@@ -108,22 +108,22 @@
 						templateUrl: 'client/api/users/progress/progress-partial.html',
 						controller: 'ProgressController'
 					})
-					.state('activity', {
-						url: '/activity',
-						templateUrl: 'client/api/activity/activity-partial.html',
-						controller: 'ActivityController'
-					})
-					.state('activity.create', {
-						url: '/createActivity',
-						templateUrl: 'client/api/activity/form/activity-form-partial.html',
-						controller: 'ActivityFormController'
-					})
-					// look to rename this state to something a little more Restful
-					.state('activityView', {
-						url: '/activity/:id',
-						templateUrl: 'client/api/activity/view/activity-view-partial.html',
-						controller: 'ActivityViewController'
-					})
+					// .state('activity', {
+					// 	url: '/activity',
+					// 	templateUrl: 'client/api/activity/activity-partial.html',
+					// 	controller: 'ActivityController'
+					// })
+					// .state('activity.create', {
+					// 	url: '/createActivity',
+					// 	templateUrl: 'client/api/activity/form/activity-form-partial.html',
+					// 	controller: 'ActivityFormController'
+					// })
+					// // look to rename this state to something a little more Restful
+					// .state('activityView', {
+					// 	url: '/activity/:id',
+					// 	templateUrl: 'client/api/activity/view/activity-view-partial.html',
+					// 	controller: 'ActivityViewController'
+					// })
 
 			}])
 			.run(function(editableOptions) {
