@@ -14,7 +14,6 @@
 						templateUrl: 'client/api/login/login-partial.html',
 						controller: 'LoginController'
 					})
-					
 					.state('signUp', {
 						url: '/signup',
 						templateUrl: 'client/api/signup/signup-partial.html',

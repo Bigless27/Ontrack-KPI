@@ -8,7 +8,6 @@ var GoalSchema = new Schema({
 })
 
 GoalSchema.pre('save', function(next) {
-	var goal = this
 	console.log(this)
 })
 
