@@ -1,6 +1,6 @@
 var Goal = require('./goalModel')
 var _ = require('lodash');
-var customizer = require('../updateCustomizer')
+var customizer = require('../../updateCustomizer')
 
 exports.params = function(req, res, next, id) {
 	Goal.findById(id)

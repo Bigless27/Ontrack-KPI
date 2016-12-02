@@ -1,4 +1,4 @@
-var mongoose = requrie('mongoose');
+var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var _ = require('lodash');
 
@@ -7,7 +7,7 @@ var GoalSchema = new Schema({
 	any: {}
 })
 
-GoalScheam.pre('save', function(next) {
+GoalSchema.pre('save', function(next) {
 	var goal = this
 	console.log(this)
 })

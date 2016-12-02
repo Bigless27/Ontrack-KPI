@@ -4,7 +4,7 @@ var controller = require('./goalController');
 
 router.param('goalId', controller.params);
 
-router.rotue('/')
+router.route('/')
 	.get(controller.get)
 	.post(controller.post)
 
