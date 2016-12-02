@@ -41,6 +41,11 @@
 						templateUrl: 'client/api/users/form/user-form-partial.html',
 						controller: 'UserFormController'
 					})
+					.state('main.promotionCreate', {
+						url: '/team/:id',
+						templateUrl: 'client/api/team/promotions/form/promotions-form-partial.html',
+						controller: 'PromotionFormController'
+					})
 					.state('team', {
 						url: '/team/:id',
 						templateUrl: 'client/api/team/team-partial.html',
@@ -51,11 +56,11 @@
 						templateUrl: 'client/api/team/kpi/form/kpi-form-partial.html',
 						controller: 'KPIFormController'
 					})
-					.state('team.promotionCreate', {
-						url: '/team/:id',
-						templateUrl: 'client/api/team/promotions/form/promotions-form-partial.html',
-						controller: 'PromotionFormController'
-					})
+					// .state('team.promotionCreate', {
+					// 	url: '/team/:id',
+					// 	templateUrl: 'client/api/team/promotions/form/promotions-form-partial.html',
+					// 	controller: 'PromotionFormController'
+					// })
 					.state('team.addUser', {
 						templateUrl:'client/api/team/admin/admin-add-partial.html',
 						controller: 'AddUserController'

@@ -2,8 +2,7 @@
 	angular.module('onTrack')
 	.controller('PromotionFormController', ['$scope', '$state', '$http', '$window', '$stateParams',
 		function($scope, $state, $http, $window, $stateParams) {
-
-			$scope.create = true
+			
 			$scope.teamId = $stateParams['id']
 
 			var today = new Date();

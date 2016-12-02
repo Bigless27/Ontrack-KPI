@@ -4,25 +4,8 @@ var _ = require('lodash');
 var Team = require('../teamModel')
 
 
-var kpiSchema = new Schema({
-	kpiValue: {type: String, required: true},
-	activityValue: {type: String},
-	achieveValue: {type: Number},
-	type: {type: String},
-	durationType: {type: String},
-	length: {type: Number}
-})
-
-//all these subtypes schemas I believe may be optimized by just holding the name
-var subTypesSchema = new Schema({
-	name: {type: String}
-})
-
 var PromotionSchema = new Schema({
 	name: {type: String, required: true, index: true},
-	type: {type: String, required: true},
-	subTypes: [subTypesSchema],
-	kpis: [kpiSchema],
 	reward: [{type: String}],
 	achievementRule: {type: String},
 	goals: [{}],
