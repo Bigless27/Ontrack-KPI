@@ -7,7 +7,6 @@ var checkUser = [auth.decodeToken(), auth.getFreshUser()];
 //nested
 // router.use('/:id/settings', require('./settings/settingsRoutes'));
 router.use('/:id/promotions', require('./promotions/promotionRoutes'));
-router.use('/:id/kpis', require('./kpi/kpiRoutes'))
 //
 
 router.param('id', controller.params);
