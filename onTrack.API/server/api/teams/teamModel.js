@@ -65,9 +65,7 @@ TeamSchema.pre('save', function(next) {
 
 TeamSchema.pre('remove', function(next){
 	//this require here is a patch!!!!! look to refactor better in future from circular dependency
-	var Kpis = require('./kpi/kpiModel'),
-		Promotions = require('./promotions/promotionModel'),
-		kpiIds = this.kpis.map(k => k._id),
+	var Promotions = require('./promotions/promotionModel'),
 		promotionIds = this.promotions.map(p => p._id),
 		teamId = this.teamId,
 		userEmails = this.users.map(x => x.email)
@@ -82,10 +80,6 @@ TeamSchema.pre('remove', function(next){
 				if (err) next(err)
 			})
 		})
-	})
-
-	Kpis.remove({ _id: {$in: kpiIds}}, function(err) {
-		if(err) next(err)
 	})
 
 	Promotions.remove({ _id: {$in: promotionIds}}, function(err) {
