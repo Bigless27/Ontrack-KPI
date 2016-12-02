@@ -51,11 +51,6 @@
 						templateUrl: 'client/api/team/team-partial.html',
 						controller: 'TeamController'
 					})
-					.state('team.kpiCreate', {
-						url: '/kpi/:id',
-						templateUrl: 'client/api/team/kpi/form/kpi-form-partial.html',
-						controller: 'KPIFormController'
-					})
 					// .state('team.promotionCreate', {
 					// 	url: '/team/:id',
 					// 	templateUrl: 'client/api/team/promotions/form/promotions-form-partial.html',
@@ -72,11 +67,6 @@
 					.state('team.switchOwner', {
 						templateUrl: 'client/api/team/owner/owner-partial.html',
 						controller: 'OwnerController'
-					})
-					.state('kpi', {
-						url: '/team/:id/kpis/:kpiId',
-						templateUrl: 'client/api/team/kpi/kpi-partial.html',
-						controller: 'KPIController as ctrl'
 					})
 					.state('promotion', {
 						url: '/team/:id/promotions/:promoId',
@@ -845,6 +835,124 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('ActivityFormController', ['$scope', '$state', '$window', '$http', '$stateParams',
+	 function($scope, $state, $window, $http, $stateParams) {
+
+		$scope.selectAll = function(){
+	 		if($scope.activity.users.length < $scope.optionsList.length){
+		 		$scope.activity.users = $scope.optionsList
+		 		$('#user-select-button')[0].innerHTML = 'Clear'
+	 		}
+	 		else{
+	 			$scope.activity.users = []
+	 			$('#user-select-button')[0].innerHTML = 'Select All'
+	 		}
+	 	}
+
+	 	$scope.subTypesList = []
+
+	 	$scope.optionsList = []
+
+	 	function getUsers(){
+			$http.get('/api/users')
+				.success(function(users) {
+					users.forEach(function(user){
+						if(user){
+							$scope.optionsList.push(
+									{ fullName: user.firstName + ' ' + user.lastName,
+										userId: user._id, firstName: user.firstName,
+										lastName: user.lastName
+									}
+								)
+						}
+						else{
+							$scope.optionsList = [{name: 'No users'}]
+						}
+					})
+				})
+				.error(function(err) {
+					console.log(err);
+				})
+		}
+
+		function getTeams() {
+			$http.get('/api/teams')
+				.success(function(data) {
+					$scope.teams = data
+				})
+				.error(function(err) {
+
+				})
+		}
+
+		function getTypes() {
+			$http.get('/api/type-settings')
+				.success(function(data) {
+					$scope.settings = data
+					populateLists(data)
+				})
+				.error(function(data) {
+					console.log(data)
+				})
+		}
+
+		function populateLists(data){
+			var listHolder = []
+			data.forEach(function(set) {					
+				listHolder.push(set.type)
+			})
+			$scope.typeList = [...new Set(listHolder)]
+			
+		}
+
+		$scope.typeChecker = false
+
+		$scope.checkType = function() {
+			if(!$scope.activity.type) {
+				$scope.typeChecker = true
+			}
+		}
+
+		$scope.setSubtypes = function(){
+			$scope.subTypesList = []
+			if(!$scope.activity.type) return
+			else{
+					$scope.settings.forEach(function(set){
+					if(set.type === $scope.activity.type){
+						set.subTypes.forEach(function(sub){
+							$scope.subTypesList.push({name: sub.text})	
+						})
+					}
+				})
+			}
+		}
+
+		$scope.typeList = []
+
+		$scope.submitActivity = function(activity){
+		 	var token = $window.sessionStorage['jwt']
+
+			$http.post('/api/activity', activity,{
+				headers: {
+					'Authorization': `Bearer ${token}`
+				}
+			})
+			.success(function(data) {
+				$state.reload()
+			})
+			.error(function(err) {
+				console.log(err)
+			})
+		}
+		// get rid of the request to get a user and just use the one available in a team
+
+		getTypes()
+		getUsers()
+		getTeams()
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('ActivityViewController', ['$scope', '$state', '$window', '$stateParams', '$http', '$q',
 	 function($scope, $state, $window, $stateParams, $http, $q) {
 
@@ -1160,124 +1268,6 @@
 
 		getUsers()
 	 	getActivitySettings()
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('ActivityFormController', ['$scope', '$state', '$window', '$http', '$stateParams',
-	 function($scope, $state, $window, $http, $stateParams) {
-
-		$scope.selectAll = function(){
-	 		if($scope.activity.users.length < $scope.optionsList.length){
-		 		$scope.activity.users = $scope.optionsList
-		 		$('#user-select-button')[0].innerHTML = 'Clear'
-	 		}
-	 		else{
-	 			$scope.activity.users = []
-	 			$('#user-select-button')[0].innerHTML = 'Select All'
-	 		}
-	 	}
-
-	 	$scope.subTypesList = []
-
-	 	$scope.optionsList = []
-
-	 	function getUsers(){
-			$http.get('/api/users')
-				.success(function(users) {
-					users.forEach(function(user){
-						if(user){
-							$scope.optionsList.push(
-									{ fullName: user.firstName + ' ' + user.lastName,
-										userId: user._id, firstName: user.firstName,
-										lastName: user.lastName
-									}
-								)
-						}
-						else{
-							$scope.optionsList = [{name: 'No users'}]
-						}
-					})
-				})
-				.error(function(err) {
-					console.log(err);
-				})
-		}
-
-		function getTeams() {
-			$http.get('/api/teams')
-				.success(function(data) {
-					$scope.teams = data
-				})
-				.error(function(err) {
-
-				})
-		}
-
-		function getTypes() {
-			$http.get('/api/type-settings')
-				.success(function(data) {
-					$scope.settings = data
-					populateLists(data)
-				})
-				.error(function(data) {
-					console.log(data)
-				})
-		}
-
-		function populateLists(data){
-			var listHolder = []
-			data.forEach(function(set) {					
-				listHolder.push(set.type)
-			})
-			$scope.typeList = [...new Set(listHolder)]
-			
-		}
-
-		$scope.typeChecker = false
-
-		$scope.checkType = function() {
-			if(!$scope.activity.type) {
-				$scope.typeChecker = true
-			}
-		}
-
-		$scope.setSubtypes = function(){
-			$scope.subTypesList = []
-			if(!$scope.activity.type) return
-			else{
-					$scope.settings.forEach(function(set){
-					if(set.type === $scope.activity.type){
-						set.subTypes.forEach(function(sub){
-							$scope.subTypesList.push({name: sub.text})	
-						})
-					}
-				})
-			}
-		}
-
-		$scope.typeList = []
-
-		$scope.submitActivity = function(activity){
-		 	var token = $window.sessionStorage['jwt']
-
-			$http.post('/api/activity', activity,{
-				headers: {
-					'Authorization': `Bearer ${token}`
-				}
-			})
-			.success(function(data) {
-				$state.reload()
-			})
-			.error(function(err) {
-				console.log(err)
-			})
-		}
-		// get rid of the request to get a user and just use the one available in a team
-
-		getTypes()
-		getUsers()
-		getTeams()
 	}])
 }());
 (function() {
@@ -1748,179 +1738,6 @@
 
 			$scope.optionsList = [];
 
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('KPIController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
-		function($scope, $state, $http, $window, $stateParams, $q) {
-
-			function getKpiSettings() {
-		 		var d = $q.defer();
-		 		$http.get('api/teams/' + $stateParams.id + 
-		 			'/kpis/' + $stateParams.kpiId)
-		 			.success(function(kpi) {
-		 				$http.get('api/type-settings')
-				 			.success(function(set){
-				 				$scope.kpi = kpi
-				 				$scope.noSubtypes = false
-				 				if (kpi.subTypes.length === 0){
-				 					$scope.noSubtypes = true
-				 				}
-				 				$scope.settings = set
-				 				getUniqueTypes()
-				 				getUniqueSubtypes()
-				 				d.resolve()
-				 			})
-				 			.error(function(err) {
-				 				console.log(err)
-				 				d.reject()
-				 			})
-		 			})
-		 			.error(function(err) {
-		 				console.log(err)
-		 				d.reject()
-		 			})
-		 	}
-
-	 	function getUniqueTypes() {
-	 		var typeCopy = $scope.settings
-	 		var unUniqueTypes = typeCopy.map(function(x){
-				return x.type
-			})
-			$scope.typeList = [...new Set(unUniqueTypes)]
-	 	}
-
-	 	function getUniqueSubtypes() {
-		 	var unSetSubtypes = $scope.settings.filter(function(set) {
-			 	return set.type === $scope.kpi.type
-			 })
-	 		var subTypeStrings = $scope.kpi.subTypes.map(x => x.name)
-	 		var subArr = []
-	 		unSetSubtypes[0].subTypes.forEach(function(sub) {
-	 				if (!subTypeStrings.includes(sub.text)){
-		 				subArr.push({name: sub.text})
-	 				}
-	 		})
-	 		$scope.subTypes = subArr
-	 	}
-
-	 	$scope.userTags = false
-
-		$scope.toggleEdit = function() {
-			if($scope.userTags){
-				$scope.userTags = false
-			}
-			else{
-				$scope.userTags = true
-			}
-		}
-
-		$scope.afterRemoveItem = function(item) {
-			var subStrings = $scope.subTypes.map(x => x.name)
-	 		if (subStrings.includes(item.name)) {
-	 			return
-	 		}
-	 		else{
-		 		$scope.subTypes.push({name: item.name})
-	 		}
-		}
-
-		$scope.deleteKpi = function() {
-			var token = $window.sessionStorage['jwt']
-			swal({
-			  title: "Are you sure?",
-			  text: "You will not be able to recover this kpi!",
-			  type: "warning",
-			  showCancelButton: true,
-			  confirmButtonColor: "#DD6B55",
-			  confirmButtonText: "Yes, delete it!",
-			  html: false
-			}).then(function(){
-				$http.delete('/api/teams/' + $stateParams['id']
-				 + '/kpis/' + $stateParams['kpiId'], {
-					headers: {
-						'Authorization': `Bearer ${token}`
-					}
-				})
-				.success(function(data){
-					var teamId = {'id': $stateParams['id'] + ''}
-					$state.go('team',teamId )
-				})
-				.error(function(err) {
-					console.log(err)
-				})
-			}).done(function() {
-				return
-			})
-
-		}
-
-		$scope.updateName = function(data) {
-			if (data === ''){
-				return 'Name is Required'
-			}
-			else if (data.length < 2){
-				return 'Name must be more than one character'
-			}
-			return updateKpi(data, 'name')
-		}
-
-
-		$scope.updateType = function(data) {
-			if (data === ''){
-				return 'Type is required'
-			}
-			else if (($scope.kpi.type == data)) {
-				return 
-			}
-			return updateKpi(data, 'type')
-		}
-
-		$scope.updateSubtypes = function(data) {
-			return updateKpi(data,'subTypes')			
-		}
-
-		//have type show on edit click
-		$(document).on('click','#kpi-type-edit-button', function(){
-			$('#kpi-type-edit')[0].click()
-		} )
-		
-
-
-		$scope.updateValue = function(data) {
-			if (data === ''){
-				return 'Value is required'
-			}
-			return updateKpi(data, 'value')
-		}
-
-
-		function updateKpi(data, field){
-			var d = $q.defer();
-			var token = $window.sessionStorage['jwt']
-			$scope.kpi[field] = data
-
-			$http.put('/api/teams/' + $stateParams.id
-			 + '/kpis/' + $stateParams.kpiId, $scope.kpi,{
-				headers: {
-					'Authorization': `Bearer ${token}`
-				}
-			})
-			.success(function(data){
-				if (field == 'type') {
-					$scope.updateSubtypes([])
-				}
-				else {
-					$state.reload()
-				}
-			})
-			.error(function(err) {
-				console.log(err)
-			})
-		}
-
-		getKpiSettings()	
 	}])
 }());
 (function() {
@@ -2886,91 +2703,6 @@ app.directive('suggestion', function(){
 	 	}
 
 	 	getSettings()
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('KPIFormController', ['$scope', '$state', '$http', '$window', '$stateParams',
-		function($scope, $state, $http, $window, $stateParams) {
-			$scope.create = true
-			$scope.err = false
-			$scope.teamId = $stateParams['id']
-
-			function getSettings() {
-			$http.get('api/type-settings')
-				.success(function(data) {
-					$scope.settings = data
-					setTypes()
-				})
-				.error(function(err){
-					console.log(err)
-				})
-			}
-			//for select button
-			function setTypes() {
-				var settingsCopy = $scope.settings
-				$scope.types = [...new Set(settingsCopy.map(function(set){
-					return set.type
-				}))]
-			}
-
-			$scope.subTypesList = [];
-
-			$scope.typeChecker = false
-
-			$scope.checkType = function(){
-				if(!$scope.kpi.type) {
-					$scope.typeChecker = true
-				}
-			}
-
-			$scope.setSubtypes = function() {
-				$scope.subTypesList = []
-				if(!$scope.kpi.type) return
-				else{
-					$scope.typeChecker = false
-					$scope.settings.forEach(function(set){
-						if(set.type === $scope.kpi.type){
-							set.subTypes.forEach(function(sub){
-								$scope.subTypesList.push({name: sub.text})
-							})
-						}
-					})
-				}
-			}
-			getSettings()
-
-
-			$scope.submitKpi = function(kpi) {
-				$scope.$broadcast('show-errors-check-validity');
-
-				if ($scope.kpiForm.$invalid){return}
-
-				var token = $window.sessionStorage['jwt']
-
-				var names = $scope.team.kpis.filter(function(x) {
-					return x.name == kpi.name
-				})
-
-				if (names.length > 0) {
-					$scope.err = true
-					$scope.oops = 'Name is already taken!'
-					return
-				}
-				else{
-					$http.post('api/teams/' + $stateParams['id'] + '/kpis', kpi ,{
-						headers: {
-							"Authorization": `Bearer ${token}`
-						}
-					})
-					.success(function(data){
-							$state.reload()
-					})
-					.error(function(err){
-						console.log(err)
-					})
-				}
-			}
 	}])
 }());
 (function() {

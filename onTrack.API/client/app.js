@@ -51,11 +51,6 @@
 						templateUrl: 'client/api/team/team-partial.html',
 						controller: 'TeamController'
 					})
-					.state('team.kpiCreate', {
-						url: '/kpi/:id',
-						templateUrl: 'client/api/team/kpi/form/kpi-form-partial.html',
-						controller: 'KPIFormController'
-					})
 					// .state('team.promotionCreate', {
 					// 	url: '/team/:id',
 					// 	templateUrl: 'client/api/team/promotions/form/promotions-form-partial.html',
@@ -72,11 +67,6 @@
 					.state('team.switchOwner', {
 						templateUrl: 'client/api/team/owner/owner-partial.html',
 						controller: 'OwnerController'
-					})
-					.state('kpi', {
-						url: '/team/:id/kpis/:kpiId',
-						templateUrl: 'client/api/team/kpi/kpi-partial.html',
-						controller: 'KPIController as ctrl'
 					})
 					.state('promotion', {
 						url: '/team/:id/promotions/:promoId',
