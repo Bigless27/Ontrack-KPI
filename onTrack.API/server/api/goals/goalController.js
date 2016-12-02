@@ -45,8 +45,6 @@ exports.post = function(req, res, next) { //yup
 };
 
 exports.put = function(req, res, next) {// works
-	
-  
   	var goal = req.goal;
 
 	var update = req.body;
@@ -63,7 +61,6 @@ exports.put = function(req, res, next) {// works
 };
 
 exports.delete = function(req, res, next) { //works
-	
 	req.goal.remove(function(err, removed) {
 		if (err) {
 			next(err);
