@@ -30,7 +30,6 @@ exports.getOne = function(req, res, next) {// works
 }
 
 exports.put = function(req, res, next) {// works
-  
   	var settings = req.settings;
 
 	var update = req.body;
