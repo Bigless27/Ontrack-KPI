@@ -82,6 +82,11 @@
 						templateUrl: 'client/api/settings/settings-partial.html',
 						controller: 'MainSettingsController'
 					})
+					.state('setting.createGoal', {
+						url: '/createGoal',
+						templateUrl: 'client/api/settings/goals/goals-form/goals-form-partial.html',
+						controller: 'GoalsFromController'
+					})
 					.state('setting.settingTypeCreate',{
 						url: '/createType',
 						templateUrl: 'client/api/settings/type-setting/type-form/settings-type-form-partial.html',

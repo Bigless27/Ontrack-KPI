@@ -82,6 +82,11 @@
 						templateUrl: 'client/api/settings/settings-partial.html',
 						controller: 'MainSettingsController'
 					})
+					.state('setting.createGoal', {
+						url: '/createGoal',
+						templateUrl: 'client/api/settings/goals/goals-form/goals-form-partial.html',
+						controller: 'GoalsFromController'
+					})
 					.state('setting.settingTypeCreate',{
 						url: '/createType',
 						templateUrl: 'client/api/settings/type-setting/type-form/settings-type-form-partial.html',
@@ -815,7 +820,7 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('goalsController', ['$scope', '$state', '$window', '$http', '$stateParams',
+	.controller('GoalsController', ['$scope', '$state', '$window', '$http', '$stateParams',
 	function($scope, $state, $window, $http, $stateParams) {
 
 	}])
@@ -2116,15 +2121,6 @@ app.directive('suggestion', function(){
 
 (function() {
 	angular.module('onTrack')
-	.controller('goalsFormController', ['$scope', '$state', '$window', '$stateParams',
-	function($scope, $state, $window, $http, $stateParams) {
-
-
-
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('SettingsProgressFormController', ['$scope', '$state', '$window', '$http',
 	 function($scope, $state, $window, $http) {
 
@@ -2224,6 +2220,15 @@ app.directive('suggestion', function(){
 	 	}
 
 	 	getUsers()
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('GoalsFormController', ['$scope', '$state', '$window', '$stateParams',
+	function($scope, $state, $window, $http, $stateParams) {
+
+
+
 	}])
 }());
 (function() {

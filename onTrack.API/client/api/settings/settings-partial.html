@@ -6,7 +6,7 @@
 
 <div ui-view></div>
 <div class = 'container'>
-	<div class = 'col-sm-6 col-md-6'>
+	<div class = 'col-sm-4 col-md-4'>
 		<h2>Type Settings</h2>
 		<a href="" class = 'btn btn-default' ui-sref = 'setting.settingTypeCreate'>Create Type Setting</a>
 
@@ -25,7 +25,7 @@
 			</table>
 		</div>
 	</div>
-	<div class = 'col-sm-6 col-md-6'>
+	<div class = 'col-sm-4 col-md-4'>
 		<h2>Assign Progress Tracker</h2>
 		<div class = 'btn btn-default' ui-sref = 'setting.settingProgressCreate'>Create Progress Setting</div>
 		<div ng-repeat = 'prog in progressSettings'>
@@ -42,6 +42,10 @@
 			</table>
 
 		</div>
+	</div>
+	<div class = 'col-sm-4 col-md-4'>
+		<h2>Goals</h2>
+		<div class =  'btn btn-default' ui-sref = 'setting.createGoal'>Create Goal</div>
 	</div>
 </div>
 
