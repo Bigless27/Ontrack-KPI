@@ -822,7 +822,7 @@
 	angular.module('onTrack')
 	.controller('GoalsController', ['$scope', '$state', '$window', '$http', '$stateParams',
 	function($scope, $state, $window, $http, $stateParams) {
-
+		
 	}])
 }());
 (function() {
@@ -1297,6 +1297,84 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('OwnerController', ['$scope', '$state', '$http', '$window', '$stateParams', 
+		function($scope, $state, $http, $window, $stateParams) {
+
+			$scope.optionsList = []
+			$scope.success = false
+
+			$scope.transfer = function(data) {
+				var token = $window.sessionStorage['jwt']
+				$scope.team['owner'] = [data]
+
+				$http.put('api/teams/' + $stateParams.id, $scope.team, {
+					headers: {
+						'Authorization': `Bearer ${token}`
+					}
+				})
+				.success(function(data) {
+					$state.reload()
+				})
+				.error(function(err) {
+					console.log(err)
+				}) 
+			}
+
+			// function getUsers() {
+			// 	$http.get('api/users')
+			// 		.success(function(users) {
+			// 			users.forEach(function(user){
+			// 				if(user){
+			// 					if (user.email !== $scope.team.owner[0].email){
+			// 						$scope.optionsList.push(
+			// 								{firstName: user.firstName, lastName: user.lastName, userId: user._id, 
+			// 									email: user.email, fullName: user.firstName + ' ' + user.lastName}
+			// 						)
+			// 					}
+			// 				}
+			// 				else{
+			// 					$scope.optionsList = [{name: 'No users'}]
+			// 				}
+			// 			})
+			// 		})
+			// 		.error(function(err) {
+			// 			console.log(err)
+			// 		})
+			// }
+
+			function getTeam() {
+				$http.get('api/teams/' + $stateParams.id)
+					.success(function(data) {
+						$scope.team = data
+
+						data.admins.forEach(function(user){
+							if(user){
+								if (user.email !== $scope.team.owner[0].email){
+									$scope.optionsList.push(
+											{firstName: user.firstName, lastName: user.lastName, userId: user._id, 
+												email: user.email, fullName: user.firstName + ' ' + user.lastName}
+									)
+								}
+							}
+							else{
+								$scope.optionsList = [{fullName: 'No Users, only admins can be owners'}]
+							}
+						})
+						if ($scope.optionsList.length == 0) {
+							$scope.optionsList = [{fullName: 'No Users, only admins can be owners'}]	
+						}
+						// getUsers()
+					})
+					.error(function(err) {
+						console.log(err)
+					})
+			}
+
+			getTeam()
+		}])
+} ());
+(function() {
+	angular.module('onTrack')
 	.controller('PromotionController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
 		function($scope, $state, $http, $window, $stateParams, $q) {
 
@@ -1598,84 +1676,6 @@
 			getPromotions()		
 	}])
 }());
-(function() {
-	angular.module('onTrack')
-	.controller('OwnerController', ['$scope', '$state', '$http', '$window', '$stateParams', 
-		function($scope, $state, $http, $window, $stateParams) {
-
-			$scope.optionsList = []
-			$scope.success = false
-
-			$scope.transfer = function(data) {
-				var token = $window.sessionStorage['jwt']
-				$scope.team['owner'] = [data]
-
-				$http.put('api/teams/' + $stateParams.id, $scope.team, {
-					headers: {
-						'Authorization': `Bearer ${token}`
-					}
-				})
-				.success(function(data) {
-					$state.reload()
-				})
-				.error(function(err) {
-					console.log(err)
-				}) 
-			}
-
-			// function getUsers() {
-			// 	$http.get('api/users')
-			// 		.success(function(users) {
-			// 			users.forEach(function(user){
-			// 				if(user){
-			// 					if (user.email !== $scope.team.owner[0].email){
-			// 						$scope.optionsList.push(
-			// 								{firstName: user.firstName, lastName: user.lastName, userId: user._id, 
-			// 									email: user.email, fullName: user.firstName + ' ' + user.lastName}
-			// 						)
-			// 					}
-			// 				}
-			// 				else{
-			// 					$scope.optionsList = [{name: 'No users'}]
-			// 				}
-			// 			})
-			// 		})
-			// 		.error(function(err) {
-			// 			console.log(err)
-			// 		})
-			// }
-
-			function getTeam() {
-				$http.get('api/teams/' + $stateParams.id)
-					.success(function(data) {
-						$scope.team = data
-
-						data.admins.forEach(function(user){
-							if(user){
-								if (user.email !== $scope.team.owner[0].email){
-									$scope.optionsList.push(
-											{firstName: user.firstName, lastName: user.lastName, userId: user._id, 
-												email: user.email, fullName: user.firstName + ' ' + user.lastName}
-									)
-								}
-							}
-							else{
-								$scope.optionsList = [{fullName: 'No Users, only admins can be owners'}]
-							}
-						})
-						if ($scope.optionsList.length == 0) {
-							$scope.optionsList = [{fullName: 'No Users, only admins can be owners'}]	
-						}
-						// getUsers()
-					})
-					.error(function(err) {
-						console.log(err)
-					})
-			}
-
-			getTeam()
-		}])
-} ());
 (function() {
 	angular.module('onTrack')
 	.controller('UserFormController', ['$scope', '$state', '$http', '$window', 
@@ -2126,32 +2126,8 @@ app.directive('suggestion', function(){
 
 		$scope.tracker = 0
 
-
-		//the ng-model doesn't bing to the angular scope. look to make directive or compile
-		$scope.addField = function() {
-			$("<hr>" +
-				"<div class = 'form-group'>" +
-					"<lable for = 'key' class = 'control-label'>Key</label>" +
-					"<div class = 'input-group'>" +
-						"<span class = 'input-group-addon'><i class = 'glyphicon glyphicon-user'></i></span>" +
-						"<input name = 'key' type = 'text' ng-model = goal.key" + $scope.tracker + ' ' + "class = 'form-control' placeholder = 'enter a key'>" +
-					"</div>"+
-				"</div>" +
-				"<div class = form-group'>" +
-					"<lable for = 'value' class = control-label'>Value</label>" +
-					"<div class = 'input-group'>" +
-						"<span class = 'input-group-addon'><i class = 'glyphicon glyphicon-user'></i></span>" +
-						"<input name = 'value' type = 'text' ng-model = goal.value" + $scope.tracker + ' ' + "class = 'form-control' placeholder = 'enter a value'" + 
-					"</div>" +
-				"</div>"
-			).insertBefore('#add-button')
-
-		}
-
-
 		$scope.submit = function(data) {
 			console.log(data)
-			console.log($scope.goal)
 		}
 	}])
 
@@ -2180,8 +2156,9 @@ app.directive('suggestion', function(){
 
 	.directive('addFields', function($compile) {
 		return function(scope, element, attrs) {
-			var goalFormField = 
-			"<div class = 'fieldForm'>"+
+
+			function goalFormField(i) {
+				return "<div class = 'fieldForm'>"+
 				"<hr>" +
 				"<div class = 'form-group'>" +
 					"<lable for = 'key' class = 'control-label'>Key</label>" +
@@ -2197,16 +2174,18 @@ app.directive('suggestion', function(){
 						"<input name = 'value' type = 'text' ng-model = goal.value" + scope.tracker + ' ' + "class = 'form-control' placeholder = 'enter a value'" + 
 					"</div>" +
 				"</div>" +
-			"</div>";
+			"</div>"
+			}
+
 			if(scope.tracker < 1) {
 				angular.element(document.getElementById('space-for-buttons'))
-					.append($compile(goalFormField)(scope))
+					.append($compile(goalFormField(scope.tracker))(scope))
 			}
 
 			element.bind("click", function(){
 				scope.tracker++;
 				angular.element(document.getElementById('space-for-buttons'))
-					.append($compile(goalFormField)(scope))
+					.append($compile(goalFormField(scope.tracker))(scope))
 			})
 		}
 	})
