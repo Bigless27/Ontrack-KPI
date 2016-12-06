@@ -287,6 +287,40 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('MainController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+
+			function getTeams() {
+				$http.get('api/teams')
+					.success(function(data) {
+						$scope.teams = data
+					})
+					.error(function(err) {
+						console.log(err);
+					})
+			}
+
+			function getUsers() {
+				$http.get('api/users')
+					.success(function(data) {
+						$scope.users = data
+					})
+					.error(function(err) {
+						console.log(err)
+					})
+			}
+
+			$scope.logout = function() {
+				$window.sessionStorage.clear()
+				$state.go('login')
+			}
+		
+			getUsers() 
+			getTeams()
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('MainSettingsController', ['$scope', '$state', '$window', '$http',
 	 function($scope, $state, $window, $http) {
 
@@ -370,40 +404,6 @@
 					$scope.errMessage = error.message
 				})
 		}
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('MainController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
-
-			function getTeams() {
-				$http.get('api/teams')
-					.success(function(data) {
-						$scope.teams = data
-					})
-					.error(function(err) {
-						console.log(err);
-					})
-			}
-
-			function getUsers() {
-				$http.get('api/users')
-					.success(function(data) {
-						$scope.users = data
-					})
-					.error(function(err) {
-						console.log(err)
-					})
-			}
-
-			$scope.logout = function() {
-				$window.sessionStorage.clear()
-				$state.go('login')
-			}
-		
-			getUsers() 
-			getTeams()
 	}])
 }());
 (function() {
@@ -1297,84 +1297,6 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('OwnerController', ['$scope', '$state', '$http', '$window', '$stateParams', 
-		function($scope, $state, $http, $window, $stateParams) {
-
-			$scope.optionsList = []
-			$scope.success = false
-
-			$scope.transfer = function(data) {
-				var token = $window.sessionStorage['jwt']
-				$scope.team['owner'] = [data]
-
-				$http.put('api/teams/' + $stateParams.id, $scope.team, {
-					headers: {
-						'Authorization': `Bearer ${token}`
-					}
-				})
-				.success(function(data) {
-					$state.reload()
-				})
-				.error(function(err) {
-					console.log(err)
-				}) 
-			}
-
-			// function getUsers() {
-			// 	$http.get('api/users')
-			// 		.success(function(users) {
-			// 			users.forEach(function(user){
-			// 				if(user){
-			// 					if (user.email !== $scope.team.owner[0].email){
-			// 						$scope.optionsList.push(
-			// 								{firstName: user.firstName, lastName: user.lastName, userId: user._id, 
-			// 									email: user.email, fullName: user.firstName + ' ' + user.lastName}
-			// 						)
-			// 					}
-			// 				}
-			// 				else{
-			// 					$scope.optionsList = [{name: 'No users'}]
-			// 				}
-			// 			})
-			// 		})
-			// 		.error(function(err) {
-			// 			console.log(err)
-			// 		})
-			// }
-
-			function getTeam() {
-				$http.get('api/teams/' + $stateParams.id)
-					.success(function(data) {
-						$scope.team = data
-
-						data.admins.forEach(function(user){
-							if(user){
-								if (user.email !== $scope.team.owner[0].email){
-									$scope.optionsList.push(
-											{firstName: user.firstName, lastName: user.lastName, userId: user._id, 
-												email: user.email, fullName: user.firstName + ' ' + user.lastName}
-									)
-								}
-							}
-							else{
-								$scope.optionsList = [{fullName: 'No Users, only admins can be owners'}]
-							}
-						})
-						if ($scope.optionsList.length == 0) {
-							$scope.optionsList = [{fullName: 'No Users, only admins can be owners'}]	
-						}
-						// getUsers()
-					})
-					.error(function(err) {
-						console.log(err)
-					})
-			}
-
-			getTeam()
-		}])
-} ());
-(function() {
-	angular.module('onTrack')
 	.controller('PromotionController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
 		function($scope, $state, $http, $window, $stateParams, $q) {
 
@@ -1676,6 +1598,84 @@
 			getPromotions()		
 	}])
 }());
+(function() {
+	angular.module('onTrack')
+	.controller('OwnerController', ['$scope', '$state', '$http', '$window', '$stateParams', 
+		function($scope, $state, $http, $window, $stateParams) {
+
+			$scope.optionsList = []
+			$scope.success = false
+
+			$scope.transfer = function(data) {
+				var token = $window.sessionStorage['jwt']
+				$scope.team['owner'] = [data]
+
+				$http.put('api/teams/' + $stateParams.id, $scope.team, {
+					headers: {
+						'Authorization': `Bearer ${token}`
+					}
+				})
+				.success(function(data) {
+					$state.reload()
+				})
+				.error(function(err) {
+					console.log(err)
+				}) 
+			}
+
+			// function getUsers() {
+			// 	$http.get('api/users')
+			// 		.success(function(users) {
+			// 			users.forEach(function(user){
+			// 				if(user){
+			// 					if (user.email !== $scope.team.owner[0].email){
+			// 						$scope.optionsList.push(
+			// 								{firstName: user.firstName, lastName: user.lastName, userId: user._id, 
+			// 									email: user.email, fullName: user.firstName + ' ' + user.lastName}
+			// 						)
+			// 					}
+			// 				}
+			// 				else{
+			// 					$scope.optionsList = [{name: 'No users'}]
+			// 				}
+			// 			})
+			// 		})
+			// 		.error(function(err) {
+			// 			console.log(err)
+			// 		})
+			// }
+
+			function getTeam() {
+				$http.get('api/teams/' + $stateParams.id)
+					.success(function(data) {
+						$scope.team = data
+
+						data.admins.forEach(function(user){
+							if(user){
+								if (user.email !== $scope.team.owner[0].email){
+									$scope.optionsList.push(
+											{firstName: user.firstName, lastName: user.lastName, userId: user._id, 
+												email: user.email, fullName: user.firstName + ' ' + user.lastName}
+									)
+								}
+							}
+							else{
+								$scope.optionsList = [{fullName: 'No Users, only admins can be owners'}]
+							}
+						})
+						if ($scope.optionsList.length == 0) {
+							$scope.optionsList = [{fullName: 'No Users, only admins can be owners'}]	
+						}
+						// getUsers()
+					})
+					.error(function(err) {
+						console.log(err)
+					})
+			}
+
+			getTeam()
+		}])
+} ());
 (function() {
 	angular.module('onTrack')
 	.controller('UserFormController', ['$scope', '$state', '$http', '$window', 
@@ -2166,9 +2166,23 @@ app.directive('suggestion', function(){
 
 	})
 
+	.directive('removeOne', function() {
+		return {
+			restrict: 'E',
+			template: '<div class = "btn btn-default">remove a pair</div>',
+			link: function(scope, element, attrs) {
+				element.bind('click', function() {
+					$('#space-for-buttons').children().last().remove()
+				})
+			}
+		}
+	})
+
 	.directive('addFields', function($compile) {
 		return function(scope, element, attrs) {
-			var goalFormField = "<hr>" +
+			var goalFormField = 
+			"<div class = 'fieldForm'>"+
+				"<hr>" +
 				"<div class = 'form-group'>" +
 					"<lable for = 'key' class = 'control-label'>Key</label>" +
 					"<div class = 'input-group'>" +
@@ -2182,7 +2196,8 @@ app.directive('suggestion', function(){
 						"<span class = 'input-group-addon'><i class = 'glyphicon glyphicon-user'></i></span>" +
 						"<input name = 'value' type = 'text' ng-model = goal.value" + scope.tracker + ' ' + "class = 'form-control' placeholder = 'enter a value'" + 
 					"</div>" +
-				"</div>";
+				"</div>" +
+			"</div>";
 			if(scope.tracker < 1) {
 				angular.element(document.getElementById('space-for-buttons'))
 					.append($compile(goalFormField)(scope))

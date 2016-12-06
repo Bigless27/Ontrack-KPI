@@ -45,9 +45,23 @@
 
 	})
 
+	.directive('removeOne', function() {
+		return {
+			restrict: 'E',
+			template: '<div class = "btn btn-default">remove a pair</div>',
+			link: function(scope, element, attrs) {
+				element.bind('click', function() {
+					$('#space-for-buttons').children().last().remove()
+				})
+			}
+		}
+	})
+
 	.directive('addFields', function($compile) {
 		return function(scope, element, attrs) {
-			var goalFormField = "<hr>" +
+			var goalFormField = 
+			"<div class = 'fieldForm'>"+
+				"<hr>" +
 				"<div class = 'form-group'>" +
 					"<lable for = 'key' class = 'control-label'>Key</label>" +
 					"<div class = 'input-group'>" +
@@ -61,7 +75,8 @@
 						"<span class = 'input-group-addon'><i class = 'glyphicon glyphicon-user'></i></span>" +
 						"<input name = 'value' type = 'text' ng-model = goal.value" + scope.tracker + ' ' + "class = 'form-control' placeholder = 'enter a value'" + 
 					"</div>" +
-				"</div>";
+				"</div>" +
+			"</div>";
 			if(scope.tracker < 1) {
 				angular.element(document.getElementById('space-for-buttons'))
 					.append($compile(goalFormField)(scope))
