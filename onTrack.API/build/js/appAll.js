@@ -287,40 +287,6 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('MainController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
-
-			function getTeams() {
-				$http.get('api/teams')
-					.success(function(data) {
-						$scope.teams = data
-					})
-					.error(function(err) {
-						console.log(err);
-					})
-			}
-
-			function getUsers() {
-				$http.get('api/users')
-					.success(function(data) {
-						$scope.users = data
-					})
-					.error(function(err) {
-						console.log(err)
-					})
-			}
-
-			$scope.logout = function() {
-				$window.sessionStorage.clear()
-				$state.go('login')
-			}
-		
-			getUsers() 
-			getTeams()
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('MainSettingsController', ['$scope', '$state', '$window', '$http',
 	 function($scope, $state, $window, $http) {
 
@@ -382,6 +348,62 @@
 	 	loadTypeSettings()
 	 	loadProgressSettings()
 
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+		$scope.signUp = function(user) {
+			$scope.$broadcast('show-errors-check-validity')
+
+			if ($scope.userForm.$invalid){return;}
+			$scope.err = false
+			$http.post('api/users', user)
+				.success(function(data) {
+					$scope.err = false
+					$window.sessionStorage.jwt = data['token']
+					$state.go('main')
+				})
+				.error(function(error) {
+					$scope.err = true
+					$scope.errMessage = error.message
+				})
+		}
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('MainController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+
+			function getTeams() {
+				$http.get('api/teams')
+					.success(function(data) {
+						$scope.teams = data
+					})
+					.error(function(err) {
+						console.log(err);
+					})
+			}
+
+			function getUsers() {
+				$http.get('api/users')
+					.success(function(data) {
+						$scope.users = data
+					})
+					.error(function(err) {
+						console.log(err)
+					})
+			}
+
+			$scope.logout = function() {
+				$window.sessionStorage.clear()
+				$state.go('login')
+			}
+		
+			getUsers() 
+			getTeams()
 	}])
 }());
 (function() {
@@ -541,28 +563,6 @@
 			getTeam()
 
 		
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
-		$scope.signUp = function(user) {
-			$scope.$broadcast('show-errors-check-validity')
-
-			if ($scope.userForm.$invalid){return;}
-			$scope.err = false
-			$http.post('api/users', user)
-				.success(function(data) {
-					$scope.err = false
-					$window.sessionStorage.jwt = data['token']
-					$state.go('main')
-				})
-				.error(function(error) {
-					$scope.err = true
-					$scope.errMessage = error.message
-				})
-		}
 	}])
 }());
 (function() {
@@ -2160,7 +2160,7 @@ app.directive('suggestion', function(){
 				restrict: 'E',
 				template: '<div add-fields class = "btn btn-default">Click to add key-value pair</div>',
 				link: function(scope, elem, attrs) {
-					
+		
 				}
 			}
 
@@ -2168,10 +2168,7 @@ app.directive('suggestion', function(){
 
 	.directive('addFields', function($compile) {
 		return function(scope, element, attrs) {
-			element.bind("click", function(){
-				scope.tracker++;
-				angular.element(document.getElementById('space-for-buttons'))
-					.append($compile("<hr>" +
+			var goalFormField = "<hr>" +
 				"<div class = 'form-group'>" +
 					"<lable for = 'key' class = 'control-label'>Key</label>" +
 					"<div class = 'input-group'>" +
@@ -2185,7 +2182,16 @@ app.directive('suggestion', function(){
 						"<span class = 'input-group-addon'><i class = 'glyphicon glyphicon-user'></i></span>" +
 						"<input name = 'value' type = 'text' ng-model = goal.value" + scope.tracker + ' ' + "class = 'form-control' placeholder = 'enter a value'" + 
 					"</div>" +
-				"</div>")(scope))
+				"</div>";
+			if(scope.tracker < 1) {
+				angular.element(document.getElementById('space-for-buttons'))
+					.append($compile(goalFormField)(scope))
+			}
+
+			element.bind("click", function(){
+				scope.tracker++;
+				angular.element(document.getElementById('space-for-buttons'))
+					.append($compile(goalFormField)(scope))
 			})
 		}
 	})

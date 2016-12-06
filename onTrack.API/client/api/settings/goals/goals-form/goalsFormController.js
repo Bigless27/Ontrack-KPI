@@ -39,7 +39,7 @@
 				restrict: 'E',
 				template: '<div add-fields class = "btn btn-default">Click to add key-value pair</div>',
 				link: function(scope, elem, attrs) {
-					
+		
 				}
 			}
 
@@ -47,10 +47,7 @@
 
 	.directive('addFields', function($compile) {
 		return function(scope, element, attrs) {
-			element.bind("click", function(){
-				scope.tracker++;
-				angular.element(document.getElementById('space-for-buttons'))
-					.append($compile("<hr>" +
+			var goalFormField = "<hr>" +
 				"<div class = 'form-group'>" +
 					"<lable for = 'key' class = 'control-label'>Key</label>" +
 					"<div class = 'input-group'>" +
@@ -64,7 +61,16 @@
 						"<span class = 'input-group-addon'><i class = 'glyphicon glyphicon-user'></i></span>" +
 						"<input name = 'value' type = 'text' ng-model = goal.value" + scope.tracker + ' ' + "class = 'form-control' placeholder = 'enter a value'" + 
 					"</div>" +
-				"</div>")(scope))
+				"</div>";
+			if(scope.tracker < 1) {
+				angular.element(document.getElementById('space-for-buttons'))
+					.append($compile(goalFormField)(scope))
+			}
+
+			element.bind("click", function(){
+				scope.tracker++;
+				angular.element(document.getElementById('space-for-buttons'))
+					.append($compile(goalFormField)(scope))
 			})
 		}
 	})
