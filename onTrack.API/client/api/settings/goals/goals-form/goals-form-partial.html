@@ -1,37 +1,10 @@
 <form id = 'edit' role = 'form' data-toggle = 'validator'>
 	<h1>Create A Goal</h1>
 
-	<div class = 'form-group'>
-		<lable for = 'key' class = 'control-label'>Key</label>
-			<div class = 'input-group'>
-				<span class = 'input-group-addon'><i class = 'glyphicon glyphicon-user'></i></span>
-				<input
-					name = 'key'
-					type = 'text'
-					ng-model = 'goal.key'
-					class = 'form-control'
-					placeholder = 'enter a key'
-					>
-			</div>
-	</div>
+	<add-button></add-button>
+	<div id = 'space-for-buttons'></div>
 
-	<div class = 'form-group'>
-		<lable for = 'value' class = 'control-label'>Value</label>
-			<div class = 'input-group'>
-				<span class = 'input-group-addon'><i class = 'glyphicon glyphicon-user'></i></span>
-				<input
-					name = 'value'
-					type = 'text'
-					ng-model =	'goal.value'
-					class = 'form-control'
-					placeholder = 'enter a key'
-					>
-			</div>
-	</div>
-
-	<div id = 'add-button' class = 'btn btn-info' ng-click = 'addField()'>
-		Add more fields
-	</div>
+	
 	<div class = 'btn btn-default' ui-sref = 'setting'>Close</div>
 	<div class = 'btn btn-default' ng-click = 'submit(goal)' style = 'display:block; width:100px; margin-top:10px;'>Submit</div>
 </form>

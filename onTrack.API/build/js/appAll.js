@@ -386,28 +386,6 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
-		$scope.signUp = function(user) {
-			$scope.$broadcast('show-errors-check-validity')
-
-			if ($scope.userForm.$invalid){return;}
-			$scope.err = false
-			$http.post('api/users', user)
-				.success(function(data) {
-					$scope.err = false
-					$window.sessionStorage.jwt = data['token']
-					$state.go('main')
-				})
-				.error(function(error) {
-					$scope.err = true
-					$scope.errMessage = error.message
-				})
-		}
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('TeamController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
 		function($scope, $state, $http, $window, $stateParams, $q) {
 		
@@ -563,6 +541,28 @@
 			getTeam()
 
 		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+		$scope.signUp = function(user) {
+			$scope.$broadcast('show-errors-check-validity')
+
+			if ($scope.userForm.$invalid){return;}
+			$scope.err = false
+			$http.post('api/users', user)
+				.success(function(data) {
+					$scope.err = false
+					$window.sessionStorage.jwt = data['token']
+					$state.go('main')
+				})
+				.error(function(error) {
+					$scope.err = true
+					$scope.errMessage = error.message
+				})
+		}
 	}])
 }());
 (function() {
@@ -2126,8 +2126,9 @@ app.directive('suggestion', function(){
 
 		$scope.tracker = 0
 
+
+		//the ng-model doesn't bing to the angular scope. look to make directive or compile
 		$scope.addField = function() {
-			$scope.tracker += 1
 			$("<hr>" +
 				"<div class = 'form-group'>" +
 					"<lable for = 'key' class = 'control-label'>Key</label>" +
@@ -2144,13 +2145,51 @@ app.directive('suggestion', function(){
 					"</div>" +
 				"</div>"
 			).insertBefore('#add-button')
+
 		}
+
 
 		$scope.submit = function(data) {
 			console.log(data)
 			console.log($scope.goal)
 		}
 	}])
+
+	.directive('addButton', function() {
+			return{
+				restrict: 'E',
+				template: '<div add-fields class = "btn btn-default">Click to add key-value pair</div>',
+				link: function(scope, elem, attrs) {
+					
+				}
+			}
+
+	})
+
+	.directive('addFields', function($compile) {
+		return function(scope, element, attrs) {
+			element.bind("click", function(){
+				scope.tracker++;
+				angular.element(document.getElementById('space-for-buttons'))
+					.append($compile("<hr>" +
+				"<div class = 'form-group'>" +
+					"<lable for = 'key' class = 'control-label'>Key</label>" +
+					"<div class = 'input-group'>" +
+						"<span class = 'input-group-addon'><i class = 'glyphicon glyphicon-user'></i></span>" +
+						"<input name = 'key' type = 'text' ng-model = goal.key" + scope.tracker + ' ' + "class = 'form-control' placeholder = 'enter a key'>" +
+					"</div>"+
+				"</div>" +
+				"<div class = form-group'>" +
+					"<lable for = 'value' class = control-label'>Value</label>" +
+					"<div class = 'input-group'>" +
+						"<span class = 'input-group-addon'><i class = 'glyphicon glyphicon-user'></i></span>" +
+						"<input name = 'value' type = 'text' ng-model = goal.value" + scope.tracker + ' ' + "class = 'form-control' placeholder = 'enter a value'" + 
+					"</div>" +
+				"</div>")(scope))
+			})
+		}
+	})
+
 }());
 (function() {
 	angular.module('onTrack')
