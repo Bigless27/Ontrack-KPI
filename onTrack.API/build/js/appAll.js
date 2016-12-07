@@ -82,11 +82,6 @@
 						templateUrl: 'client/api/settings/settings-partial.html',
 						controller: 'MainSettingsController'
 					})
-					.state('setting.createGoal', {
-						url: '/createGoal',
-						templateUrl: 'client/api/settings/goals/goals-form/goals-form-partial.html',
-						controller: 'GoalsFormController'
-					})
 					.state('setting.settingTypeCreate',{
 						url: '/createType',
 						templateUrl: 'client/api/settings/type-setting/type-form/settings-type-form-partial.html',
@@ -112,6 +107,16 @@
 						templateUrl: 'client/api/users/progress/progress-partial.html',
 						controller: 'ProgressController'
 					})
+					.state('goals', {
+						url: '/goals',
+						templateUrl: 'client/api/settings/goals/goals-partial.html',
+						controller: 'GoalsController'
+					})
+					.state('goals.create', {
+						url: '/create',
+						templateUrl: 'client/api/settings/goals/goals-form/goals-form-partial.html',
+						controller: 'GoalsFormController'
+					})
 					// .state('activity', {
 					// 	url: '/activity',
 					// 	templateUrl: 'client/api/activity/activity-partial.html',
@@ -133,6 +138,22 @@
 			.run(function(editableOptions) {
 			  editableOptions.theme = 'bs3'; // bootstrap3 theme. Can be also 'bs2', 'default'
 			})
+}());
+(function() {
+	angular.module('onTrack')
+		.factory('arrToObject', function() {
+			var service = {};
+			service.create = function(values) {
+				var obj = {}
+				while (values.length) {
+					var kv = values.splice(0,2)
+					obj[kv[0]] = kv[1]
+				}
+				return obj
+			}
+			return service
+		})
+
 }());
 (function() {
   var showErrorsModule;
@@ -260,22 +281,6 @@
 }());
 (function() {
 	angular.module('onTrack')
-		.factory('arrToObject', function() {
-			var service = {};
-			service.create = function(values) {
-				var obj = {}
-				while (values.length) {
-					var kv = values.splice(0,2)
-					obj[kv[0]] = kv[1]
-				}
-				return obj
-			}
-			return service
-		})
-
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('LoginController', ['$scope', '$state', '$window', '$http',
 	 function($scope, $state, $window, $http) {
 
@@ -303,36 +308,24 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('MainController', ['$scope', '$state', '$http', '$window', 
+	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
 		function($scope, $state, $http, $window) {
+		$scope.signUp = function(user) {
+			$scope.$broadcast('show-errors-check-validity')
 
-			function getTeams() {
-				$http.get('api/teams')
-					.success(function(data) {
-						$scope.teams = data
-					})
-					.error(function(err) {
-						console.log(err);
-					})
-			}
-
-			function getUsers() {
-				$http.get('api/users')
-					.success(function(data) {
-						$scope.users = data
-					})
-					.error(function(err) {
-						console.log(err)
-					})
-			}
-
-			$scope.logout = function() {
-				$window.sessionStorage.clear()
-				$state.go('login')
-			}
-		
-			getUsers() 
-			getTeams()
+			if ($scope.userForm.$invalid){return;}
+			$scope.err = false
+			$http.post('api/users', user)
+				.success(function(data) {
+					$scope.err = false
+					$window.sessionStorage.jwt = data['token']
+					$state.go('main')
+				})
+				.error(function(error) {
+					$scope.err = true
+					$scope.errMessage = error.message
+				})
+		}
 	}])
 }());
 (function() {
@@ -402,24 +395,36 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
+	.controller('MainController', ['$scope', '$state', '$http', '$window', 
 		function($scope, $state, $http, $window) {
-		$scope.signUp = function(user) {
-			$scope.$broadcast('show-errors-check-validity')
 
-			if ($scope.userForm.$invalid){return;}
-			$scope.err = false
-			$http.post('api/users', user)
-				.success(function(data) {
-					$scope.err = false
-					$window.sessionStorage.jwt = data['token']
-					$state.go('main')
-				})
-				.error(function(error) {
-					$scope.err = true
-					$scope.errMessage = error.message
-				})
-		}
+			function getTeams() {
+				$http.get('api/teams')
+					.success(function(data) {
+						$scope.teams = data
+					})
+					.error(function(err) {
+						console.log(err);
+					})
+			}
+
+			function getUsers() {
+				$http.get('api/users')
+					.success(function(data) {
+						$scope.users = data
+					})
+					.error(function(err) {
+						console.log(err)
+					})
+			}
+
+			$scope.logout = function() {
+				$window.sessionStorage.clear()
+				$state.go('login')
+			}
+		
+			getUsers() 
+			getTeams()
 	}])
 }());
 (function() {
@@ -2137,10 +2142,12 @@ app.directive('suggestion', function(){
 
 (function() {
 	angular.module('onTrack')
-	.controller('GoalsFormController', ['$scope', '$state', '$window', '$http', '$stateParams', 'arrToObject',
-	function($scope, $state, $window, $http,  $stateParams, arrToObject) {
+	.controller('GoalsFormController', ['$scope', '$state', '$window', '$http', 'arrToObject',
+	function($scope, $state, $window, $http, arrToObject) {
 
-		$scope.tracker = 0
+		$scope.tracker = 0;
+
+		  console.log('hey')
 
 		$scope.submit = function(data) {
 			if (!data) {
@@ -2206,8 +2213,9 @@ app.directive('suggestion', function(){
 				"</form>" +
 				"</div>"
 			}
-
+			
 			if(scope.tracker < 1) {
+				console.log('hey')
 				angular.element(document.getElementById('space-for-buttons'))
 					.append($compile(goalFormField(scope.tracker))(scope))
 			}

@@ -1,9 +1,11 @@
 (function() {
 	angular.module('onTrack')
-	.controller('GoalsFormController', ['$scope', '$state', '$window', '$http', '$stateParams', 'arrToObject',
-	function($scope, $state, $window, $http,  $stateParams, arrToObject) {
+	.controller('GoalsFormController', ['$scope', '$state', '$window', '$http', 'arrToObject',
+	function($scope, $state, $window, $http, arrToObject) {
 
-		$scope.tracker = 0
+		$scope.tracker = 0;
+
+		  console.log('hey')
 
 		$scope.submit = function(data) {
 			if (!data) {
@@ -69,8 +71,9 @@
 				"</form>" +
 				"</div>"
 			}
-
+			
 			if(scope.tracker < 1) {
+				console.log('hey')
 				angular.element(document.getElementById('space-for-buttons'))
 					.append($compile(goalFormField(scope.tracker))(scope))
 			}
