@@ -33,9 +33,11 @@ exports.getOne = function(req, res, next) {
 
 exports.post = function(req, res, next) { //yup
 
-	var newgoal = req.body;
+	var newGoal = req.body;
 
-	Goal.create(newGoal) 
+	var data = {any: newGoal}
+
+	Goal.create(data) 
 		.then(function(goal) {
 			res.json(goal)
 		}, function(err) {

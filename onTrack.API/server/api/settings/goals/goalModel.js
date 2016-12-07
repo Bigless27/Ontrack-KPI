@@ -7,8 +7,5 @@ var GoalSchema = new Schema({
 	any: {}
 })
 
-GoalSchema.pre('save', function(next) {
-	console.log(this)
-})
 
 module.exports = mongoose.model('goal', GoalSchema)

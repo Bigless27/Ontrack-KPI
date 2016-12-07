@@ -1,7 +1,7 @@
 (function() {
 	angular.module('onTrack')
-	.controller('GoalsFormController', ['$scope', '$state', '$window', '$stateParams', 'arrToObject',
-	function($scope, $state, $window,  $stateParams, arrToObject) {
+	.controller('GoalsFormController', ['$scope', '$state', '$window', '$http', '$stateParams', 'arrToObject',
+	function($scope, $state, $window, $http,  $stateParams, arrToObject) {
 
 		$scope.tracker = 0
 
@@ -9,7 +9,16 @@
 			if (!data) {
 				return
 			}
-			arrToObject.create(Object.values(data))
+			var dataJson = arrToObject.create(Object.values(data))
+
+			$http.post('api/goals', dataJson)
+				.success(function(data) {
+					$state.reload()
+				})
+				.error(function(err) {
+					console.log(err)
+				})
+
 		}
 	}])
 
@@ -17,10 +26,7 @@
 	.directive('addButton', function() {
 			return{
 				restrict: 'E',
-				template: '<div add-fields class = "btn btn-default">Click to add key-value pair</div>',
-				link: function(scope, elem, attrs) {
-		
-				}
+				template: '<div add-fields class = "btn btn-default">Click to add key-value pair</div>'
 			}
 
 	})
