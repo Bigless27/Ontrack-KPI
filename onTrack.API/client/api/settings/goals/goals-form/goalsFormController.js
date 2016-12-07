@@ -1,14 +1,18 @@
 (function() {
 	angular.module('onTrack')
-	.controller('GoalsFormController', ['$scope', '$state', '$window', '$stateParams',
-	function($scope, $state, $window, $http, $stateParams) {
+	.controller('GoalsFormController', ['$scope', '$state', '$window', '$stateParams', 'arrToObject',
+	function($scope, $state, $window,  $stateParams, arrToObject) {
 
 		$scope.tracker = 0
 
 		$scope.submit = function(data) {
-			console.log(data)
+			if (!data) {
+				return
+			}
+			arrToObject.create(Object.values(data))
 		}
 	}])
+
 
 	.directive('addButton', function() {
 			return{
@@ -39,21 +43,25 @@
 			function goalFormField(i) {
 				return "<div class = 'fieldForm'>"+
 				"<hr>" +
-				"<div class = 'form-group'>" +
-					"<lable for = 'key' class = 'control-label'>Key</label>" +
-					"<div class = 'input-group'>" +
-						"<span class = 'input-group-addon'><i class = 'glyphicon glyphicon-user'></i></span>" +
-						"<input name = 'key' type = 'text' ng-model = goal.key" + scope.tracker + ' ' + "class = 'form-control' placeholder = 'enter a key'>" +
-					"</div>"+
-				"</div>" +
-				"<div class = form-group'>" +
-					"<lable for = 'value' class = control-label'>Value</label>" +
-					"<div class = 'input-group'>" +
-						"<span class = 'input-group-addon'><i class = 'glyphicon glyphicon-user'></i></span>" +
-						"<input name = 'value' type = 'text' ng-model = goal.value" + scope.tracker + ' ' + "class = 'form-control' placeholder = 'enter a value'" + 
+				"<form id = 'edit' name = 'goalForm' role = 'form' data-toggle = 'validator'>" +
+					"<div class = 'form-group' show-errors>" +
+						"<lable for = 'key' class = 'control-label'>Key</label>" +
+						"<div class = 'input-group'>" +
+							"<span class = 'input-group-addon'><i class = 'glyphicon glyphicon-user'></i></span>" +
+							"<input name = 'key' type = 'text' ng-model = goal.key" + scope.tracker + ' ' + "class = 'form-control' placeholder = 'enter a key' required>" +
+						"</div>"+
+						"<p class= 'help-block' ng-if = 'goalForm.key.$error.required'>Key is required</p>" +
 					"</div>" +
-				"</div>" +
-			"</div>"
+					"<div class = 'form-group' show-errors>" +
+						"<lable for = 'value' class = control-label'>Value</label>" +
+						"<div class = 'input-group'>" +
+							"<span class = 'input-group-addon'><i class = 'glyphicon glyphicon-user'></i></span>" +
+							"<input name = 'value' type = 'text' ng-model = goal.value" + scope.tracker + ' ' + "class = 'form-control' placeholder = 'enter a value' required>" + 
+						"</div>" +
+						"<p class = 'help-block' ng-if = 'goalForm.value.$error.required'>Value is required</p>" +
+					"</div>" +
+				"</form>" +
+				"</div>"
 			}
 
 			if(scope.tracker < 1) {

@@ -76,3 +76,29 @@
 		<button type = 'button' ng-click = "submitProgressSetting(setting)" class = "btn btn-primary">Submit</button>
 		<div class = 'btn btn-default' ui-sref = 'setting'>Close</div>
 </form>
+
+
+
+
+<div class = 'fieldForm'>+
+				<hr> +
+				<form id = 'edit' name = 'goalForm' role = 'form' data-toggle = 'validator'> +
+					<div class = 'form-group' show-errors> +
+						<lable for = 'key' class = 'control-label'>Key</label> +
+						<div class = 'input-group'> +
+							<span class = 'input-group-addon'><i class = 'glyphicon glyphicon-user'></i></span> +
+							<input name = 'key' type = 'text' ng-model = goal.key + scope.tracker + ' ' + class = 'form-control' placeholder = 'enter a key' required> +
+						</div>+
+						<p class= 'help-block' ng-if = 'goalForm.key.$error.required'>Key is required</p> +
+					</div> +
+					<div class = 'form-group' show-errors> +
+						<lable for = 'value' class = control-label'>Value</label> +
+						<div class = 'input-group'> +
+							<span class = 'input-group-addon'><i class = 'glyphicon glyphicon-user'></i></span> +
+							<input name = 'value' type = 'text' ng-model = goal.value + scope.tracker + ' ' + class = 'form-control' placeholder = 'enter a value' required + 
+						</div> +
+						<p class = 'help-block' ng-if = 'goalForm.value.$error.required'>Value is required</p> +
+					</div> +
+				</form> +
+				</div>
+
