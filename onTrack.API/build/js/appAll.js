@@ -140,22 +140,6 @@
 			})
 }());
 (function() {
-	angular.module('onTrack')
-		.factory('arrToObject', function() {
-			var service = {};
-			service.create = function(values) {
-				var obj = {}
-				while (values.length) {
-					var kv = values.splice(0,2)
-					obj[kv[0]] = kv[1]
-				}
-				return obj
-			}
-			return service
-		})
-
-}());
-(function() {
   var showErrorsModule;
 
   showErrorsModule = angular.module('ui.bootstrap.showErrors', []);
@@ -281,6 +265,22 @@
 }());
 (function() {
 	angular.module('onTrack')
+		.factory('arrToObject', function() {
+			var service = {};
+			service.create = function(values) {
+				var obj = {}
+				while (values.length) {
+					var kv = values.splice(0,2)
+					obj[kv[0]] = kv[1]
+				}
+				return obj
+			}
+			return service
+		})
+
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('LoginController', ['$scope', '$state', '$window', '$http',
 	 function($scope, $state, $window, $http) {
 
@@ -308,24 +308,36 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
+	.controller('MainController', ['$scope', '$state', '$http', '$window', 
 		function($scope, $state, $http, $window) {
-		$scope.signUp = function(user) {
-			$scope.$broadcast('show-errors-check-validity')
 
-			if ($scope.userForm.$invalid){return;}
-			$scope.err = false
-			$http.post('api/users', user)
-				.success(function(data) {
-					$scope.err = false
-					$window.sessionStorage.jwt = data['token']
-					$state.go('main')
-				})
-				.error(function(error) {
-					$scope.err = true
-					$scope.errMessage = error.message
-				})
-		}
+			function getTeams() {
+				$http.get('api/teams')
+					.success(function(data) {
+						$scope.teams = data
+					})
+					.error(function(err) {
+						console.log(err);
+					})
+			}
+
+			function getUsers() {
+				$http.get('api/users')
+					.success(function(data) {
+						$scope.users = data
+					})
+					.error(function(err) {
+						console.log(err)
+					})
+			}
+
+			$scope.logout = function() {
+				$window.sessionStorage.clear()
+				$state.go('login')
+			}
+		
+			getUsers() 
+			getTeams()
 	}])
 }());
 (function() {
@@ -395,36 +407,24 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('MainController', ['$scope', '$state', '$http', '$window', 
+	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
 		function($scope, $state, $http, $window) {
+		$scope.signUp = function(user) {
+			$scope.$broadcast('show-errors-check-validity')
 
-			function getTeams() {
-				$http.get('api/teams')
-					.success(function(data) {
-						$scope.teams = data
-					})
-					.error(function(err) {
-						console.log(err);
-					})
-			}
-
-			function getUsers() {
-				$http.get('api/users')
-					.success(function(data) {
-						$scope.users = data
-					})
-					.error(function(err) {
-						console.log(err)
-					})
-			}
-
-			$scope.logout = function() {
-				$window.sessionStorage.clear()
-				$state.go('login')
-			}
-		
-			getUsers() 
-			getTeams()
+			if ($scope.userForm.$invalid){return;}
+			$scope.err = false
+			$http.post('api/users', user)
+				.success(function(data) {
+					$scope.err = false
+					$window.sessionStorage.jwt = data['token']
+					$state.go('main')
+				})
+				.error(function(error) {
+					$scope.err = true
+					$scope.errMessage = error.message
+				})
+		}
 	}])
 }());
 (function() {
@@ -844,7 +844,41 @@
 	.controller('GoalsController', ['$scope', '$state', '$window', '$http', '$stateParams',
 	function($scope, $state, $window, $http, $stateParams) {
 		
+	
+
 	}])
+
+	.directive('goalFormat', function($compile, $http) {
+		return {
+			restrict: 'E',
+			controller: function($scope, $element, $attrs) {
+				function getGoals() {
+					$http.get('api/goals')
+						.success(function(data) {
+							$scope.goals = data.map(x => x.any)
+							var solution = []
+							$scope.goals.forEach(goal => {
+								generateTable(goal)
+							})
+							
+
+						})
+						.error(function(err) {
+							console.log(err)
+						})
+				}
+
+				function generateTable(goal) {
+					var a = Object.keys(goal)
+					var b  = Object.values(goal)
+					
+				}
+
+				getGoals()
+			}
+		}
+	})
+
 }());
 (function() {
 	angular.module('onTrack')
@@ -2146,8 +2180,6 @@ app.directive('suggestion', function(){
 	function($scope, $state, $window, $http, arrToObject) {
 
 		$scope.tracker = 0;
-
-		  console.log('hey')
 
 		$scope.submit = function(data) {
 			if (!data) {

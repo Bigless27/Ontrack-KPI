@@ -3,8 +3,12 @@
 <div ui-view></div>
 
 <div class = 'btn btn-default' ui-sref = 'goals.create'>Create</div>
+<div class = 'btn btn-default' ui-sref = 'setting'>Back</div>
 <div class = 'container'>
 	<div class = 'col col-sm-6'>
-
+		<pre ng-repeat = 'goal in goals'>
+			{{goal}}
+		</pre>
+		<goal-format></goal-format>
 	</div>
 </div>

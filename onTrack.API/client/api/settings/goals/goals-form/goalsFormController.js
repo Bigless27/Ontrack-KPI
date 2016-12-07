@@ -5,8 +5,6 @@
 
 		$scope.tracker = 0;
 
-		  console.log('hey')
-
 		$scope.submit = function(data) {
 			if (!data) {
 				return
