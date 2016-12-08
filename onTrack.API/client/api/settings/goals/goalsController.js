@@ -21,7 +21,6 @@
 							$scope.goals.forEach(goal => {
 								tableHtml.push(generateTable(goal))
 							})
-							console.log($('#goal'))
 							$('#goal').append(tableHtml.join(''))
 						})
 						.error(function(err) {
@@ -34,6 +33,10 @@
 					var values  = Object.values(goal)
 
 					var tableLayout = "<table class = 'table table-bordered'>" +
+					"<tr>" +
+							"<th>Key</th>" +
+							"<th>Value</th>" +
+					"</tr>" +
 					tableCreator(keys, values) +
 					"</table>"
 
@@ -42,18 +45,17 @@
 				}
 
 				function tableCreator(keys, values) {
-					var formedColumns;
+					var formedColumns = []
 
-					keys.forEach(function(key) {
-						values.forEach(function(value) {
-							formedColumns =  "<tr>" +  
-								"<th>" + key + "</th>" +
-								"<td>" + value + "</td>" +
-								"</tr>"
-						})
+					keys.forEach(function(key, i) {
+						formedColumns.push(
+							"<tr>" +  
+							"<td>" + key + "</td>" +
+							"<td>" + values[i] + "</td>" +
+							"</tr>")
 					})
 
-					return formedColumns
+					return formedColumns.join('')
 				}
 
 				getGoals()
