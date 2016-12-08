@@ -850,18 +850,20 @@
 
 	.directive('goalFormat', function($compile, $http) {
 		return {
-			restrict: 'E',
+			restrict: 'A',
 			controller: function($scope, $element, $attrs) {
 				function getGoals() {
+					var tableHtml = []
+
 					$http.get('api/goals')
 						.success(function(data) {
 							$scope.goals = data.map(x => x.any)
 							var solution = []
 							$scope.goals.forEach(goal => {
-								generateTable(goal)
+								tableHtml.push(generateTable(goal))
 							})
-							
-
+							console.log($('#goal'))
+							$('#goal').append(tableHtml.join(''))
 						})
 						.error(function(err) {
 							console.log(err)
@@ -869,9 +871,30 @@
 				}
 
 				function generateTable(goal) {
-					var a = Object.keys(goal)
-					var b  = Object.values(goal)
-					
+					var keys = Object.keys(goal)
+					var values  = Object.values(goal)
+
+					var tableLayout = "<table class = 'table table-bordered'>" +
+					tableCreator(keys, values) +
+					"</table>"
+
+					return tableLayout
+
+				}
+
+				function tableCreator(keys, values) {
+					var formedColumns;
+
+					keys.forEach(function(key) {
+						values.forEach(function(value) {
+							formedColumns =  "<tr>" +  
+								"<th>" + key + "</th>" +
+								"<td>" + value + "</td>" +
+								"</tr>"
+						})
+					})
+
+					return formedColumns
 				}
 
 				getGoals()
@@ -2247,7 +2270,6 @@ app.directive('suggestion', function(){
 			}
 			
 			if(scope.tracker < 1) {
-				console.log('hey')
 				angular.element(document.getElementById('space-for-buttons'))
 					.append($compile(goalFormField(scope.tracker))(scope))
 			}

@@ -71,7 +71,6 @@
 			}
 			
 			if(scope.tracker < 1) {
-				console.log('hey')
 				angular.element(document.getElementById('space-for-buttons'))
 					.append($compile(goalFormField(scope.tracker))(scope))
 			}
