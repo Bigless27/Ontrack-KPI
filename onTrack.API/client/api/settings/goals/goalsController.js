@@ -7,7 +7,7 @@
 
 	}])
 
-	.directive('goalFormat', function($compile, $http) {
+	.directive('goalsFormat', function($compile, $http) {
 		return {
 			restrict: 'A',
 			controller: function($scope, $element, $attrs) {
@@ -16,12 +16,14 @@
 
 					$http.get('api/goals')
 						.success(function(data) {
+							$scope.ids = data.map(x => x._id)
+							$scope.idCounter = 0
 							$scope.goals = data.map(x => x.any)
-							var solution = []
 							$scope.goals.forEach(goal => {
 								tableHtml.push(generateTable(goal))
 							})
 							$('#goal').append($compile(tableHtml.join(''))($scope))
+
 						})
 						.error(function(err) {
 							console.log(err)
@@ -35,13 +37,13 @@
 					var tableLayout = "<table class = 'table table-bordered'>" +
 					"<tr>" +
 							"<th>Key</th>" +
-							"<th>Value<div style ='margin: 0px 5px' ui-sref = 'goalsView' class = 'btn btn-default'>View</div></th>" +
+							"<th>Value<div style ='margin: 0px 5px' ui-sref = 'goalsView({id: ids[" + $scope.idCounter+ "]})' class = 'btn btn-default'>View</div></th>" +
 					"</tr>" +
 					tableCreator(keys, values) +
 					"</table>"
 
+					$scope.idCounter ++
 					return tableLayout
-
 				}
 
 				function tableCreator(keys, values) {
