@@ -10,7 +10,7 @@
 	.directive('goalsFormat', function($compile, $http) {
 		return {
 			restrict: 'A',
-			controller: function($scope, $element, $attrs) {
+			controller: function($scope, $element, $attrs, $stateParams) {
 				function getGoals() {
 					var tableHtml = []
 
@@ -39,14 +39,14 @@
 							"<th>Key</th>" +
 							"<th>Value<div style ='margin: 0px 5px' ui-sref = 'goalsView({id: ids[" + $scope.idCounter+ "]})' class = 'btn btn-default'>View</div></th>" +
 					"</tr>" +
-					tableCreator(keys, values) +
+					rowCreator(keys, values) +
 					"</table>"
 
 					$scope.idCounter ++
 					return tableLayout
 				}
 
-				function tableCreator(keys, values) {
+				function rowCreator(keys, values) {
 					var formedColumns = []
 
 					keys.forEach(function(key, i) {
@@ -56,7 +56,6 @@
 							"<td>" + values[i] + "</td>" +
 							"</tr>")
 					})
-
 					return formedColumns.join('')
 				}
 
