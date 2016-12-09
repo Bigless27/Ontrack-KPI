@@ -21,7 +21,7 @@
 							$scope.goals.forEach(goal => {
 								tableHtml.push(generateTable(goal))
 							})
-							$('#goal').append(tableHtml.join(''))
+							$('#goal').append($compile(tableHtml.join(''))($scope))
 						})
 						.error(function(err) {
 							console.log(err)
@@ -35,7 +35,7 @@
 					var tableLayout = "<table class = 'table table-bordered'>" +
 					"<tr>" +
 							"<th>Key</th>" +
-							"<th>Value<div style ='margin: 0px 5px' class = 'btn btn-default'>View</div></th>" +
+							"<th>Value<div style ='margin: 0px 5px' ui-sref = 'goalsView' class = 'btn btn-default'>View</div></th>" +
 					"</tr>" +
 					tableCreator(keys, values) +
 					"</table>"

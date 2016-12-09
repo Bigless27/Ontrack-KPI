@@ -117,6 +117,12 @@
 						templateUrl: 'client/api/settings/goals/goals-form/goals-form-partial.html',
 						controller: 'GoalsFormController'
 					})
+					.state('goalsView', {
+						url: '/goals/:id',
+						templateUrl: 'client/api/settings/goals/goals-view/goals-view-partial.html',
+						controller: 'GoalsViewController'
+					})
+
 					// .state('activity', {
 					// 	url: '/activity',
 					// 	templateUrl: 'client/api/activity/activity-partial.html',
