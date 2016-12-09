@@ -35,7 +35,7 @@
 					var tableLayout = "<table class = 'table table-bordered'>" +
 					"<tr>" +
 							"<th>Key</th>" +
-							"<th>Value</th>" +
+							"<th>Value<div style ='margin: 0px 5px' class = 'btn btn-default'>View</div></th>" +
 					"</tr>" +
 					tableCreator(keys, values) +
 					"</table>"
