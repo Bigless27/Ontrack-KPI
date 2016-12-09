@@ -3,16 +3,15 @@
 	.controller('GoalsViewController', ['$scope', '$state', '$http', '$stateParams', 
 	function($scope, $state, $http, $stateParams) {
 
-		// function getUser() {
-		// 	$http.get('api/goals/' + $stateParams.id)
-		// 		.success(function(data) {
-		// 			goalTable.create(data)
-		// 		})
-		// 		.error(function(err) {
-		// 			console.log(err)
-		// 		})
-		// }
-		// getUser()
+		$scope.deleteGoal = function() {
+			$http.delete('api/goals/' + $stateParams.id)
+				.success(function(data) {
+					$state.go('goals')
+				})
+				.error(function(err) {
+
+				})
+		}
 	}])
 
 	.directive('goalFormat', function($stateParams, $http, $compile) {
@@ -39,6 +38,7 @@
 					"<tr>" +
 							"<th>Key</th>" +
 							"<th>Value</th>" +
+							"<th></th>" +
 					"</tr>" +
 					rowCreator(keys, values) +
 					"</table>"
@@ -54,6 +54,7 @@
 							"<tr>" +  
 							"<td>" + key + "</td>" +
 							"<td>" + values[i] + "</td>" +
+							"<td><a ng-click = 'edit"+ i + "'>Edit</a>" +
 							"</tr>")
 					})
 					return formedColumns.join('')

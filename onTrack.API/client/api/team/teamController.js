@@ -6,7 +6,7 @@
 			$scope.removeAdmin = function(admin) {
 				var token = $window.sessionStorage['jwt']
 
-				$http.put('/api/teamss/' + $stateParams['id'] + '/removeAdmin', admin, {
+				$http.put('/api/teams/' + $stateParams['id'] + '/removeAdmin', admin, {
 					headers: {
 						'Authorization': `Bearer ${token}`
 					}
