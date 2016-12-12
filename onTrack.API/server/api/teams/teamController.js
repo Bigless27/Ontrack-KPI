@@ -7,7 +7,6 @@ var customizer = require('../updateCustomizer')
 exports.params = function(req, res, next, id) {
   Team.findById(id)
     .populate('owner')
-    .populate('kpis')
     .populate('users')
     .populate('promotions')
     .exec(function(err, team) {
