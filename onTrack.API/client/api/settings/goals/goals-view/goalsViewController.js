@@ -4,13 +4,24 @@
 	function($scope, $state, $http, $stateParams) {
 
 		$scope.deleteGoal = function() {
-			$http.delete('api/goals/' + $stateParams.id)
+
+			swal({
+				title: "Are you sure?",
+				text: "You will not be able to recover this goal",
+				type: "warning",
+				showCancelButton: true,
+				confirmButtonColor: "#DD6B55",
+				confirmButtonText: "Yes, delete it!",
+				html: false
+			}).then(function() {
+				$http.delete('api/goals/' + $stateParams.id)
 				.success(function(data) {
 					$state.go('goals')
 				})
 				.error(function(err) {
 					console.log(err)
 				})
+			}).catch(e => {})
 		}
 	}])
 
