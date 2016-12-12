@@ -9,7 +9,7 @@
 					$state.go('goals')
 				})
 				.error(function(err) {
-
+					console.log(err)
 				})
 		}
 	}])

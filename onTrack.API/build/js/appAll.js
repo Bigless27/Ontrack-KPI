@@ -314,40 +314,6 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('MainController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
-
-			function getTeams() {
-				$http.get('api/teams')
-					.success(function(data) {
-						$scope.teams = data
-					})
-					.error(function(err) {
-						console.log(err);
-					})
-			}
-
-			function getUsers() {
-				$http.get('api/users')
-					.success(function(data) {
-						$scope.users = data
-					})
-					.error(function(err) {
-						console.log(err)
-					})
-			}
-
-			$scope.logout = function() {
-				$window.sessionStorage.clear()
-				$state.go('login')
-			}
-		
-			getUsers() 
-			getTeams()
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('MainSettingsController', ['$scope', '$state', '$window', '$http',
 	 function($scope, $state, $window, $http) {
 
@@ -413,6 +379,40 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('MainController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+
+			function getTeams() {
+				$http.get('api/teams')
+					.success(function(data) {
+						$scope.teams = data
+					})
+					.error(function(err) {
+						console.log(err);
+					})
+			}
+
+			function getUsers() {
+				$http.get('api/users')
+					.success(function(data) {
+						$scope.users = data
+					})
+					.error(function(err) {
+						console.log(err)
+					})
+			}
+
+			$scope.logout = function() {
+				$window.sessionStorage.clear()
+				$state.go('login')
+			}
+		
+			getUsers() 
+			getTeams()
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
 		function($scope, $state, $http, $window) {
 		$scope.signUp = function(user) {
@@ -431,165 +431,6 @@
 					$scope.errMessage = error.message
 				})
 		}
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('TeamController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
-		function($scope, $state, $http, $window, $stateParams, $q) {
-		
-			$scope.removeAdmin = function(admin) {
-				var token = $window.sessionStorage['jwt']
-
-				$http.put('/api/teams/' + $stateParams['id'] + '/removeAdmin', admin, {
-					headers: {
-						'Authorization': `Bearer ${token}`
-					}
-				})
-				.success(function(data){
-					$scope.team = data
-				})
-				.error(function(err) {
-					console.log(err)
-				})
-			}
-
-			$scope.removeUser = function(user) {
-				//this automatically makes two requests. Check to see if you need to. If not then only issue one update
-				var token = $window.sessionStorage['jwt']
-
-				$http.put('/api/teams/' + $stateParams.id + '/removeAdmin', user , {
-						headers: {
-							'Authorization': `Bearer ${token}`
-						}
-					})
-					.success(function(data) {
-						$http.put('/api/teams/' + $stateParams.id + '/removeUser', user, {
-								headers: {
-									'Authorization': `Bearer ${token}`
-								}
-							})
-							.success(function(data) {
-								$scope.team = data
-							})
-							.error(function(err) {
-								console.log(err)
-						})
-					})
-					.error(function(err) {
-						console.log(err)
-				})
-			}
-
-			$scope.deleteTeam = function() {
-				var token = $window.sessionStorage['jwt']
-
-				swal({
-				  title: "Are you sure?",
-				  text: "You will not be able to recover this team!",
-				  type: "warning",
-				  showCancelButton: true,
-				  confirmButtonColor: "#DD6B55",
-				  confirmButtonText: "Yes, delete it!",
-				  html: false
-				}).then(function(){
-					$http.delete('/api/teams/' + $stateParams['id'],
-					 {
-						headers: {
-							'Authorization': `Bearer ${token}`
-						}
-					})
-					.success(function(data){
-						$state.go('main')
-					})
-					.error(function(err) {
-						console.log(err)
-					})
-				}).done(function(){
-					return
-				})
-			}
-
-			$scope.logout = function() {
-				$window.sessionStorage.clear()
-				$state.go('login')
-			}
-
-			$scope.updateName = function(data) {
-				if (data === ''){
-					return 'Name is required'
-				}
-			
-				if($scope.nameArr.includes(data)){
-					return 'Name is already taken'
-				}
-				return updateTeam(data, 'name')
-			}
-
-			function updateTeam(data, field) {
-				var d = $q.defer();
-				var token = $window.sessionStorage['jwt']
-				$scope.team[field] = data
-
-				$http.put('/api/teams/' + $stateParams['id'], $scope.team,{
-					headers: {
-						'Authorization': `Bearer ${token}`
-					}
-				})
-				.success(function(data){
-					var params = {Teamid: $stateParams['Teamid'], kpiid: $stateParams['kpiid'] }
-					$state.reload()
-				})
-				.error(function(err) {
-					console.log(err)
-				})
-
-			}
-
-
-
-			function getTeam(){
-				$http.get('/api/teams/' + $stateParams['id'])
-					.success(function(data) {
-						$scope.team = data
-					})
-					.error(function(err) {
-						console.log(err);
-					})
-			}
-
-			function getTeams() {
-				$http.get('api/teams')
-					.success(function(data) {
-						$scope.nameArr = []
-						data.forEach(function(team){
-							$scope.nameArr.push(team.name)
-						})
-
-					})
-					.error(function(err) {
-						console.log(err);
-					})
-			}
-
-			function getUsers() {
-				$http.get('api/users')
-					.success(function(data) {
-						$scope.users = []
-						data.forEach(function(){
-							$scope.users.push({name: data.firstName + ' ' + data.lastName})
-						})
-
-					})
-					.error(function(err) {
-						console.log(err)
-					})
-			}
-
-			getTeams()
-			getTeam()
-
-		
 	}])
 }());
 (function() {
@@ -718,7 +559,7 @@
 						})
 					}
 				})
-				.done(function() {
+				.catch(function() {
 					return
 				})
 			}
@@ -847,6 +688,164 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('TeamController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
+		function($scope, $state, $http, $window, $stateParams, $q) {
+		
+			$scope.removeAdmin = function(admin) {
+				var token = $window.sessionStorage['jwt']
+
+				$http.put('/api/teams/' + $stateParams['id'] + '/removeAdmin', admin, {
+					headers: {
+						'Authorization': `Bearer ${token}`
+					}
+				})
+				.success(function(data){
+					$scope.team = data
+				})
+				.error(function(err) {
+					console.log(err)
+				})
+			}
+
+			$scope.removeUser = function(user) {
+				//this automatically makes two requests. Check to see if you need to. If not then only issue one update
+				var token = $window.sessionStorage['jwt']
+
+				$http.put('/api/teams/' + $stateParams.id + '/removeAdmin', user , {
+						headers: {
+							'Authorization': `Bearer ${token}`
+						}
+					})
+					.success(function(data) {
+						$http.put('/api/teams/' + $stateParams.id + '/removeUser', user, {
+								headers: {
+									'Authorization': `Bearer ${token}`
+								}
+							})
+							.success(function(data) {
+								$scope.team = data
+							})
+							.error(function(err) {
+								console.log(err)
+						})
+					})
+					.error(function(err) {
+						console.log(err)
+				})
+			}
+
+			$scope.deleteTeam = function() {
+				var token = $window.sessionStorage['jwt']
+
+				swal({
+				  title: "Are you sure?",
+				  text: "You will not be able to recover this team!",
+				  type: "warning",
+				  showCancelButton: true,
+				  confirmButtonColor: "#DD6B55",
+				  confirmButtonText: "Yes, delete it!",
+				  html: false
+				}).then(function(){
+					$http.delete('/api/teams/' + $stateParams['id'],
+					 {
+						headers: {
+							'Authorization': `Bearer ${token}`
+						}
+					})
+					.success(function(data){
+						$state.go('main')
+					})
+					.error(function(err) {
+						console.log(err)
+					})
+				}).catch(function(){
+					return
+				})
+			}
+
+			$scope.logout = function() {
+				$window.sessionStorage.clear()
+				$state.go('login')
+			}
+
+			$scope.updateName = function(data) {
+				if (data === ''){
+					return 'Name is required'
+				}
+			
+				if($scope.nameArr.includes(data)){
+					return 'Name is already taken'
+				}
+				return updateTeam(data, 'name')
+			}
+
+			function updateTeam(data, field) {
+				var d = $q.defer();
+				var token = $window.sessionStorage['jwt']
+				$scope.team[field] = data
+
+				$http.put('/api/teams/' + $stateParams['id'], $scope.team,{
+					headers: {
+						'Authorization': `Bearer ${token}`
+					}
+				})
+				.success(function(data){
+					$state.reload()
+				})
+				.error(function(err) {
+					console.log(err)
+				})
+
+			}
+
+
+
+			function getTeam(){
+				$http.get('/api/teams/' + $stateParams['id'])
+					.success(function(data) {
+						$scope.team = data
+					})
+					.error(function(err) {
+						console.log(err);
+					})
+			}
+
+			function getTeams() {
+				$http.get('api/teams')
+					.success(function(data) {
+						$scope.nameArr = []
+						data.forEach(function(team){
+							$scope.nameArr.push(team.name)
+						})
+
+					})
+					.error(function(err) {
+						console.log(err);
+					})
+			}
+
+			function getUsers() {
+				$http.get('api/users')
+					.success(function(data) {
+						$scope.users = []
+						data.forEach(function(){
+							$scope.users.push({name: data.firstName + ' ' + data.lastName})
+						})
+
+					})
+					.error(function(err) {
+						console.log(err)
+					})
+			}
+
+			getTeams()
+			getTeam()
+
+		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('GoalsController', ['$scope', '$state', '$window', '$http', '$stateParams',
 	function($scope, $state, $window, $http, $stateParams) {
 		
@@ -939,7 +938,7 @@
 					.error(function(err) {
 						console.log(err)
 					})
-				}).done(function() {
+				}).catch(function() {
 					return
 				})
 			}
@@ -1169,7 +1168,6 @@
 				  showCancelButton: true,
 				  confirmButtonColor: "#DD6B55",
 				  confirmButtonText: "Yes, delete it!",
-				  closeOnConfirm: true,
 				  html: false
 				}).then(function(){
 					$http.delete('/api/type-settings/'+ $stateParams.id, {
@@ -1183,6 +1181,8 @@
 					.error(function(err) {
 						console.log(err)
 					})
+				}).catch(function() {
+					return
 				})
 			}
 
@@ -1237,6 +1237,82 @@
 
 	 		getSetting()
 
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('ProgressController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
+		function($scope, $state, $http, $window, $stateParams, $q) {
+			
+			function getProgress() {
+				$http.get('api/users/' + $stateParams.id + '/progress/' + $stateParams.progressId)
+					.success(function(data) {
+						$scope.progress = data
+						$http.get('api/progress-settings/' + data.settingId)
+							.success(function(data){
+								$scope.setting = data
+							})
+							.error(function(err) {
+								console.log(err)
+							})
+					})
+					.error(function(err) {
+						console.log(err)
+					})
+			}
+
+
+			$scope.updateValue = function(data) {
+				if (data < 0) {
+					return "Value can't be negative"
+				}
+				updateProgress(data)
+			}
+
+			function updateProgress(data) {
+				$scope.progress['value'] = data
+
+				$http.put('api/users/' + $stateParams.id + '/progress/' + $stateParams.progressId, $scope.progress)
+					.error(function(err) {
+						console.log(err)
+					})
+
+			}
+
+			getProgress()
+
+
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('UserFormController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+
+			$scope.errorDisplay = false
+
+			$scope.createUser = function(user) {
+				
+				var duplicate = $scope.users.filter(function(x){
+					return x.email == user.email
+				})
+
+				if (duplicate.length > 0){
+					$scope.oops = 'Email is already taken!'
+					$scope.errorDisplay = true
+					return
+				}
+				else{
+					$http.post('api/users', user)
+						.success(function(data){
+							$state.reload()
+
+						})
+						.error(function(err) {
+							console.log(err)
+						})
+				}
+			}
 	}])
 }());
 (function() {
@@ -1588,7 +1664,7 @@
 					.error(function(err) {
 						console.log(err)
 					})
-				}).done(function() {
+				}).catch(function() {
 					return
 				})
 			}
@@ -1761,82 +1837,6 @@
 			}
 
 			getPromotions()		
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('UserFormController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
-
-			$scope.errorDisplay = false
-
-			$scope.createUser = function(user) {
-				
-				var duplicate = $scope.users.filter(function(x){
-					return x.email == user.email
-				})
-
-				if (duplicate.length > 0){
-					$scope.oops = 'Email is already taken!'
-					$scope.errorDisplay = true
-					return
-				}
-				else{
-					$http.post('api/users', user)
-						.success(function(data){
-							$state.reload()
-
-						})
-						.error(function(err) {
-							console.log(err)
-						})
-				}
-			}
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('ProgressController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
-		function($scope, $state, $http, $window, $stateParams, $q) {
-			
-			function getProgress() {
-				$http.get('api/users/' + $stateParams.id + '/progress/' + $stateParams.progressId)
-					.success(function(data) {
-						$scope.progress = data
-						$http.get('api/progress-settings/' + data.settingId)
-							.success(function(data){
-								$scope.setting = data
-							})
-							.error(function(err) {
-								console.log(err)
-							})
-					})
-					.error(function(err) {
-						console.log(err)
-					})
-			}
-
-
-			$scope.updateValue = function(data) {
-				if (data < 0) {
-					return "Value can't be negative"
-				}
-				updateProgress(data)
-			}
-
-			function updateProgress(data) {
-				$scope.progress['value'] = data
-
-				$http.put('api/users/' + $stateParams.id + '/progress/' + $stateParams.progressId, $scope.progress)
-					.error(function(err) {
-						console.log(err)
-					})
-
-			}
-
-			getProgress()
-
-
 	}])
 }());
 var app = angular.module('app', ['autocomplete']);
@@ -2303,7 +2303,7 @@ app.directive('suggestion', function(){
 					$state.go('goals')
 				})
 				.error(function(err) {
-
+					console.log(err)
 				})
 		}
 	}])

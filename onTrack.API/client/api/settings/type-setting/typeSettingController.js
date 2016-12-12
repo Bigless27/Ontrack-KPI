@@ -12,7 +12,6 @@
 				  showCancelButton: true,
 				  confirmButtonColor: "#DD6B55",
 				  confirmButtonText: "Yes, delete it!",
-				  closeOnConfirm: true,
 				  html: false
 				}).then(function(){
 					$http.delete('/api/type-settings/'+ $stateParams.id, {
@@ -26,6 +25,8 @@
 					.error(function(err) {
 						console.log(err)
 					})
+				}).catch(function() {
+					return
 				})
 			}
 

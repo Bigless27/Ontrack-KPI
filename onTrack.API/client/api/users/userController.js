@@ -46,7 +46,7 @@
 						})
 					}
 				})
-				.done(function() {
+				.catch(function() {
 					return
 				})
 			}

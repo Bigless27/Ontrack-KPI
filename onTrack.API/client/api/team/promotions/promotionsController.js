@@ -126,7 +126,7 @@
 					.error(function(err) {
 						console.log(err)
 					})
-				}).done(function() {
+				}).catch(function() {
 					return
 				})
 			}

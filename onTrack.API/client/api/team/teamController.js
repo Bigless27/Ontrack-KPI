@@ -70,7 +70,7 @@
 					.error(function(err) {
 						console.log(err)
 					})
-				}).done(function(){
+				}).catch(function(){
 					return
 				})
 			}
@@ -102,7 +102,6 @@
 					}
 				})
 				.success(function(data){
-					var params = {Teamid: $stateParams['Teamid'], kpiid: $stateParams['kpiid'] }
 					$state.reload()
 				})
 				.error(function(err) {
