@@ -2244,6 +2244,9 @@ app.directive('suggestion', function(){
 			template: '<div class = "btn btn-default">remove a pair</div>',
 			link: function(scope, element, attrs) {
 				element.bind('click', function() {
+					if (!$('#space-for-buttons').children().length) {
+						$('.table-removable').last().remove()
+					}
 					$('#space-for-buttons').children().last().remove()
 				})
 			}
@@ -2293,8 +2296,8 @@ app.directive('suggestion', function(){
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('GoalsViewController', ['$scope', '$state', '$http', '$stateParams', 'scopeService',
-	function($scope, $state, $http, $stateParams, scopeService) {
+	.controller('GoalsViewController', ['$scope', '$state', '$http', '$stateParams', 'scopeService', 'arrToObject',
+	function($scope, $state, $http, $stateParams, scopeService, arrToObject) {
 
 		$scope.box = false;
 
@@ -2332,22 +2335,52 @@ app.directive('suggestion', function(){
 		}
 
 		$scope.submit = function(goal) {
+
+			var holder = []
+			var goalArr = Object.values(goal).filter(x => { return typeof(x) === 'string'})
 			var newGoal = {}
-			goal.forEach(x => {
-				newGoal[x.key] = x.value
-			})
+			if (goalArr.length) {
+				var nestedObj = goal.filter(x => {return typeof(x) === 'object'})
+
+				nestedObj.forEach(x => {
+					newGoal[x.key] = x.value
+				})
+
+				var solution = Object.assign(newGoal,arrToObject.create(goalArr))
+
+
+				console.log(solution)
+				// var i = len/2
+				// var counter = 2
+
+				// while (i) {
+				// 	var key = goal['key' + counter]
+				// 	var value = goal['value' + counter]
+				// 	console.log(key)
+				// 	holder.push({key: value})
+				// 	counter++
+				// 	i --
+				// }
+			}
+			else{	
+				var newGoal = {}
+				goal.forEach(x => {
+					newGoal[x.key] = x.value
+				})
+			}
 			
-			$http.put('api/goals/' + $stateParams.id, newGoal)	
-				.success(data => {
-					$state.reload()
-				})
-				.error(err => {	
-					console.log(err)
-				})
+			// $http.put('api/goals/' + $stateParams.id, newGoal)	
+			// 	.success(data => {
+			// 		$state.reload()
+			// 	})
+			// 	.error(err => {	
+			// 		console.log(err)
+			// 	})
 		}
 
 		$scope.cancel = function() {
 			$scope.box = false
+			$state.reload()
 		}
 
 		$scope.deleteGoal = function() {
@@ -2386,6 +2419,13 @@ app.directive('suggestion', function(){
 		}
 	})
 
+	.directive('removeGoalRow', function() {
+		return {
+			restrict: 'E',
+			template: "<div class = 'btn btn-default'>Remove a Pair</div>"
+		}
+	})
+
 	.directive('addGoal', function() {
 		return{
 			restrict: 'E',
@@ -2393,23 +2433,6 @@ app.directive('suggestion', function(){
 		}
 	})
 
-	.directive('addFieldsTable', function($compile) {
-		return function(scope, element, attrs) {
-
-			function goalFormField() {
-				return "<tr>" +
-					"<td><input></td>" +
-					"<td><input></td>" +
-					"</tr>"
-			}
-
-			element.bind("click", function() {
-				angular.element(document.getElementById('add-goal'))
-					.append($compile(goalFormField())(scope))
-			})
-
-		}
-	})
 
 	// .directive('goalFormat', function($stateParams, $http, $compile, scopeService) {
 	// 	return {

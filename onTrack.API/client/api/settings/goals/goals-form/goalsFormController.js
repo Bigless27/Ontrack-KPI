@@ -36,6 +36,9 @@
 			template: '<div class = "btn btn-default">remove a pair</div>',
 			link: function(scope, element, attrs) {
 				element.bind('click', function() {
+					if (!$('#space-for-buttons').children().length) {
+						$('.table-removable').last().remove()
+					}
 					$('#space-for-buttons').children().last().remove()
 				})
 			}
