@@ -43,6 +43,7 @@
 			var holder = []
 			var goalArr = Object.values(goal).filter(x => { return typeof(x) === 'string'})
 			var newGoal = {}
+			var updateGoal = null
 			if (goalArr.length) {
 				var nestedObj = goal.filter(x => {return typeof(x) === 'object'})
 
@@ -50,10 +51,8 @@
 					newGoal[x.key] = x.value
 				})
 
-				var solution = Object.assign(newGoal,arrToObject.create(goalArr))
+				updatedGoal = Object.assign(newGoal,arrToObject.create(goalArr))
 
-
-				console.log(solution)
 				// var i = len/2
 				// var counter = 2
 
@@ -67,19 +66,22 @@
 				// }
 			}
 			else{	
-				var newGoal = {}
 				goal.forEach(x => {
 					newGoal[x.key] = x.value
 				})
 			}
+
+			if(updatedGoal) {
+				newGoal = updatedGoal
+			}
 			
-			// $http.put('api/goals/' + $stateParams.id, newGoal)	
-			// 	.success(data => {
-			// 		$state.reload()
-			// 	})
-			// 	.error(err => {	
-			// 		console.log(err)
-			// 	})
+			$http.put('api/goals/' + $stateParams.id, newGoal)	
+				.success(data => {
+					$state.reload()
+				})
+				.error(err => {	
+					console.log(err)
+				})
 		}
 
 		$scope.cancel = function() {
