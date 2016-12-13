@@ -413,6 +413,28 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+		$scope.signUp = function(user) {
+			$scope.$broadcast('show-errors-check-validity')
+
+			if ($scope.userForm.$invalid){return;}
+			$scope.err = false
+			$http.post('api/users', user)
+				.success(function(data) {
+					$scope.err = false
+					$window.sessionStorage.jwt = data['token']
+					$state.go('main')
+				})
+				.error(function(error) {
+					$scope.err = true
+					$scope.errMessage = error.message
+				})
+		}
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('TeamController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
 		function($scope, $state, $http, $window, $stateParams, $q) {
 		
@@ -567,28 +589,6 @@
 			getTeam()
 
 		
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
-		$scope.signUp = function(user) {
-			$scope.$broadcast('show-errors-check-validity')
-
-			if ($scope.userForm.$invalid){return;}
-			$scope.err = false
-			$http.post('api/users', user)
-				.success(function(data) {
-					$scope.err = false
-					$window.sessionStorage.jwt = data['token']
-					$state.go('main')
-				})
-				.error(function(error) {
-					$scope.err = true
-					$scope.errMessage = error.message
-				})
-		}
 	}])
 }());
 (function() {
@@ -2294,11 +2294,46 @@ app.directive('suggestion', function(){
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('GoalsViewController', ['$scope', '$state', '$http', '$stateParams', 
-	function($scope, $state, $http, $stateParams) {
+	.controller('GoalsViewController', ['$scope', '$state', '$http', '$stateParams', 'scopeService',
+	function($scope, $state, $http, $stateParams, scopeService) {
+
+		$scope.box = false;
+
+
+		// $scope.dummy = scopeService.getValue()
+
+		// $scope.$watch(function() {return scopeService.getValue()}, function(newValue, oldValue) {
+		// 	$scope.dummy = newValue
+		// })
+
+		function getGoal() {
+			$http.get('api/goals/' + $stateParams.id)
+				.success(data => {
+					var holder = []
+					holder.push(Object.keys(data.any))
+					holder.push(Object.values(data.any))
+					$scope.goal = holder
+				})
+				.error(err => {
+					console.log(err)
+				})
+		} 
+
+		getGoal()
+
+		$scope.editGoal = function() {
+			$scope.box = true
+		}
+
+		$scope.submit = function() {
+			console.log($('input'))
+		}
+
+		$scope.cancel = function() {
+			$scope.box = false
+		}
 
 		$scope.deleteGoal = function() {
-
 			swal({
 				title: "Are you sure?",
 				text: "You will not be able to recover this goal",
@@ -2319,7 +2354,22 @@ app.directive('suggestion', function(){
 		}
 	}])
 
-	.directive('goalFormat', function($stateParams, $http, $compile) {
+	.factory('scopeService', function() {
+
+		var model = {}
+		var counter = 0
+
+		return {
+			getValue: function() {
+				return model.value
+			},
+			updateValue: function(value) {
+				model.value = value;
+			}
+		}
+	})
+
+	.directive('goalFormat', function($stateParams, $http, $compile, scopeService) {
 		return {
 			restrict: 'A',
 			controller: function($scope, $element, $attrs) {
@@ -2327,6 +2377,7 @@ app.directive('suggestion', function(){
 					var tableHtml = []	
 					$http.get('api/goals/' + $stateParams.id)
 						.success(function(data) {
+							scopeService.updateValue(data)
 							tableHtml.push(generateTable(data.any))
 							$('#goal').append($compile(tableHtml.join(''))($scope))
 						})
@@ -2343,7 +2394,6 @@ app.directive('suggestion', function(){
 					"<tr>" +
 							"<th>Key</th>" +
 							"<th>Value</th>" +
-							"<th></th>" +
 					"</tr>" +
 					rowCreator(keys, values) +
 					"</table>"
@@ -2357,9 +2407,8 @@ app.directive('suggestion', function(){
 					keys.forEach(function(key, i) {
 						formedColumns.push(
 							"<tr>" +  
-							"<td>" + key + "</td>" +
-							"<td>" + values[i] + "</td>" +
-							"<td><a ng-click = 'edit"+ i + "'>Edit</a>" +
+							"<td class = editable>" + "<span ng-if = '!box'>" + key + "</span>" + "<input ng-if = 'box' ng-model = 'dummy.any[0][key]'>" + "</td>" +
+							"<td class = editable>" + "<span ng-if = '!box'>" + values[i] + "</span>" + "<input ng-if = 'box' ng-model = 'dummy.any." + key + "'>" + "</td>" +
 							"</tr>")
 					})
 					return formedColumns.join('')

@@ -1,12 +1,39 @@
 <h1>View Goal</h1>
 <div class = 'container'>
-	<div class = 'col col-sm-6'>
+	<div class = 'col col-lg-6'>
+		<pre>
+			{{dummy}}
+		</pre>
 		<div class = 'row'>
 			<div class = 'btn btn-default' ui-sref = 'goals'>Back</div>
 			<div class = 'btn btn-default' ng-click = "deleteGoal()">Delete</div>
+			<div class = 'btn btn-default' ng-click = 'editGoal()'>Edit</div>
+		</div>
+		<div class = 'row' ng-if = 'box' style = 'padding: 5px 0px'>
+			<div class = 'btn btn-info' ng-click = 'submit()'><i class = 'glyphicon glyphicon-ok'></i></div>
+			<div class = 'btn btn-danger' ng-click = 'cancel()'><i class = 'glyphicon glyphicon-remove'></i></div>
 		</div>
 		<div class = 'row'>
-			<div id = 'goal' goal-format></div>
+
+			<div>
+				<table class = 'table table-bordered'>
+					<tr>
+						<th>Key</th>
+						<th>Value</th>
+					</tr>
+					<tr ng-repeat = 'g in goal'>
+						<td>
+							<span ng-if = '!box'>{{g}}</span>
+							<input ng-if = 'box' ng-model = "">
+						</td>
+						<td>
+							<span ng-if = '!box'>{{g}}</span>
+							<input ng-if = 'box' ng-model = "apple.values">
+						</td>
+					</tr>
+				</table>
+			</div>
+			<!-- <div id = 'goal' goal-format></div> -->
 		</div>
 	</div>
 </div>
