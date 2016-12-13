@@ -28,7 +28,6 @@
 				restrict: 'E',
 				template: '<div add-fields class = "btn btn-default">Click to add key-value pair</div>'
 			}
-
 	})
 
 	.directive('removeOne', function() {

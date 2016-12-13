@@ -12,16 +12,17 @@
 		<div class = 'row' ng-if = 'box' style = 'padding: 5px 0px'>
 			<div class = 'btn btn-info' ng-click = 'submit(goal)'><i class = 'glyphicon glyphicon-ok'></i></div>
 			<div class = 'btn btn-danger' ng-click = 'cancel()'><i class = 'glyphicon glyphicon-remove'></i></div>
+			<add-goal></add-goal>
 		</div>
 		<div class = 'row'>
 
 			<div>
-				<table class = 'table table-bordered'>
+				<table id = 'add-goal' class = 'table table-bordered'>
 					<tr>
 						<th>Key</th>
 						<th>Value</th>
 					</tr>
-					<tr ng-repeat = 'g in goal'>
+					<tr  ng-repeat = 'g in goal'>
 						<td>
 							<span ng-if = '!box'>{{g.key}}</span>
 							<input ng-if = 'box' ng-model = "g.key">

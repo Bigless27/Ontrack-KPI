@@ -2236,7 +2236,6 @@ app.directive('suggestion', function(){
 				restrict: 'E',
 				template: '<div add-fields class = "btn btn-default">Click to add key-value pair</div>'
 			}
-
 	})
 
 	.directive('removeOne', function() {
@@ -2298,6 +2297,8 @@ app.directive('suggestion', function(){
 	function($scope, $state, $http, $stateParams, scopeService) {
 
 		$scope.box = false;
+
+		$scope.tracker = 1
 
 
 		// $scope.dummy = scopeService.getValue()
@@ -2385,55 +2386,80 @@ app.directive('suggestion', function(){
 		}
 	})
 
-	.directive('goalFormat', function($stateParams, $http, $compile, scopeService) {
-		return {
-			restrict: 'A',
-			controller: function($scope, $element, $attrs) {
-				function getGoal() {
-					var tableHtml = []	
-					$http.get('api/goals/' + $stateParams.id)
-						.success(function(data) {
-							scopeService.updateValue(data)
-							tableHtml.push(generateTable(data.any))
-							$('#goal').append($compile(tableHtml.join(''))($scope))
-						})
-						.error(function(err) {
-							console.log(err)
-						})
-				}
-
-				function generateTable(goal) {
-					var keys = Object.keys(goal)
-					var values  = Object.values(goal)
-
-					var tableLayout = "<table class = 'table table-bordered'>" +
-					"<tr>" +
-							"<th>Key</th>" +
-							"<th>Value</th>" +
-					"</tr>" +
-					rowCreator(keys, values) +
-					"</table>"
-
-					return tableLayout
-				}
-
-				function rowCreator(keys, values) {
-					var formedColumns = []
-
-					keys.forEach(function(key, i) {
-						formedColumns.push(
-							"<tr>" +  
-							"<td class = editable>" + "<span ng-if = '!box'>" + key + "</span>" + "<input ng-if = 'box' ng-model = 'dummy.any[0][key]'>" + "</td>" +
-							"<td class = editable>" + "<span ng-if = '!box'>" + values[i] + "</span>" + "<input ng-if = 'box' ng-model = 'dummy.any." + key + "'>" + "</td>" +
-							"</tr>")
-					})
-					return formedColumns.join('')
-				}
-
-				getGoal()
-			}
+	.directive('addGoal', function() {
+		return{
+			restrict: 'E',
+			template: '<div add-fields-table class = "btn btn-default">Click to add key-value pair</div>'
 		}
 	})
+
+	.directive('addFieldsTable', function($compile) {
+		return function(scope, element, attrs) {
+
+			function goalFormField() {
+				return "<tr>" +
+					"<td><input></td>" +
+					"<td><input></td>" +
+					"</tr>"
+			}
+
+			element.bind("click", function() {
+				angular.element(document.getElementById('add-goal'))
+					.append($compile(goalFormField())(scope))
+			})
+
+		}
+	})
+
+	// .directive('goalFormat', function($stateParams, $http, $compile, scopeService) {
+	// 	return {
+	// 		restrict: 'A',
+	// 		controller: function($scope, $element, $attrs) {
+	// 			function getGoal() {
+	// 				var tableHtml = []	
+	// 				$http.get('api/goals/' + $stateParams.id)
+	// 					.success(function(data) {
+	// 						scopeService.updateValue(data)
+	// 						tableHtml.push(generateTable(data.any))
+	// 						$('#goal').append($compile(tableHtml.join(''))($scope))
+	// 					})
+	// 					.error(function(err) {
+	// 						console.log(err)
+	// 					})
+	// 			}
+
+	// 			function generateTable(goal) {
+	// 				var keys = Object.keys(goal)
+	// 				var values  = Object.values(goal)
+
+	// 				var tableLayout = "<table class = 'table table-bordered'>" +
+	// 				"<tr>" +
+	// 						"<th>Key</th>" +
+	// 						"<th>Value</th>" +
+	// 				"</tr>" +
+	// 				rowCreator(keys, values) +
+	// 				"</table>"
+
+	// 				return tableLayout
+	// 			}
+
+	// 			function rowCreator(keys, values) {
+	// 				var formedColumns = []
+
+	// 				keys.forEach(function(key, i) {
+	// 					formedColumns.push(
+	// 						"<tr>" +  
+	// 						"<td class = editable>" + "<span ng-if = '!box'>" + key + "</span>" + "<input ng-if = 'box' ng-model = 'dummy.any[0][key]'>" + "</td>" +
+	// 						"<td class = editable>" + "<span ng-if = '!box'>" + values[i] + "</span>" + "<input ng-if = 'box' ng-model = 'dummy.any." + key + "'>" + "</td>" +
+	// 						"</tr>")
+	// 				})
+	// 				return formedColumns.join('')
+	// 			}
+
+	// 			getGoal()
+	// 		}
+	// 	}
+	// })
 }());
 (function() {
 	angular.module('onTrack')
