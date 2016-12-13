@@ -16,8 +16,13 @@
 			$http.get('api/goals/' + $stateParams.id)
 				.success(data => {
 					var holder = []
-					holder.push(Object.keys(data.any))
-					holder.push(Object.values(data.any))
+
+					var keys = Object.keys(data.any)
+				    var values = Object.values(data.any)
+
+				    keys.forEach(function(key, i) {
+				    	holder.push({'key': key, 'value': values[i]})
+				    })
 					$scope.goal = holder
 				})
 				.error(err => {
@@ -31,8 +36,8 @@
 			$scope.box = true
 		}
 
-		$scope.submit = function() {
-			console.log($('input'))
+		$scope.submit = function(g) {
+			console.log(g)
 		}
 
 		$scope.cancel = function() {

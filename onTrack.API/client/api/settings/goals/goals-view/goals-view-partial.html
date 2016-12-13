@@ -10,7 +10,7 @@
 			<div class = 'btn btn-default' ng-click = 'editGoal()'>Edit</div>
 		</div>
 		<div class = 'row' ng-if = 'box' style = 'padding: 5px 0px'>
-			<div class = 'btn btn-info' ng-click = 'submit()'><i class = 'glyphicon glyphicon-ok'></i></div>
+			<div class = 'btn btn-info' ng-click = 'submit(goal)'><i class = 'glyphicon glyphicon-ok'></i></div>
 			<div class = 'btn btn-danger' ng-click = 'cancel()'><i class = 'glyphicon glyphicon-remove'></i></div>
 		</div>
 		<div class = 'row'>
@@ -23,12 +23,12 @@
 					</tr>
 					<tr ng-repeat = 'g in goal'>
 						<td>
-							<span ng-if = '!box'>{{g}}</span>
-							<input ng-if = 'box' ng-model = "">
+							<span ng-if = '!box'>{{g.key}}</span>
+							<input ng-if = 'box' ng-model = "g.key">
 						</td>
 						<td>
-							<span ng-if = '!box'>{{g}}</span>
-							<input ng-if = 'box' ng-model = "apple.values">
+							<span ng-if = '!box'>{{g.value}}</span>
+							<input ng-if = 'box' ng-model = "g.value">
 						</td>
 					</tr>
 				</table>
