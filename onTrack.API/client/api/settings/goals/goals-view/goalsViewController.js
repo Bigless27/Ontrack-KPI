@@ -36,8 +36,19 @@
 			$scope.box = true
 		}
 
-		$scope.submit = function(g) {
-			console.log(g)
+		$scope.submit = function(goal) {
+			var newGoal = {}
+			goal.forEach(x => {
+				newGoal[x.key] = x.value
+			})
+			
+			$http.put('api/goals/' + $stateParams.id, newGoal)	
+				.success(data => {
+					$state.reload()
+				})
+				.error(err => {	
+					console.log(err)
+				})
 		}
 
 		$scope.cancel = function() {

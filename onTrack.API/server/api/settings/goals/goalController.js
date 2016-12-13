@@ -47,13 +47,12 @@ exports.post = function(req, res, next) { //yup
 };
 
 exports.put = function(req, res, next) {// works
-  	var goal = req.goal;
 
-	var update = req.body;
+	var goal = req.goal
 
-	_.mergeWith(goal, update, customizer.custom);
+	goal.any = req.body
 
-	Goal.save(function(err, saved) {
+	goal.save(function(err, saved) {
 	if (err) {
 	  next(err);
 	} else {

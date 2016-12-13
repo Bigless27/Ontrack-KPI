@@ -846,6 +846,73 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('GoalsController', ['$scope', '$state', '$window', '$http', '$stateParams',
+	function($scope, $state, $window, $http, $stateParams) {
+		
+	
+
+	}])
+
+	.directive('goalsFormat', function($compile, $http) {
+		return {
+			restrict: 'A',
+			controller: function($scope, $element, $attrs, $stateParams) {
+				function getGoals() {
+					var tableHtml = []
+
+					$http.get('api/goals')
+						.success(function(data) {
+							$scope.ids = data.map(x => x._id)
+							$scope.idCounter = 0
+							$scope.goals = data.map(x => x.any)
+							$scope.goals.forEach(goal => {
+								tableHtml.push(generateTable(goal))
+							})
+							$('#goal').append($compile(tableHtml.join(''))($scope))
+
+						})
+						.error(function(err) {
+							console.log(err)
+						})
+				}
+
+				function generateTable(goal) {
+					var keys = Object.keys(goal)
+					var values  = Object.values(goal)
+
+					var tableLayout = "<table class = 'table table-bordered'>" +
+					"<tr>" +
+							"<th>Key</th>" +
+							"<th>Value<div style ='margin: 0px 5px' ui-sref = 'goalsView({id: ids[" + $scope.idCounter+ "]})' class = 'btn btn-default'>View</div></th>" +
+					"</tr>" +
+					rowCreator(keys, values) +
+					"</table>"
+
+					$scope.idCounter ++
+					return tableLayout
+				}
+
+				function rowCreator(keys, values) {
+					var formedColumns = []
+
+					keys.forEach(function(key, i) {
+						formedColumns.push(
+							"<tr>" +  
+							"<td>" + key + "</td>" +
+							"<td>" + values[i] + "</td>" +
+							"</tr>")
+					})
+					return formedColumns.join('')
+				}
+
+				getGoals()
+			}
+		}
+	})
+
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('ProgressSettingController', ['$scope', '$state', '$window', '$http', '$stateParams',
 	 function($scope, $state, $window, $http, $stateParams) {
 
@@ -1089,73 +1156,6 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('GoalsController', ['$scope', '$state', '$window', '$http', '$stateParams',
-	function($scope, $state, $window, $http, $stateParams) {
-		
-	
-
-	}])
-
-	.directive('goalsFormat', function($compile, $http) {
-		return {
-			restrict: 'A',
-			controller: function($scope, $element, $attrs, $stateParams) {
-				function getGoals() {
-					var tableHtml = []
-
-					$http.get('api/goals')
-						.success(function(data) {
-							$scope.ids = data.map(x => x._id)
-							$scope.idCounter = 0
-							$scope.goals = data.map(x => x.any)
-							$scope.goals.forEach(goal => {
-								tableHtml.push(generateTable(goal))
-							})
-							$('#goal').append($compile(tableHtml.join(''))($scope))
-
-						})
-						.error(function(err) {
-							console.log(err)
-						})
-				}
-
-				function generateTable(goal) {
-					var keys = Object.keys(goal)
-					var values  = Object.values(goal)
-
-					var tableLayout = "<table class = 'table table-bordered'>" +
-					"<tr>" +
-							"<th>Key</th>" +
-							"<th>Value<div style ='margin: 0px 5px' ui-sref = 'goalsView({id: ids[" + $scope.idCounter+ "]})' class = 'btn btn-default'>View</div></th>" +
-					"</tr>" +
-					rowCreator(keys, values) +
-					"</table>"
-
-					$scope.idCounter ++
-					return tableLayout
-				}
-
-				function rowCreator(keys, values) {
-					var formedColumns = []
-
-					keys.forEach(function(key, i) {
-						formedColumns.push(
-							"<tr>" +  
-							"<td>" + key + "</td>" +
-							"<td>" + values[i] + "</td>" +
-							"</tr>")
-					})
-					return formedColumns.join('')
-				}
-
-				getGoals()
-			}
-		}
-	})
-
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('TypeSettingController', ['$scope', '$state', '$window', '$http', '$stateParams',
 	 function($scope, $state, $window, $http, $stateParams) {
 
@@ -1241,68 +1241,6 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('TeamFormController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
-
-			$scope.errorDisplay = false
-
-			$scope.createTeam = function(data){
-				var token = $window.sessionStorage['jwt']
-
-				var names = $scope.teams.filter(function(team) {
-					return team.name == data.name
-				})
-
-				if(names.length > 0){
-					$scope.errorDisplay = true
-					$scope.oops = 'Name is already taken!'
-					return
-				}
-				else {
-					$http.post('/api/teams' , data ,{
-						headers: {
-							'Authorization': `Bearer ${token}`
-						}
-					})
-					.success(function(data){
-						var teamId = {'id': data._id + ''}
-						$state.go('team',teamId )
-					})
-					.error(function(err) {
-						$scope.errorDisplay = true
-						$scope.oops = err.message
-					})
-				}
-			}
-
-			function getAllUsers() {
-				$http.get('/api/users')
-					.success(function(users){
-						users.forEach(function(user){
-							if(user){
-								$scope.optionsList.push(
-										{firstName: user.firstName, lastName: user.lastName, 
-											email: user.email, fullName: user.firstName + ' ' + user.lastName}
-									)
-							}
-							else{
-								$scope.optionsList = [{name: 'No users'}]
-							}
-						})
-					})
-					.error(function(err){
-						console.log(err)
-					})
-			}
-
-			getAllUsers()
-
-			$scope.optionsList = [];
-
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('AdminController', ['$scope', '$state', '$http', '$window', '$stateParams',
 		function($scope, $state, $http, $window, $stateParams) {
 		
@@ -1379,6 +1317,68 @@
 		$scope.optionsList = []
 
 		getUsers()
+
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('TeamFormController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+
+			$scope.errorDisplay = false
+
+			$scope.createTeam = function(data){
+				var token = $window.sessionStorage['jwt']
+
+				var names = $scope.teams.filter(function(team) {
+					return team.name == data.name
+				})
+
+				if(names.length > 0){
+					$scope.errorDisplay = true
+					$scope.oops = 'Name is already taken!'
+					return
+				}
+				else {
+					$http.post('/api/teams' , data ,{
+						headers: {
+							'Authorization': `Bearer ${token}`
+						}
+					})
+					.success(function(data){
+						var teamId = {'id': data._id + ''}
+						$state.go('team',teamId )
+					})
+					.error(function(err) {
+						$scope.errorDisplay = true
+						$scope.oops = err.message
+					})
+				}
+			}
+
+			function getAllUsers() {
+				$http.get('/api/users')
+					.success(function(users){
+						users.forEach(function(user){
+							if(user){
+								$scope.optionsList.push(
+										{firstName: user.firstName, lastName: user.lastName, 
+											email: user.email, fullName: user.firstName + ' ' + user.lastName}
+									)
+							}
+							else{
+								$scope.optionsList = [{name: 'No users'}]
+							}
+						})
+					})
+					.error(function(err){
+						console.log(err)
+					})
+			}
+
+			getAllUsers()
+
+			$scope.optionsList = [];
 
 	}])
 }());
@@ -2208,109 +2208,6 @@ app.directive('suggestion', function(){
 
 (function() {
 	angular.module('onTrack')
-	.controller('SettingsProgressFormController', ['$scope', '$state', '$window', '$http',
-	 function($scope, $state, $window, $http) {
-
-
-	 	$scope.selectAll = function(){
-	 		if($scope.setting.users.length < $scope.optionsList.length){
-		 		$scope.setting.users = $scope.optionsList
-		 		$('#user-select-button')[0].innerHTML = 'Clear'
-	 		}
-	 		else{
-	 			$scope.setting.users = []
-	 			$('#user-select-button')[0].innerHTML = 'Select All'
-	 		}
-	 	}
-
-	 	$scope.subTypesList = []
-
-	 	$scope.optionsList = []
-
-	 	function getUsers(){
-			$http.get('/api/users')
-				.success(function(users) {
-					users.forEach(function(user){
-						if(user){
-							$scope.optionsList.push(
-									{ fullName: user.firstName + ' ' + user.lastName, email: user.email,
-										userId: user._id, firstName: user.firstName,
-										lastName: user.lastName
-									}
-								)
-						}
-						else{
-							$scope.optionsList = [{name: 'No users'}]
-						}
-					})
-				})
-				.error(function(err) {
-					console.log(err);
-				})
-		}
-
-		function getSettings() {
-			$http.get('api/type-settings')
-				.success(function(data) {
-					$scope.typeSettings = data
-					setTypes()
-				})
-				.error(function(err){
-					console.log(err)
-				})
-		}
-
-		//for select button
-		function setTypes() {
-			var settingsCopy = $scope.typeSettings
-			$scope.types = [...new Set(settingsCopy.map(function(set){
-				return set.type
-			}))]
-
-		}
-
-
-		getSettings()
-
-		$scope.typeChecker = false
-
-		$scope.checkType = function() {
-			if(!$scope.setting.type) {
-				$scope.typeChecker = true
-			}
-		}
-
-		$scope.setSubtypes = function(){
-			$scope.subTypesList = []
-			if(!$scope.setting.type) return
-			else{
-					$scope.typeChecker = false
-					$scope.typeSettings.forEach(function(set){
-					if(set.type === $scope.setting.type){
-						set.subTypes.forEach(function(sub){
-							$scope.subTypesList.push({name: sub.text})
-						})
-					}
-				})
-			}
-		}
-
-	 	$scope.submitProgressSetting = function(setting) {
-	 		$http.post('/api/progress-settings', setting)
-	 			.success(function(data) {
-	 				$scope.progressSettings = data
-	 				$state.reload()
-	 			})
-	 			.error(function(err) {
-	 				console.log(err)
-	 			})
-	 	}
-
-	 	getUsers()
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('GoalsFormController', ['$scope', '$state', '$window', '$http', 'arrToObject',
 	function($scope, $state, $window, $http, arrToObject) {
 
@@ -2433,8 +2330,19 @@ app.directive('suggestion', function(){
 			$scope.box = true
 		}
 
-		$scope.submit = function(g) {
-			console.log(g)
+		$scope.submit = function(goal) {
+			var newGoal = {}
+			goal.forEach(x => {
+				newGoal[x.key] = x.value
+			})
+			
+			$http.put('api/goals/' + $stateParams.id, newGoal)	
+				.success(data => {
+					$state.reload()
+				})
+				.error(err => {	
+					console.log(err)
+				})
 		}
 
 		$scope.cancel = function() {
@@ -2526,6 +2434,109 @@ app.directive('suggestion', function(){
 			}
 		}
 	})
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('SettingsProgressFormController', ['$scope', '$state', '$window', '$http',
+	 function($scope, $state, $window, $http) {
+
+
+	 	$scope.selectAll = function(){
+	 		if($scope.setting.users.length < $scope.optionsList.length){
+		 		$scope.setting.users = $scope.optionsList
+		 		$('#user-select-button')[0].innerHTML = 'Clear'
+	 		}
+	 		else{
+	 			$scope.setting.users = []
+	 			$('#user-select-button')[0].innerHTML = 'Select All'
+	 		}
+	 	}
+
+	 	$scope.subTypesList = []
+
+	 	$scope.optionsList = []
+
+	 	function getUsers(){
+			$http.get('/api/users')
+				.success(function(users) {
+					users.forEach(function(user){
+						if(user){
+							$scope.optionsList.push(
+									{ fullName: user.firstName + ' ' + user.lastName, email: user.email,
+										userId: user._id, firstName: user.firstName,
+										lastName: user.lastName
+									}
+								)
+						}
+						else{
+							$scope.optionsList = [{name: 'No users'}]
+						}
+					})
+				})
+				.error(function(err) {
+					console.log(err);
+				})
+		}
+
+		function getSettings() {
+			$http.get('api/type-settings')
+				.success(function(data) {
+					$scope.typeSettings = data
+					setTypes()
+				})
+				.error(function(err){
+					console.log(err)
+				})
+		}
+
+		//for select button
+		function setTypes() {
+			var settingsCopy = $scope.typeSettings
+			$scope.types = [...new Set(settingsCopy.map(function(set){
+				return set.type
+			}))]
+
+		}
+
+
+		getSettings()
+
+		$scope.typeChecker = false
+
+		$scope.checkType = function() {
+			if(!$scope.setting.type) {
+				$scope.typeChecker = true
+			}
+		}
+
+		$scope.setSubtypes = function(){
+			$scope.subTypesList = []
+			if(!$scope.setting.type) return
+			else{
+					$scope.typeChecker = false
+					$scope.typeSettings.forEach(function(set){
+					if(set.type === $scope.setting.type){
+						set.subTypes.forEach(function(sub){
+							$scope.subTypesList.push({name: sub.text})
+						})
+					}
+				})
+			}
+		}
+
+	 	$scope.submitProgressSetting = function(setting) {
+	 		$http.post('/api/progress-settings', setting)
+	 			.success(function(data) {
+	 				$scope.progressSettings = data
+	 				$state.reload()
+	 			})
+	 			.error(function(err) {
+	 				console.log(err)
+	 			})
+	 	}
+
+	 	getUsers()
+	}])
 }());
 (function() {
 	angular.module('onTrack')
