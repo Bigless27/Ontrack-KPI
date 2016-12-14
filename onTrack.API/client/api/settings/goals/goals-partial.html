@@ -9,7 +9,25 @@
 			<div class = 'btn btn-default' ui-sref = 'setting'>Back</div>
 		</div>
 		<div class = 'row'>
-			<div id = 'goal' goals-format></div>
+			<div>
+				<table id = 'add-goal' class = 'table table-bordered' ng-repeat = 'goal in goals'>
+					<tr>
+						<th>Key</th>
+						<th>
+							Value 
+							<div style ='margin: 0px 5px' ui-sref = 'goalsView({id: goal._id})' class = 'btn btn-default'>
+								View
+							</div>
+						</th>
+					</tr>
+					<tr ng-repeat = '(key, value) in goal.any'>
+						<td>{{key}}</td>
+						<td>
+							{{value}}
+						</td>
+					</tr>
+				</table>
+			</div>
 		</div>
 	</div>
 </div>
