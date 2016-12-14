@@ -1,18 +1,11 @@
 (function() {
 	angular.module('onTrack')
-	.controller('GoalsViewController', ['$scope', '$state', '$http', '$stateParams', 'scopeService', 'arrToObject',
-	function($scope, $state, $http, $stateParams, scopeService, arrToObject) {
+	.controller('GoalsViewController', ['$scope', '$state', '$http', '$stateParams', 'arrToObject',
+	function($scope, $state, $http, $stateParams, arrToObject) {
 
 		$scope.box = false;
 
 		$scope.tracker = 1
-
-
-		// $scope.dummy = scopeService.getValue()
-
-		// $scope.$watch(function() {return scopeService.getValue()}, function(newValue, oldValue) {
-		// 	$scope.dummy = newValue
-		// })
 
 		function getGoal() {
 			$http.get('api/goals/' + $stateParams.id)
@@ -39,11 +32,10 @@
 		}
 
 		$scope.submit = function(goal) {
-
 			var holder = []
 			var goalArr = Object.values(goal).filter(x => { return typeof(x) === 'string'})
 			var newGoal = {}
-			var updateGoal = null
+			var updatedGoal = null
 			if (goalArr.length) {
 				var nestedObj = goal.filter(x => {return typeof(x) === 'object'})
 
@@ -52,18 +44,6 @@
 				})
 
 				updatedGoal = Object.assign(newGoal,arrToObject.create(goalArr))
-
-				// var i = len/2
-				// var counter = 2
-
-				// while (i) {
-				// 	var key = goal['key' + counter]
-				// 	var value = goal['value' + counter]
-				// 	console.log(key)
-				// 	holder.push({key: value})
-				// 	counter++
-				// 	i --
-				// }
 			}
 			else{	
 				goal.forEach(x => {
@@ -110,28 +90,20 @@
 		}
 	}])
 
-	.factory('scopeService', function() {
+	// .factory('scopeService', function() {
 
-		var model = {}
-		var counter = 0
+	// 	var model = {}
+	// 	var counter = 0
 
-		return {
-			getValue: function() {
-				return model.value
-			},
-			updateValue: function(value) {
-				model.value = value;
-			}
-		}
-	})
-
-	.directive('removeGoalRow', function() {
-		return {
-			restrict: 'E',
-			template: "<div class = 'btn btn-default'>Remove a Pair</div>"
-		}
-	})
-
+	// 	return {
+	// 		getValue: function() {
+	// 			return model.value
+	// 		},
+	// 		updateValue: function(value) {
+	// 			model.value = value;
+	// 		}
+	// 	}
+	// })
 	.directive('addGoal', function() {
 		return{
 			restrict: 'E',

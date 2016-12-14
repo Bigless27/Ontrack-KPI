@@ -846,73 +846,6 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('GoalsController', ['$scope', '$state', '$window', '$http', '$stateParams',
-	function($scope, $state, $window, $http, $stateParams) {
-		
-	
-
-	}])
-
-	.directive('goalsFormat', function($compile, $http) {
-		return {
-			restrict: 'A',
-			controller: function($scope, $element, $attrs, $stateParams) {
-				function getGoals() {
-					var tableHtml = []
-
-					$http.get('api/goals')
-						.success(function(data) {
-							$scope.ids = data.map(x => x._id)
-							$scope.idCounter = 0
-							$scope.goals = data.map(x => x.any)
-							$scope.goals.forEach(goal => {
-								tableHtml.push(generateTable(goal))
-							})
-							$('#goal').append($compile(tableHtml.join(''))($scope))
-
-						})
-						.error(function(err) {
-							console.log(err)
-						})
-				}
-
-				function generateTable(goal) {
-					var keys = Object.keys(goal)
-					var values  = Object.values(goal)
-
-					var tableLayout = "<table class = 'table table-bordered'>" +
-					"<tr>" +
-							"<th>Key</th>" +
-							"<th>Value<div style ='margin: 0px 5px' ui-sref = 'goalsView({id: ids[" + $scope.idCounter+ "]})' class = 'btn btn-default'>View</div></th>" +
-					"</tr>" +
-					rowCreator(keys, values) +
-					"</table>"
-
-					$scope.idCounter ++
-					return tableLayout
-				}
-
-				function rowCreator(keys, values) {
-					var formedColumns = []
-
-					keys.forEach(function(key, i) {
-						formedColumns.push(
-							"<tr>" +  
-							"<td>" + key + "</td>" +
-							"<td>" + values[i] + "</td>" +
-							"</tr>")
-					})
-					return formedColumns.join('')
-				}
-
-				getGoals()
-			}
-		}
-	})
-
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('ProgressSettingController', ['$scope', '$state', '$window', '$http', '$stateParams',
 	 function($scope, $state, $window, $http, $stateParams) {
 
@@ -1153,6 +1086,73 @@
 	 	getUsers()
 
 	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('GoalsController', ['$scope', '$state', '$window', '$http', '$stateParams',
+	function($scope, $state, $window, $http, $stateParams) {
+		
+	
+
+	}])
+
+	.directive('goalsFormat', function($compile, $http) {
+		return {
+			restrict: 'A',
+			controller: function($scope, $element, $attrs, $stateParams) {
+				function getGoals() {
+					var tableHtml = []
+
+					$http.get('api/goals')
+						.success(function(data) {
+							$scope.ids = data.map(x => x._id)
+							$scope.idCounter = 0
+							$scope.goals = data.map(x => x.any)
+							$scope.goals.forEach(goal => {
+								tableHtml.push(generateTable(goal))
+							})
+							$('#goal').append($compile(tableHtml.join(''))($scope))
+
+						})
+						.error(function(err) {
+							console.log(err)
+						})
+				}
+
+				function generateTable(goal) {
+					var keys = Object.keys(goal)
+					var values  = Object.values(goal)
+
+					var tableLayout = "<table class = 'table table-bordered'>" +
+					"<tr>" +
+							"<th>Key</th>" +
+							"<th>Value<div style ='margin: 0px 5px' ui-sref = 'goalsView({id: ids[" + $scope.idCounter+ "]})' class = 'btn btn-default'>View</div></th>" +
+					"</tr>" +
+					rowCreator(keys, values) +
+					"</table>"
+
+					$scope.idCounter ++
+					return tableLayout
+				}
+
+				function rowCreator(keys, values) {
+					var formedColumns = []
+
+					keys.forEach(function(key, i) {
+						formedColumns.push(
+							"<tr>" +  
+							"<td>" + key + "</td>" +
+							"<td>" + values[i] + "</td>" +
+							"</tr>")
+					})
+					return formedColumns.join('')
+				}
+
+				getGoals()
+			}
+		}
+	})
+
 }());
 (function() {
 	angular.module('onTrack')
@@ -1765,37 +1765,6 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('UserFormController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
-
-			$scope.errorDisplay = false
-
-			$scope.createUser = function(user) {
-				
-				var duplicate = $scope.users.filter(function(x){
-					return x.email == user.email
-				})
-
-				if (duplicate.length > 0){
-					$scope.oops = 'Email is already taken!'
-					$scope.errorDisplay = true
-					return
-				}
-				else{
-					$http.post('api/users', user)
-						.success(function(data){
-							$state.reload()
-
-						})
-						.error(function(err) {
-							console.log(err)
-						})
-				}
-			}
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('ProgressController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
 		function($scope, $state, $http, $window, $stateParams, $q) {
 			
@@ -1837,6 +1806,37 @@
 			getProgress()
 
 
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('UserFormController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+
+			$scope.errorDisplay = false
+
+			$scope.createUser = function(user) {
+				
+				var duplicate = $scope.users.filter(function(x){
+					return x.email == user.email
+				})
+
+				if (duplicate.length > 0){
+					$scope.oops = 'Email is already taken!'
+					$scope.errorDisplay = true
+					return
+				}
+				else{
+					$http.post('api/users', user)
+						.success(function(data){
+							$state.reload()
+
+						})
+						.error(function(err) {
+							console.log(err)
+						})
+				}
+			}
 	}])
 }());
 var app = angular.module('app', ['autocomplete']);
@@ -2208,286 +2208,6 @@ app.directive('suggestion', function(){
 
 (function() {
 	angular.module('onTrack')
-	.controller('GoalsFormController', ['$scope', '$state', '$window', '$http', 'arrToObject',
-	function($scope, $state, $window, $http, arrToObject) {
-
-		$scope.tracker = 0;
-
-		$scope.submit = function(data) {
-			if (!data) {
-				return
-			}
-			var dataJson = arrToObject.create(Object.values(data))
-
-			$http.post('api/goals', dataJson)
-				.success(function(data) {
-					$state.reload()
-				})
-				.error(function(err) {
-					console.log(err)
-				})
-
-		}
-	}])
-
-
-	.directive('addButton', function() {
-			return{
-				restrict: 'E',
-				template: '<div add-fields class = "btn btn-default">Click to add key-value pair</div>'
-			}
-	})
-
-	.directive('removeOne', function() {
-		return {
-			restrict: 'E',
-			template: '<div class = "btn btn-default">remove a pair</div>',
-			link: function(scope, element, attrs) {
-				element.bind('click', function() {
-					if (!$('#space-for-buttons').children().length) {
-						$('.table-removable').last().remove()
-					}
-					$('#space-for-buttons').children().last().remove()
-				})
-			}
-		}
-	})
-
-	.directive('addFields', function($compile) {
-		return function(scope, element, attrs) {
-
-			function goalFormField(i) {
-				return "<div class = 'fieldForm'>"+
-				"<hr>" +
-				"<form id = 'edit' name = 'goalForm' role = 'form' data-toggle = 'validator'>" +
-					"<div class = 'form-group' show-errors>" +
-						"<lable for = 'key' class = 'control-label'>Key</label>" +
-						"<div class = 'input-group'>" +
-							"<span class = 'input-group-addon'><i class = 'glyphicon glyphicon-user'></i></span>" +
-							"<input name = 'key' type = 'text' ng-model = goal.key" + scope.tracker + ' ' + "class = 'form-control' placeholder = 'enter a key' required>" +
-						"</div>"+
-						"<p class= 'help-block' ng-if = 'goalForm.key.$error.required'>Key is required</p>" +
-					"</div>" +
-					"<div class = 'form-group' show-errors>" +
-						"<lable for = 'value' class = control-label'>Value</label>" +
-						"<div class = 'input-group'>" +
-							"<span class = 'input-group-addon'><i class = 'glyphicon glyphicon-user'></i></span>" +
-							"<input name = 'value' type = 'text' ng-model = goal.value" + scope.tracker + ' ' + "class = 'form-control' placeholder = 'enter a value' required>" + 
-						"</div>" +
-						"<p class = 'help-block' ng-if = 'goalForm.value.$error.required'>Value is required</p>" +
-					"</div>" +
-				"</form>" +
-				"</div>"
-			}
-			
-			if(scope.tracker < 1) {
-				angular.element(document.getElementById('space-for-buttons'))
-					.append($compile(goalFormField(scope.tracker))(scope))
-			}
-
-			element.bind("click", function(){
-				scope.tracker++;
-				angular.element(document.getElementById('space-for-buttons'))
-					.append($compile(goalFormField(scope.tracker))(scope))
-			})
-		}
-	})
-
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('GoalsViewController', ['$scope', '$state', '$http', '$stateParams', 'scopeService', 'arrToObject',
-	function($scope, $state, $http, $stateParams, scopeService, arrToObject) {
-
-		$scope.box = false;
-
-		$scope.tracker = 1
-
-
-		// $scope.dummy = scopeService.getValue()
-
-		// $scope.$watch(function() {return scopeService.getValue()}, function(newValue, oldValue) {
-		// 	$scope.dummy = newValue
-		// })
-
-		function getGoal() {
-			$http.get('api/goals/' + $stateParams.id)
-				.success(data => {
-					var holder = []
-
-					var keys = Object.keys(data.any)
-				    var values = Object.values(data.any)
-
-				    keys.forEach(function(key, i) {
-				    	holder.push({'key': key, 'value': values[i]})
-				    })
-					$scope.goal = holder
-				})
-				.error(err => {
-					console.log(err)
-				})
-		} 
-
-		getGoal()
-
-		$scope.editGoal = function() {
-			$scope.box = true
-		}
-
-		$scope.submit = function(goal) {
-
-			var holder = []
-			var goalArr = Object.values(goal).filter(x => { return typeof(x) === 'string'})
-			var newGoal = {}
-			var updateGoal = null
-			if (goalArr.length) {
-				var nestedObj = goal.filter(x => {return typeof(x) === 'object'})
-
-				nestedObj.forEach(x => {
-					newGoal[x.key] = x.value
-				})
-
-				updatedGoal = Object.assign(newGoal,arrToObject.create(goalArr))
-
-				// var i = len/2
-				// var counter = 2
-
-				// while (i) {
-				// 	var key = goal['key' + counter]
-				// 	var value = goal['value' + counter]
-				// 	console.log(key)
-				// 	holder.push({key: value})
-				// 	counter++
-				// 	i --
-				// }
-			}
-			else{	
-				goal.forEach(x => {
-					newGoal[x.key] = x.value
-				})
-			}
-
-			if(updatedGoal) {
-				newGoal = updatedGoal
-			}
-			
-			$http.put('api/goals/' + $stateParams.id, newGoal)	
-				.success(data => {
-					$state.reload()
-				})
-				.error(err => {	
-					console.log(err)
-				})
-		}
-
-		$scope.cancel = function() {
-			$scope.box = false
-			$state.reload()
-		}
-
-		$scope.deleteGoal = function() {
-			swal({
-				title: "Are you sure?",
-				text: "You will not be able to recover this goal",
-				type: "warning",
-				showCancelButton: true,
-				confirmButtonColor: "#DD6B55",
-				confirmButtonText: "Yes, delete it!",
-				html: false
-			}).then(function() {
-				$http.delete('api/goals/' + $stateParams.id)
-				.success(function(data) {
-					$state.go('goals')
-				})
-				.error(function(err) {
-					console.log(err)
-				})
-			}).catch(e => {})
-		}
-	}])
-
-	.factory('scopeService', function() {
-
-		var model = {}
-		var counter = 0
-
-		return {
-			getValue: function() {
-				return model.value
-			},
-			updateValue: function(value) {
-				model.value = value;
-			}
-		}
-	})
-
-	.directive('removeGoalRow', function() {
-		return {
-			restrict: 'E',
-			template: "<div class = 'btn btn-default'>Remove a Pair</div>"
-		}
-	})
-
-	.directive('addGoal', function() {
-		return{
-			restrict: 'E',
-			template: '<div add-fields-table class = "btn btn-default">Click to add key-value pair</div>'
-		}
-	})
-
-
-	// .directive('goalFormat', function($stateParams, $http, $compile, scopeService) {
-	// 	return {
-	// 		restrict: 'A',
-	// 		controller: function($scope, $element, $attrs) {
-	// 			function getGoal() {
-	// 				var tableHtml = []	
-	// 				$http.get('api/goals/' + $stateParams.id)
-	// 					.success(function(data) {
-	// 						scopeService.updateValue(data)
-	// 						tableHtml.push(generateTable(data.any))
-	// 						$('#goal').append($compile(tableHtml.join(''))($scope))
-	// 					})
-	// 					.error(function(err) {
-	// 						console.log(err)
-	// 					})
-	// 			}
-
-	// 			function generateTable(goal) {
-	// 				var keys = Object.keys(goal)
-	// 				var values  = Object.values(goal)
-
-	// 				var tableLayout = "<table class = 'table table-bordered'>" +
-	// 				"<tr>" +
-	// 						"<th>Key</th>" +
-	// 						"<th>Value</th>" +
-	// 				"</tr>" +
-	// 				rowCreator(keys, values) +
-	// 				"</table>"
-
-	// 				return tableLayout
-	// 			}
-
-	// 			function rowCreator(keys, values) {
-	// 				var formedColumns = []
-
-	// 				keys.forEach(function(key, i) {
-	// 					formedColumns.push(
-	// 						"<tr>" +  
-	// 						"<td class = editable>" + "<span ng-if = '!box'>" + key + "</span>" + "<input ng-if = 'box' ng-model = 'dummy.any[0][key]'>" + "</td>" +
-	// 						"<td class = editable>" + "<span ng-if = '!box'>" + values[i] + "</span>" + "<input ng-if = 'box' ng-model = 'dummy.any." + key + "'>" + "</td>" +
-	// 						"</tr>")
-	// 				})
-	// 				return formedColumns.join('')
-	// 			}
-
-	// 			getGoal()
-	// 		}
-	// 	}
-	// })
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('SettingsProgressFormController', ['$scope', '$state', '$window', '$http',
 	 function($scope, $state, $window, $http) {
 
@@ -2588,6 +2308,265 @@ app.directive('suggestion', function(){
 
 	 	getUsers()
 	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('GoalsFormController', ['$scope', '$state', '$window', '$http', 'arrToObject',
+	function($scope, $state, $window, $http, arrToObject) {
+
+		$scope.tracker = 0;
+
+		$scope.submit = function(data) {
+			if (!data) {
+				return
+			}
+			var dataJson = arrToObject.create(Object.values(data))
+
+			$http.post('api/goals', dataJson)
+				.success(function(data) {
+					$state.reload()
+				})
+				.error(function(err) {
+					console.log(err)
+				})
+
+		}
+	}])
+
+
+	.directive('addButton', function() {
+			return{
+				restrict: 'E',
+				template: '<div add-fields class = "btn btn-default">Click to add key-value pair</div>'
+			}
+	})
+
+	.directive('removeOne', function() {
+		return {
+			restrict: 'E',
+			template: '<div class = "btn btn-default">remove a pair</div>',
+			link: function(scope, element, attrs) {
+				element.bind('click', function() {
+					if (!$('#space-for-buttons').children().length) {
+						$('.table-removable').last().remove()
+						if(scope.goal) {
+							scope.goal.pop()
+						}
+					}
+					$('#space-for-buttons').children().last().remove()
+				})
+			}
+		}
+	})
+
+	.service('removeModelAssociation', function() {
+
+	})
+
+	.directive('addFields', function($compile) {
+		return function(scope, element, attrs) {
+
+			function goalFormField(i) {
+				return "<div class = 'fieldForm'>"+
+				"<hr>" +
+				"<form id = 'edit' name = 'goalForm' role = 'form' data-toggle = 'validator'>" +
+					"<div class = 'form-group' show-errors>" +
+						"<lable for = 'key' class = 'control-label'>Key</label>" +
+						"<div class = 'input-group'>" +
+							"<span class = 'input-group-addon'><i class = 'glyphicon glyphicon-user'></i></span>" +
+							"<input name = 'key' type = 'text' ng-model = goal.key" + scope.tracker + ' ' + "class = 'form-control' placeholder = 'enter a key' required>" +
+						"</div>"+
+						"<p class= 'help-block' ng-if = 'goalForm.key.$error.required'>Key is required</p>" +
+					"</div>" +
+					"<div class = 'form-group' show-errors>" +
+						"<lable for = 'value' class = control-label'>Value</label>" +
+						"<div class = 'input-group'>" +
+							"<span class = 'input-group-addon'><i class = 'glyphicon glyphicon-user'></i></span>" +
+							"<input name = 'value' type = 'text' ng-model = goal.value" + scope.tracker + ' ' + "class = 'form-control' placeholder = 'enter a value' required>" + 
+						"</div>" +
+						"<p class = 'help-block' ng-if = 'goalForm.value.$error.required'>Value is required</p>" +
+					"</div>" +
+				"</form>" +
+				"</div>"
+			}
+			
+			if(scope.tracker < 1) {
+				angular.element(document.getElementById('space-for-buttons'))
+					.append($compile(goalFormField(scope.tracker))(scope))
+			}
+
+			element.bind("click", function(){
+				scope.tracker++;
+				angular.element(document.getElementById('space-for-buttons'))
+					.append($compile(goalFormField(scope.tracker))(scope))
+			})
+		}
+	})
+
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('GoalsViewController', ['$scope', '$state', '$http', '$stateParams', 'arrToObject',
+	function($scope, $state, $http, $stateParams, arrToObject) {
+
+		$scope.box = false;
+
+		$scope.tracker = 1
+
+		function getGoal() {
+			$http.get('api/goals/' + $stateParams.id)
+				.success(data => {
+					var holder = []
+
+					var keys = Object.keys(data.any)
+				    var values = Object.values(data.any)
+
+				    keys.forEach(function(key, i) {
+				    	holder.push({'key': key, 'value': values[i]})
+				    })
+					$scope.goal = holder
+				})
+				.error(err => {
+					console.log(err)
+				})
+		} 
+
+		getGoal()
+
+		$scope.editGoal = function() {
+			$scope.box = true
+		}
+
+		$scope.submit = function(goal) {
+			var holder = []
+			var goalArr = Object.values(goal).filter(x => { return typeof(x) === 'string'})
+			var newGoal = {}
+			var updatedGoal = null
+			if (goalArr.length) {
+				var nestedObj = goal.filter(x => {return typeof(x) === 'object'})
+
+				nestedObj.forEach(x => {
+					newGoal[x.key] = x.value
+				})
+
+				updatedGoal = Object.assign(newGoal,arrToObject.create(goalArr))
+			}
+			else{	
+				goal.forEach(x => {
+					newGoal[x.key] = x.value
+				})
+			}
+
+			if(updatedGoal) {
+				newGoal = updatedGoal
+			}
+			
+			$http.put('api/goals/' + $stateParams.id, newGoal)	
+				.success(data => {
+					$state.reload()
+				})
+				.error(err => {	
+					console.log(err)
+				})
+		}
+
+		$scope.cancel = function() {
+			$scope.box = false
+			$state.reload()
+		}
+
+		$scope.deleteGoal = function() {
+			swal({
+				title: "Are you sure?",
+				text: "You will not be able to recover this goal",
+				type: "warning",
+				showCancelButton: true,
+				confirmButtonColor: "#DD6B55",
+				confirmButtonText: "Yes, delete it!",
+				html: false
+			}).then(function() {
+				$http.delete('api/goals/' + $stateParams.id)
+				.success(function(data) {
+					$state.go('goals')
+				})
+				.error(function(err) {
+					console.log(err)
+				})
+			}).catch(e => {})
+		}
+	}])
+
+	// .factory('scopeService', function() {
+
+	// 	var model = {}
+	// 	var counter = 0
+
+	// 	return {
+	// 		getValue: function() {
+	// 			return model.value
+	// 		},
+	// 		updateValue: function(value) {
+	// 			model.value = value;
+	// 		}
+	// 	}
+	// })
+	.directive('addGoal', function() {
+		return{
+			restrict: 'E',
+			template: '<div add-fields-table class = "btn btn-default">Click to add key-value pair</div>'
+		}
+	})
+
+
+	// .directive('goalFormat', function($stateParams, $http, $compile, scopeService) {
+	// 	return {
+	// 		restrict: 'A',
+	// 		controller: function($scope, $element, $attrs) {
+	// 			function getGoal() {
+	// 				var tableHtml = []	
+	// 				$http.get('api/goals/' + $stateParams.id)
+	// 					.success(function(data) {
+	// 						scopeService.updateValue(data)
+	// 						tableHtml.push(generateTable(data.any))
+	// 						$('#goal').append($compile(tableHtml.join(''))($scope))
+	// 					})
+	// 					.error(function(err) {
+	// 						console.log(err)
+	// 					})
+	// 			}
+
+	// 			function generateTable(goal) {
+	// 				var keys = Object.keys(goal)
+	// 				var values  = Object.values(goal)
+
+	// 				var tableLayout = "<table class = 'table table-bordered'>" +
+	// 				"<tr>" +
+	// 						"<th>Key</th>" +
+	// 						"<th>Value</th>" +
+	// 				"</tr>" +
+	// 				rowCreator(keys, values) +
+	// 				"</table>"
+
+	// 				return tableLayout
+	// 			}
+
+	// 			function rowCreator(keys, values) {
+	// 				var formedColumns = []
+
+	// 				keys.forEach(function(key, i) {
+	// 					formedColumns.push(
+	// 						"<tr>" +  
+	// 						"<td class = editable>" + "<span ng-if = '!box'>" + key + "</span>" + "<input ng-if = 'box' ng-model = 'dummy.any[0][key]'>" + "</td>" +
+	// 						"<td class = editable>" + "<span ng-if = '!box'>" + values[i] + "</span>" + "<input ng-if = 'box' ng-model = 'dummy.any." + key + "'>" + "</td>" +
+	// 						"</tr>")
+	// 				})
+	// 				return formedColumns.join('')
+	// 			}
+
+	// 			getGoal()
+	// 		}
+	// 	}
+	// })
 }());
 (function() {
 	angular.module('onTrack')

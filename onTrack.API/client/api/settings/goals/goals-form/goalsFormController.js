@@ -38,11 +38,18 @@
 				element.bind('click', function() {
 					if (!$('#space-for-buttons').children().length) {
 						$('.table-removable').last().remove()
+						if(scope.goal) {
+							scope.goal.pop()
+						}
 					}
 					$('#space-for-buttons').children().last().remove()
 				})
 			}
 		}
+	})
+
+	.service('removeModelAssociation', function() {
+
 	})
 
 	.directive('addFields', function($compile) {
