@@ -13,4 +13,19 @@
 			return service
 		})
 
+		// .factory('scopeService', function() {
+
+		// 	var model = {}
+		// 	var counter = 0
+
+		// 	return {
+		// 		getValue: function() {
+		// 			return model.value
+		// 		},
+		// 		updateValue: function(value) {
+		// 			model.value = value;
+		// 		}
+		// 	}
+		// })
+
 }());
