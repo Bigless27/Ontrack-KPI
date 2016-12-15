@@ -6,6 +6,9 @@
 			$scope.errorDisplay = false
 
 			$scope.createUser = function(user) {
+				$scope.$broadcast('show-errors-check-validity');
+
+				if($scope.goalForm.$invalid){return;}
 				
 				var duplicate = $scope.users.filter(function(x){
 					return x.email == user.email

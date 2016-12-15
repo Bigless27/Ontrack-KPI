@@ -6,6 +6,10 @@
 			$scope.errorDisplay = false
 
 			$scope.createTeam = function(data){
+				$scope.$broadcast('show-errors-check-validity');
+
+				if($scope.goalForm.$invalid){return;}
+				
 				var token = $window.sessionStorage['jwt']
 
 				var names = $scope.teams.filter(function(team) {
