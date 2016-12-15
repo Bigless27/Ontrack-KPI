@@ -848,91 +848,6 @@
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('TypeSettingController', ['$scope', '$state', '$window', '$http', '$stateParams',
-	 function($scope, $state, $window, $http, $stateParams) {
-
-	 		$scope.deleteSetting = function() {
-				var token = $window.sessionStorage['jwt']
-				swal({
-				  title: "Are you sure?",
-				  text: "You will not be able to recover this Setting!",
-				  type: "warning",
-				  showCancelButton: true,
-				  confirmButtonColor: "#DD6B55",
-				  confirmButtonText: "Yes, delete it!",
-				  html: false
-				}).then(function(){
-					$http.delete('/api/type-settings/'+ $stateParams.id, {
-						headers: {
-							'Authorization': `Bearer ${token}`
-						}
-					})
-					.success(function(data){
-						$state.go('setting')
-					})
-					.error(function(err) {
-						console.log(err)
-					})
-				}).catch(function() {
-					return
-				})
-			}
-
-			$scope.userTags = false
-
-			$scope.toggleEdit = function() {
-				if($scope.userTags){
-					$scope.userTags = false
-				}
-				else{
-					$scope.userTags = true
-				}
-			}
-
-			$scope.updateType = function(type){
-				updateSetting(type, 'type')
-			}
-
-			$scope.updateSubtype = function(sub){
-				updateSetting(sub, 'subTypes')
-			}
-
-			function updateSetting(data, field){
-				var token = $window.sessionStorage['jwt']
-				$scope.setting[field] = data
-				$http.put('api/type-settings/' + $stateParams.id, $scope.setting, {
-					headers: {
-						'Authorization': `Bearer ${token}`
-					}
-				})
-				.success(function(data){
-					$state.reload()
-				})
-				.error(function(err) {
-					console.log(err)
-				})
-			}
-
-	 		function getSetting(){
-	 			$http.get('api/type-settings/' + $stateParams.id)
-	 				.success(function(data) {
-	 					$scope.noSubTypes = false
-	 					$scope.setting = data
-	 					if ($scope.setting.subTypes.length === 0){
-	 						$scope.noSubTypes = true
-	 					}
-	 				})
-	 				.error(function(err) {
-	 					console.log(err)
-	 				})
-	 		}
-
-	 		getSetting()
-
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('ProgressSettingController', ['$scope', '$state', '$window', '$http', '$stateParams',
 	 function($scope, $state, $window, $http, $stateParams) {
 
@@ -1171,6 +1086,91 @@
 
 	 	getSetting()
 	 	getUsers()
+
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('TypeSettingController', ['$scope', '$state', '$window', '$http', '$stateParams',
+	 function($scope, $state, $window, $http, $stateParams) {
+
+	 		$scope.deleteSetting = function() {
+				var token = $window.sessionStorage['jwt']
+				swal({
+				  title: "Are you sure?",
+				  text: "You will not be able to recover this Setting!",
+				  type: "warning",
+				  showCancelButton: true,
+				  confirmButtonColor: "#DD6B55",
+				  confirmButtonText: "Yes, delete it!",
+				  html: false
+				}).then(function(){
+					$http.delete('/api/type-settings/'+ $stateParams.id, {
+						headers: {
+							'Authorization': `Bearer ${token}`
+						}
+					})
+					.success(function(data){
+						$state.go('setting')
+					})
+					.error(function(err) {
+						console.log(err)
+					})
+				}).catch(function() {
+					return
+				})
+			}
+
+			$scope.userTags = false
+
+			$scope.toggleEdit = function() {
+				if($scope.userTags){
+					$scope.userTags = false
+				}
+				else{
+					$scope.userTags = true
+				}
+			}
+
+			$scope.updateType = function(type){
+				updateSetting(type, 'type')
+			}
+
+			$scope.updateSubtype = function(sub){
+				updateSetting(sub, 'subTypes')
+			}
+
+			function updateSetting(data, field){
+				var token = $window.sessionStorage['jwt']
+				$scope.setting[field] = data
+				$http.put('api/type-settings/' + $stateParams.id, $scope.setting, {
+					headers: {
+						'Authorization': `Bearer ${token}`
+					}
+				})
+				.success(function(data){
+					$state.reload()
+				})
+				.error(function(err) {
+					console.log(err)
+				})
+			}
+
+	 		function getSetting(){
+	 			$http.get('api/type-settings/' + $stateParams.id)
+	 				.success(function(data) {
+	 					$scope.noSubTypes = false
+	 					$scope.setting = data
+	 					if ($scope.setting.subTypes.length === 0){
+	 						$scope.noSubTypes = true
+	 					}
+	 				})
+	 				.error(function(err) {
+	 					console.log(err)
+	 				})
+	 		}
+
+	 		getSetting()
 
 	}])
 }());
@@ -2150,37 +2150,6 @@ app.directive('suggestion', function(){
 
 (function() {
 	angular.module('onTrack')
-	.controller('GoalsFormController', ['$scope', '$state', '$window', '$http', 'arrToObject',
-	function($scope, $state, $window, $http, arrToObject) {
-
-		$scope.tracker = 0;
-
-		$scope.submit = function(data) {
-			$scope.$broadcast('show-errors-check-validity');
-
-			if($scope.goalForm.$invalid){return;}
-
-			var named = {'gsfName': data.name}
-			delete data.name
-
-			var data = arrToObject.create(Object.values(data))
-			
-			var dataJson = Object.assign(data, named)
-
-			$http.post('api/goals', dataJson)
-				.success(function(data) {
-					$state.reload()
-				})
-				.error(function(err) {
-					console.log(err)
-				})
-
-		}
-	}])
-
-}());
-(function() {
-	angular.module('onTrack')
 		.directive('addGoal', function() {
 			return{
 				restrict: 'E',
@@ -2281,6 +2250,15 @@ app.directive('suggestion', function(){
 				}
 			}
 
+			service.generateKVObj = function(obj) {
+				var keys = Object.keys(obj)
+				var values = Object.values(obj)
+
+				var solution = keys.map((x,i) => {return {'key': x, 'value': values[i]}})
+
+				return solution
+			}
+
 			service.nestedObj = function(obj) {
 				 return obj.filter(x => {return typeof(x) === 'object'})
 			}
@@ -2312,120 +2290,31 @@ app.directive('suggestion', function(){
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('SettingsTypeFormController', ['$scope', '$state', '$window', '$http',
-	 function($scope, $state, $window, $http) {
+	.controller('GoalsFormController', ['$scope', '$state', '$window', '$http', 'arrToObject',
+	function($scope, $state, $window, $http, arrToObject) {
 
-	 	$scope.err = false
+		$scope.tracker = 0;
 
-	 	function getSettings(){
-	 		$http.get('api/type-settings')
-	 			.success(function(data){
-	 				$scope.settings = data
-	 			})
-	 			.error(function(err) {
-	 				console.log(err)
-	 			})
-	 	}
+		$scope.submit = function(data) {
+			$scope.$broadcast('show-errors-check-validity');
 
-	 	$scope.submitSetting = function(setting) {
-	 		var allTypes = $scope.settings.map(s => s.type.toLowerCase())
-	 		if (allTypes.includes(setting.type.toLowerCase())){
-	 			$scope.oops = 'Type is already being used, add a subtype in the view'
-	 			$scope.err = true
-	 		}
-	 		else{
-		 		$http.post('api/type-settings', setting)
-		 			.success(function(data) {
-		 				$scope.typeSettings = data
-		 				$state.reload()
-		 			})
-		 			.error(function(err) {
-		 				console.log(err)
-		 			})
-	 		}
-	 	}
+			if($scope.goalForm.$invalid){return;}
 
-	 	getSettings()
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('GoalsViewController', ['$scope', '$state', '$http', '$stateParams', 'arrToObject', 'submitFormat',
-	function($scope, $state, $http, $stateParams, arrToObject, submitFormat) {
+			var named = {'gsfName': data.name}
+			delete data.name
 
-		$scope.box = false;
-
-		$scope.tracker = 1
-
-		function getGoal() {
-			$http.get('api/goals/' + $stateParams.id)
-				.success(data => {
-					var holder = []
-
-					var keys = Object.keys(data.any)
-				    var values = Object.values(data.any)
-
-				    keys.forEach(function(key, i) {
-				    	holder.push({'key': key, 'value': values[i]})
-				    })
-				    var combinedFormatted = Object.assign(holder, {'gsfName': data.gsfName})
-	
-					$scope.goal = combinedFormatted
-				})
-				.error(err => {
-					console.log(err)
-				})
-		} 
-
-		getGoal()
-
-		$scope.editGoal = function() {
-			$scope.box = true
-		}
-
-		$scope.submit = function(goal) {
-
-			var name = {'gsfName': goal.gsfName}
-			delete goal.gsfName
-
-			var newGoal = submitFormat.kvPair(goal)
-
-			var addedGoals = submitFormat.addGoalFormat(goal)
-
-			updatedGoal = Object.assign(newGoal, arrToObject.create(addedGoals), name)
+			var data = arrToObject.create(Object.values(data))
 			
-			$http.put('api/goals/' + $stateParams.id, updatedGoal)	
-				.success(data => {
-					$state.reload()
-				})
-				.error(err => {	
-					console.log(err)
-				})
-		}
+			var dataJson = Object.assign(data, named)
 
-		$scope.cancel = function() {
-			$scope.box = false
-			$state.reload()
-		}
-
-		$scope.deleteGoal = function() {
-			swal({
-				title: "Are you sure?",
-				text: "You will not be able to recover this goal",
-				type: "warning",
-				showCancelButton: true,
-				confirmButtonColor: "#DD6B55",
-				confirmButtonText: "Yes, delete it!",
-				html: false
-			}).then(function() {
-				$http.delete('api/goals/' + $stateParams.id)
+			$http.post('api/goals', dataJson)
 				.success(function(data) {
-					$state.go('goals')
+					$state.reload()
 				})
 				.error(function(err) {
 					console.log(err)
 				})
-			}).catch(e => {})
+
 		}
 	}])
 
@@ -2531,6 +2420,122 @@ app.directive('suggestion', function(){
 	 	}
 
 	 	getUsers()
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('GoalsViewController', ['$scope', '$state', '$http', '$stateParams', 'arrToObject', 'submitFormat',
+	function($scope, $state, $http, $stateParams, arrToObject, submitFormat) {
+
+		$scope.box = false;
+
+		$scope.tracker = 1
+
+		function getGoal() {
+			$http.get('api/goals/' + $stateParams.id)
+				.success(data => {
+					var holder = []
+
+					var kvObj = submitFormat.generateKVObj(data.any)
+				
+					var combinedFormatted = Object.assign(kvObj, {'gsfName': data.gsfName})
+
+					$scope.goal = combinedFormatted
+				})
+				.error(err => {
+					console.log(err)
+				})
+		} 
+
+		getGoal()
+
+		$scope.editGoal = function() {
+			$scope.box = true
+		}
+
+		$scope.submit = function(goal) {
+
+			var name = {'gsfName': goal.gsfName}
+			delete goal.gsfName
+
+			var newGoal = submitFormat.kvPair(goal)
+
+			var addedGoals = submitFormat.addGoalFormat(goal)
+
+			updatedGoal = Object.assign(newGoal, arrToObject.create(addedGoals), name)
+			
+			$http.put('api/goals/' + $stateParams.id, updatedGoal)	
+				.success(data => {
+					$state.reload()
+				})
+				.error(err => {	
+					console.log(err)
+				})
+		}
+
+		$scope.cancel = function() {
+			$scope.box = false
+			$state.reload()
+		}
+
+		$scope.deleteGoal = function() {
+			swal({
+				title: "Are you sure?",
+				text: "You will not be able to recover this goal",
+				type: "warning",
+				showCancelButton: true,
+				confirmButtonColor: "#DD6B55",
+				confirmButtonText: "Yes, delete it!",
+				html: false
+			}).then(function() {
+				$http.delete('api/goals/' + $stateParams.id)
+				.success(function(data) {
+					$state.go('goals')
+				})
+				.error(function(err) {
+					console.log(err)
+				})
+			}).catch(e => {})
+		}
+	}])
+
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('SettingsTypeFormController', ['$scope', '$state', '$window', '$http',
+	 function($scope, $state, $window, $http) {
+
+	 	$scope.err = false
+
+	 	function getSettings(){
+	 		$http.get('api/type-settings')
+	 			.success(function(data){
+	 				$scope.settings = data
+	 			})
+	 			.error(function(err) {
+	 				console.log(err)
+	 			})
+	 	}
+
+	 	$scope.submitSetting = function(setting) {
+	 		var allTypes = $scope.settings.map(s => s.type.toLowerCase())
+	 		if (allTypes.includes(setting.type.toLowerCase())){
+	 			$scope.oops = 'Type is already being used, add a subtype in the view'
+	 			$scope.err = true
+	 		}
+	 		else{
+		 		$http.post('api/type-settings', setting)
+		 			.success(function(data) {
+		 				$scope.typeSettings = data
+		 				$state.reload()
+		 			})
+		 			.error(function(err) {
+		 				console.log(err)
+		 			})
+	 		}
+	 	}
+
+	 	getSettings()
 	}])
 }());
 (function() {

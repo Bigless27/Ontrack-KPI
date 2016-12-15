@@ -12,14 +12,10 @@
 				.success(data => {
 					var holder = []
 
-					var keys = Object.keys(data.any)
-				    var values = Object.values(data.any)
+					var kvObj = submitFormat.generateKVObj(data.any)
+				
+					var combinedFormatted = Object.assign(kvObj, {'gsfName': data.gsfName})
 
-				    keys.forEach(function(key, i) {
-				    	holder.push({'key': key, 'value': values[i]})
-				    })
-				    var combinedFormatted = Object.assign(holder, {'gsfName': data.gsfName})
-	
 					$scope.goal = combinedFormatted
 				})
 				.error(err => {

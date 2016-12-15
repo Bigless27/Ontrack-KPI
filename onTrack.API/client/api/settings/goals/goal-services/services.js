@@ -26,6 +26,15 @@
 				}
 			}
 
+			service.generateKVObj = function(obj) {
+				var keys = Object.keys(obj)
+				var values = Object.values(obj)
+
+				var solution = keys.map((x,i) => {return {'key': x, 'value': values[i]}})
+
+				return solution
+			}
+
 			service.nestedObj = function(obj) {
 				 return obj.filter(x => {return typeof(x) === 'object'})
 			}
