@@ -5,9 +5,20 @@
 			
 			$scope.teamId = $stateParams['id']
 
+
+
 			var today = new Date();
 			$scope.minDate = today.toISOString();
 
+			function getGoals(){
+				$http.get('api/goals')
+					.success(data => {
+						$scope.goals = data
+					})	
+					.error(err => {
+						console.log(err)
+					})
+			} 
 
 			function getSettings(){
 				$http.get('api/type-settings')

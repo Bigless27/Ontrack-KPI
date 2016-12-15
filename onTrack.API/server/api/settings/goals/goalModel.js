@@ -4,6 +4,7 @@ var _ = require('lodash');
 
 // you can pass any string into the goal schema
 var GoalSchema = new Schema({
+	gsfName: {type: String, required: true},
 	any: {}
 })
 

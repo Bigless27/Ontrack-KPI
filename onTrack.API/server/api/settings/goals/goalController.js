@@ -35,7 +35,10 @@ exports.post = function(req, res, next) { //yup
 
 	var newGoal = req.body;
 
-	var data = {any: newGoal}
+	var name = {'gsfName': newGoal.gsfName}
+	delete newGoal.gsfName
+
+	var data = Object.assign({any: newGoal}, name)
 
 	Goal.create(data) 
 		.then(function(goal) {

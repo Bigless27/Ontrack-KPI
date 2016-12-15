@@ -18,7 +18,9 @@
 				    keys.forEach(function(key, i) {
 				    	holder.push({'key': key, 'value': values[i]})
 				    })
-					$scope.goal = holder
+				    var combinedFormatted = Object.assign(holder, {'gsfName': data.gsfName})
+				    console.log(combinedFormatted)
+					$scope.goal = combinedFormatted
 				})
 				.error(err => {
 					console.log(err)

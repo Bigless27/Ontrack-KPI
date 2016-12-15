@@ -16,6 +16,13 @@
 			<div>
 				<table id = 'add-goal' class = 'table table-bordered'>
 					<tr>
+						<th>Name</th>
+						<td>
+							<span ng-if = '!box'>{{goal.gsfName}}</span>
+							<input ng-if = 'box' ng-model = 'goal.gsfName'>
+						</td>
+					</tr>
+					<tr>
 						<th>Key</th>
 						<th>Value</th>
 					</tr>
