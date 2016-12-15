@@ -848,6 +848,91 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('TypeSettingController', ['$scope', '$state', '$window', '$http', '$stateParams',
+	 function($scope, $state, $window, $http, $stateParams) {
+
+	 		$scope.deleteSetting = function() {
+				var token = $window.sessionStorage['jwt']
+				swal({
+				  title: "Are you sure?",
+				  text: "You will not be able to recover this Setting!",
+				  type: "warning",
+				  showCancelButton: true,
+				  confirmButtonColor: "#DD6B55",
+				  confirmButtonText: "Yes, delete it!",
+				  html: false
+				}).then(function(){
+					$http.delete('/api/type-settings/'+ $stateParams.id, {
+						headers: {
+							'Authorization': `Bearer ${token}`
+						}
+					})
+					.success(function(data){
+						$state.go('setting')
+					})
+					.error(function(err) {
+						console.log(err)
+					})
+				}).catch(function() {
+					return
+				})
+			}
+
+			$scope.userTags = false
+
+			$scope.toggleEdit = function() {
+				if($scope.userTags){
+					$scope.userTags = false
+				}
+				else{
+					$scope.userTags = true
+				}
+			}
+
+			$scope.updateType = function(type){
+				updateSetting(type, 'type')
+			}
+
+			$scope.updateSubtype = function(sub){
+				updateSetting(sub, 'subTypes')
+			}
+
+			function updateSetting(data, field){
+				var token = $window.sessionStorage['jwt']
+				$scope.setting[field] = data
+				$http.put('api/type-settings/' + $stateParams.id, $scope.setting, {
+					headers: {
+						'Authorization': `Bearer ${token}`
+					}
+				})
+				.success(function(data){
+					$state.reload()
+				})
+				.error(function(err) {
+					console.log(err)
+				})
+			}
+
+	 		function getSetting(){
+	 			$http.get('api/type-settings/' + $stateParams.id)
+	 				.success(function(data) {
+	 					$scope.noSubTypes = false
+	 					$scope.setting = data
+	 					if ($scope.setting.subTypes.length === 0){
+	 						$scope.noSubTypes = true
+	 					}
+	 				})
+	 				.error(function(err) {
+	 					console.log(err)
+	 				})
+	 		}
+
+	 		getSetting()
+
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('ProgressSettingController', ['$scope', '$state', '$window', '$http', '$stateParams',
 	 function($scope, $state, $window, $http, $stateParams) {
 
@@ -1086,91 +1171,6 @@
 
 	 	getSetting()
 	 	getUsers()
-
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('TypeSettingController', ['$scope', '$state', '$window', '$http', '$stateParams',
-	 function($scope, $state, $window, $http, $stateParams) {
-
-	 		$scope.deleteSetting = function() {
-				var token = $window.sessionStorage['jwt']
-				swal({
-				  title: "Are you sure?",
-				  text: "You will not be able to recover this Setting!",
-				  type: "warning",
-				  showCancelButton: true,
-				  confirmButtonColor: "#DD6B55",
-				  confirmButtonText: "Yes, delete it!",
-				  html: false
-				}).then(function(){
-					$http.delete('/api/type-settings/'+ $stateParams.id, {
-						headers: {
-							'Authorization': `Bearer ${token}`
-						}
-					})
-					.success(function(data){
-						$state.go('setting')
-					})
-					.error(function(err) {
-						console.log(err)
-					})
-				}).catch(function() {
-					return
-				})
-			}
-
-			$scope.userTags = false
-
-			$scope.toggleEdit = function() {
-				if($scope.userTags){
-					$scope.userTags = false
-				}
-				else{
-					$scope.userTags = true
-				}
-			}
-
-			$scope.updateType = function(type){
-				updateSetting(type, 'type')
-			}
-
-			$scope.updateSubtype = function(sub){
-				updateSetting(sub, 'subTypes')
-			}
-
-			function updateSetting(data, field){
-				var token = $window.sessionStorage['jwt']
-				$scope.setting[field] = data
-				$http.put('api/type-settings/' + $stateParams.id, $scope.setting, {
-					headers: {
-						'Authorization': `Bearer ${token}`
-					}
-				})
-				.success(function(data){
-					$state.reload()
-				})
-				.error(function(err) {
-					console.log(err)
-				})
-			}
-
-	 		function getSetting(){
-	 			$http.get('api/type-settings/' + $stateParams.id)
-	 				.success(function(data) {
-	 					$scope.noSubTypes = false
-	 					$scope.setting = data
-	 					if ($scope.setting.subTypes.length === 0){
-	 						$scope.noSubTypes = true
-	 					}
-	 				})
-	 				.error(function(err) {
-	 					console.log(err)
-	 				})
-	 		}
-
-	 		getSetting()
 
 	}])
 }());
@@ -2150,6 +2150,37 @@ app.directive('suggestion', function(){
 
 (function() {
 	angular.module('onTrack')
+	.controller('GoalsFormController', ['$scope', '$state', '$window', '$http', 'arrToObject',
+	function($scope, $state, $window, $http, arrToObject) {
+
+		$scope.tracker = 0;
+
+		$scope.submit = function(data) {
+			$scope.$broadcast('show-errors-check-validity');
+
+			if($scope.goalForm.$invalid){return;}
+
+			var named = {'gsfName': data.name}
+			delete data.name
+
+			var data = arrToObject.create(Object.values(data))
+			
+			var dataJson = Object.assign(data, named)
+
+			$http.post('api/goals', dataJson)
+				.success(function(data) {
+					$state.reload()
+				})
+				.error(function(err) {
+					console.log(err)
+				})
+
+		}
+	}])
+
+}());
+(function() {
+	angular.module('onTrack')
 		.directive('addGoal', function() {
 			return{
 				restrict: 'E',
@@ -2281,34 +2312,41 @@ app.directive('suggestion', function(){
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('GoalsFormController', ['$scope', '$state', '$window', '$http', 'arrToObject',
-	function($scope, $state, $window, $http, arrToObject) {
+	.controller('SettingsTypeFormController', ['$scope', '$state', '$window', '$http',
+	 function($scope, $state, $window, $http) {
 
-		$scope.tracker = 0;
+	 	$scope.err = false
 
-		$scope.submit = function(data) {
-			$scope.$broadcast('show-errors-check-validity');
+	 	function getSettings(){
+	 		$http.get('api/type-settings')
+	 			.success(function(data){
+	 				$scope.settings = data
+	 			})
+	 			.error(function(err) {
+	 				console.log(err)
+	 			})
+	 	}
 
-			if($scope.goalForm.$invalid){return;}
+	 	$scope.submitSetting = function(setting) {
+	 		var allTypes = $scope.settings.map(s => s.type.toLowerCase())
+	 		if (allTypes.includes(setting.type.toLowerCase())){
+	 			$scope.oops = 'Type is already being used, add a subtype in the view'
+	 			$scope.err = true
+	 		}
+	 		else{
+		 		$http.post('api/type-settings', setting)
+		 			.success(function(data) {
+		 				$scope.typeSettings = data
+		 				$state.reload()
+		 			})
+		 			.error(function(err) {
+		 				console.log(err)
+		 			})
+	 		}
+	 	}
 
-			var named = {'gsfName': data.name}
-			delete data.name
-
-			var data = arrToObject.create(Object.values(data))
-			
-			var dataJson = Object.assign(data, named)
-
-			$http.post('api/goals', dataJson)
-				.success(function(data) {
-					$state.reload()
-				})
-				.error(function(err) {
-					console.log(err)
-				})
-
-		}
+	 	getSettings()
 	}])
-
 }());
 (function() {
 	angular.module('onTrack')
@@ -2331,7 +2369,7 @@ app.directive('suggestion', function(){
 				    	holder.push({'key': key, 'value': values[i]})
 				    })
 				    var combinedFormatted = Object.assign(holder, {'gsfName': data.gsfName})
-				    console.log(combinedFormatted)
+	
 					$scope.goal = combinedFormatted
 				})
 				.error(err => {
@@ -2347,11 +2385,14 @@ app.directive('suggestion', function(){
 
 		$scope.submit = function(goal) {
 
+			var name = {'gsfName': goal.gsfName}
+			delete goal.gsfName
+
 			var newGoal = submitFormat.kvPair(goal)
 
 			var addedGoals = submitFormat.addGoalFormat(goal)
 
-			updatedGoal = Object.assign(newGoal, arrToObject.create(addedGoals))
+			updatedGoal = Object.assign(newGoal, arrToObject.create(addedGoals), name)
 			
 			$http.put('api/goals/' + $stateParams.id, updatedGoal)	
 				.success(data => {
@@ -2490,44 +2531,6 @@ app.directive('suggestion', function(){
 	 	}
 
 	 	getUsers()
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('SettingsTypeFormController', ['$scope', '$state', '$window', '$http',
-	 function($scope, $state, $window, $http) {
-
-	 	$scope.err = false
-
-	 	function getSettings(){
-	 		$http.get('api/type-settings')
-	 			.success(function(data){
-	 				$scope.settings = data
-	 			})
-	 			.error(function(err) {
-	 				console.log(err)
-	 			})
-	 	}
-
-	 	$scope.submitSetting = function(setting) {
-	 		var allTypes = $scope.settings.map(s => s.type.toLowerCase())
-	 		if (allTypes.includes(setting.type.toLowerCase())){
-	 			$scope.oops = 'Type is already being used, add a subtype in the view'
-	 			$scope.err = true
-	 		}
-	 		else{
-		 		$http.post('api/type-settings', setting)
-		 			.success(function(data) {
-		 				$scope.typeSettings = data
-		 				$state.reload()
-		 			})
-		 			.error(function(err) {
-		 				console.log(err)
-		 			})
-	 		}
-	 	}
-
-	 	getSettings()
 	}])
 }());
 (function() {

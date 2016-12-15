@@ -53,6 +53,9 @@ exports.put = function(req, res, next) {// works
 
 	var goal = req.goal
 
+	goal.gsfName = req.body.gsfName
+	delete req.body.gsfName
+
 	goal.any = req.body
 
 	goal.save(function(err, saved) {

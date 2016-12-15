@@ -19,7 +19,7 @@
 				    	holder.push({'key': key, 'value': values[i]})
 				    })
 				    var combinedFormatted = Object.assign(holder, {'gsfName': data.gsfName})
-				    console.log(combinedFormatted)
+	
 					$scope.goal = combinedFormatted
 				})
 				.error(err => {
@@ -35,11 +35,14 @@
 
 		$scope.submit = function(goal) {
 
+			var name = {'gsfName': goal.gsfName}
+			delete goal.gsfName
+
 			var newGoal = submitFormat.kvPair(goal)
 
 			var addedGoals = submitFormat.addGoalFormat(goal)
 
-			updatedGoal = Object.assign(newGoal, arrToObject.create(addedGoals))
+			updatedGoal = Object.assign(newGoal, arrToObject.create(addedGoals), name)
 			
 			$http.put('api/goals/' + $stateParams.id, updatedGoal)	
 				.success(data => {
