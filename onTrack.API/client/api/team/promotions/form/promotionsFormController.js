@@ -14,11 +14,13 @@
 				$http.get('api/goals')
 					.success(data => {
 						$scope.goals = data
+						console.log(data)
 					})	
 					.error(err => {
 						console.log(err)
 					})
 			} 
+			getGoals()
 
 			function getSettings(){
 				$http.get('api/type-settings')

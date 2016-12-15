@@ -10,8 +10,6 @@
 		function getGoal() {
 			$http.get('api/goals/' + $stateParams.id)
 				.success(data => {
-					var holder = []
-
 					var kvObj = submitFormat.generateKVObj(data.any)
 				
 					var combinedFormatted = Object.assign(kvObj, {'gsfName': data.gsfName})
