@@ -13,6 +13,32 @@
 			return service
 		})
 
+		.factory('submitFormat', function() {
+			var service = {}
+
+			service.addGoalFormat = function(obj) {
+				var goalArr = Object.values(obj).filter(x => {return typeof(x) === 'string'})
+				if (goalArr) {
+					return goalArr
+				}
+				else{
+					return {}
+				}
+			}
+
+			service.nestedObj = function(obj) {
+				 return obj.filter(x => {return typeof(x) === 'object'})
+			}
+
+			service.kvPair = function(obj) {
+				service.newGoal = {}
+				obj.forEach(x => { return service.newGoal[x.key] = x.value})
+				return service.newGoal
+			}
+
+			return service
+		})
+
 		// .factory('scopeService', function() {
 
 		// 	var model = {}

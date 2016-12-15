@@ -1,7 +1,7 @@
 (function() {
 	angular.module('onTrack')
-	.controller('GoalsViewController', ['$scope', '$state', '$http', '$stateParams', 'arrToObject',
-	function($scope, $state, $http, $stateParams, arrToObject) {
+	.controller('GoalsViewController', ['$scope', '$state', '$http', '$stateParams', 'arrToObject', 'submitFormat',
+	function($scope, $state, $http, $stateParams, arrToObject, submitFormat) {
 
 		$scope.box = false;
 
@@ -32,30 +32,14 @@
 		}
 
 		$scope.submit = function(goal) {
-			var holder = []
-			var goalArr = Object.values(goal).filter(x => { return typeof(x) === 'string'})
-			var newGoal = {}
-			var updatedGoal = null
-			if (goalArr.length) {
-				var nestedObj = goal.filter(x => {return typeof(x) === 'object'})
 
-				nestedObj.forEach(x => {
-					newGoal[x.key] = x.value
-				})
+			var newGoal = submitFormat.kvPair(goal)
 
-				updatedGoal = Object.assign(newGoal,arrToObject.create(goalArr))
-			}
-			else{	
-				goal.forEach(x => {
-					newGoal[x.key] = x.value
-				})
-			}
+			var addedGoals = submitFormat.addGoalFormat(goal)
 
-			if(updatedGoal) {
-				newGoal = updatedGoal
-			}
+			updatedGoal = Object.assign(newGoal, arrToObject.create(addedGoals))
 			
-			$http.put('api/goals/' + $stateParams.id, newGoal)	
+			$http.put('api/goals/' + $stateParams.id, updatedGoal)	
 				.success(data => {
 					$state.reload()
 				})
