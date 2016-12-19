@@ -1,5 +1,5 @@
 <form name ="promotionForm" role = "form" data-toggle = 'validator'>
-		<h1>Promotion</h1>
+		<h1>Promotion Create Form</h1>
 
 		<div class = "form-group" show-errors>
 			<label for = "name" class = 'control-label'>Name</label>
@@ -37,13 +37,37 @@
             <p class="help-block" ng-if= "promotionForm.completionValue.$error.min">Value must greater than 0</p>
 		</div>
 
-		<div class = "form-group">
-			<label for = 'goals' class = 'control-label'>Goals</label>
+
+		<div class = 'container'>
+			<div class = 'col-sm-6 col-offset-2' ui-view></div>
+		</div>
+		<span 
+			ng-show = 'goalShow'
+			class = 'btn btn-default'
+			ng-click = 'hideGoalPreview()'
+			>
+			Close
+		</span>
+		<div class = 'form-group' style = 'width: 400px;'>
+			<label for = 'goal' class = 'control-label'>Goal</label>
 			<div class = 'input-group'>
 				<span class = 'input-group-addon'><i class = 'glyphicon glyphicon-user'></i></span>
-				<input class = 'form-control'>
+				<span>
+				<span style = 'width: 200px'>
+					<multiple-autocomplete
+						ng-click = 'showGoalPreview()'
+						ng-model = 'promotion.goals'
+						object-property = 'gsfName'
+						suggestions-arr = 'goals'
+						before-select-item = 'beforeSelectItem'
+						>
+					</multiple-autocomplete>
+				</span>
 			</div>
 		</div>
+
+
+
 
 		<div class = "form-group" show-errors>
 			<label for = "description" class = 'control-label'>Description</label>
@@ -108,5 +132,5 @@
 
 		<button type = 'button' ng-click = "submitPromotion(promotion)" class = "btn btn-primary">Submit</button>
 
-		<div class = 'btn btn-default' ui-sref = 'main'>Close</div>
+		<div class = 'btn btn-default' ui-sref = 'main'>Back</div>
 </form>

@@ -40,10 +40,15 @@
 						templateUrl: 'client/api/users/form/user-form-partial.html',
 						controller: 'UserFormController'
 					})
-					.state('main.promotionCreate', {
-						url: '/team/:id',
+					.state('promotionCreate', {
+						url: '/team/promotionCreate',
 						templateUrl: 'client/api/team/promotions/form/promotions-form-partial.html',
 						controller: 'PromotionFormController'
+					})
+					.state('promotionCreate.goalPreview', {
+						url: '/team/promotionCreate/goalView',
+						templateUrl: 'client/api/team/promotions/goalPreviewView/goal-preview-view.html',
+						controller: 'GoalPreviewController'
 					})
 					.state('team', {
 						url: '/team/:id',

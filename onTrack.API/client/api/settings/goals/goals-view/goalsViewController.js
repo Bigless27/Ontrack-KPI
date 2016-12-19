@@ -15,6 +15,7 @@
 					var combinedFormatted = Object.assign(kvObj, {'gsfName': data.gsfName})
 
 					$scope.goal = combinedFormatted
+
 				})
 				.error(err => {
 					console.log(err)

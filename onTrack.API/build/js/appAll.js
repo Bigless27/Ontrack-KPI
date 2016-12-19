@@ -40,10 +40,15 @@
 						templateUrl: 'client/api/users/form/user-form-partial.html',
 						controller: 'UserFormController'
 					})
-					.state('main.promotionCreate', {
-						url: '/team/:id',
+					.state('promotionCreate', {
+						url: '/team/promotionCreate',
 						templateUrl: 'client/api/team/promotions/form/promotions-form-partial.html',
 						controller: 'PromotionFormController'
+					})
+					.state('promotionCreate.goalPreview', {
+						url: '/team/promotionCreate/goalView',
+						templateUrl: 'client/api/team/promotions/goalPreviewView/goal-preview-view.html',
+						controller: 'GoalPreviewController'
 					})
 					.state('team', {
 						url: '/team/:id',
@@ -2336,6 +2341,7 @@ app.directive('suggestion', function(){
 					var combinedFormatted = Object.assign(kvObj, {'gsfName': data.gsfName})
 
 					$scope.goal = combinedFormatted
+
 				})
 				.error(err => {
 					console.log(err)
@@ -2538,12 +2544,12 @@ app.directive('suggestion', function(){
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('PromotionFormController', ['$scope', '$state', '$http', '$window', '$stateParams',
-		function($scope, $state, $http, $window, $stateParams) {
+	.controller('PromotionFormController', ['$scope', '$state', '$http', '$window', '$stateParams', 'goalPreview',
+		function($scope, $state, $http, $window, $stateParams, goalPreview) {
 			
 			$scope.teamId = $stateParams['id']
 
-
+			$scope.showGoal = false
 
 			var today = new Date();
 			$scope.minDate = today.toISOString();
@@ -2552,7 +2558,6 @@ app.directive('suggestion', function(){
 				$http.get('api/goals')
 					.success(data => {
 						$scope.goals = data
-						console.log(data)
 					})	
 					.error(err => {
 						console.log(err)
@@ -2560,50 +2565,19 @@ app.directive('suggestion', function(){
 			} 
 			getGoals()
 
-			function getSettings(){
-				$http.get('api/type-settings')
-					.success(function(data){
-						$scope.settings = data
-						setTypes()
-					})
-					.error(function(err) {
-						console.log(err)
-					})
+			$scope.showGoalPreview = function() {
+				$scope.goalShow = true
 			}
 
-			function setTypes() {
-				var unUniqueTypes = $scope.settings.map(function(set){
-					return set.type
-				})
-				$scope.typeList = [...new Set(unUniqueTypes)]
+			$scope.hideGoalPreview = function() {
+				$scope.goalShow = false
+				$state.go('promotionCreate')
 			}
 
-			$scope.subTypesList = [];
-
-			$scope.typeChecker = false
-
-			$scope.checkType = function(){
-				if(!$scope.promotion.type) {
-					$scope.typeChecker = true
-				}
+			$scope.beforeSelectItem = function(item) {
+				$state.go('promotionCreate.goalPreview')
+				goalPreview.updateValue(item._id)
 			}
-
-			$scope.setSubtypes = function() {
-				$scope.subTypesList = []
-				if(!$scope.promotion.type) return
-				else{
-					$scope.typeChecker = false
-					$scope.settings.forEach(function(set){
-						if(set.type === $scope.promotion.type){
-							set.subTypes.forEach(function(sub){
-								$scope.subTypesList.push({name: sub.text})
-							})
-						}
-					})
-				}
-			}
-
-			getSettings()
 
 			
 			$scope.submitPromotion = function(promotion) {
@@ -2624,5 +2598,42 @@ app.directive('suggestion', function(){
 					console.log(err)
 				})
 			}
+	}])
+	.service('goalPreview', function() {
+		var model = {}
+
+		return {
+			getValue: function() {
+				return model.value
+			},
+			updateValue: function(value) {
+				model.value = value;
+			}
+		}
+	})
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('GoalPreviewController', ['$scope', '$http', '$state', 'goalPreview', 'submitFormat',
+		function($scope, $http, $state, goalPreview, submitFormat) {
+
+			$scope.$watch(function() {return goalPreview.getValue()}, function(newValue, oldValue) {
+				!newValue ? $state.go('promotionCreate') : getGoal(newValue)
+			})
+
+			function getGoal(id) {
+				$http.get(`/api/goals/${id}`)
+					.success(data => {
+						var kvObj = submitFormat.generateKVObj(data.any)
+						
+						$scope.goal = Object.assign(kvObj, {'gsfName': data.gsfName})
+					})
+					.error(err => {
+						console.log(err)
+					})
+			}
+
+			getGoal(goalPreview.getValue())
+			
 	}])
 }());
