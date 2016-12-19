@@ -1,8 +1,8 @@
 var Promotion = require('./promotionModel');
-var Progress = require('../../users/progress/progressModel')
-var Team = require('../teamModel')
+var Progress = require('../users/progress/progressModel')
+var Team = require('../teams/teamModel')
 var _ = require('lodash');
-var customizer = require('../../updateCustomizer')
+var customizer = require('../updateCustomizer')
 
 exports.params = function(req, res, next, id) {
 	Promotion.findById(id)
@@ -39,24 +39,32 @@ exports.getOne = function(req, res, next) {
 exports.post = function(req, res, next) { //yup
 
 	var newpromotion = req.body;
+
+	console.log(newpromotion)
 	
-	newpromotion.teamId = req.team._id
-
 	Promotion.create(newpromotion)
-		.then(function(promotion) {
-			var updatedTeam = req.team
-			updatedTeam.promotions.push(promotion._id);
+		.then(function(team) {
+			res.json(team)
+		}, function(err) {
+			next(err);
+		})
 
-			updatedTeam.save(function(err, saved) {
-				if(err) {
-					next(err)
-				} else {
-					res.json(promotion)
-				}
-			})
-	}, function(err) {
-	  next(err);
-	});
+	// Promotion.create(newpromotion)
+	// 	.then(function(promotion) {
+	// 		res.json(newpromotion)
+	// 		// var updatedTeam = req.team
+	// 		// updatedTeam.promotions.push(promotion._id);
+
+	// 		// updatedTeam.save(function(err, saved) {
+	// 		// 	if(err) {
+	// 		// 		next(err)
+	// 		// 	} else {
+	// 		// 		res.json(promotion)
+	// 		// 	}
+	// 		})
+	// }, function(err) {
+	//   next(err);
+	// });
 
 };
 

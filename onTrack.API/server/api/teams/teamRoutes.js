@@ -3,12 +3,6 @@ var controller = require('./teamController');
 var auth = require('../../auth/auth')
 var checkUser = [auth.decodeToken(), auth.getFreshUser()];
 
-
-//nested
-// router.use('/:id/settings', require('./settings/settingsRoutes'));
-router.use('/:id/promotions', require('./promotions/promotionRoutes'));
-//
-
 router.param('id', controller.params);
 
 router.route('/')

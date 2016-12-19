@@ -19,6 +19,7 @@
 						console.log(err)
 					})
 			} 
+
 			getGoals()
 
 			$scope.showGoalPreview = function() {
@@ -42,7 +43,9 @@
 				if($scope.promotionForm.$invalid){return;}
 				var token = $window.sessionStorage['jwt']
 
-				$http.post('api/teams/' + $stateParams['id'] + '/promotions', promotion ,{
+				promotion.goals = promotion.goals.map(x => x._id)
+
+				$http.post('api/promotions', promotion ,{
 					headers: {
 						"Authorization": `Bearer ${token}`
 					}

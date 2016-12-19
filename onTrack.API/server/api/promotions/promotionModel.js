@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var _ = require('lodash');
-var Team = require('../teamModel')
+var Team = require('../teams/teamModel')
 
 
 var PromotionSchema = new Schema({
@@ -19,29 +19,25 @@ var PromotionSchema = new Schema({
 
 
 PromotionSchema.post('remove', function(doc) {
-	Team.findById(doc.teamId)
-		.then(function(team) {
-			if(!team) {
-				console.log('association not deleted')
-			} else {
-				var update = team
+	// Team.findById(doc.teamId)
+	// 	.then(function(team) {
+	// 		if(!team) {
+	// 			console.log('association not deleted')
+	// 		} else {
+	// 			var update = team
 				
-				update.promotions.splice(update.promotions.indexOf(doc._id),1);
-				_.merge(team, update)
+	// 			update.promotions.splice(update.promotions.indexOf(doc._id),1);
+	// 			_.merge(team, update)
 
-				team.save(function(err, saved) {
-					if (err) {
-						console.log('not saved')
-					} else {
-						console.log('association deleted and saved')
-					}
-				})
-			}
-		})
-
+	// 			team.save(function(err, saved) {
+	// 				if (err) {
+	// 					console.log('not saved')
+	// 				} else {
+	// 					console.log('association deleted and saved')
+	// 				}
+	// 			})
+	// 		}
+	// 	})
 })
-
-
-
 
 module.exports = mongoose.model('promotion', PromotionSchema)
