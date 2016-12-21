@@ -150,6 +150,160 @@
 			  editableOptions.theme = 'bs3'; // bootstrap3 theme. Can be also 'bs2', 'default'
 			})
 }());
+angular.module("templates", []).run(["$templateCache", function($templateCache) {$templateCache.put("multiple-autocomplete-tpl.html","<div class=\"ng-ms form-item-container\">\r\n    <ul class=\"list-inline\">\r\n        <li ng-repeat=\"item in modelArr\">\r\n			<span ng-if=\"objectProperty == undefined || objectProperty == \'\'\">\r\n				{{item}} <span class=\"remove\" ng-click=\"removeAddedValues(item)\">\r\n                <i class=\"glyphicon glyphicon-remove\"></i></span>&nbsp;\r\n			</span>\r\n            <span ng-if=\"objectProperty != undefined && objectProperty != \'\'\">\r\n				{{item[objectProperty]}} <span class=\"remove\" ng-click=\"removeAddedValues(item)\">\r\n                <i class=\"glyphicon glyphicon-remove\"></i></span>&nbsp;\r\n			</span>\r\n        </li>\r\n        <li>\r\n            <input name=\"{{name}}\" ng-model=\"inputValue\" placeholder=\"\" ng-keydown=\"keyParser($event)\"\r\n                   err-msg-required=\"{{errMsgRequired}}\"\r\n                   ng-focus=\"onFocus()\" ng-blur=\"onBlur()\" ng-required=\"!modelArr.length && isRequired\"\r\n                    ng-change=\"onChange()\">\r\n        </li>\r\n    </ul>\r\n</div>\r\n<div class=\"autocomplete-list\" ng-show=\"isFocused || isHover\" ng-mouseenter=\"onMouseEnter()\" ng-mouseleave=\"onMouseLeave()\">\r\n    <ul ng-if=\"objectProperty == undefined || objectProperty == \'\'\">\r\n        <li ng-class=\"{\'autocomplete-active\' : selectedItemIndex == $index}\"\r\n            ng-repeat=\"suggestion in suggestionsArr | filter : inputValue | filter : alreadyAddedValues\"\r\n            ng-click=\"onSuggestedItemsClick(suggestion)\" ng-mouseenter=\"mouseEnterOnItem($index)\">\r\n            {{suggestion}}\r\n        </li>\r\n    </ul>\r\n    <ul ng-if=\"objectProperty != undefined && objectProperty != \'\'\">\r\n        <li ng-class=\"{\'autocomplete-active\' : selectedItemIndex == $index}\"\r\n            ng-repeat=\"suggestion in suggestionsArr | filter : inputValue | filter : alreadyAddedValues\"\r\n            ng-click=\"onSuggestedItemsClick(suggestion)\" ng-mouseenter=\"mouseEnterOnItem($index)\">\r\n            {{suggestion[objectProperty]}}\r\n        </li>\r\n    </ul>\r\n</div>");}]);
+(function () {
+    //declare all modules and their dependencies.
+    angular.module('multipleSelect', [
+        'templates'
+    ]).config(function () {
+
+    });
+}
+)();
+(function () {
+
+    angular.module('multipleSelect').directive('multipleAutocomplete', [
+        '$filter',
+        '$http',
+        function ($filter, $http) {
+            return {
+                restrict: 'EA',
+                scope : {
+                    suggestionsArr : '=?',
+                    modelArr : '=ngModel',
+                    apiUrl : '@',
+                    beforeSelectItem : '=?',
+                    afterSelectItem : '=?',
+                    beforeRemoveItem : '=?',
+                    afterRemoveItem : '=?'
+                },
+                templateUrl: 'multiple-autocomplete-tpl.html',
+                link : function(scope, element, attr){
+                    scope.objectProperty = attr.objectProperty;
+                    scope.selectedItemIndex = 0;
+                    scope.name = attr.name;
+                    scope.isRequired = attr.required;
+                    scope.errMsgRequired = attr.errMsgRequired;
+                    scope.isHover = false;
+                    scope.isFocused = false;
+
+                    if(scope.modelArr == null || scope.modelArr == ""){
+                        scope.modelArr = [];
+                    }
+                    scope.onFocus = function () {
+                        scope.mouseEnterOnItem(0)
+                        scope.isFocused = true
+                    };
+
+                    scope.onMouseEnter = function () {
+                        scope.isHover = true
+                    };
+
+                    scope.onMouseLeave = function () {
+                        scope.isHover = false;
+                    };
+
+                    scope.onBlur = function () {
+                        scope.isFocused=false;
+                    };
+
+                    scope.onChange = function () {
+                        scope.selectedItemIndex = 0;
+                    };
+
+                    scope.keyParser = function ($event) {
+                        var keys = {
+                            38: 'up',
+                            40: 'down',
+                            8 : 'backspace',
+                            13: 'enter',
+                            9 : 'tab',
+                            27: 'esc'
+                        };
+                        var key = keys[$event.keyCode];
+                        if(key == 'backspace' && scope.inputValue == ""){
+                            if(scope.modelArr.length != 0){
+                                scope.removeAddedValues(scope.modelArr[scope.modelArr.length-1]);
+                                //scope.modelArr.pop();
+                            }
+                        }
+                        else if(key == 'down'){
+                            var filteredSuggestionArr = $filter('filter')(scope.suggestionsArr, scope.inputValue);
+                            filteredSuggestionArr = $filter('filter')(filteredSuggestionArr, scope.alreadyAddedValues);
+                            if(scope.selectedItemIndex < filteredSuggestionArr.length -1)
+                                scope.selectedItemIndex++;
+                        }
+                        else if(key == 'up' && scope.selectedItemIndex > 0){
+                            scope.selectedItemIndex--;
+                        }
+                        else if(key == 'esc'){
+                            scope.isHover = false;
+                            scope.isFocused=false;
+                        }
+                        else if(key == 'enter'){
+                            var filteredSuggestionArr = $filter('filter')(scope.suggestionsArr, scope.inputValue);
+                            filteredSuggestionArr = $filter('filter')(filteredSuggestionArr, scope.alreadyAddedValues);
+                            if(scope.selectedItemIndex < filteredSuggestionArr.length)
+                                scope.onSuggestedItemsClick(filteredSuggestionArr[scope.selectedItemIndex]);
+                        }
+                    };
+
+                    scope.onSuggestedItemsClick = function (selectedValue) {
+                        if(scope.beforeSelectItem && typeof(scope.beforeSelectItem) == 'function')
+                            scope.beforeSelectItem(selectedValue);
+
+                        scope.modelArr.push(selectedValue);
+
+                        if(scope.afterSelectItem && typeof(scope.afterSelectItem) == 'function')
+                            scope.afterSelectItem(selectedValue);
+                        scope.inputValue = "";    
+
+                    };
+
+                    var isDuplicate = function (arr, item) {
+                        var duplicate = false;
+                        if(arr == null || arr == "")
+                            return duplicate;
+
+                        for(var i=0;i<arr.length;i++){
+                            duplicate = angular.equals(arr[i], item);
+                            if(duplicate)
+                                break;
+                        }
+                        return duplicate;
+                    };
+
+                    scope.alreadyAddedValues = function (item) {
+                        var isAdded = true;
+                        isAdded = !isDuplicate(scope.modelArr, item);
+                        return isAdded;
+                    };
+
+                    scope.removeAddedValues = function (item) {
+                        if(scope.modelArr != null && scope.modelArr != "") {
+                            var itemIndex = scope.modelArr.indexOf(item);
+                            if (itemIndex != -1) {
+                                if(scope.beforeRemoveItem && typeof(scope.beforeRemoveItem) == 'function')
+                                    scope.beforeRemoveItem(item);
+
+                                scope.modelArr.splice(itemIndex, 1);
+
+                                if(scope.afterRemoveItem && typeof(scope.afterRemoveItem) == 'function')
+                                    scope.afterRemoveItem(item);
+                            }
+                        }
+                    };
+
+                    scope.mouseEnterOnItem = function (index) {
+                        scope.selectedItemIndex = index;
+
+                        scope.$emit('highlight', scope.suggestionsArr[index])
+                    };
+                }
+            };
+        }
+    ]);
+})();
 (function() {
   var showErrorsModule;
 
@@ -303,6 +457,40 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('MainController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+
+			function getTeams() {
+				$http.get('api/teams')
+					.success(function(data) {
+						$scope.teams = data
+					})
+					.error(function(err) {
+						console.log(err);
+					})
+			}
+
+			function getUsers() {
+				$http.get('api/users')
+					.success(function(data) {
+						$scope.users = data
+					})
+					.error(function(err) {
+						console.log(err)
+					})
+			}
+
+			$scope.logout = function() {
+				$window.sessionStorage.clear()
+				$state.go('login')
+			}
+		
+			getUsers() 
+			getTeams()
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('MainSettingsController', ['$scope', '$state', '$window', '$http',
 	 function($scope, $state, $window, $http) {
 
@@ -364,62 +552,6 @@
 	 	loadTypeSettings()
 	 	loadProgressSettings()
 
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('MainController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
-
-			function getTeams() {
-				$http.get('api/teams')
-					.success(function(data) {
-						$scope.teams = data
-					})
-					.error(function(err) {
-						console.log(err);
-					})
-			}
-
-			function getUsers() {
-				$http.get('api/users')
-					.success(function(data) {
-						$scope.users = data
-					})
-					.error(function(err) {
-						console.log(err)
-					})
-			}
-
-			$scope.logout = function() {
-				$window.sessionStorage.clear()
-				$state.go('login')
-			}
-		
-			getUsers() 
-			getTeams()
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
-		$scope.signUp = function(user) {
-			$scope.$broadcast('show-errors-check-validity')
-
-			if ($scope.userForm.$invalid){return;}
-			$scope.err = false
-			$http.post('api/users', user)
-				.success(function(data) {
-					$scope.err = false
-					$window.sessionStorage.jwt = data['token']
-					$state.go('main')
-				})
-				.error(function(error) {
-					$scope.err = true
-					$scope.errMessage = error.message
-				})
-		}
 	}])
 }());
 (function() {
@@ -578,6 +710,28 @@
 			getTeam()
 
 		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+		$scope.signUp = function(user) {
+			$scope.$broadcast('show-errors-check-validity')
+
+			if ($scope.userForm.$invalid){return;}
+			$scope.err = false
+			$http.post('api/users', user)
+				.success(function(data) {
+					$scope.err = false
+					$window.sessionStorage.jwt = data['token']
+					$state.go('main')
+				})
+				.error(function(error) {
+					$scope.err = true
+					$scope.errMessage = error.message
+				})
+		}
 	}])
 }());
 (function() {
@@ -853,6 +1007,91 @@
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('TypeSettingController', ['$scope', '$state', '$window', '$http', '$stateParams',
+	 function($scope, $state, $window, $http, $stateParams) {
+
+	 		$scope.deleteSetting = function() {
+				var token = $window.sessionStorage['jwt']
+				swal({
+				  title: "Are you sure?",
+				  text: "You will not be able to recover this Setting!",
+				  type: "warning",
+				  showCancelButton: true,
+				  confirmButtonColor: "#DD6B55",
+				  confirmButtonText: "Yes, delete it!",
+				  html: false
+				}).then(function(){
+					$http.delete('/api/type-settings/'+ $stateParams.id, {
+						headers: {
+							'Authorization': `Bearer ${token}`
+						}
+					})
+					.success(function(data){
+						$state.go('setting')
+					})
+					.error(function(err) {
+						console.log(err)
+					})
+				}).catch(function() {
+					return
+				})
+			}
+
+			$scope.userTags = false
+
+			$scope.toggleEdit = function() {
+				if($scope.userTags){
+					$scope.userTags = false
+				}
+				else{
+					$scope.userTags = true
+				}
+			}
+
+			$scope.updateType = function(type){
+				updateSetting(type, 'type')
+			}
+
+			$scope.updateSubtype = function(sub){
+				updateSetting(sub, 'subTypes')
+			}
+
+			function updateSetting(data, field){
+				var token = $window.sessionStorage['jwt']
+				$scope.setting[field] = data
+				$http.put('api/type-settings/' + $stateParams.id, $scope.setting, {
+					headers: {
+						'Authorization': `Bearer ${token}`
+					}
+				})
+				.success(function(data){
+					$state.reload()
+				})
+				.error(function(err) {
+					console.log(err)
+				})
+			}
+
+	 		function getSetting(){
+	 			$http.get('api/type-settings/' + $stateParams.id)
+	 				.success(function(data) {
+	 					$scope.noSubTypes = false
+	 					$scope.setting = data
+	 					if ($scope.setting.subTypes.length === 0){
+	 						$scope.noSubTypes = true
+	 					}
+	 				})
+	 				.error(function(err) {
+	 					console.log(err)
+	 				})
+	 		}
+
+	 		getSetting()
+
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('ProgressSettingController', ['$scope', '$state', '$window', '$http', '$stateParams',
 	 function($scope, $state, $window, $http, $stateParams) {
 
@@ -1091,91 +1330,6 @@
 
 	 	getSetting()
 	 	getUsers()
-
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('TypeSettingController', ['$scope', '$state', '$window', '$http', '$stateParams',
-	 function($scope, $state, $window, $http, $stateParams) {
-
-	 		$scope.deleteSetting = function() {
-				var token = $window.sessionStorage['jwt']
-				swal({
-				  title: "Are you sure?",
-				  text: "You will not be able to recover this Setting!",
-				  type: "warning",
-				  showCancelButton: true,
-				  confirmButtonColor: "#DD6B55",
-				  confirmButtonText: "Yes, delete it!",
-				  html: false
-				}).then(function(){
-					$http.delete('/api/type-settings/'+ $stateParams.id, {
-						headers: {
-							'Authorization': `Bearer ${token}`
-						}
-					})
-					.success(function(data){
-						$state.go('setting')
-					})
-					.error(function(err) {
-						console.log(err)
-					})
-				}).catch(function() {
-					return
-				})
-			}
-
-			$scope.userTags = false
-
-			$scope.toggleEdit = function() {
-				if($scope.userTags){
-					$scope.userTags = false
-				}
-				else{
-					$scope.userTags = true
-				}
-			}
-
-			$scope.updateType = function(type){
-				updateSetting(type, 'type')
-			}
-
-			$scope.updateSubtype = function(sub){
-				updateSetting(sub, 'subTypes')
-			}
-
-			function updateSetting(data, field){
-				var token = $window.sessionStorage['jwt']
-				$scope.setting[field] = data
-				$http.put('api/type-settings/' + $stateParams.id, $scope.setting, {
-					headers: {
-						'Authorization': `Bearer ${token}`
-					}
-				})
-				.success(function(data){
-					$state.reload()
-				})
-				.error(function(err) {
-					console.log(err)
-				})
-			}
-
-	 		function getSetting(){
-	 			$http.get('api/type-settings/' + $stateParams.id)
-	 				.success(function(data) {
-	 					$scope.noSubTypes = false
-	 					$scope.setting = data
-	 					if ($scope.setting.subTypes.length === 0){
-	 						$scope.noSubTypes = true
-	 					}
-	 				})
-	 				.error(function(err) {
-	 					console.log(err)
-	 				})
-	 		}
-
-	 		getSetting()
 
 	}])
 }());
@@ -2403,6 +2557,44 @@ app.directive('suggestion', function(){
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('SettingsTypeFormController', ['$scope', '$state', '$window', '$http',
+	 function($scope, $state, $window, $http) {
+
+	 	$scope.err = false
+
+	 	function getSettings(){
+	 		$http.get('api/type-settings')
+	 			.success(function(data){
+	 				$scope.settings = data
+	 			})
+	 			.error(function(err) {
+	 				console.log(err)
+	 			})
+	 	}
+
+	 	$scope.submitSetting = function(setting) {
+	 		var allTypes = $scope.settings.map(s => s.type.toLowerCase())
+	 		if (allTypes.includes(setting.type.toLowerCase())){
+	 			$scope.oops = 'Type is already being used, add a subtype in the view'
+	 			$scope.err = true
+	 		}
+	 		else{
+		 		$http.post('api/type-settings', setting)
+		 			.success(function(data) {
+		 				$scope.typeSettings = data
+		 				$state.reload()
+		 			})
+		 			.error(function(err) {
+		 				console.log(err)
+		 			})
+	 		}
+	 	}
+
+	 	getSettings()
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('SettingsProgressFormController', ['$scope', '$state', '$window', '$http',
 	 function($scope, $state, $window, $http) {
 
@@ -2506,46 +2698,8 @@ app.directive('suggestion', function(){
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('SettingsTypeFormController', ['$scope', '$state', '$window', '$http',
-	 function($scope, $state, $window, $http) {
-
-	 	$scope.err = false
-
-	 	function getSettings(){
-	 		$http.get('api/type-settings')
-	 			.success(function(data){
-	 				$scope.settings = data
-	 			})
-	 			.error(function(err) {
-	 				console.log(err)
-	 			})
-	 	}
-
-	 	$scope.submitSetting = function(setting) {
-	 		var allTypes = $scope.settings.map(s => s.type.toLowerCase())
-	 		if (allTypes.includes(setting.type.toLowerCase())){
-	 			$scope.oops = 'Type is already being used, add a subtype in the view'
-	 			$scope.err = true
-	 		}
-	 		else{
-		 		$http.post('api/type-settings', setting)
-		 			.success(function(data) {
-		 				$scope.typeSettings = data
-		 				$state.reload()
-		 			})
-		 			.error(function(err) {
-		 				console.log(err)
-		 			})
-	 		}
-	 	}
-
-	 	getSettings()
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('PromotionFormController', ['$scope', '$state', '$http', '$window', '$stateParams', 'goalPreview',
-		function($scope, $state, $http, $window, $stateParams, goalPreview) {
+	.controller('PromotionFormController', ['$scope', '$state', '$http', '$window', '$stateParams', 'goalPreview', '$rootScope',
+		function($scope, $state, $http, $window, $stateParams, goalPreview, $rootScope) {
 			
 			$scope.teamId = $stateParams['id']
 
@@ -2566,20 +2720,25 @@ app.directive('suggestion', function(){
 
 			getGoals()
 
-			$scope.showGoalPreview = function() {
+			// $scope.$on('highlight', function(data) {
+			// 	$state.go('promotionCreate.goalPreview')
+			// 	goalPreview.updateValue(data)
+			// })
+
+			$scope.$on('highlight', function(event, data) {
+				$state.go('promotionCreate.goalPreview')
 				$scope.goalShow = true
-			}
+				goalPreview.updateValue(data._id)
+			})
 
 			$scope.hideGoalPreview = function() {
 				$scope.goalShow = false
 				$state.go('promotionCreate')
 			}
 
-			$scope.beforeSelectItem = function(item) {
-				$state.go('promotionCreate.goalPreview')
-				goalPreview.updateValue(item._id)
+			$scope.afterSelectItem = function(item) {
+				
 			}
-
 			
 			$scope.submitPromotion = function(promotion) {
 				$scope.$broadcast('show-errors-check-validity');
@@ -2606,6 +2765,7 @@ app.directive('suggestion', function(){
 		var model = {}
 
 		return {
+
 			getValue: function() {
 				return model.value
 			},

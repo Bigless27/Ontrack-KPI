@@ -7,7 +7,6 @@
   },
   "dependencies": {
     "angular": "*",
-    "angular-multiple-select": "*",
     "angular-sanitize": "*",
     "angular-ui-router": "^0.3.2",
     "bcrypt": "*",

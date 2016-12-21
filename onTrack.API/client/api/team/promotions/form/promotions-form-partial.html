@@ -55,11 +55,10 @@
 				<span>
 				<span style = 'width: 200px'>
 					<multiple-autocomplete
-						ng-click = 'showGoalPreview()'
 						ng-model = 'promotion.goals'
 						object-property = 'gsfName'
 						suggestions-arr = 'goals'
-						before-select-item = 'beforeSelectItem'
+						after-select-item = 'beforeSelectItem'
 						>
 					</multiple-autocomplete>
 				</span>

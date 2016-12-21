@@ -1,7 +1,7 @@
 (function() {
 	angular.module('onTrack')
-	.controller('PromotionFormController', ['$scope', '$state', '$http', '$window', '$stateParams', 'goalPreview',
-		function($scope, $state, $http, $window, $stateParams, goalPreview) {
+	.controller('PromotionFormController', ['$scope', '$state', '$http', '$window', '$stateParams', 'goalPreview', '$rootScope',
+		function($scope, $state, $http, $window, $stateParams, goalPreview, $rootScope) {
 			
 			$scope.teamId = $stateParams['id']
 
@@ -22,20 +22,25 @@
 
 			getGoals()
 
-			$scope.showGoalPreview = function() {
+			// $scope.$on('highlight', function(data) {
+			// 	$state.go('promotionCreate.goalPreview')
+			// 	goalPreview.updateValue(data)
+			// })
+
+			$scope.$on('highlight', function(event, data) {
+				$state.go('promotionCreate.goalPreview')
 				$scope.goalShow = true
-			}
+				goalPreview.updateValue(data._id)
+			})
 
 			$scope.hideGoalPreview = function() {
 				$scope.goalShow = false
 				$state.go('promotionCreate')
 			}
 
-			$scope.beforeSelectItem = function(item) {
-				$state.go('promotionCreate.goalPreview')
-				goalPreview.updateValue(item._id)
+			$scope.afterSelectItem = function(item) {
+				
 			}
-
 			
 			$scope.submitPromotion = function(promotion) {
 				$scope.$broadcast('show-errors-check-validity');
@@ -62,6 +67,7 @@
 		var model = {}
 
 		return {
+
 			getValue: function() {
 				return model.value
 			},
