@@ -39,8 +39,6 @@ exports.getOne = function(req, res, next) {
 exports.post = function(req, res, next) { //yup
 
 	var newpromotion = req.body;
-
-	console.log(newpromotion)
 	
 	Promotion.create(newpromotion)
 		.then(function(team) {
@@ -48,24 +46,6 @@ exports.post = function(req, res, next) { //yup
 		}, function(err) {
 			next(err);
 		})
-
-	// Promotion.create(newpromotion)
-	// 	.then(function(promotion) {
-	// 		res.json(newpromotion)
-	// 		// var updatedTeam = req.team
-	// 		// updatedTeam.promotions.push(promotion._id);
-
-	// 		// updatedTeam.save(function(err, saved) {
-	// 		// 	if(err) {
-	// 		// 		next(err)
-	// 		// 	} else {
-	// 		// 		res.json(promotion)
-	// 		// 	}
-	// 		})
-	// }, function(err) {
-	//   next(err);
-	// });
-
 };
 
 exports.put = function(req, res, next) {// works
