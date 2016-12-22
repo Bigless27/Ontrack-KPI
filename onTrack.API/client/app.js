@@ -87,31 +87,7 @@
 						templateUrl: 'client/api/settings/settings-partial.html',
 						controller: 'MainSettingsController'
 					})
-					.state('setting.settingTypeCreate',{
-						url: '/createType',
-						templateUrl: 'client/api/settings/type-setting/type-form/settings-type-form-partial.html',
-						controller: 'SettingsTypeFormController'
-					})
-					.state('setting.settingProgressCreate', {
-						url: '/createProgress',
-						templateUrl: 'client/api/settings/progress-setting/progress-form/settings-progress-form-partial.html',
-						controller: 'SettingsProgressFormController'
-					})
-					.state('settingProgress', {
-						url: '/progressSetting/:id',
-						templateUrl: 'client/api/settings/progress-setting/progress-setting-partial.html',
-						controller: "ProgressSettingController"
-					})
-					.state('settingType', {
-						url: '/typeSetting/:id', 
-						templateUrl: 'client/api/settings/type-setting/type-setting-partial.html',
-						controller: 'TypeSettingController'
-					})
-					.state('progress', {
-						url: '/users/:id/progress/:progressId',
-						templateUrl: 'client/api/users/progress/progress-partial.html',
-						controller: 'ProgressController'
-					})
+					
 					.state('goals', {
 						url: '/goals',
 						templateUrl: 'client/api/settings/goals/goals-partial.html',
