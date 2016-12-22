@@ -104,8 +104,9 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 
                         if(scope.afterSelectItem && typeof(scope.afterSelectItem) == 'function')
                             scope.afterSelectItem(selectedValue);
-                        scope.inputValue = "";    
+                        scope.inputValue = ""; 
 
+                        // var newRenderIndex = scope.suggestionsArr.findIndex(sug => {return scope.alreadyAddedValues(sug)})
                     };
 
                     var isDuplicate = function (arr, item) {
@@ -145,7 +146,9 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
                     scope.mouseEnterOnItem = function (index) {
                         scope.selectedItemIndex = index;
 
-                        scope.$emit('highlight', scope.suggestionsArr[index])
+                        var filterdSuggestionsArr = scope.suggestionsArr.filter(sug => {return scope.alreadyAddedValues(sug)})
+
+                        scope.$emit('highlight', filterdSuggestionsArr[index])
                     };
                 }
             };
