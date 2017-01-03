@@ -22,6 +22,18 @@
 
 			getGoals()
 
+			function getRewards() {
+				$http.get('api/rewards')
+					.success(data => {
+						$scope.rewards = data
+					})
+					.error(err => {
+						console.log(err)
+					})
+			}
+
+			getRewards()
+
 			// $scope.$on('highlight', function(data) {
 			// 	$state.go('promotionCreate.goalPreview')
 			// 	goalPreview.updateValue(data)
