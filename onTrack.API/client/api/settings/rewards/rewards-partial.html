@@ -7,8 +7,15 @@
 			<div class = 'btn btn-success' ui-sref = 'setting'>Back</div>
 		</div>
 		<div ui-view></div>
+		<hr>
 		<div class = 'row'>
-			<table>
+			<table class = 'table table-bordered' ng-repeat = 'reward in rewards'>
+				<tr>
+					<th>Name</th>
+				</tr>
+				<tr>
+					<td><a ui-sref = 'rewardsView({id: reward._id})'>{{reward.name}}</a></td>
+				</tr>
 			</table>
 		</div>
 	</div>

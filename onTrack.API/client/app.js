@@ -112,6 +112,11 @@
 						templateUrl: 'client/api/settings/rewards/rewards-form/rewards-form-partial.html',
 						controller: 'RewardsFromController'
 					})
+					.state('rewardsView', {
+						url: '/rewards/:id',
+						templateUrl: 'client/api/settings/rewards/rewards-view/rewards-view-partial.html',
+						controller: 'RewardsViewController'
+					})
 
 					// .state('activity', {
 					// 	url: '/activity',

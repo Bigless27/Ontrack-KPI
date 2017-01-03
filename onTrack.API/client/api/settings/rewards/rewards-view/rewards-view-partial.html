@@ -1,1 +1,50 @@
-rewards-view-partial.html
+<div class = 'container'>
+	<div class = 'col-md-8 col-md-offset-2'>	
+		<table class = 'table table-striped'>
+			<tr>
+				<th>Name</th>
+				<td><span
+						editable-text = 'reward.name'
+						e-form = 'name'
+						onbeforesave = 'updateName($data)'
+						>
+						{{reward.name}}
+					</span>
+				</td>
+				<td>
+					<a href ="" ng-click = 'name.$show()' ng-hide = 'name.$visable'>Edit</a>
+				</td>
+			</tr>
+			<tr>
+				<th>Type</th>
+				<td><span
+						editable-text = 'reward.type'
+						e-form = 'type'
+						onbeforesave = 'updateType($data)'
+						>
+						{{reward.type}}
+					</span>
+				</td>
+				<td>
+					<a href ="" ng-click = 'type.$show()' ng-hide = 'type.$visable'>Edit</a>
+				</td>
+			</tr>
+			<tr>
+				<th>Description</th>
+				<td><span
+						editable-textarea = 'reward.description'
+						e-rows = '5'
+						e-cols = '30'
+						e-form = 'description'
+						onbeforesave = 'updateDescription($data)'
+						>
+						{{reward.description}}
+					</span>
+				</td>
+				<td>
+					<a href ="" ng-click = 'description.$show()' ng-hide = 'description.$visable'>Edit</a>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>

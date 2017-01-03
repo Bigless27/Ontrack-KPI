@@ -1,6 +1,6 @@
 var Rewards = require('./rewardsModel')
 var _ = require('lodash')
-var cutsomizer = require('../../updateCustomizer')
+var customizer = require('../../updateCustomizer')
 
 exports.params = function(req, res, next, id) {
 	Rewards.findById(id)
@@ -44,6 +44,8 @@ exports.put = function(req, res, next) {// works
 
 exports.post = function(req, res, next) { //works
 	var newReward = req.body;
+
+	console.log(newReward)
 
 	Rewards.create(newReward)
 		.then(function(reward) {
