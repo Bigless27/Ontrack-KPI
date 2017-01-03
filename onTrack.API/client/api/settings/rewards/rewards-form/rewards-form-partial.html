@@ -1,19 +1,34 @@
 <div id = 'edit'>
-	<h1>Create A Goal</h1>
+	<h1>Create A Reward</h1>
 
-	<add-button></add-button>
-	<form name = 'goalForm'>
+	<form name = 'rewardForm'>
 		<div class = 'form-group' show-errors>
 			<label for = 'name' class = 'control-label'>Name</label>
 			<div class = 'input-group'>
 				<span class = 'input-group-addon'><i class = 'glyphicon glyphicon-user'></i></span>
-				<input name = 'name' type = 'text' ng-model = 'goal.name' class = 'form-control' placeholder = 'enter a name' required>
+				<input name = 'name' type = 'text' ng-model = 'reward.name' class = 'form-control' placeholder = 'enter a name' required>
 			</div>
-			<p class = 'help-block' ng-if = 'goalForm.name.$error.required'></p>
+				<p class = 'help-block' ng-if = 'rewardForm.name.$error.required'>Name is required</p>
+		</div>
+		<div class = 'form-group' show-errors>
+			<label for = 'type' class = 'control-label'>Type</label>
+			<div class = 'input-group'>
+				<span class = 'input-group-addon'><i class = 'glyphicon glyphicon-user'></i></span>
+				<input name = 'type' ng-model = 'reward.type' class = 'form-control' placeholder = 'enter a type' required>
+			</div>
+				<p class = 'help-block' ng-if = 'rewardForm.type.$error.required'>Type is required</p>
+		</div>
+		<div class = 'form-group' show-errors>
+			<label for = 'description' class = 'control-label'>Description</label>
+			<div class = 'input-group'>
+				<span class = 'input-group-addon'><i class = 'glyphicon glyphicon-user'></i></span>
+				<textarea name = 'description' ng-model = 'reward.description' class = 'form-control' placeholder = 'enter a description' required>
+				</textarea>
+			</div>
+				<p class = 'help-block' ng-if = 'rewardForm.description.$error.required'>Description is required</p>
 		</div>
 	</form>
-	<div id = 'space-for-buttons'></div>
-	<remove-one></remove-one>
-	<div class = 'btn btn-default' style = 'margin: 5px 0px' ui-sref = 'goals'>Close</div>
-	<div class = 'btn btn-default' ng-click = 'submit(goal)' style = 'display:block; width:100px; margin-top:10px;'>Submit</div>
+	
+	<div class = 'btn btn-default' style = 'margin: 5px 0px' ui-sref = 'rewards'>Close</div>
+	<div class = 'btn btn-default' ng-click = 'submit(reward)' style = 'display:block; width:100px; margin-top:10px;'>Submit</div>
 </div>
