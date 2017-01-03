@@ -87,7 +87,6 @@
 						templateUrl: 'client/api/settings/settings-partial.html',
 						controller: 'MainSettingsController'
 					})
-					
 					.state('goals', {
 						url: '/goals',
 						templateUrl: 'client/api/settings/goals/goals-partial.html',
@@ -102,6 +101,16 @@
 						url: '/goals/:id',
 						templateUrl: 'client/api/settings/goals/goals-view/goals-view-partial.html',
 						controller: 'GoalsViewController'
+					})
+					.state('rewards', {
+						url: '/rewards',
+						templateUrl: 'client/api/settings/rewards/rewards-partial.html',
+						controller: 'RewardsController'
+					})
+					.state('rewards.create', {
+						url: '/create',
+						templateUrl: 'client/api/settings/rewards/rewards-form/rewards-form-partial.html',
+						controller: 'RewardsFromController'
 					})
 
 					// .state('activity', {

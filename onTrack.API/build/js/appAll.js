@@ -87,31 +87,6 @@
 						templateUrl: 'client/api/settings/settings-partial.html',
 						controller: 'MainSettingsController'
 					})
-					.state('setting.settingTypeCreate',{
-						url: '/createType',
-						templateUrl: 'client/api/settings/type-setting/type-form/settings-type-form-partial.html',
-						controller: 'SettingsTypeFormController'
-					})
-					.state('setting.settingProgressCreate', {
-						url: '/createProgress',
-						templateUrl: 'client/api/settings/progress-setting/progress-form/settings-progress-form-partial.html',
-						controller: 'SettingsProgressFormController'
-					})
-					.state('settingProgress', {
-						url: '/progressSetting/:id',
-						templateUrl: 'client/api/settings/progress-setting/progress-setting-partial.html',
-						controller: "ProgressSettingController"
-					})
-					.state('settingType', {
-						url: '/typeSetting/:id', 
-						templateUrl: 'client/api/settings/type-setting/type-setting-partial.html',
-						controller: 'TypeSettingController'
-					})
-					.state('progress', {
-						url: '/users/:id/progress/:progressId',
-						templateUrl: 'client/api/users/progress/progress-partial.html',
-						controller: 'ProgressController'
-					})
 					.state('goals', {
 						url: '/goals',
 						templateUrl: 'client/api/settings/goals/goals-partial.html',
@@ -126,6 +101,16 @@
 						url: '/goals/:id',
 						templateUrl: 'client/api/settings/goals/goals-view/goals-view-partial.html',
 						controller: 'GoalsViewController'
+					})
+					.state('rewards', {
+						url: '/rewards',
+						templateUrl: 'client/api/settings/rewards/rewards-partial.html',
+						controller: 'RewardsController'
+					})
+					.state('rewards.create', {
+						url: '/create',
+						templateUrl: 'client/api/settings/rewards/rewards-form/rewards-form-partial.html',
+						controller: 'RewardsFromController'
 					})
 
 					// .state('activity', {
@@ -992,6 +977,13 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('RewardsController', ['$scope', '$http', '$state', 
+		function($scope, $http, $state) {
+
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('GoalsController', ['$scope', '$state', '$window', '$http', '$stateParams',
 	function($scope, $state, $window, $http, $stateParams) {
 		function getGoals() {
@@ -1007,334 +999,6 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 		getGoals()
 	}])
 
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('ProgressSettingController', ['$scope', '$state', '$window', '$http', '$stateParams',
-	 function($scope, $state, $window, $http, $stateParams) {
-
-	 	$scope.deleteSetting = function() {
-				var token = $window.sessionStorage['jwt']
-				swal({
-				  title: "Are you sure?",
-				  text: "You will not be able to recover this Setting!",
-				  type: "warning",
-				  showCancelButton: true,
-				  confirmButtonColor: "#DD6B55",
-				  confirmButtonText: "Yes, delete it!",
-				  html: false
-				}).then(function(){
-					$http.delete('/api/progress-settings/'+ $stateParams.id, {
-						headers: {
-							'Authorization': `Bearer ${token}`
-						}
-					})
-					.success(function(data){
-						$state.go('setting')
-					})
-					.error(function(err) {
-						console.log(err)
-					})
-				}).catch(function() {
-					return
-				})
-			}
-
-		$scope.updateName = function(name) {
-			if (name === ''){
-				return 'Name is required'
-			}
-			updateSetting(name, 'name')
-		}
-
-		$scope.updateType = function(data) {
-			if (data === ''){
-				return 'Type is required'
-			}
-			else if (($scope.setting.type == data)) {
-				return 
-			}
-			return updateSetting(data, 'type')
-		}
-
-		$scope.updateSubtypes = function(data) {
-			return updateSetting(data, 'subTypes')
-		}
-
-		$scope.updateUsers = function(users) {
-			//This can definetly be made better. Needs to update users and delete users promotions
-			if($scope.setting.users.length > users.length){
-				var editRefs = $scope.setting.users.filter(function(user){
-					if (!users.map(x => x.userId).includes(user.userId)) {
-						return user
-					}
-				})
-				editRefs.forEach(function(r) {
-					var token = $window.sessionStorage['jwt']
-					var newUser = $scope.users.find(x => x._id === r.userId) //find the actually user from the subdocument of prog setting
-					var delIndex = newUser.settingProgress.indexOf($scope.setting._id)
-					newUser.settingProgress.splice(delIndex, 1)
-					$http.get('api/users/' + r.userId)
-						.success(function(userProgEdit) {
-							var progId = userProgEdit.progress.filter(function(prog) {
-									if(prog.settingId === $scope.setting._id) {
-										return prog
-									}
-							}).map(x => x._id)
-
-							var delProgIndex = newUser.progress.indexOf(progId[0])
-							newUser.progress.splice(delProgIndex, 1)
-
-							$http.put('api/users/' + r.userId, newUser, {
-								headers: {
-									'Authorization': `Bearer ${token}`
-								}
-							})
-							.success(function(data){
-								$http.delete('api/users/' + data._id + '/progress/' + progId[0])
-									.success(function(data) {
-										$state.reload()
-									})
-									.error(function(err) {
-										console.log(err)
-									})
-							})
-							.error(function(err) {
-								console.log(err)
-							})
-						})
-						.error(function(err) {
-							console.log(err)
-						})
-				})
-			}
-			updateSetting(users, 'users')
-		}
-
-
-		function updateSetting(data, field){
-			$scope.setting[field] = data
-			$http.put('api/progress-settings/' + $stateParams.id, $scope.setting)
-				.success(function(data){
-					if (field == 'type') {
-						$scope.updateSubtypes([])
-					}
-					else {
-						$state.reload()
-					}
-				})
-				.error(function(err) {
-					console.log(err)
-				})
-		}
-
-		function getUsers() {
-			$http.get('api/users')
-				.success(function(data) {
-					$scope.users = data
-					sortUsers(data)
-				})
-				.error(function(err) {
-					console.log(err)
-				})
-		}
-
-		function sortUsers(users){
-			var sub = []
-			users.forEach(function(user) {
-				sub.push({userId: user._id, fullName: user.firstName + ' ' + user.lastName, email: user.email,
-							firstName: user.firstName, lastName: user.lastName})
-			})	
-			$scope.optionsList = sub 
-		}
-
-		function sortInitUsers(set){
-			var initMS = []
-			set.users.forEach(function(user) {
-				initMS.push({userId: user.userId, fullName: user.firstName + ' ' + user.lastName,
-							firstName: user.firstName, lastName: user.lastName})
-			})
-			$scope.initUsers = initMS
-		}
-
-		$scope.userTags = false
-		$scope.subTags = false
-
-		$scope.toggleEditSubs = function() {
-			if ($scope.subTags) {
-				$scope.subTags = false
-			}
-			else {
-				$scope.subTags = true
-			}
-		}
-
-		$scope.toggleEditUsers = function() {
-			if ($scope.userTags) {
-				$scope.userTags = false
-			}
-			else {
-				$scope.userTags = true
-			}
-		}
-
-		//have type show on edit click
-		$(document).on('click','#progress-type-edit-button', function(){
-			$('#progress-type-edit')[0].click()
-		} )
-
-	 	function getSetting(){
-	 		$http.get('api/progress-settings/' + $stateParams.id)
-	 			.success(function(data){
-	 				$http.get('api/type-settings')
-	 					.success(function(set) {
-	 						$scope.noUsers = false
-	 						$scope.noSubs = false
-			 				$scope.setting = data
-			 				if ($scope.setting.users.length === 0){
-			 					$scope.noUsers = true
-			 				}
-			 				else if($scope.setting.subTypes.length === 0){
-			 					$scope.noSubs = true
-			 				}
-			 				$scope.typeSetting = set
-			 				getUniqueTypes()
-				 			getUniqueSubtypes()
-			 				sortInitUsers(data)
-
-	 					})
-	 					.error(function(err) {
-	 						console.log(err)
-	 					})
-
-	 			})
-	 			.error(function(err) {
-	 				console.log(err)
-	 			})
-	 	}
-
-	 	function getUniqueTypes() {
-	 		var typeCopy = $scope.typeSetting
-	 		var unUniqueTypes = typeCopy.map(function(x){
-				return x.type
-			})
-			$scope.typeList = [...new Set(unUniqueTypes)]
-	 	}
-
-	 	function getUniqueSubtypes() {
-	 		var unSetSubtypes = $scope.typeSetting.filter(function(set) {
-	 			return set.type === $scope.setting.type
-	 		})
-	 		var subTypeStrings = $scope.setting.subTypes.map(x => x.name)
-	 		var subArr = []
-	 		unSetSubtypes[0].subTypes.forEach(function(sub) {
-	 				if (!subTypeStrings.includes(sub.text)){
-		 				subArr.push({name: sub.text})
-	 				}
-	 		})
-	 		$scope.subTypes = subArr
-	 	}
-
-	 	$scope.afterRemoveItem = function(item) {
-		 		var subStrings = $scope.subTypes.map(x => x.name)
-		 		if (subStrings.includes(item.name)) {
-		 			return
-		 		}
-		 		else{
-			 		$scope.subTypes.push({name: item.name})
-		 		}
-		 }
-
-
-	 	getSetting()
-	 	getUsers()
-
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('TypeSettingController', ['$scope', '$state', '$window', '$http', '$stateParams',
-	 function($scope, $state, $window, $http, $stateParams) {
-
-	 		$scope.deleteSetting = function() {
-				var token = $window.sessionStorage['jwt']
-				swal({
-				  title: "Are you sure?",
-				  text: "You will not be able to recover this Setting!",
-				  type: "warning",
-				  showCancelButton: true,
-				  confirmButtonColor: "#DD6B55",
-				  confirmButtonText: "Yes, delete it!",
-				  html: false
-				}).then(function(){
-					$http.delete('/api/type-settings/'+ $stateParams.id, {
-						headers: {
-							'Authorization': `Bearer ${token}`
-						}
-					})
-					.success(function(data){
-						$state.go('setting')
-					})
-					.error(function(err) {
-						console.log(err)
-					})
-				}).catch(function() {
-					return
-				})
-			}
-
-			$scope.userTags = false
-
-			$scope.toggleEdit = function() {
-				if($scope.userTags){
-					$scope.userTags = false
-				}
-				else{
-					$scope.userTags = true
-				}
-			}
-
-			$scope.updateType = function(type){
-				updateSetting(type, 'type')
-			}
-
-			$scope.updateSubtype = function(sub){
-				updateSetting(sub, 'subTypes')
-			}
-
-			function updateSetting(data, field){
-				var token = $window.sessionStorage['jwt']
-				$scope.setting[field] = data
-				$http.put('api/type-settings/' + $stateParams.id, $scope.setting, {
-					headers: {
-						'Authorization': `Bearer ${token}`
-					}
-				})
-				.success(function(data){
-					$state.reload()
-				})
-				.error(function(err) {
-					console.log(err)
-				})
-			}
-
-	 		function getSetting(){
-	 			$http.get('api/type-settings/' + $stateParams.id)
-	 				.success(function(data) {
-	 					$scope.noSubTypes = false
-	 					$scope.setting = data
-	 					if ($scope.setting.subTypes.length === 0){
-	 						$scope.noSubTypes = true
-	 					}
-	 				})
-	 				.error(function(err) {
-	 					console.log(err)
-	 				})
-	 		}
-
-	 		getSetting()
-
-	}])
 }());
 (function() {
 	angular.module('onTrack')
@@ -2312,35 +1976,12 @@ app.directive('suggestion', function(){
 
 (function() {
 	angular.module('onTrack')
-	.controller('GoalsFormController', ['$scope', '$state', '$window', '$http', 'arrToObject',
-	function($scope, $state, $window, $http, arrToObject) {
-
-		$scope.tracker = 0;
-
-		$scope.submit = function(data) {
-			$scope.$broadcast('show-errors-check-validity');
-
-			if($scope.goalForm.$invalid){return;}
-
-			var named = {'gsfName': data.name}
-			delete data.name
-
-			var data = arrToObject.create(Object.values(data))
+	.controller('RewardsFromController', ['$scope', '$http', '$state',
+		function($scope, $http, $state) {
 			
-			var dataJson = Object.assign(data, named)
+		}])
+})
 
-			$http.post('api/goals', dataJson)
-				.success(function(data) {
-					$state.reload()
-				})
-				.error(function(err) {
-					console.log(err)
-				})
-
-		}
-	}])
-
-}());
 (function() {
 	angular.module('onTrack')
 		.directive('addGoal', function() {
@@ -2483,6 +2124,37 @@ app.directive('suggestion', function(){
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('GoalsFormController', ['$scope', '$state', '$window', '$http', 'arrToObject',
+	function($scope, $state, $window, $http, arrToObject) {
+
+		$scope.tracker = 0;
+
+		$scope.submit = function(data) {
+			$scope.$broadcast('show-errors-check-validity');
+
+			if($scope.goalForm.$invalid){return;}
+
+			var named = {'gsfName': data.name}
+			delete data.name
+
+			var data = arrToObject.create(Object.values(data))
+			
+			var dataJson = Object.assign(data, named)
+
+			$http.post('api/goals', dataJson)
+				.success(function(data) {
+					$state.reload()
+				})
+				.error(function(err) {
+					console.log(err)
+				})
+
+		}
+	}])
+
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('GoalsViewController', ['$scope', '$state', '$http', '$stateParams', 'arrToObject', 'submitFormat',
 	function($scope, $state, $http, $stateParams, arrToObject, submitFormat) {
 
@@ -2557,147 +2229,6 @@ app.directive('suggestion', function(){
 		}
 	}])
 
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('SettingsProgressFormController', ['$scope', '$state', '$window', '$http',
-	 function($scope, $state, $window, $http) {
-
-
-	 	$scope.selectAll = function(){
-	 		if($scope.setting.users.length < $scope.optionsList.length){
-		 		$scope.setting.users = $scope.optionsList
-		 		$('#user-select-button')[0].innerHTML = 'Clear'
-	 		}
-	 		else{
-	 			$scope.setting.users = []
-	 			$('#user-select-button')[0].innerHTML = 'Select All'
-	 		}
-	 	}
-
-	 	$scope.subTypesList = []
-
-	 	$scope.optionsList = []
-
-	 	function getUsers(){
-			$http.get('/api/users')
-				.success(function(users) {
-					users.forEach(function(user){
-						if(user){
-							$scope.optionsList.push(
-									{ fullName: user.firstName + ' ' + user.lastName, email: user.email,
-										userId: user._id, firstName: user.firstName,
-										lastName: user.lastName
-									}
-								)
-						}
-						else{
-							$scope.optionsList = [{name: 'No users'}]
-						}
-					})
-				})
-				.error(function(err) {
-					console.log(err);
-				})
-		}
-
-		function getSettings() {
-			$http.get('api/type-settings')
-				.success(function(data) {
-					$scope.typeSettings = data
-					setTypes()
-				})
-				.error(function(err){
-					console.log(err)
-				})
-		}
-
-		//for select button
-		function setTypes() {
-			var settingsCopy = $scope.typeSettings
-			$scope.types = [...new Set(settingsCopy.map(function(set){
-				return set.type
-			}))]
-
-		}
-
-
-		getSettings()
-
-		$scope.typeChecker = false
-
-		$scope.checkType = function() {
-			if(!$scope.setting.type) {
-				$scope.typeChecker = true
-			}
-		}
-
-		$scope.setSubtypes = function(){
-			$scope.subTypesList = []
-			if(!$scope.setting.type) return
-			else{
-					$scope.typeChecker = false
-					$scope.typeSettings.forEach(function(set){
-					if(set.type === $scope.setting.type){
-						set.subTypes.forEach(function(sub){
-							$scope.subTypesList.push({name: sub.text})
-						})
-					}
-				})
-			}
-		}
-
-	 	$scope.submitProgressSetting = function(setting) {
-	 		$http.post('/api/progress-settings', setting)
-	 			.success(function(data) {
-	 				$scope.progressSettings = data
-	 				$state.reload()
-	 			})
-	 			.error(function(err) {
-	 				console.log(err)
-	 			})
-	 	}
-
-	 	getUsers()
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('SettingsTypeFormController', ['$scope', '$state', '$window', '$http',
-	 function($scope, $state, $window, $http) {
-
-	 	$scope.err = false
-
-	 	function getSettings(){
-	 		$http.get('api/type-settings')
-	 			.success(function(data){
-	 				$scope.settings = data
-	 			})
-	 			.error(function(err) {
-	 				console.log(err)
-	 			})
-	 	}
-
-	 	$scope.submitSetting = function(setting) {
-	 		var allTypes = $scope.settings.map(s => s.type.toLowerCase())
-	 		if (allTypes.includes(setting.type.toLowerCase())){
-	 			$scope.oops = 'Type is already being used, add a subtype in the view'
-	 			$scope.err = true
-	 		}
-	 		else{
-		 		$http.post('api/type-settings', setting)
-		 			.success(function(data) {
-		 				$scope.typeSettings = data
-		 				$state.reload()
-		 			})
-		 			.error(function(err) {
-		 				console.log(err)
-		 			})
-	 		}
-	 	}
-
-	 	getSettings()
-	}])
 }());
 (function() {
 	angular.module('onTrack')

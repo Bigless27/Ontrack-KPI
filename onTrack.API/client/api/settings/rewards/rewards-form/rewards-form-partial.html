@@ -1,1 +1,19 @@
-rewards-form-partial.html
+<div id = 'edit'>
+	<h1>Create A Goal</h1>
+
+	<add-button></add-button>
+	<form name = 'goalForm'>
+		<div class = 'form-group' show-errors>
+			<label for = 'name' class = 'control-label'>Name</label>
+			<div class = 'input-group'>
+				<span class = 'input-group-addon'><i class = 'glyphicon glyphicon-user'></i></span>
+				<input name = 'name' type = 'text' ng-model = 'goal.name' class = 'form-control' placeholder = 'enter a name' required>
+			</div>
+			<p class = 'help-block' ng-if = 'goalForm.name.$error.required'></p>
+		</div>
+	</form>
+	<div id = 'space-for-buttons'></div>
+	<remove-one></remove-one>
+	<div class = 'btn btn-default' style = 'margin: 5px 0px' ui-sref = 'goals'>Close</div>
+	<div class = 'btn btn-default' ng-click = 'submit(goal)' style = 'display:block; width:100px; margin-top:10px;'>Submit</div>
+</div>
