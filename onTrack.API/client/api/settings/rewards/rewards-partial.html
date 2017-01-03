@@ -12,9 +12,19 @@
 			<table class = 'table table-bordered' ng-repeat = 'reward in rewards'>
 				<tr>
 					<th>Name</th>
+					<th>
+						Type
+						<a style = 'float: right' ui-sref = 'rewardsView({id: reward._id})'>View</a>
+
+					</th>
 				</tr>
 				<tr>
-					<td><a ui-sref = 'rewardsView({id: reward._id})'>{{reward.name}}</a></td>
+					<td>	
+						{{reward.name}}
+					</td>
+					<td>
+						{{reward.type}}
+					</td>
 				</tr>
 			</table>
 		</div>
