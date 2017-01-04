@@ -4,7 +4,7 @@
 	<div class = 'btn btn-danger' ng-click = 'logout()'>Logout</div>
 </nav>
 
- <div id = "team-mission-control">
+ <div>
  	<div style = 'padding: 10px 5px'>
 	 	<span>
 		 	<h2 style = 'display:inline;'>
@@ -22,55 +22,64 @@
  		<span ui-sref = 'team.switchOwner'><a href="">Edit</a></span>
  	</div>
 		<span class = 'btn btn-danger' ng-click = 'deleteTeam()'>Delete Team</span>
+	<hr>
  	<div ui-view class = 'create-view'></div>
  </div>
-<div class = 'table-holder'>
- 	<table class = 'table table-bordered'>
- 		<thead>
- 			<tr class ='active'><th>Admin(s)</th></tr>
- 		</thead>
- 		<tbody ng-repeat = 'admin in team.admins'>
- 			<tr class = 'info'>
- 				<td>{{admin.firstName}} {{admin.lastName}}
-  					<span class = 'btn btn-danger' ng-click = "removeAdmin(admin)" style = 'float: right;'>X</span>
- 				</td>
+<div class="container">
+	<div class = 'row'>
+		<div class = 'col-sm-4'>
+		 	<table class = 'table table-bordered'>
+		 		<thead>
+		 			<tr class ='active'><th>Admin(s)</th></tr>
+		 		</thead>
+		 		<tbody ng-repeat = 'admin in team.admins'>
+		 			<tr class = 'info'>
+		 				<td>{{admin.firstName}} {{admin.lastName}}
+		  					<span class = 'btn btn-danger' ng-click = "removeAdmin(admin)" style = 'float: right;'>X</span>
+		 				</td>
 
- 			</tr>
- 		</tbody>
- 		<tr class = 'active'>
- 			<td>
- 				<div ui-sref = 'team.addAdmin' class = 'btn btn-primary'>Add Admin</div>
- 			</td>
- 		</tr>
- 	</table>
+		 			</tr>
+		 		</tbody>
+		 		<tr class = 'active'>
+		 			<td>
+		 				<div ui-sref = 'team.addAdmin' class = 'btn btn-primary'>Add Admin</div>
+		 			</td>
+		 		</tr>
+		 	</table>
+		</div>
 
- 	<table class = 'table table-bordered'>
- 		<thead>
- 			<tr class ='active'><th>Promotions</th></tr>
- 		</thead>
- 		<tr class = 'active'>
- 			<td>
- 				<div ui-sref = 'team.addPromotion' class = 'btn btn-primary'>Add Promotion</div>
- 			</td>
- 		</tr>
- 	</table>
+		<div class="col-sm-4">
+		 	<table class = 'table table-bordered'>
+		 		<thead>
+		 			<tr class ='active'><th>Promotions</th></tr>
+		 		</thead>
+		 		<tr class = 'active'>
+		 			<td>
+		 				<div ui-sref = 'team.addPromotion' class = 'btn btn-primary'>Add Promotion</div>
+		 			</td>
+		 		</tr>
+		 	</table>
+		</div>
 
- 	<table class = 'table table-bordered'>
- 		<thead>
- 			<tr class ='active'><th>Users</th></tr>
- 		</thead>
- 		<tbody ng-repeat = 'user in team.users'>
- 			<tr class = 'info'>
- 				<td>
- 					{{user.firstName}} {{user.lastName}}
- 					<span class = 'btn btn-danger' ng-click = "removeUser(user)" style = 'float: right;'>X</span>
- 				</td>
- 			</tr>
- 		</tbody>
- 		<tr>
- 			<td class = 'active'>
- 				<div ui-sref = 'team.addUser' class = 'btn btn-primary'>Add User</div>
- 			</td>
- 		</tr>
- 	</table>
- </div>
+		<div class="col-sm-4">
+		 	<table class = 'table table-bordered'>
+		 		<thead>
+		 			<tr class ='active'><th>Users</th></tr>
+		 		</thead>
+		 		<tbody ng-repeat = 'user in team.users'>
+		 			<tr class = 'info'>
+		 				<td>
+		 					{{user.firstName}} {{user.lastName}}
+		 					<span class = 'btn btn-danger' ng-click = "removeUser(user)" style = 'float: right;'>X</span>
+		 				</td>
+		 			</tr>
+		 		</tbody>
+		 		<tr>
+		 			<td class = 'active'>
+		 				<div ui-sref = 'team.addUser' class = 'btn btn-primary'>Add User</div>
+		 			</td>
+		 		</tr>
+		 	</table>
+		</div>
+	</div>
+</div>

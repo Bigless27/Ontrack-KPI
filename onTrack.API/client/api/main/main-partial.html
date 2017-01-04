@@ -3,36 +3,34 @@
 	<div class = 'btn btn-default' ui-sref = 'main'>Back</div>
 	<div class = 'btn btn-danger' ng-click = 'logout()'>Logout</div>
 </nav>
+<div class = "container">
+	<div class = 'btn btn-default' ui-sref = 'setting'>Settings</div>
+	<div class = 'btn btn-default' ui-sref = 'promotionCreate'>Create Promotion</div>
 
-<div class = 'btn btn-default' ui-sref = 'setting'>Settings</div>
-<div class = 'btn btn-default' ui-sref = 'promotionCreate'>Create Promotion</div>
+	 <div ui-view></div>
 
- <div ui-view></div>
-
- <div class =  'row'>
- 	<div class = 'col-sm-6'>
-	 	<h2 class = 'card-title'>My Teams</h2>
-	 	<ul ng-repeat = 'team in teams'>
-	 		<li>
-	 			<a ui-sref = 'team({id: team._id})'>{{team.name}}</a>
-	 		</li>
-	 	</ul>
-	 	<div ui-sref = 'main.createTeam' class = 'btn btn-default'> Create Team</div>
-	 	
- 	</div>
-
- 	<div  class = 'col-sm-6'>
-	 	<h2 class = 'card-title'>All Users</h2>
-
-	 	<input ng-model = 'query' type = 'text' placeholder = 'Search Users'>
-	 	<span class = 'btn btn-default' ui-sref = 'main.createUser'> Create User</span>
-	 	<div id = 'usersList'>
-		 	<ul ng-repeat = "user in users | filter: query | orderBy: sortField: reverse" >
+	 <div class =  'row'>
+	 	<div class = 'col-sm-4 col-md-4'>
+		 	<h2 class = 'card-title'>My Teams</h2>
+		 	<ul ng-repeat = 'team in teams'>
 		 		<li>
-		 			<a ui-sref = 'user({id: user._id})'>{{user.firstName}} {{user.lastName}}</a>
+		 			<a ui-sref = 'team({id: team._id})'>{{team.name}}</a>
 		 		</li>
 		 	</ul>
+		 	<div ui-sref = 'main.createTeam' class = 'btn btn-default'> Create Team</div>
 	 	</div>
- 	</div>
- </div>
 
+	 	<div  class = 'col-sm-4 col-md-4'>
+		 	<h2 class = 'card-title'>All Users</h2>
+		 	<input ng-model = 'query' type = 'text' placeholder = 'Search Users'>
+		 	<span class = 'btn btn-default' ui-sref = 'main.createUser'> Create User</span>
+		 	<div id = 'usersList'>
+			 	<ul ng-repeat = "user in users | filter: query | orderBy: sortField: reverse" >
+			 		<li>
+			 			<a ui-sref = 'user({id: user._id})'>{{user.firstName}} {{user.lastName}}</a>
+			 		</li>
+			 	</ul>
+		 	</div>
+	 	</div>
+	 </div>
+</div>

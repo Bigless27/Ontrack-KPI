@@ -986,24 +986,6 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('RewardsController', ['$scope', '$http', '$state', 
-		function($scope, $http, $state) {
-
-			function getRewards() {
-				$http.get('api/rewards')
-					.success(data => {
-						$scope.rewards = data
-					})
-					.error(err => {
-						console.log(err)
-					})
-			}
-
-			getRewards()
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('GoalsController', ['$scope', '$state', '$window', '$http', '$stateParams',
 	function($scope, $state, $window, $http, $stateParams) {
 		function getGoals() {
@@ -1022,6 +1004,24 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('RewardsController', ['$scope', '$http', '$state', 
+		function($scope, $http, $state) {
+
+			function getRewards() {
+				$http.get('api/rewards')
+					.success(data => {
+						$scope.rewards = data
+					})
+					.error(err => {
+						console.log(err)
+					})
+			}
+
+			getRewards()
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('AdminController', ['$scope', '$state', '$http', '$window', '$stateParams',
 		function($scope, $state, $http, $window, $stateParams) {
 		
@@ -1037,28 +1037,28 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 		$scope.add = function(data){
 				var token = $window.sessionStorage['jwt']
 
-				var client = {admins:[], users:[]}
+				var team = {admins:[], users:[]}
 
-				$scope.client.admins.forEach(function(user) {
-					client.admins.push({id: user._id, email: user.email, firstName: user.firstName, lastName: user.lastName})
+				$scope.team.admins.forEach(function(user) {
+					team.admins.push({id: user._id, email: user.email, firstName: user.firstName, lastName: user.lastName})
 				})
 
-				$scope.client.users.forEach(function(user) {
-					client.users.push({id: user._id, email: user.email, firstName: user.firstName, lastName: user.lastName})
+				$scope.team.users.forEach(function(user) {
+					team.users.push({id: user._id, email: user.email, firstName: user.firstName, lastName: user.lastName})
 				})
 
 
 				data.users.forEach(function(user){
-					if (client.admins.filter(function(e){return e.email == user.email}).length === 0) {
-					 	client.admins.push({id:user._id, email: user.email, firstName: user.firstName, lastName: user.lastName})
+					if (team.admins.filter(function(e){return e.email == user.email}).length === 0) {
+					 	team.admins.push({id:user._id, email: user.email, firstName: user.firstName, lastName: user.lastName})
 					}
-					if(client.users.filter(function(e){return e.email == user.email}).length === 0) {
-						client.users.push({id:user._id, email: user.email, firstName: user.firstName, lastName: user.lastName})
+					if(team.users.filter(function(e){return e.email == user.email}).length === 0) {
+						team.users.push({id:user._id, email: user.email, firstName: user.firstName, lastName: user.lastName})
 					}
 				})
 
 
-				$http.put('/api/clients/' + $stateParams['id'], client, {
+				$http.put('/api/teams/' + $stateParams['id'], team, {
 					headers: {
 						'Authorization': `Bearer ${token}`
 					}
@@ -1077,7 +1077,7 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 				.success(function(users) {
 					users.forEach(function(user){
 						if(user){
-							var userEmails = $scope.client.admins.map(x => x.email)
+							var userEmails = $scope.team.admins.map(x => x.email)
 							if(!userEmails.includes(user.email)) {
 								$scope.optionsList.push(
 										{firstName: user.firstName, lastName: user.lastName, 
@@ -1629,74 +1629,34 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('RewardsFromController', ['$scope', '$http', '$state',
-		function($scope, $http, $state) {
+	.controller('GoalsFormController', ['$scope', '$state', '$window', '$http', 'arrToObject',
+	function($scope, $state, $window, $http, arrToObject) {
 
-			$scope.submit = function(reward) {
-				$http.post('/api/rewards', reward)
-					.success(data => {
-						$state.go('rewards')
-					})
-					.error( e => {
-						console.log(e)
-					})
-			}
-		}])
-});
-(function() {
-	angular.module('onTrack') 
-	.controller('RewardsViewController', ['$scope', '$http', '$state', '$stateParams', 
-		function($scope, $http, $state, $stateParams) {
+		$scope.tracker = 0;
 
+		$scope.submit = function(data) {
+			$scope.$broadcast('show-errors-check-validity');
 
-			$scope.updateName = function(name) {
-				if (!name) {
-					return 'Name is required'
-				}
-				updateReward('name', name)
-			}
+			if($scope.goalForm.$invalid){return;}
 
-			$scope.updateType = function(type) {
-				if (!type) {
-					return 'Type is required'
-				}
-				updateReward('type', type)
-			}
+			var named = {'gsfName': data.name}
+			delete data.name
 
-			$scope.updateDescription = function(description) {
-				if (!description) {
-					return 'Description is required'
-				}
-				updateReward('description', description)
-			}
+			var data = arrToObject.create(Object.values(data))
+			
+			var dataJson = Object.assign(data, named)
 
-			function updateReward(param, name) {
-				$scope.reward[param] = name
+			$http.post('api/goals', dataJson)
+				.success(function(data) {
+					$state.reload()
+				})
+				.error(function(err) {
+					console.log(err)
+				})
 
-				$http.put('api/rewards/' + $stateParams.id, $scope.reward)
-					.success(data => {
-						$state.reload()
-					})
-					.error(err => {
-						console.log(err)
-					})
-			}
+		}
+	}])
 
-
-
-			function getReward() {
-				$http.get('api/rewards/' + $stateParams.id)
-					.success(data => {
-						$scope.reward = data
-					})
-					.error(err => {
-						console.log(err)
-					})
-			}
-
-			getReward()
-
-		}])
 }());
 (function() {
 	angular.module('onTrack')
@@ -1840,37 +1800,6 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('GoalsFormController', ['$scope', '$state', '$window', '$http', 'arrToObject',
-	function($scope, $state, $window, $http, arrToObject) {
-
-		$scope.tracker = 0;
-
-		$scope.submit = function(data) {
-			$scope.$broadcast('show-errors-check-validity');
-
-			if($scope.goalForm.$invalid){return;}
-
-			var named = {'gsfName': data.name}
-			delete data.name
-
-			var data = arrToObject.create(Object.values(data))
-			
-			var dataJson = Object.assign(data, named)
-
-			$http.post('api/goals', dataJson)
-				.success(function(data) {
-					$state.reload()
-				})
-				.error(function(err) {
-					console.log(err)
-				})
-
-		}
-	}])
-
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('GoalsViewController', ['$scope', '$state', '$http', '$stateParams', 'arrToObject', 'submitFormat',
 	function($scope, $state, $http, $stateParams, arrToObject, submitFormat) {
 
@@ -1945,6 +1874,77 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 		}
 	}])
 
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('RewardsFromController', ['$scope', '$http', '$state',
+		function($scope, $http, $state) {
+
+			$scope.submit = function(reward) {
+				$http.post('/api/rewards', reward)
+					.success(data => {
+						$state.go('rewards')
+					})
+					.error( e => {
+						console.log(e)
+					})
+			}
+		}])
+});
+(function() {
+	angular.module('onTrack') 
+	.controller('RewardsViewController', ['$scope', '$http', '$state', '$stateParams', 
+		function($scope, $http, $state, $stateParams) {
+
+
+			$scope.updateName = function(name) {
+				if (!name) {
+					return 'Name is required'
+				}
+				updateReward('name', name)
+			}
+
+			$scope.updateType = function(type) {
+				if (!type) {
+					return 'Type is required'
+				}
+				updateReward('type', type)
+			}
+
+			$scope.updateDescription = function(description) {
+				if (!description) {
+					return 'Description is required'
+				}
+				updateReward('description', description)
+			}
+
+			function updateReward(param, name) {
+				$scope.reward[param] = name
+
+				$http.put('api/rewards/' + $stateParams.id, $scope.reward)
+					.success(data => {
+						$state.reload()
+					})
+					.error(err => {
+						console.log(err)
+					})
+			}
+
+
+
+			function getReward() {
+				$http.get('api/rewards/' + $stateParams.id)
+					.success(data => {
+						$scope.reward = data
+					})
+					.error(err => {
+						console.log(err)
+					})
+			}
+
+			getReward()
+
+		}])
 }());
 (function() {
 	angular.module('onTrack')
