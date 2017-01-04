@@ -68,6 +68,10 @@
 						templateUrl:'client/api/team/admin/admin-add-partial.html',
 						controller: 'AdminController'
 					})
+					.state('team.addPromotion', {
+						templateUrl: 'client/api/team/promotions/promotions-add/promotions-add-partial.html',
+						controller: 'PromotionAddController'
+					})
 					.state('team.switchOwner', {
 						templateUrl: 'client/api/team/owner/owner-partial.html',
 						controller: 'OwnerController'

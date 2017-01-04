@@ -68,6 +68,10 @@
 						templateUrl:'client/api/team/admin/admin-add-partial.html',
 						controller: 'AdminController'
 					})
+					.state('team.addPromotion', {
+						templateUrl: 'client/api/team/promotions/promotions-add/promotions-add-partial.html',
+						controller: 'PromotionAddController'
+					})
 					.state('team.switchOwner', {
 						templateUrl: 'client/api/team/owner/owner-partial.html',
 						controller: 'OwnerController'
@@ -982,24 +986,6 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('GoalsController', ['$scope', '$state', '$window', '$http', '$stateParams',
-	function($scope, $state, $window, $http, $stateParams) {
-		function getGoals() {
-			$http.get('api/goals')
-				.success(function(data) {
-					$scope.goals = data
-				})
-				.error(function(err) {
-					console.log(err)
-				})
-		}
-
-		getGoals()
-	}])
-
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('RewardsController', ['$scope', '$http', '$state', 
 		function($scope, $http, $state) {
 
@@ -1015,6 +1001,24 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 
 			getRewards()
 	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('GoalsController', ['$scope', '$state', '$window', '$http', '$stateParams',
+	function($scope, $state, $window, $http, $stateParams) {
+		function getGoals() {
+			$http.get('api/goals')
+				.success(function(data) {
+					$scope.goals = data
+				})
+				.error(function(err) {
+					console.log(err)
+				})
+		}
+
+		getGoals()
+	}])
+
 }());
 (function() {
 	angular.module('onTrack')
@@ -1625,6 +1629,77 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('RewardsFromController', ['$scope', '$http', '$state',
+		function($scope, $http, $state) {
+
+			$scope.submit = function(reward) {
+				$http.post('/api/rewards', reward)
+					.success(data => {
+						$state.go('rewards')
+					})
+					.error( e => {
+						console.log(e)
+					})
+			}
+		}])
+});
+(function() {
+	angular.module('onTrack') 
+	.controller('RewardsViewController', ['$scope', '$http', '$state', '$stateParams', 
+		function($scope, $http, $state, $stateParams) {
+
+
+			$scope.updateName = function(name) {
+				if (!name) {
+					return 'Name is required'
+				}
+				updateReward('name', name)
+			}
+
+			$scope.updateType = function(type) {
+				if (!type) {
+					return 'Type is required'
+				}
+				updateReward('type', type)
+			}
+
+			$scope.updateDescription = function(description) {
+				if (!description) {
+					return 'Description is required'
+				}
+				updateReward('description', description)
+			}
+
+			function updateReward(param, name) {
+				$scope.reward[param] = name
+
+				$http.put('api/rewards/' + $stateParams.id, $scope.reward)
+					.success(data => {
+						$state.reload()
+					})
+					.error(err => {
+						console.log(err)
+					})
+			}
+
+
+
+			function getReward() {
+				$http.get('api/rewards/' + $stateParams.id)
+					.success(data => {
+						$scope.reward = data
+					})
+					.error(err => {
+						console.log(err)
+					})
+			}
+
+			getReward()
+
+		}])
+}());
+(function() {
+	angular.module('onTrack')
 		.directive('addGoal', function() {
 			return{
 				restrict: 'E',
@@ -1873,77 +1948,6 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('RewardsFromController', ['$scope', '$http', '$state',
-		function($scope, $http, $state) {
-
-			$scope.submit = function(reward) {
-				$http.post('/api/rewards', reward)
-					.success(data => {
-						$state.go('rewards')
-					})
-					.error( e => {
-						console.log(e)
-					})
-			}
-		}])
-});
-(function() {
-	angular.module('onTrack') 
-	.controller('RewardsViewController', ['$scope', '$http', '$state', '$stateParams', 
-		function($scope, $http, $state, $stateParams) {
-
-
-			$scope.updateName = function(name) {
-				if (!name) {
-					return 'Name is required'
-				}
-				updateReward('name', name)
-			}
-
-			$scope.updateType = function(type) {
-				if (!type) {
-					return 'Type is required'
-				}
-				updateReward('type', type)
-			}
-
-			$scope.updateDescription = function(description) {
-				if (!description) {
-					return 'Description is required'
-				}
-				updateReward('description', description)
-			}
-
-			function updateReward(param, name) {
-				$scope.reward[param] = name
-
-				$http.put('api/rewards/' + $stateParams.id, $scope.reward)
-					.success(data => {
-						$state.reload()
-					})
-					.error(err => {
-						console.log(err)
-					})
-			}
-
-
-
-			function getReward() {
-				$http.get('api/rewards/' + $stateParams.id)
-					.success(data => {
-						$scope.reward = data
-					})
-					.error(err => {
-						console.log(err)
-					})
-			}
-
-			getReward()
-
-		}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('PromotionFormController', ['$scope', '$state', '$http', '$window', '$stateParams', 'goalPreview', '$rootScope',
 		function($scope, $state, $http, $window, $stateParams, goalPreview, $rootScope) {
 			
@@ -2068,4 +2072,23 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 			getGoal(goalPreview.getValue())
 			
 	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('PromotionAddController',['$scope', '$state', '$http', 
+		function($scope, $state, $http) {
+
+			function getPromotions() {
+				$http.get('api/promotions')
+					.success(data => {
+						$scope.promotions = data
+					})
+					.error(err => {
+						console.log(err)
+					})
+			}
+			
+
+			getPromotions()
+		}])
 }());

@@ -19,13 +19,13 @@ exports.params = function(req, res, next, id) {
 };
 
 exports.get = function(req, res, next) {
-	Team.findById(req.params.id)
+	Promotion.find({})
 			.populate('promotions')
-			.exec(function(err, team) {
+			.exec(function(err, promotion) {
 				if (err) {
 					res.status(401).send('Error finding team')
 				} else {
-					res.json(team.promotions)
+					res.json(promotion)
 			}
 		})
 };

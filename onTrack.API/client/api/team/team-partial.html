@@ -48,16 +48,9 @@
  		<thead>
  			<tr class ='active'><th>Promotions</th></tr>
  		</thead>
- 		<tbody ng-repeat = 'promotion in team.promotions'>
- 			<tr class = 'info'>
- 				<td>
- 					<a ui-sref = 'promotion({id: team._id, promoId: promotion._id})'>{{promotion.name}}</a>
- 				</td>
- 			</tr>
- 		</tbody>
  		<tr class = 'active'>
  			<td>
- 				<div ui-sref = 'team.promotionCreate' class = 'btn btn-primary'>Create Promotion</div>
+ 				<div ui-sref = 'team.addPromotion' class = 'btn btn-primary'>Add Promotion</div>
  			</td>
  		</tr>
  	</table>
