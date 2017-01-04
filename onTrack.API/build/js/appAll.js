@@ -1,6 +1,6 @@
 (function() {
-	angular.module('onTrack', ['ui.router', 'ui.bootstrap.showErrors', 'multipleSelect', 'xeditable', 'ngTagsInput', 'ui.select', 
-		'ngSanitize', 'autocomplete'])
+	angular.module('onTrack', ['ui.router', 'ui.bootstrap.showErrors', 'multipleSelect', 'multipleSelectCustomized', 'xeditable', 'ngTagsInput', 'ui.select', 
+		'ngSanitize'])
 	.config(['$stateProvider', '$urlRouterProvider', 'showErrorsConfigProvider',
 			function($stateProvider, $urlRouterProvider, showErrorsConfigProvider) {
 
@@ -143,7 +143,7 @@
 angular.module("templates", []).run(["$templateCache", function($templateCache) {$templateCache.put("multiple-autocomplete-tpl.html","<div class=\"ng-ms form-item-container\">\r\n    <ul class=\"list-inline\">\r\n        <li ng-repeat=\"item in modelArr\">\r\n			<span ng-if=\"objectProperty == undefined || objectProperty == \'\'\">\r\n				{{item}} <span class=\"remove\" ng-click=\"removeAddedValues(item)\">\r\n                <i class=\"glyphicon glyphicon-remove\"></i></span>&nbsp;\r\n			</span>\r\n            <span ng-if=\"objectProperty != undefined && objectProperty != \'\'\">\r\n				{{item[objectProperty]}} <span class=\"remove\" ng-click=\"removeAddedValues(item)\">\r\n                <i class=\"glyphicon glyphicon-remove\"></i></span>&nbsp;\r\n			</span>\r\n        </li>\r\n        <li>\r\n            <input name=\"{{name}}\" ng-model=\"inputValue\" placeholder=\"\" ng-keydown=\"keyParser($event)\"\r\n                   err-msg-required=\"{{errMsgRequired}}\"\r\n                   ng-focus=\"onFocus()\" ng-blur=\"onBlur()\" ng-required=\"!modelArr.length && isRequired\"\r\n                    ng-change=\"onChange()\">\r\n        </li>\r\n    </ul>\r\n</div>\r\n<div class=\"autocomplete-list\" ng-show=\"isFocused || isHover\" ng-mouseenter=\"onMouseEnter()\" ng-mouseleave=\"onMouseLeave()\">\r\n    <ul ng-if=\"objectProperty == undefined || objectProperty == \'\'\">\r\n        <li ng-class=\"{\'autocomplete-active\' : selectedItemIndex == $index}\"\r\n            ng-repeat=\"suggestion in suggestionsArr | filter : inputValue | filter : alreadyAddedValues\"\r\n            ng-click=\"onSuggestedItemsClick(suggestion)\" ng-mouseenter=\"mouseEnterOnItem($index)\">\r\n            {{suggestion}}\r\n        </li>\r\n    </ul>\r\n    <ul ng-if=\"objectProperty != undefined && objectProperty != \'\'\">\r\n        <li ng-class=\"{\'autocomplete-active\' : selectedItemIndex == $index}\"\r\n            ng-repeat=\"suggestion in suggestionsArr | filter : inputValue | filter : alreadyAddedValues\"\r\n            ng-click=\"onSuggestedItemsClick(suggestion)\" ng-mouseenter=\"mouseEnterOnItem($index)\">\r\n            {{suggestion[objectProperty]}}\r\n        </li>\r\n    </ul>\r\n</div>");}]);
 (function () {
     //declare all modules and their dependencies.
-    angular.module('multipleSelect', [
+    angular.module('multipleSelectCustomized', [
         'templates'
     ]).config(function () {
 
@@ -152,7 +152,7 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 )();
 (function () {
 
-    angular.module('multipleSelect').directive('multipleAutocomplete', [
+    angular.module('multipleSelectCustomized').directive('multipleAutocompleteCustomized', [
         '$filter',
         '$http',
         function ($filter, $http) {
@@ -450,40 +450,6 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('MainController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
-
-			function getTeams() {
-				$http.get('api/teams')
-					.success(function(data) {
-						$scope.teams = data
-					})
-					.error(function(err) {
-						console.log(err);
-					})
-			}
-
-			function getUsers() {
-				$http.get('api/users')
-					.success(function(data) {
-						$scope.users = data
-					})
-					.error(function(err) {
-						console.log(err)
-					})
-			}
-
-			$scope.logout = function() {
-				$window.sessionStorage.clear()
-				$state.go('login')
-			}
-		
-			getUsers() 
-			getTeams()
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('MainSettingsController', ['$scope', '$state', '$window', '$http',
 	 function($scope, $state, $window, $http) {
 
@@ -545,6 +511,40 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 	 	loadTypeSettings()
 	 	loadProgressSettings()
 
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('MainController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+
+			function getTeams() {
+				$http.get('api/teams')
+					.success(function(data) {
+						$scope.teams = data
+					})
+					.error(function(err) {
+						console.log(err);
+					})
+			}
+
+			function getUsers() {
+				$http.get('api/users')
+					.success(function(data) {
+						$scope.users = data
+					})
+					.error(function(err) {
+						console.log(err)
+					})
+			}
+
+			$scope.logout = function() {
+				$window.sessionStorage.clear()
+				$state.go('login')
+			}
+		
+			getUsers() 
+			getTeams()
 	}])
 }());
 (function() {
@@ -1623,373 +1623,6 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 
 	}])
 }());
-var app = angular.module('app', ['autocomplete']);
-
-// the service that retrieves some movie title from an url
-app.factory('MovieRetriever', function($http, $q, $timeout){
-  var MovieRetriever = new Object();
-
-  MovieRetriever.getmovies = function(i) {
-    var moviedata = $q.defer();
-    var movies;
-
-    var someMovies = ["The Wolverine", "The Smurfs 2", "The Mortal Instruments: City of Bones", "Drinking Buddies", "All the Boys Love Mandy Lane", "The Act Of Killing", "Red 2", "Jobs", "Getaway", "Red Obsession", "2 Guns", "The World's End", "Planes", "Paranoia", "The To Do List", "Man of Steel"];
-
-    var moreMovies = ["The Wolverine", "The Smurfs 2", "The Mortal Instruments: City of Bones", "Drinking Buddies", "All the Boys Love Mandy Lane", "The Act Of Killing", "Red 2", "Jobs", "Getaway", "Red Obsession", "2 Guns", "The World's End", "Planes", "Paranoia", "The To Do List", "Man of Steel", "The Way Way Back", "Before Midnight", "Only God Forgives", "I Give It a Year", "The Heat", "Pacific Rim", "Pacific Rim", "Kevin Hart: Let Me Explain", "A Hijacking", "Maniac", "After Earth", "The Purge", "Much Ado About Nothing", "Europa Report", "Stuck in Love", "We Steal Secrets: The Story Of Wikileaks", "The Croods", "This Is the End", "The Frozen Ground", "Turbo", "Blackfish", "Frances Ha", "Prince Avalanche", "The Attack", "Grown Ups 2", "White House Down", "Lovelace", "Girl Most Likely", "Parkland", "Passion", "Monsters University", "R.I.P.D.", "Byzantium", "The Conjuring", "The Internship"]
-
-    if(i && i.indexOf('T')!=-1)
-      movies=moreMovies;
-    else
-      movies=moreMovies;
-
-    $timeout(function(){
-      moviedata.resolve(movies);
-    },1000);
-
-    return moviedata.promise
-  }
-
-  return MovieRetriever;
-});
-
-app.controller('MyCtrl', function($scope, MovieRetriever){
-
-  $scope.movies = MovieRetriever.getmovies("...");
-  $scope.movies.then(function(data){
-    $scope.movies = data;
-  });
-
-  $scope.getmovies = function(){
-    return $scope.movies;
-  }
-
-  $scope.doSomething = function(typedthings){
-    console.log("Do something like reload data with this: " + typedthings );
-    $scope.newmovies = MovieRetriever.getmovies(typedthings);
-    $scope.newmovies.then(function(data){
-      $scope.movies = data;
-    });
-  }
-
-  $scope.doSomethingElse = function(suggestion){
-    console.log("Suggestion selected: " + suggestion );
-  }
-
-});
-
-/* --- Made by justgoscha and licensed under MIT license --- */
-
-var app = angular.module('autocomplete', []);
-
-app.directive('autocomplete', function() {
-  var index = -1;
-
-  return {
-    restrict: 'E',
-    scope: {
-      searchParam: '=ngModel',
-      suggestions: '=data',
-      onType: '=onType',
-      onSelect: '=onSelect',
-      autocompleteRequired: '=',
-      noAutoSort: '=noAutoSort'
-    },
-    controller: ['$scope', function($scope){
-      // the index of the suggestions that's currently selected
-      $scope.selectedIndex = -1;
-
-      $scope.initLock = true;
-
-      // set new index
-      $scope.setIndex = function(i){
-        $scope.selectedIndex = parseInt(i);
-      };
-
-      this.setIndex = function(i){
-        $scope.setIndex(i);
-        $scope.$apply();
-      };
-
-      $scope.getIndex = function(i){
-        return $scope.selectedIndex;
-      };
-
-      // watches if the parameter filter should be changed
-      var watching = true;
-
-      // autocompleting drop down on/off
-      $scope.completing = false;
-
-      // starts autocompleting on typing in something
-      $scope.$watch('searchParam', function(newValue, oldValue){
-
-        if (oldValue === newValue || (!oldValue && $scope.initLock)) {
-          return;
-        }
-
-        if(watching && typeof $scope.searchParam !== 'undefined' && $scope.searchParam !== null) {
-          $scope.completing = true;
-          $scope.searchFilter = $scope.searchParam;
-          $scope.selectedIndex = -1;
-        }
-
-        // function thats passed to on-type attribute gets executed
-        if($scope.onType)
-          $scope.onType($scope.searchParam);
-      });
-
-      // for hovering over suggestions
-      this.preSelect = function(suggestion){
-
-        watching = false;
-
-        // this line determines if it is shown
-        // in the input field before it's selected:
-        //$scope.searchParam = suggestion;
-
-        $scope.$apply();
-        watching = true;
-
-      };
-
-      $scope.preSelect = this.preSelect;
-
-      this.preSelectOff = function(){
-        watching = true;
-      };
-
-      $scope.preSelectOff = this.preSelectOff;
-
-      // selecting a suggestion with RIGHT ARROW or ENTER
-      $scope.select = function(suggestion){
-        if(suggestion){
-          $scope.searchParam = suggestion;
-          $scope.searchFilter = suggestion;
-          if($scope.onSelect)
-            $scope.onSelect(suggestion);
-        }
-        watching = false;
-        $scope.completing = false;
-        setTimeout(function(){watching = true;},1000);
-        $scope.setIndex(-1);
-      };
-
-
-    }],
-    link: function(scope, element, attrs){
-        console.log(scope.noAutoSort)
-
-      setTimeout(function() {
-        scope.initLock = false;
-        scope.$apply();
-      }, 250);
-
-      var attr = '';
-
-      // Default atts
-      scope.attrs = {
-        "placeholder": "start typing...",
-        "class": "",
-        "id": "",
-        "inputclass": "",
-        "inputid": ""
-      };
-
-      for (var a in attrs) {
-        attr = a.replace('attr', '').toLowerCase();
-        // add attribute overriding defaults
-        // and preventing duplication
-        if (a.indexOf('attr') === 0) {
-          scope.attrs[attr] = attrs[a];
-        }
-      }
-
-      if (attrs.clickActivation) {
-        element[0].onclick = function(e){
-          if(!scope.searchParam){
-            setTimeout(function() {
-              scope.completing = true;
-              scope.$apply();
-            }, 200);
-          }
-        };
-      }
-
-      var key = {left: 37, up: 38, right: 39, down: 40 , enter: 13, esc: 27, tab: 9};
-
-      document.addEventListener("keydown", function(e){
-        var keycode = e.keyCode || e.which;
-
-        switch (keycode){
-          case key.esc:
-            // disable suggestions on escape
-            scope.select();
-            scope.setIndex(-1);
-            scope.$apply();
-            e.preventDefault();
-        }
-      }, true);
-
-      document.addEventListener("blur", function(e){
-        // disable suggestions on blur
-        // we do a timeout to prevent hiding it before a click event is registered
-        setTimeout(function() {
-          scope.select();
-          scope.setIndex(-1);
-          scope.$apply();
-        }, 150);
-      }, true);
-
-      element[0].addEventListener("keydown",function (e){
-        var keycode = e.keyCode || e.which;
-
-        var l = angular.element(this).find('li').length;
-
-        // this allows submitting forms by pressing Enter in the autocompleted field
-        if(!scope.completing || l == 0) return;
-
-        // implementation of the up and down movement in the list of suggestions
-        switch (keycode){
-          case key.up:
-
-            index = scope.getIndex()-1;
-            if(index<-1){
-              index = l-1;
-            } else if (index >= l ){
-              index = -1;
-              scope.setIndex(index);
-              scope.preSelectOff();
-              break;
-            }
-            scope.setIndex(index);
-
-            if(index!==-1)
-              scope.preSelect(angular.element(angular.element(this).find('li')[index]).text());
-
-            scope.$apply();
-
-            break;
-          case key.down:
-            index = scope.getIndex()+1;
-            if(index<-1){
-              index = l-1;
-            } else if (index >= l ){
-              index = -1;
-              scope.setIndex(index);
-              scope.preSelectOff();
-              scope.$apply();
-              break;
-            }
-            scope.setIndex(index);
-
-            if(index!==-1)
-              scope.preSelect(angular.element(angular.element(this).find('li')[index]).text());
-
-            break;
-          case key.left:
-            break;
-          case key.right:
-          case key.enter:
-          case key.tab:
-
-            index = scope.getIndex();
-            // scope.preSelectOff();
-            if(index !== -1) {
-              scope.select(angular.element(angular.element(this).find('li')[index]).text());
-              if(keycode == key.enter) {
-                e.preventDefault();
-              }
-            } else {
-              if(keycode == key.enter) {
-                scope.select();
-              }
-            }
-            scope.setIndex(-1);
-            scope.$apply();
-
-            break;
-          case key.esc:
-            // disable suggestions on escape
-            scope.select();
-            scope.setIndex(-1);
-            scope.$apply();
-            e.preventDefault();
-            break;
-          default:
-            return;
-        }
-
-      });
-    },
-    template: '\
-        <div class="autocomplete {{ attrs.class }}" id="{{ attrs.id }}">\
-          <input\
-            type="text"\
-            ng-model="searchParam"\
-            placeholder="{{ attrs.placeholder }}"\
-            class="{{ attrs.inputclass }}"\
-            tabindex="{{ attrs.tabindex }}"\
-            id="{{ attrs.inputid }}"\
-            name="{{ attrs.name }}"\
-            ng-required="{{ autocompleteRequired }}" />\
-          <ul ng-if="!noAutoSort" ng-show="completing && (suggestions | filter:searchFilter).length > 0">\
-            <li\
-              suggestion\
-              ng-repeat="suggestion in suggestions | filter:searchFilter | orderBy:\'toString()\' track by $index"\
-              index="{{ $index }}"\
-              val="{{ suggestion }}"\
-              ng-class="{ active: ($index === selectedIndex) }"\
-              ng-click="select(suggestion)"\
-              ng-bind-html="suggestion | highlight:searchParam"></li>\
-          </ul>\
-          <ul ng-if="noAutoSort" ng-show="completing && (suggestions | filter:searchFilter).length > 0">\
-            <li\
-              suggestion\
-              ng-repeat="suggestion in suggestions | filter:searchFilter track by $index"\
-              index="{{ $index }}"\
-              val="{{ suggestion }}"\
-              ng-class="{ active: ($index === selectedIndex) }"\
-              ng-click="select(suggestion)"\
-              ng-bind-html="suggestion | highlight:searchParam"></li>\
-          </ul>\
-        </div>'
-  };
-});
-
-app.filter('highlight', ['$sce', function ($sce) {
-  return function (input, searchParam) {
-    if (typeof input === 'function') return '';
-    if (searchParam) {
-      var words = '(' +
-            searchParam.split(/\ /).join(' |') + '|' +
-            searchParam.split(/\ /).join('|') +
-          ')',
-          exp = new RegExp(words, 'gi');
-      if (words.length) {
-        input = input.replace(exp, "<span class=\"highlight\">$1</span>");
-      }
-    }
-    return $sce.trustAsHtml(input);
-  };
-}]);
-
-app.directive('suggestion', function(){
-  return {
-    restrict: 'A',
-    require: '^autocomplete', // ^look for controller on parents element
-    link: function(scope, element, attrs, autoCtrl){
-      element.bind('mouseenter', function() {
-        autoCtrl.preSelect(attrs.val);
-        autoCtrl.setIndex(attrs.index);
-      });
-
-      element.bind('mouseleave', function() {
-        autoCtrl.preSelectOff();
-      });
-    }
-  };
-});
-
 (function() {
 	angular.module('onTrack')
 		.directive('addGoal', function() {
@@ -2311,31 +1944,6 @@ app.directive('suggestion', function(){
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('GoalPreviewController', ['$scope', '$http', '$state', 'goalPreview', 'submitFormat',
-		function($scope, $http, $state, goalPreview, submitFormat) {
-
-			$scope.$watch(function() {return goalPreview.getValue()}, function(newValue, oldValue) {
-				!newValue ? $state.go('promotionCreate') : getGoal(newValue)
-			})
-
-			function getGoal(id) {
-				$http.get(`/api/goals/${id}`)
-					.success(data => {
-						var kvObj = submitFormat.generateKVObj(data.any)
-						
-						$scope.goal = Object.assign(kvObj, {'gsfName': data.gsfName})
-					})
-					.error(err => {
-						console.log(err)
-					})
-			}
-
-			getGoal(goalPreview.getValue())
-			
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('PromotionFormController', ['$scope', '$state', '$http', '$window', '$stateParams', 'goalPreview', '$rootScope',
 		function($scope, $state, $http, $window, $stateParams, goalPreview, $rootScope) {
 			
@@ -2370,10 +1978,21 @@ app.directive('suggestion', function(){
 
 			getRewards()
 
-			// $scope.$on('highlight', function(data) {
-			// 	$state.go('promotionCreate.goalPreview')
-			// 	goalPreview.updateValue(data)
-			// })
+			$scope.setRewards = function() {
+				if(!$scope.reward) return
+				else {
+					$scope.typeChecker = false
+					$scope.filterdRewards = $scope.rewards.filter( x => {return x.type == $scope.reward.type})
+				}
+			}
+
+			$scope.typeChecker = false
+
+			$scope.checkType = function() {
+				if (!$scope.reward) {
+					$scope.typeChecker = true
+				}
+			}
 
 			$scope.$on('highlight', function(event, data) {
 				$state.go('promotionCreate.goalPreview')
@@ -2424,4 +2043,29 @@ app.directive('suggestion', function(){
 			}
 		}
 	})
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('GoalPreviewController', ['$scope', '$http', '$state', 'goalPreview', 'submitFormat',
+		function($scope, $http, $state, goalPreview, submitFormat) {
+
+			$scope.$watch(function() {return goalPreview.getValue()}, function(newValue, oldValue) {
+				!newValue ? $state.go('promotionCreate') : getGoal(newValue)
+			})
+
+			function getGoal(id) {
+				$http.get(`/api/goals/${id}`)
+					.success(data => {
+						var kvObj = submitFormat.generateKVObj(data.any)
+						
+						$scope.goal = Object.assign(kvObj, {'gsfName': data.gsfName})
+					})
+					.error(err => {
+						console.log(err)
+					})
+			}
+
+			getGoal(goalPreview.getValue())
+			
+	}])
 }());

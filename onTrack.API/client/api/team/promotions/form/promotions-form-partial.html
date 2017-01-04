@@ -1,6 +1,4 @@
 <div class = 'container'>
-
-
 	<form name ="promotionForm" role = "form" data-toggle = 'validator'>
 			<h1>Promotion Create Form</h1>
 
@@ -57,22 +55,77 @@
 					<span class = 'input-group-addon'><i class = 'glyphicon glyphicon-user'></i></span>
 					<span>
 					<span style = 'width: 200px'>
-						<multiple-autocomplete
+						<multiple-autocomplete-customized
 							ng-model = 'promotion.goals'
 							object-property = 'gsfName'
 							suggestions-arr = 'goals'
 							after-select-item = 'beforeSelectItem'
 							>
-						</multiple-autocomplete>
+						</multiple-autocomplete-customized>
 					</span>
 				</div>
 			</div>
 
-			<div class = 'form-group'>
-				<label for = 'reward' class = 'control-label'>Reward</label>
+			<div class = 'container'>
+				<h4 style = 'text-align: center;'>Select Rewards</h4>
+				<div class = 'form-group'>
+					<label for = 'type' class = 'control-label'>Type</label>
+					<div class = 'input-group'>
+						<span class = 'input-group-addon'><i class = 'glyphicon glyphicon-user'></i></span>
+						<span>
+							<select
+								name = 'reward'
+								ng-model = "reward" 
+								ng-blur = 'setRewards()'
+								class = "form-control"
+								placeholder = "select a type" 
+								ng-options = 'r.type for r in rewards'
+								style = 'width: 400px'
+								required
+							>
+							</select>
+						</span>
+					</div>
+				</div>
+
+				<div class = 'form-group'>
+					<label for = 'rewards' class = 'control-label'>Rewards</label>
+					<div class = 'input-group'>
+						<span class = 'input-group-addon'><i class = 'glyphicon glyphicon-user'></i></span>
+						<multiple-autocomplete
+							ng-model = 'promotion.rewards'
+							object-property = 'name'
+							suggestions-arr = 'filteredRewards'
+							ng-click = 'checkType()'
+						>
+						</multiple-autocomplete>
+					</div>
+					<p class = 'alert alert-danger' ng-if = 'typeChecker'>Please select a type first</p>
+				</div>
+
+			</div>
+
+
+			<!-- <div class = 'form-group'>
+				<label for = 'rewards' class = 'control-label'>Rewards</label>
+				<div class = 'input-group'>
+					<label for = 'type' cladd = 'control-label'>Type</label>
+					<span class = 'input-group-addon'><i class = 'glyphicon glyphicon-user'></i></span>
+						<select
+							name = 'type'
+							ng-model = 'type' 
+							class = "form-control"
+							placeholder = "select a type" 
+							required
+						>
+							<option ng-repeat = 'reward in rewards'>
+								{{reward.type}}
+							</option>
+						</select>
+					</span>
+				</div>
 				<div class = 'input-group'>
 					<span class = 'input-group-addon'><i class = 'glyphicon glyphicon-user'></i></span>
-					<span>
 						<select
 							name = 'rewards'
 							ng-model = "promotion.rewards" 
@@ -86,11 +139,7 @@
 						</select>
 					</span>
 				</div>
-
-			</div>
-
-
-
+			</div> -->
 
 			<div class = "form-group" show-errors>
 				<label for = "description" class = 'control-label'>Description</label>
@@ -108,12 +157,6 @@
 	            </div>
 	            <p class="help-block" ng-if= "promotionForm.description.$error.required">Description is required</p>
 			</div>
-
-			<!-- <div class = 'form-group' show-errors>
-				
-
-			</div> -->
-
 
 			<div class = "form-group" show-errors>
 				<label for = "Date" class = 'control-label'>Start Date</label>

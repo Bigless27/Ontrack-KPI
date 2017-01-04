@@ -34,10 +34,21 @@
 
 			getRewards()
 
-			// $scope.$on('highlight', function(data) {
-			// 	$state.go('promotionCreate.goalPreview')
-			// 	goalPreview.updateValue(data)
-			// })
+			$scope.setRewards = function() {
+				if(!$scope.reward) return
+				else {
+					$scope.typeChecker = false
+					$scope.filterdRewards = $scope.rewards.filter( x => {return x.type == $scope.reward.type})
+				}
+			}
+
+			$scope.typeChecker = false
+
+			$scope.checkType = function() {
+				if (!$scope.reward) {
+					$scope.typeChecker = true
+				}
+			}
 
 			$scope.$on('highlight', function(event, data) {
 				$state.go('promotionCreate.goalPreview')
