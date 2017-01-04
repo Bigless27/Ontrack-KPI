@@ -1111,7 +1111,7 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 			$scope.createTeam = function(data){
 				$scope.$broadcast('show-errors-check-validity');
 
-				if($scope.goalForm.$invalid){return;}
+				if($scope.teamForm.$invalid){return;}
 				
 				var token = $window.sessionStorage['jwt']
 
@@ -1161,6 +1161,17 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 					})
 			}
 
+			function getPromotions() {
+				$http.get('api/promotions')
+					.success( data => {
+						$scope.promotions = data
+					})
+					.error( err => {
+						console.log(err)
+					})
+			}
+
+			getPromotions()
 			getAllUsers()
 
 			$scope.optionsList = [];
@@ -1629,37 +1640,6 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('GoalsFormController', ['$scope', '$state', '$window', '$http', 'arrToObject',
-	function($scope, $state, $window, $http, arrToObject) {
-
-		$scope.tracker = 0;
-
-		$scope.submit = function(data) {
-			$scope.$broadcast('show-errors-check-validity');
-
-			if($scope.goalForm.$invalid){return;}
-
-			var named = {'gsfName': data.name}
-			delete data.name
-
-			var data = arrToObject.create(Object.values(data))
-			
-			var dataJson = Object.assign(data, named)
-
-			$http.post('api/goals', dataJson)
-				.success(function(data) {
-					$state.reload()
-				})
-				.error(function(err) {
-					console.log(err)
-				})
-
-		}
-	}])
-
-}());
-(function() {
-	angular.module('onTrack')
 		.directive('addGoal', function() {
 			return{
 				restrict: 'E',
@@ -1796,6 +1776,37 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 		// 		}
 		// 	}
 		// })
+
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('GoalsFormController', ['$scope', '$state', '$window', '$http', 'arrToObject',
+	function($scope, $state, $window, $http, arrToObject) {
+
+		$scope.tracker = 0;
+
+		$scope.submit = function(data) {
+			$scope.$broadcast('show-errors-check-validity');
+
+			if($scope.goalForm.$invalid){return;}
+
+			var named = {'gsfName': data.name}
+			delete data.name
+
+			var data = arrToObject.create(Object.values(data))
+			
+			var dataJson = Object.assign(data, named)
+
+			$http.post('api/goals', dataJson)
+				.success(function(data) {
+					$state.reload()
+				})
+				.error(function(err) {
+					console.log(err)
+				})
+
+		}
+	}])
 
 }());
 (function() {
@@ -2075,8 +2086,29 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('PromotionAddController',['$scope', '$state', '$http', 
-		function($scope, $state, $http) {
+	.controller('PromotionAddController',['$scope', '$state', '$http', '$stateParams', '$window',
+		function($scope, $state, $http, $stateParams, $window) {
+
+			$scope.add = function(promotion) {
+				var token = $window.sessionStorage['jwt']
+
+				var promo = {promotion: []}
+
+				promotion.forEach( p => {promo.promotion.push({name: p.name, promoId: p._id})})
+
+				$http.put('api/teams/' + $stateParams.id,  promo, {
+					headers: {
+						'Authorization': `Bearer ${token}`
+					}
+				})
+					.success( data => {
+						$state.reload()
+					})
+					.error( err => {
+						console.log(err)
+					})
+
+			}
 
 			function getPromotions() {
 				$http.get('api/promotions')
@@ -2087,7 +2119,6 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 						console.log(err)
 					})
 			}
-			
 
 			getPromotions()
 		}])

@@ -53,6 +53,14 @@
 		 		<thead>
 		 			<tr class ='active'><th>Promotions</th></tr>
 		 		</thead>
+		 		<tbody ng-repeat = 'promo in team.promotions'>
+		 			<tr class = 'info'>
+		 				<td>{{promo.name}}
+		  					<span class = 'btn btn-danger' ng-click = "removeAdmin(admin)" style = 'float: right;'>X</span>
+		 				</td>
+
+		 			</tr>
+		 		</tbody>
 		 		<tr class = 'active'>
 		 			<td>
 		 				<div ui-sref = 'team.addPromotion' class = 'btn btn-primary'>Add Promotion</div>

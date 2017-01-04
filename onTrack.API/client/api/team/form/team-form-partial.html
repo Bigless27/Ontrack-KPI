@@ -1,4 +1,4 @@
-<form name ="userForm" role = "form" data-toggle = 'validator'>
+<form name ="teamForm" role = "form" data-toggle = 'validator'>
 		<h1>Create a Team</h1>
 		<p style = 'font-size:14px;'>*You are automatically added as an admin and a user</p>
 
@@ -9,7 +9,7 @@
 				<input 
 					name = 'name'
 					type = "text"
-					ng-model = "user.name" 
+					ng-model = "team.name" 
 					class = "form-control"
 					value = 'name' 
 					placeholder = 'Name'
@@ -20,17 +20,30 @@
 		</div>
 
 		<div class = "form-group">
+			<label for = "value" class = 'control-label'>Promotions</label>
+			<div class = "input-group">
+				<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+				<multiple-autocomplete 
+					ng-model="team.promotions"
+     				object-property="name"
+     				suggestions-arr="promotions"
+     				>
+				</multiple-autocomplete>
+            </div>
+		</div>
+    </div>
+
+		<div class = "form-group">
 			<label for = "value" class = 'control-label'>Admins</label>
 			<div class = "input-group">
 				<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
 				<multiple-autocomplete 
-					ng-model="user.admins"
+					ng-model="team.admins"
      				object-property="fullName"
      				suggestions-arr="optionsList"
-     				required = 'true'>
+     				>
 				</multiple-autocomplete>
             </div>
-            <p class="help-block" ng-if= "userForm.admins.$error.required">Value is required</p>
 		</div>
 
 		<div class = "form-group">
@@ -38,18 +51,17 @@
 			<div class = "input-group">
 				<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
 				<multiple-autocomplete 
-					ng-model="user.users"
+					ng-model="team.users"
      				object-property="fullName"
      				suggestions-arr="optionsList"
-     				required = 'true'>
+     				>
 				</multiple-autocomplete>
             </div>
-            <p class="help-block" ng-if= "userForm.users.$error.required">Value is required</p>
 		</div>
     </div>
 
     	<p ng-if = 'errorDisplay'>{{oops}}</p>
 
-		<button type = 'button' ng-click = "createTeam(user)" class = "btn btn-primary">Submit</button>
+		<button type = 'button' ng-click = "createTeam(team)" class = "btn btn-primary">Submit</button>
 		<div  class = 'btn btn-default' ui-sref = 'main'>Close</div>
 </form>

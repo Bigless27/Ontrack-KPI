@@ -8,7 +8,7 @@
 			$scope.createTeam = function(data){
 				$scope.$broadcast('show-errors-check-validity');
 
-				if($scope.goalForm.$invalid){return;}
+				if($scope.teamForm.$invalid){return;}
 				
 				var token = $window.sessionStorage['jwt']
 
@@ -58,6 +58,17 @@
 					})
 			}
 
+			function getPromotions() {
+				$http.get('api/promotions')
+					.success( data => {
+						$scope.promotions = data
+					})
+					.error( err => {
+						console.log(err)
+					})
+			}
+
+			getPromotions()
 			getAllUsers()
 
 			$scope.optionsList = [];

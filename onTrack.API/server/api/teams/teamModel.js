@@ -24,13 +24,18 @@ var ownerSchema = new Schema({
 	userId: {type: String}
 })
 
+var promotionSchema = new Schema({
+	name: {type: String},
+	promoId: {type: String}
+})
+
 
 var TeamSchema = new Schema({
 	name: {type: String, required: true, unique: true},
 	users: [usersSchema],
 	startDate: {type: Date},
 	endDate: {type: Date},
-	promotions: [{type: Schema.Types.ObjectId, ref: 'promotion'}],
+	promotions: [promotionSchema],
 	kpis: [{type: Schema.Types.ObjectId, ref: 'kpi'}],
 	owner: [ownerSchema],
 	admins: [adminSchema],
