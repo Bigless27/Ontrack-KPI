@@ -6,7 +6,7 @@ var Team = require('../teams/teamModel')
 
 var PromotionSchema = new Schema({
 	name: {type: String, required: true, index: true},
-	rewards: [{type: String}],
+	rewards: [{type: Schema.Types.ObjectId, ref: 'reward'}],
 	achievementRule: {type: String},
 	goals: [{type: Schema.Types.ObjectId, ref: 'goal'}],
 	completionValue: {type: Number, required: true},
