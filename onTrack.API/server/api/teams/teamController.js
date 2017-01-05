@@ -48,6 +48,24 @@ exports.removeAdmin = function(req, res, next) {
   })
 }
 
+exports.removePromotion = function(req, res, next) {
+  var team = req.team
+
+  var update = req.body
+
+  var i = team.promotions.length
+
+  var updatedTeam = removePromotion(team, update)
+
+  updatedTeam.save(function(err, saved) {
+    if (err) {
+      next(err);
+    } else {
+      res.json(saved);
+    }
+  })
+}
+
 exports.removeUsersTeam = function(req, res, next) {
   var team = req.team
 
@@ -89,6 +107,19 @@ exports.removeUsersTeam = function(req, res, next) {
       res.json(saved);
     }
   })
+}
+
+function removePromotion(team, update) {
+  var i = team.promotions.length
+  console.log(team)
+  console.log(update)
+
+  while(i--){
+    var ad = team.promotions[i]
+    if (ad.promoId.toString() === update.promoId.toString()){
+      ad.remove()
+    }
+  }
 }
 
 function removeAdminsUsers(param, team, update) {

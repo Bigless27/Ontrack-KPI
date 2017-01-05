@@ -488,6 +488,28 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+		$scope.signUp = function(user) {
+			$scope.$broadcast('show-errors-check-validity')
+
+			if ($scope.userForm.$invalid){return;}
+			$scope.err = false
+			$http.post('api/users', user)
+				.success(function(data) {
+					$scope.err = false
+					$window.sessionStorage.jwt = data['token']
+					$state.go('main')
+				})
+				.error(function(error) {
+					$scope.err = true
+					$scope.errMessage = error.message
+				})
+		}
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('MainSettingsController', ['$scope', '$state', '$window', '$http',
 	 function($scope, $state, $window, $http) {
 
@@ -553,31 +575,26 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
-		$scope.signUp = function(user) {
-			$scope.$broadcast('show-errors-check-validity')
-
-			if ($scope.userForm.$invalid){return;}
-			$scope.err = false
-			$http.post('api/users', user)
-				.success(function(data) {
-					$scope.err = false
-					$window.sessionStorage.jwt = data['token']
-					$state.go('main')
-				})
-				.error(function(error) {
-					$scope.err = true
-					$scope.errMessage = error.message
-				})
-		}
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('TeamController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
 		function($scope, $state, $http, $window, $stateParams, $q) {
-		
+			
+			$scope.removePromotion = function(promo) {
+				var token = $window.sessionStorage['jwt']
+
+				$http.put('/api/teams/' + $stateParams.id + '/removePromotion', promo, {
+					headers: {
+						'Authorization': `Bearer ${token}`
+					}
+				})
+				.success( promo => {
+					$scope.team = data
+				})
+				.error( err => {
+					console.log(err)
+				})
+
+			}
+
 			$scope.removeAdmin = function(admin) {
 				var token = $window.sessionStorage['jwt']
 
@@ -595,7 +612,7 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 			}
 
 			$scope.removeUser = function(user) {
-				//this automatically makes two requests. Check to see if you need to. If not then only issue one update
+				//this automatically makes two requests. Check to see if you need to remove admin as well. If not then only issue one update
 				var token = $window.sessionStorage['jwt']
 
 				$http.put('/api/teams/' + $stateParams.id + '/removeAdmin', user , {
@@ -1022,6 +1039,83 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('TeamFormController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+
+			$scope.errorDisplay = false
+
+			$scope.createTeam = function(data){
+				$scope.$broadcast('show-errors-check-validity');
+
+				if($scope.teamForm.$invalid){return;}
+				
+				var token = $window.sessionStorage['jwt']
+
+				var names = $scope.teams.filter(function(team) {
+					return team.name == data.name
+				})
+
+				if(names.length > 0){
+					$scope.errorDisplay = true
+					$scope.oops = 'Name is already taken!'
+					return
+				}
+				else {
+					$http.post('/api/teams' , data ,{
+						headers: {
+							'Authorization': `Bearer ${token}`
+						}
+					})
+					.success(function(data){
+						var teamId = {'id': data._id + ''}
+						$state.go('team',teamId )
+					})
+					.error(function(err) {
+						$scope.errorDisplay = true
+						$scope.oops = err.message
+					})
+				}
+			}
+
+			function getAllUsers() {
+				$http.get('/api/users')
+					.success(function(users){
+						users.forEach(function(user){
+							if(user){
+								$scope.optionsList.push(
+										{firstName: user.firstName, lastName: user.lastName, 
+											email: user.email, fullName: user.firstName + ' ' + user.lastName}
+									)
+							}
+							else{
+								$scope.optionsList = [{name: 'No users'}]
+							}
+						})
+					})
+					.error(function(err){
+						console.log(err)
+					})
+			}
+
+			function getPromotions() {
+				$http.get('api/promotions')
+					.success( data => {
+						$scope.promotions = data
+					})
+					.error( err => {
+						console.log(err)
+					})
+			}
+
+			getPromotions()
+			getAllUsers()
+
+			$scope.optionsList = [];
+
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('AdminController', ['$scope', '$state', '$http', '$window', '$stateParams',
 		function($scope, $state, $http, $window, $stateParams) {
 		
@@ -1098,83 +1192,6 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 		$scope.optionsList = []
 
 		getUsers()
-
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('TeamFormController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
-
-			$scope.errorDisplay = false
-
-			$scope.createTeam = function(data){
-				$scope.$broadcast('show-errors-check-validity');
-
-				if($scope.teamForm.$invalid){return;}
-				
-				var token = $window.sessionStorage['jwt']
-
-				var names = $scope.teams.filter(function(team) {
-					return team.name == data.name
-				})
-
-				if(names.length > 0){
-					$scope.errorDisplay = true
-					$scope.oops = 'Name is already taken!'
-					return
-				}
-				else {
-					$http.post('/api/teams' , data ,{
-						headers: {
-							'Authorization': `Bearer ${token}`
-						}
-					})
-					.success(function(data){
-						var teamId = {'id': data._id + ''}
-						$state.go('team',teamId )
-					})
-					.error(function(err) {
-						$scope.errorDisplay = true
-						$scope.oops = err.message
-					})
-				}
-			}
-
-			function getAllUsers() {
-				$http.get('/api/users')
-					.success(function(users){
-						users.forEach(function(user){
-							if(user){
-								$scope.optionsList.push(
-										{firstName: user.firstName, lastName: user.lastName, 
-											email: user.email, fullName: user.firstName + ' ' + user.lastName}
-									)
-							}
-							else{
-								$scope.optionsList = [{name: 'No users'}]
-							}
-						})
-					})
-					.error(function(err){
-						console.log(err)
-					})
-			}
-
-			function getPromotions() {
-				$http.get('api/promotions')
-					.success( data => {
-						$scope.promotions = data
-					})
-					.error( err => {
-						console.log(err)
-					})
-			}
-
-			getPromotions()
-			getAllUsers()
-
-			$scope.optionsList = [];
 
 	}])
 }());

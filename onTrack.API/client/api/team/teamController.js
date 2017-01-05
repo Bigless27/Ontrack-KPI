@@ -2,7 +2,24 @@
 	angular.module('onTrack')
 	.controller('TeamController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
 		function($scope, $state, $http, $window, $stateParams, $q) {
-		
+			
+			$scope.removePromotion = function(promo) {
+				var token = $window.sessionStorage['jwt']
+
+				$http.put('/api/teams/' + $stateParams.id + '/removePromotion', promo, {
+					headers: {
+						'Authorization': `Bearer ${token}`
+					}
+				})
+				.success( promo => {
+					$scope.team = data
+				})
+				.error( err => {
+					console.log(err)
+				})
+
+			}
+
 			$scope.removeAdmin = function(admin) {
 				var token = $window.sessionStorage['jwt']
 
@@ -20,7 +37,7 @@
 			}
 
 			$scope.removeUser = function(user) {
-				//this automatically makes two requests. Check to see if you need to. If not then only issue one update
+				//this automatically makes two requests. Check to see if you need to remove admin as well. If not then only issue one update
 				var token = $window.sessionStorage['jwt']
 
 				$http.put('/api/teams/' + $stateParams.id + '/removeAdmin', user , {

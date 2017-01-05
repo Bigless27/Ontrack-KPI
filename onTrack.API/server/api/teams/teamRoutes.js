@@ -12,6 +12,9 @@ router.route('/')
 router.route('/findTeams/:email')
 	.get(controller.findTeams)
 
+router.route('/:id/removePromotion')
+	.put(checkUser, controller.removePromotion)
+
 router.route('/:id/removeAdmin')
 	.put(checkUser, controller.removeAdmin)
 
