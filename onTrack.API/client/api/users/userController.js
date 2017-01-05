@@ -12,7 +12,7 @@
 				  confirmButtonColor: "#DD6B55",
 				  confirmButtonText: "Yes, delete it!",
 				  html: false
-				}).then(function() {
+				}).then(() => {
 					if ($scope.teamOwners.indexOf($scope.user.email) >= 0) {
 						swal({
 								title: 'User is an owner of a team!',
@@ -28,12 +28,12 @@
 								'Authorization' : `Bearer ${token}`
 							}
 						})
-						.success(function(data){
+						.then(response => {
 							swal({
 									title: 'User Deleted',
 									type: 'success'
 								})
-							if (data) {
+							if (response.data) {
 								$window.sessionStorage.clear()
 								$state.go('login')
 							}
@@ -41,12 +41,12 @@
 								$state.go('main')
 							}
 						})
-						.error(function(err) {
-							console.log(err)
+						.catch(response => {
+							console.log(response.data)
 						})
 					}
 				})
-				.catch(function() {
+				.catch(response =>{
 					return
 				})
 			}
@@ -117,57 +117,55 @@
 						'Authorization': `Bearer ${token}`
 					}
 				})
-				.success(function(data){
+				.then(response => {
 					$state.reload()
 				})
-				.error(function(err) {
-					console.log(err)
+				.catch(response => {
+					console.log(response.data)
 				})
 			}
 
 			function getUser() {
 				$http.get('/api/users/' + $stateParams.id)
-					.success(function(data){
-						$scope.user = data
+					.then(response => {
+						$scope.user = response.data
 						getTeams()
 					})
-					.error(function(err) {
-						console.log(err)
+					.catch(response => {
+						console.log(response.data)
 					})
 			}
 
 			//ui-select
 			function populateTypes() {
 				$http.get('api/type-settings')
-					.success(function(data) {
-						$scope.settings = data
+					.then(response => {
+						$scope.settings = response.data
 						var unUniqueTypes = $scope.settings.map(function(x){
 							return x.type
 						})
 						$scope.typeList = [...new Set(unUniqueTypes)]
 					})
-					.error(function(err) {
-						console.log(err)
+					.catch(response => {
+						console.log(response.data)
 					})
 			}
 
 			function getTeams() {
 				$http.get('api/teams/findTeams/' + $scope.user.email)
-					.success(function(data) {
-						if (data.length > 0) {
-							var owners = data.map(x => x.owner).reduce((a, b) => a.concat(b))
+					.then(response => {
+						if (response.data.length > 0) {
+							var owners = response.data.map(x => x.owner).reduce((a, b) => a.concat(b))
 							$scope.teamOwners = owners.map(x => x.email)
 						}
 						else {
 							$scope.teamOwners = []
 						}
-						
 					})
-					.error(function(err) {
-						console.log(err)
+					.catch(response => {
+						console.log(response.data)
 					})
 			}
-
 			populateTypes()
 			getUser()
 		

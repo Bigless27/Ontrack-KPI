@@ -86,7 +86,7 @@
 						'Authorization': `Bearer ${token}`
 					}
 				})
-				.success(function(data){
+				.then(function onSuccess(response){
 					if (field == 'type') {
 						$scope.updateSubtypes([])
 					}
@@ -94,8 +94,8 @@
 						$state.reload()
 					}
 				})
-				.error(function(err) {
-					console.log(err)
+				.catch(function onError(response) {
+					console.log(response.data)
 				})
 
 			}
@@ -112,21 +112,22 @@
 				  confirmButtonColor: "#DD6B55",
 				  confirmButtonText: "Yes, delete it!",
 				  html: false
-				}).then(function(){
+				}).then(function onSuccess(response){
 					$http.delete('/api/teams/' + $stateParams.id
 					 + '/promotions/' + $stateParams.promoId, {
 						headers: {
 							'Authorization': `Bearer ${token}`
 						}
 					})
-					.success(function(data){
+					.then(function onSuccess(response){
 						var teamId = {'id': $stateParams['id'] + ''}
 						$state.go('team',teamId )
 					})
-					.error(function(err) {
-						console.log(err)
+					.catch(function onError(response) {
+						console.log(response.data)
 					})
-				}).catch(function() {
+				}).catch(function onError(response) {
+					console.log(response.data)
 					return
 				})
 			}
@@ -177,32 +178,32 @@
 			function getPromotions(){
 				$http.get('api/teams/' + $stateParams.id 
 						+ '/promotions/' + $stateParams.promoId)
-							.success(function(data) {
-								$scope.promotion = data;
+							.then(function onSuccess(response) {
+								$scope.promotion = response.data;
 								$scope.promotion['startDate'] = new Date($scope.promotion.startDate) 
 								$scope.promotion['endDate'] =  new Date($scope.promotion.endDate)
 								getTypes()
 							})
-							.error(function(err) {
-								console.log(err);
+							.catch(function onError(response) {
+								console.log(response.data);
 							})
 			}
 
 			function getTypes(){
 				$http.get('api/type-settings')
-					.success(function(data){
-						$scope.typeList = data.map(x => x.type)
+					.then(function onSuccess(response){
+						$scope.typeList = response.data.map(x => x.type)
 						$scope.noSubtypes = false
 						if ($scope.promotion.subTypes.length === 0){
 							$scope.noSubtypes = true
 						}
-						$scope.settings = data
+						$scope.settings = response.data
 						getProgresses()
 						getUniqueTypes()
 						getUniqueSubtypes()
 					})
-					.error(function(err){
-						console.log(err)
+					.catch(function onError(response){
+						console.log(response.data)
 					})
 			}
 
@@ -212,9 +213,9 @@
 			function getTeams(matches) {
 				//you have the setting Id
 				$http.get('api/teams/' + $stateParams.id)
-					.success(function(data) {
+					.then(function onSuccess(response) {
 						var theUsers = []
-						data.users.forEach(function(user) {
+						response.data.users.forEach(function(user) {
 							//match the user's email to the mathcing progress email
 							matches.forEach(function(prog) {
 								if (prog.users.map(x => x.email).includes(user.email)) {
@@ -225,29 +226,28 @@
 						})
 						var usersQuery = theUsers.reduce((x,y) => {x.concat(y)})
 					})
-					.error(function(err){
-						console.log(err)
+					.catch(function onError(response){
+						console.log(response.data)
 					})
 			}
 
 			function findUsers() {
 				$http.get('api/users/findUsers/' + $stateParams.id)
-					.success(function(data) {
-						$scope.matchingUsers = matchProgressToPromotion(data)
+					.then(function onSuccess(response) {
+						$scope.matchingUsers = matchProgressToPromotion(response.data)
 					})
-					.error(function(err) {
-						console.log(err)
+					.catch(function onError(response) {
+						console.log(reponse.data)
 					})
 			}
 
 			function getProgresses() {
 				$http.get('api/progress-settings')
-					.success(function(progs) {
+					.then(function onSuccess(response) {
 						findUsers()
-						
 					})
-					.error(function(err) {
-						console.log(err)
+					.catch(function onError(response) {
+						console.log(response.data)
 					})
 			}
 

@@ -5,11 +5,11 @@
 
 			function getRewards() {
 				$http.get('api/rewards')
-					.success(data => {
-						$scope.rewards = data
+					.then(response => {
+						$scope.rewards = response.data
 					})
-					.error(err => {
-						console.log(err)
+					.catch(response => {
+						console.log(response.data)
 					})
 			}
 

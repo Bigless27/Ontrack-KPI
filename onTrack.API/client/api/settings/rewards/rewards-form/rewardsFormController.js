@@ -5,11 +5,11 @@
 
 			$scope.submit = function(reward) {
 				$http.post('/api/rewards', reward)
-					.success(data => {
+					.then(response => {
 						$state.go('rewards')
 					})
-					.error( e => {
-						console.log(e)
+					.catch( response => {
+						console.log(response.data)
 					})
 			}
 		}])

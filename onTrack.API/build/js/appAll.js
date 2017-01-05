@@ -439,14 +439,15 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 				$scope.err = true
 
 				$http.post('auth/signin', user)
-					.success(function(data) {
+					.then((response) => {
+
 						$scope.err = false
-						$window.sessionStorage.jwt = data['token']
+						$window.sessionStorage.jwt = response.data['token']
 						$state.go('main')
 					})
-					.error(function(error) {
+					.catch((response) => {
 						$scope.err = true
-						$scope.errMessage = error
+						$scope.errMessage = response.data
 					})
 			}
 
@@ -459,21 +460,21 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 
 			function getTeams() {
 				$http.get('api/teams')
-					.success(function(data) {
-						$scope.teams = data
+					.then(function onSuccess(response) {
+						$scope.teams = response.data
 					})
-					.error(function(err) {
+					.catch(function onError(err) {
 						console.log(err);
 					})
 			}
 
 			function getUsers() {
 				$http.get('api/users')
-					.success(function(data) {
-						$scope.users = data
+					.then(function onSuccess(response) {
+						$scope.users = response.data
 					})
-					.error(function(err) {
-						console.log(err)
+					.catch(function onError(response) {
+						console.log(response.data)
 					})
 			}
 
@@ -506,8 +507,8 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 
 	 	function getUsers(){
 			$http.get('/api/users')
-				.success(function(users) {
-					users.forEach(function(user){
+				.then(function onSucces(response) {
+					response.data.forEach(function(user){
 						if(user){
 							$scope.optionsList.push(
 									{firstName: user.firstName, lastName: user.lastName, 
@@ -519,28 +520,28 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 						}
 					})
 				})
-				.error(function(err) {
-					console.log(err);
+				.catch(function onError(response) {
+					console.log(response.data);
 				})
 		}
 
 	 	function loadTypeSettings(){
 		 	 $http.get('api/type-settings')
-		 		.success(function(data) {
-		 			$scope.typeSettings = data
+		 		.then(function onSucces(response) {
+		 			$scope.typeSettings = response.data
 		 		})
-		 		.error(function(err) {
-		 			console.log(err)
+		 		.catch(function onError(response) {
+		 			console.log(response.data)
 		 		})
 	 	}
 
 	 	function loadProgressSettings(){
 	 		$http.get('api/progress-settings')
-	 			.success(function(data) {
-	 				$scope.progressSettings = data
+	 			.then(function onSucces(response) {
+	 				$scope.progressSettings = response.data
 	 			})
-	 			.error(function(err) {
-	 				console.log(err)
+	 			.catch(function onError(response) {
+	 				console.log(response.data)
 	 			})
 	 	}
 
@@ -561,14 +562,14 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 			if ($scope.userForm.$invalid){return;}
 			$scope.err = false
 			$http.post('api/users', user)
-				.success(function(data) {
+				.then(function(response) {
 					$scope.err = false
-					$window.sessionStorage.jwt = data['token']
+					$window.sessionStorage.jwt = response.data['token']
 					$state.go('main')
 				})
-				.error(function(error) {
+				.catch(function(reponse) {
 					$scope.err = true
-					$scope.errMessage = error.message
+					$scope.errMessage = response.data.message
 				})
 		}
 	}])
@@ -586,11 +587,11 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 						'Authorization': `Bearer ${token}`
 					}
 				})
-				.success( promo => {
-					$scope.team = data
+				.then( response => {
+					$scope.team = response.data
 				})
-				.error( err => {
-					console.log(err)
+				.catch( response => {
+					console.log(response.data)
 				})
 
 			}
@@ -603,11 +604,11 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 						'Authorization': `Bearer ${token}`
 					}
 				})
-				.success(function(data){
-					$scope.team = data
+				.then(response => {
+					$scope.team = response.data
 				})
-				.error(function(err) {
-					console.log(err)
+				.catch(response => {
+					console.log(response.data)
 				})
 			}
 
@@ -620,21 +621,21 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 							'Authorization': `Bearer ${token}`
 						}
 					})
-					.success(function(data) {
+					.then(response => {
 						$http.put('/api/teams/' + $stateParams.id + '/removeUser', user, {
 								headers: {
 									'Authorization': `Bearer ${token}`
 								}
 							})
-							.success(function(data) {
-								$scope.team = data
+							.then(response => {
+								$scope.team = response.data
 							})
-							.error(function(err) {
-								console.log(err)
+							.catch(response => {
+								console.log(response.data)
 						})
 					})
-					.error(function(err) {
-						console.log(err)
+					.catch(reponse => {
+						console.log(response.data)
 				})
 			}
 
@@ -649,20 +650,20 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 				  confirmButtonColor: "#DD6B55",
 				  confirmButtonText: "Yes, delete it!",
 				  html: false
-				}).then(function(){
+				}).then(response => {
 					$http.delete('/api/teams/' + $stateParams['id'],
 					 {
 						headers: {
 							'Authorization': `Bearer ${token}`
 						}
 					})
-					.success(function(data){
+					.then(response => {
 						$state.go('main')
 					})
-					.error(function(err) {
-						console.log(err)
+					.catch(response => {
+						console.log(response.data)
 					})
-				}).catch(function(){
+				}).catch(response => {
 					return
 				})
 			}
@@ -693,10 +694,10 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 						'Authorization': `Bearer ${token}`
 					}
 				})
-				.success(function(data){
+				.then(response => {
 					$state.reload()
 				})
-				.error(function(err) {
+				.catch(response => {
 					console.log(err)
 				})
 
@@ -706,39 +707,39 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 
 			function getTeam(){
 				$http.get('/api/teams/' + $stateParams['id'])
-					.success(function(data) {
-						$scope.team = data
+					.then(response => {
+						$scope.team = response.data
 					})
-					.error(function(err) {
-						console.log(err);
+					.catch(response => {
+						console.log(response.data);
 					})
 			}
 
 			function getTeams() {
 				$http.get('api/teams')
-					.success(function(data) {
+					.then(response => {
 						$scope.nameArr = []
-						data.forEach(function(team){
+						response.data.forEach(function(team){
 							$scope.nameArr.push(team.name)
 						})
 
 					})
-					.error(function(err) {
-						console.log(err);
+					.catch(response => {
+						console.log(response.data);
 					})
 			}
 
 			function getUsers() {
 				$http.get('api/users')
-					.success(function(data) {
+					.then(response => {
 						$scope.users = []
-						data.forEach(function(){
-							$scope.users.push({name: data.firstName + ' ' + data.lastName})
+						response.data.forEach(function(){
+							$scope.users.push({name: response.data.firstName + ' ' + response.data.lastName})
 						})
 
 					})
-					.error(function(err) {
-						console.log(err)
+					.catch(response => {
+						console.log(response.data)
 					})
 			}
 
@@ -775,11 +776,11 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 					'Authorization': `Bearer ${token}`
 				}
 			})
-			.success(function(data) {
+			.then(function(data) {
 				$state.reload() //look into making this two way bound
 
 			})
-			.error(function(err) {
+			.catch(function(err) {
 				console.log(err)
 			})
 		}
@@ -788,18 +789,18 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 
 		function getTeam() {
 			$http.get('/api/teams/' + $stateParams.id)
-				.success(function(data) {
+				.then(function(data) {
 					$scope.team = data	
 					getUsers()
 				})
-				.error(function(err) {
+				.catch(function(err) {
 					console.log(err)
 				})
 		}
 
 		function getUsers(){
 			$http.get('/api/users')
-				.success(function(users) {
+				.then(function(users) {
 					users.forEach(function(user){
 						if(user){
 							var userEmails = $scope.team.users.map(x => x.email)
@@ -815,7 +816,7 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 						}
 					})
 				})
-				.error(function(err) {
+				.catch(function(err) {
 					console.log(err);
 				})
 		}
@@ -840,7 +841,7 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 				  confirmButtonColor: "#DD6B55",
 				  confirmButtonText: "Yes, delete it!",
 				  html: false
-				}).then(function() {
+				}).then(() => {
 					if ($scope.teamOwners.indexOf($scope.user.email) >= 0) {
 						swal({
 								title: 'User is an owner of a team!',
@@ -856,12 +857,12 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 								'Authorization' : `Bearer ${token}`
 							}
 						})
-						.success(function(data){
+						.then(response => {
 							swal({
 									title: 'User Deleted',
 									type: 'success'
 								})
-							if (data) {
+							if (response.data) {
 								$window.sessionStorage.clear()
 								$state.go('login')
 							}
@@ -869,12 +870,12 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 								$state.go('main')
 							}
 						})
-						.error(function(err) {
-							console.log(err)
+						.catch(response => {
+							console.log(response.data)
 						})
 					}
 				})
-				.catch(function() {
+				.catch(response =>{
 					return
 				})
 			}
@@ -945,57 +946,55 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 						'Authorization': `Bearer ${token}`
 					}
 				})
-				.success(function(data){
+				.then(response => {
 					$state.reload()
 				})
-				.error(function(err) {
-					console.log(err)
+				.catch(response => {
+					console.log(response.data)
 				})
 			}
 
 			function getUser() {
 				$http.get('/api/users/' + $stateParams.id)
-					.success(function(data){
-						$scope.user = data
+					.then(response => {
+						$scope.user = response.data
 						getTeams()
 					})
-					.error(function(err) {
-						console.log(err)
+					.catch(response => {
+						console.log(response.data)
 					})
 			}
 
 			//ui-select
 			function populateTypes() {
 				$http.get('api/type-settings')
-					.success(function(data) {
-						$scope.settings = data
+					.then(response => {
+						$scope.settings = response.data
 						var unUniqueTypes = $scope.settings.map(function(x){
 							return x.type
 						})
 						$scope.typeList = [...new Set(unUniqueTypes)]
 					})
-					.error(function(err) {
-						console.log(err)
+					.catch(response => {
+						console.log(response.data)
 					})
 			}
 
 			function getTeams() {
 				$http.get('api/teams/findTeams/' + $scope.user.email)
-					.success(function(data) {
-						if (data.length > 0) {
-							var owners = data.map(x => x.owner).reduce((a, b) => a.concat(b))
+					.then(response => {
+						if (response.data.length > 0) {
+							var owners = response.data.map(x => x.owner).reduce((a, b) => a.concat(b))
 							$scope.teamOwners = owners.map(x => x.email)
 						}
 						else {
 							$scope.teamOwners = []
 						}
-						
 					})
-					.error(function(err) {
-						console.log(err)
+					.catch(response => {
+						console.log(response.data)
 					})
 			}
-
 			populateTypes()
 			getUser()
 		
@@ -1007,11 +1006,11 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 	function($scope, $state, $window, $http, $stateParams) {
 		function getGoals() {
 			$http.get('api/goals')
-				.success(function(data) {
-					$scope.goals = data
+				.then(function onSuccess(response) {
+					$scope.goals = response.data
 				})
-				.error(function(err) {
-					console.log(err)
+				.catch(function onError(response) {
+					console.log(response.data)
 				})
 		}
 
@@ -1026,15 +1025,92 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 
 			function getRewards() {
 				$http.get('api/rewards')
-					.success(data => {
-						$scope.rewards = data
+					.then(response => {
+						$scope.rewards = response.data
 					})
-					.error(err => {
-						console.log(err)
+					.catch(response => {
+						console.log(response.data)
 					})
 			}
 
 			getRewards()
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('TeamFormController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+
+			$scope.errorDisplay = false
+
+			$scope.createTeam = function(data){
+				$scope.$broadcast('show-errors-check-validity');
+
+				if($scope.teamForm.$invalid){return;}
+				
+				var token = $window.sessionStorage['jwt']
+
+				var names = $scope.teams.filter(function(team) {
+					return team.name == data.name
+				})
+
+				if(names.length > 0){
+					$scope.errorDisplay = true
+					$scope.oops = 'Name is already taken!'
+					return
+				}
+				else {
+					$http.post('/api/teams' , data ,{
+						headers: {
+							'Authorization': `Bearer ${token}`
+						}
+					})
+					.then(function onSuccess(response){
+						var teamId = {'id': response.data._id + ''}
+						$state.go('team',teamId )
+					})
+					.catch(function onError(response) {
+						$scope.errorDisplay = true
+						$scope.oops = response.data.message
+					})
+				}
+			}
+
+			function getAllUsers() {
+				$http.get('/api/users')
+					.then(function onSuccess(response){
+						response.data.forEach(function(user){
+							if(user){
+								$scope.optionsList.push(
+										{firstName: user.firstName, lastName: user.lastName, 
+											email: user.email, fullName: user.firstName + ' ' + user.lastName}
+									)
+							}
+							else{
+								$scope.optionsList = [{name: 'No users'}]
+							}
+						})
+					})
+					.catch(function onError(response){
+						console.log(response.data)
+					})
+			}
+
+			function getPromotions() {
+				$http.get('api/promotions')
+					.then( response => {
+						$scope.promotions = response.data
+					})
+					.catch( response => {
+						console.log(response.data)
+					})
+			}
+
+			getPromotions()
+			getAllUsers()
+
+			$scope.optionsList = [];
+
 	}])
 }());
 (function() {
@@ -1080,18 +1156,18 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 						'Authorization': `Bearer ${token}`
 					}
 				})
-				.success(function(data) {
+				.then(function(response) {
 					$state.reload() //look into making this two way bound
 
 				})
-				.error(function(err) {
-					console.log(err)
+				.catch(function(response) {
+					console.log(response.data)
 				})
 		}
 
 		function getUsers(){
 			$http.get('/api/users')
-				.success(function(users) {
+				.then(function(users) {
 					users.forEach(function(user){
 						if(user){
 							var userEmails = $scope.team.admins.map(x => x.email)
@@ -1107,7 +1183,7 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 						}
 					})
 				})
-				.error(function(err) {
+				.catch(function(err) {
 					console.log(err);
 				})
 		}
@@ -1115,83 +1191,6 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 		$scope.optionsList = []
 
 		getUsers()
-
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('TeamFormController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
-
-			$scope.errorDisplay = false
-
-			$scope.createTeam = function(data){
-				$scope.$broadcast('show-errors-check-validity');
-
-				if($scope.teamForm.$invalid){return;}
-				
-				var token = $window.sessionStorage['jwt']
-
-				var names = $scope.teams.filter(function(team) {
-					return team.name == data.name
-				})
-
-				if(names.length > 0){
-					$scope.errorDisplay = true
-					$scope.oops = 'Name is already taken!'
-					return
-				}
-				else {
-					$http.post('/api/teams' , data ,{
-						headers: {
-							'Authorization': `Bearer ${token}`
-						}
-					})
-					.success(function(data){
-						var teamId = {'id': data._id + ''}
-						$state.go('team',teamId )
-					})
-					.error(function(err) {
-						$scope.errorDisplay = true
-						$scope.oops = err.message
-					})
-				}
-			}
-
-			function getAllUsers() {
-				$http.get('/api/users')
-					.success(function(users){
-						users.forEach(function(user){
-							if(user){
-								$scope.optionsList.push(
-										{firstName: user.firstName, lastName: user.lastName, 
-											email: user.email, fullName: user.firstName + ' ' + user.lastName}
-									)
-							}
-							else{
-								$scope.optionsList = [{name: 'No users'}]
-							}
-						})
-					})
-					.error(function(err){
-						console.log(err)
-					})
-			}
-
-			function getPromotions() {
-				$http.get('api/promotions')
-					.success( data => {
-						$scope.promotions = data
-					})
-					.error( err => {
-						console.log(err)
-					})
-			}
-
-			getPromotions()
-			getAllUsers()
-
-			$scope.optionsList = [];
 
 	}])
 }());
@@ -1212,11 +1211,11 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 						'Authorization': `Bearer ${token}`
 					}
 				})
-				.success(function(data) {
+				.then(function(response) {
 					$state.reload()
 				})
-				.error(function(err) {
-					console.log(err)
+				.catch(function(response) {
+					console.log(response.data)
 				}) 
 			}
 
@@ -1244,10 +1243,10 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 
 			function getTeam() {
 				$http.get('api/teams/' + $stateParams.id)
-					.success(function(data) {
-						$scope.team = data
+					.then(function(response) {
+						$scope.team = response.data
 
-						data.admins.forEach(function(user){
+						response.data.admins.forEach(function(user){
 							if(user){
 								if (user.email !== $scope.team.owner[0].email){
 									$scope.optionsList.push(
@@ -1265,8 +1264,8 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 						}
 						// getUsers()
 					})
-					.error(function(err) {
-						console.log(err)
+					.catch(function(response) {
+						console.log(response.data)
 					})
 			}
 
@@ -1361,7 +1360,7 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 						'Authorization': `Bearer ${token}`
 					}
 				})
-				.success(function(data){
+				.then(function onSuccess(response){
 					if (field == 'type') {
 						$scope.updateSubtypes([])
 					}
@@ -1369,8 +1368,8 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 						$state.reload()
 					}
 				})
-				.error(function(err) {
-					console.log(err)
+				.catch(function onError(response) {
+					console.log(response.data)
 				})
 
 			}
@@ -1387,21 +1386,22 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 				  confirmButtonColor: "#DD6B55",
 				  confirmButtonText: "Yes, delete it!",
 				  html: false
-				}).then(function(){
+				}).then(function onSuccess(response){
 					$http.delete('/api/teams/' + $stateParams.id
 					 + '/promotions/' + $stateParams.promoId, {
 						headers: {
 							'Authorization': `Bearer ${token}`
 						}
 					})
-					.success(function(data){
+					.then(function onSuccess(response){
 						var teamId = {'id': $stateParams['id'] + ''}
 						$state.go('team',teamId )
 					})
-					.error(function(err) {
-						console.log(err)
+					.catch(function onError(response) {
+						console.log(response.data)
 					})
-				}).catch(function() {
+				}).catch(function onError(response) {
+					console.log(response.data)
 					return
 				})
 			}
@@ -1452,32 +1452,32 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 			function getPromotions(){
 				$http.get('api/teams/' + $stateParams.id 
 						+ '/promotions/' + $stateParams.promoId)
-							.success(function(data) {
-								$scope.promotion = data;
+							.then(function onSuccess(response) {
+								$scope.promotion = response.data;
 								$scope.promotion['startDate'] = new Date($scope.promotion.startDate) 
 								$scope.promotion['endDate'] =  new Date($scope.promotion.endDate)
 								getTypes()
 							})
-							.error(function(err) {
-								console.log(err);
+							.catch(function onError(response) {
+								console.log(response.data);
 							})
 			}
 
 			function getTypes(){
 				$http.get('api/type-settings')
-					.success(function(data){
-						$scope.typeList = data.map(x => x.type)
+					.then(function onSuccess(response){
+						$scope.typeList = response.data.map(x => x.type)
 						$scope.noSubtypes = false
 						if ($scope.promotion.subTypes.length === 0){
 							$scope.noSubtypes = true
 						}
-						$scope.settings = data
+						$scope.settings = response.data
 						getProgresses()
 						getUniqueTypes()
 						getUniqueSubtypes()
 					})
-					.error(function(err){
-						console.log(err)
+					.catch(function onError(response){
+						console.log(response.data)
 					})
 			}
 
@@ -1487,9 +1487,9 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 			function getTeams(matches) {
 				//you have the setting Id
 				$http.get('api/teams/' + $stateParams.id)
-					.success(function(data) {
+					.then(function onSuccess(response) {
 						var theUsers = []
-						data.users.forEach(function(user) {
+						response.data.users.forEach(function(user) {
 							//match the user's email to the mathcing progress email
 							matches.forEach(function(prog) {
 								if (prog.users.map(x => x.email).includes(user.email)) {
@@ -1500,29 +1500,28 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 						})
 						var usersQuery = theUsers.reduce((x,y) => {x.concat(y)})
 					})
-					.error(function(err){
-						console.log(err)
+					.catch(function onError(response){
+						console.log(response.data)
 					})
 			}
 
 			function findUsers() {
 				$http.get('api/users/findUsers/' + $stateParams.id)
-					.success(function(data) {
-						$scope.matchingUsers = matchProgressToPromotion(data)
+					.then(function onSuccess(response) {
+						$scope.matchingUsers = matchProgressToPromotion(response.data)
 					})
-					.error(function(err) {
-						console.log(err)
+					.catch(function onError(response) {
+						console.log(reponse.data)
 					})
 			}
 
 			function getProgresses() {
 				$http.get('api/progress-settings')
-					.success(function(progs) {
+					.then(function onSuccess(response) {
 						findUsers()
-						
 					})
-					.error(function(err) {
-						console.log(err)
+					.catch(function onError(response) {
+						console.log(response.data)
 					})
 			}
 
@@ -1599,11 +1598,11 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 				}
 				else{
 					$http.post('api/users', user)
-						.success(function(data){
+						.then(function(data){
 							$state.reload()
 
 						})
-						.error(function(err) {
+						.catch(function(err) {
 							console.log(err)
 						})
 				}
@@ -1617,17 +1616,17 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 			
 			function getProgress() {
 				$http.get('api/users/' + $stateParams.id + '/progress/' + $stateParams.progressId)
-					.success(function(data) {
+					.then(function(data) {
 						$scope.progress = data
 						$http.get('api/progress-settings/' + data.settingId)
-							.success(function(data){
+							.then(function(data){
 								$scope.setting = data
 							})
-							.error(function(err) {
+							.catch(function(err) {
 								console.log(err)
 							})
 					})
-					.error(function(err) {
+					.catch(function(err) {
 						console.log(err)
 					})
 			}
@@ -1815,13 +1814,89 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 			var dataJson = Object.assign(data, named)
 
 			$http.post('api/goals', dataJson)
-				.success(function(data) {
+				.then(function onSuccess(response) {
 					$state.reload()
 				})
-				.error(function(err) {
-					console.log(err)
+				.catch(function onError(response) {
+					console.log(err.data)
 				})
+		}
+	}])
 
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('GoalsViewController', ['$scope', '$state', '$http', '$stateParams', 'arrToObject', 'submitFormat',
+	function($scope, $state, $http, $stateParams, arrToObject, submitFormat) {
+
+		$scope.box = false;
+
+		$scope.tracker = 1
+
+		function getGoal() {
+			$http.get('api/goals/' + $stateParams.id)
+				.then(response => {
+					var kvObj = submitFormat.generateKVObj(response.data.any)
+				
+					var combinedFormatted = Object.assign(kvObj, {'gsfName': response.data.gsfName})
+
+					$scope.goal = combinedFormatted
+
+				})
+				.catch(response => {
+					console.log(response.data)
+				})
+		} 
+
+		getGoal()
+
+		$scope.editGoal = function() {
+			$scope.box = true
+		}
+
+		$scope.submit = function(goal) {
+
+			var name = {'gsfName': goal.gsfName}
+			delete goal.gsfName
+
+			var newGoal = submitFormat.kvPair(goal)
+
+			var addedGoals = submitFormat.addGoalFormat(goal)
+
+			updatedGoal = Object.assign(newGoal, arrToObject.create(addedGoals), name)
+			
+			$http.put('api/goals/' + $stateParams.id, updatedGoal)	
+				.then(response => {
+					$state.reload()
+				})
+				.catch(response => {	
+					console.log(response.data)
+				})
+		}
+
+		$scope.cancel = function() {
+			$scope.box = false
+			$state.reload()
+		}
+
+		$scope.deleteGoal = function() {
+			swal({
+				title: "Are you sure?",
+				text: "You will not be able to recover this goal",
+				type: "warning",
+				showCancelButton: true,
+				confirmButtonColor: "#DD6B55",
+				confirmButtonText: "Yes, delete it!",
+				html: false
+			}).then(function(response) {
+				$http.delete('api/goals/' + $stateParams.id)
+				.then(function(data) {
+					$state.go('goals')
+				})
+				.catch(function(response) {
+					console.log(response.data)
+				})
+			}).catch(e => {})
 		}
 	}])
 
@@ -1833,11 +1908,11 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 
 			$scope.submit = function(reward) {
 				$http.post('/api/rewards', reward)
-					.success(data => {
+					.then(response => {
 						$state.go('rewards')
 					})
-					.error( e => {
-						console.log(e)
+					.catch( response => {
+						console.log(response.data)
 					})
 			}
 		}])
@@ -1873,10 +1948,10 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 				$scope.reward[param] = name
 
 				$http.put('api/rewards/' + $stateParams.id, $scope.reward)
-					.success(data => {
+					.then(response => {
 						$state.reload()
 					})
-					.error(err => {
+					.catch(response => {
 						console.log(err)
 					})
 			}
@@ -1885,94 +1960,17 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 
 			function getReward() {
 				$http.get('api/rewards/' + $stateParams.id)
-					.success(data => {
-						$scope.reward = data
+					.then(response => {
+						$scope.reward = response.data
 					})
-					.error(err => {
-						console.log(err)
+					.catch(response => {
+						console.log(response.data)
 					})
 			}
 
 			getReward()
 
 		}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('GoalsViewController', ['$scope', '$state', '$http', '$stateParams', 'arrToObject', 'submitFormat',
-	function($scope, $state, $http, $stateParams, arrToObject, submitFormat) {
-
-		$scope.box = false;
-
-		$scope.tracker = 1
-
-		function getGoal() {
-			$http.get('api/goals/' + $stateParams.id)
-				.success(data => {
-					var kvObj = submitFormat.generateKVObj(data.any)
-				
-					var combinedFormatted = Object.assign(kvObj, {'gsfName': data.gsfName})
-
-					$scope.goal = combinedFormatted
-
-				})
-				.error(err => {
-					console.log(err)
-				})
-		} 
-
-		getGoal()
-
-		$scope.editGoal = function() {
-			$scope.box = true
-		}
-
-		$scope.submit = function(goal) {
-
-			var name = {'gsfName': goal.gsfName}
-			delete goal.gsfName
-
-			var newGoal = submitFormat.kvPair(goal)
-
-			var addedGoals = submitFormat.addGoalFormat(goal)
-
-			updatedGoal = Object.assign(newGoal, arrToObject.create(addedGoals), name)
-			
-			$http.put('api/goals/' + $stateParams.id, updatedGoal)	
-				.success(data => {
-					$state.reload()
-				})
-				.error(err => {	
-					console.log(err)
-				})
-		}
-
-		$scope.cancel = function() {
-			$scope.box = false
-			$state.reload()
-		}
-
-		$scope.deleteGoal = function() {
-			swal({
-				title: "Are you sure?",
-				text: "You will not be able to recover this goal",
-				type: "warning",
-				showCancelButton: true,
-				confirmButtonColor: "#DD6B55",
-				confirmButtonText: "Yes, delete it!",
-				html: false
-			}).then(function() {
-				$http.delete('api/goals/' + $stateParams.id)
-				.success(function(data) {
-					$state.go('goals')
-				})
-				.error(function(err) {
-					console.log(err)
-				})
-			}).catch(e => {})
-		}
-	}])
-
 }());
 (function() {
 	angular.module('onTrack')
@@ -1988,11 +1986,11 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 
 			function getGoals(){
 				$http.get('api/goals')
-					.success(data => {
-						$scope.goals = data
+					.then(response => {
+						$scope.goals = response.data
 					})	
-					.error(err => {
-						console.log(err)
+					.catch(response => {
+						console.log(response.data)
 					})
 			} 
 
@@ -2000,11 +1998,11 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 
 			function getRewards() {
 				$http.get('api/rewards')
-					.success(data => {
-						$scope.rewards = data
+					.then(response => {
+						$scope.rewards = response.data
 					})
-					.error(err => {
-						console.log(err)
+					.catch(response => {
+						console.log(response.data)
 					})
 			}
 
@@ -2054,11 +2052,11 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 						"Authorization": `Bearer ${token}`
 					}
 				})
-				.success(function(data){
+				.then(function(resposne){
 						$state.reload()
 				})
-				.error(function(err){
-					console.log(err)
+				.catch(function(response){
+					console.log(response.data)
 				})
 			}
 	}])
@@ -2078,6 +2076,31 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('GoalPreviewController', ['$scope', '$http', '$state', 'goalPreview', 'submitFormat',
+		function($scope, $http, $state, goalPreview, submitFormat) {
+
+			$scope.$watch(function() {return goalPreview.getValue()}, function(newValue, oldValue) {
+				!newValue ? $state.go('promotionCreate') : getGoal(newValue)
+			})
+
+			function getGoal(id) {
+				$http.get(`/api/goals/${id}`)
+					.then(response => {
+						var kvObj = submitFormat.generateKVObj(response.data.any)
+						
+						$scope.goal = Object.assign(kvObj, {'gsfName': response.data.gsfName})
+					})
+					.catch(response => {
+						console.log(response.data)
+					})
+			}
+
+			getGoal(goalPreview.getValue())
+			
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('PromotionAddController',['$scope', '$state', '$http', '$stateParams', '$window',
 		function($scope, $state, $http, $stateParams, $window) {
 
@@ -2093,50 +2116,25 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 						'Authorization': `Bearer ${token}`
 					}
 				})
-					.success( data => {
+					.then( response => {
 						$state.reload()
 					})
-					.error( err => {
-						console.log(err)
+					.catch( response => {
+						console.log(response)
 					})
 
 			}
 
 			function getPromotions() {
 				$http.get('api/promotions')
-					.success(data => {
-						$scope.promotions = data
+					.then(response => {
+						$scope.promotions = response.data
 					})
-					.error(err => {
-						console.log(err)
+					.catch(response => {
+						console.log(response.data)
 					})
 			}
 
 			getPromotions()
 		}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('GoalPreviewController', ['$scope', '$http', '$state', 'goalPreview', 'submitFormat',
-		function($scope, $http, $state, goalPreview, submitFormat) {
-
-			$scope.$watch(function() {return goalPreview.getValue()}, function(newValue, oldValue) {
-				!newValue ? $state.go('promotionCreate') : getGoal(newValue)
-			})
-
-			function getGoal(id) {
-				$http.get(`/api/goals/${id}`)
-					.success(data => {
-						var kvObj = submitFormat.generateKVObj(data.any)
-						
-						$scope.goal = Object.assign(kvObj, {'gsfName': data.gsfName})
-					})
-					.error(err => {
-						console.log(err)
-					})
-			}
-
-			getGoal(goalPreview.getValue())
-			
-	}])
 }());

@@ -21,11 +21,11 @@
 				}
 				else{
 					$http.post('api/users', user)
-						.success(function(data){
+						.then(function(data){
 							$state.reload()
 
 						})
-						.error(function(err) {
+						.catch(function(err) {
 							console.log(err)
 						})
 				}

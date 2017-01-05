@@ -18,13 +18,12 @@
 			var dataJson = Object.assign(data, named)
 
 			$http.post('api/goals', dataJson)
-				.success(function(data) {
+				.then(function onSuccess(response) {
 					$state.reload()
 				})
-				.error(function(err) {
-					console.log(err)
+				.catch(function onError(response) {
+					console.log(err.data)
 				})
-
 		}
 	}])
 

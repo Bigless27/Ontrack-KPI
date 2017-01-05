@@ -29,10 +29,10 @@
 				$scope.reward[param] = name
 
 				$http.put('api/rewards/' + $stateParams.id, $scope.reward)
-					.success(data => {
+					.then(response => {
 						$state.reload()
 					})
-					.error(err => {
+					.catch(response => {
 						console.log(err)
 					})
 			}
@@ -41,11 +41,11 @@
 
 			function getReward() {
 				$http.get('api/rewards/' + $stateParams.id)
-					.success(data => {
-						$scope.reward = data
+					.then(response => {
+						$scope.reward = response.data
 					})
-					.error(err => {
-						console.log(err)
+					.catch(response => {
+						console.log(response.data)
 					})
 			}
 

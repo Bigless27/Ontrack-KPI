@@ -15,22 +15,22 @@
 						'Authorization': `Bearer ${token}`
 					}
 				})
-					.success( data => {
+					.then( response => {
 						$state.reload()
 					})
-					.error( err => {
-						console.log(err)
+					.catch( response => {
+						console.log(response)
 					})
 
 			}
 
 			function getPromotions() {
 				$http.get('api/promotions')
-					.success(data => {
-						$scope.promotions = data
+					.then(response => {
+						$scope.promotions = response.data
 					})
-					.error(err => {
-						console.log(err)
+					.catch(response => {
+						console.log(response.data)
 					})
 			}
 

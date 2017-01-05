@@ -8,14 +8,14 @@
 			if ($scope.userForm.$invalid){return;}
 			$scope.err = false
 			$http.post('api/users', user)
-				.success(function(data) {
+				.then(function(response) {
 					$scope.err = false
-					$window.sessionStorage.jwt = data['token']
+					$window.sessionStorage.jwt = response.data['token']
 					$state.go('main')
 				})
-				.error(function(error) {
+				.catch(function(reponse) {
 					$scope.err = true
-					$scope.errMessage = error.message
+					$scope.errMessage = response.data.message
 				})
 		}
 	}])

@@ -5,21 +5,21 @@
 
 			function getTeams() {
 				$http.get('api/teams')
-					.success(function(data) {
-						$scope.teams = data
+					.then(function onSuccess(response) {
+						$scope.teams = response.data
 					})
-					.error(function(err) {
+					.catch(function onError(err) {
 						console.log(err);
 					})
 			}
 
 			function getUsers() {
 				$http.get('api/users')
-					.success(function(data) {
-						$scope.users = data
+					.then(function onSuccess(response) {
+						$scope.users = response.data
 					})
-					.error(function(err) {
-						console.log(err)
+					.catch(function onError(response) {
+						console.log(response.data)
 					})
 			}
 

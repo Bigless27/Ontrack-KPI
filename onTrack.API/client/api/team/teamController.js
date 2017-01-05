@@ -11,11 +11,11 @@
 						'Authorization': `Bearer ${token}`
 					}
 				})
-				.success( promo => {
-					$scope.team = data
+				.then( response => {
+					$scope.team = response.data
 				})
-				.error( err => {
-					console.log(err)
+				.catch( response => {
+					console.log(response.data)
 				})
 
 			}
@@ -28,11 +28,11 @@
 						'Authorization': `Bearer ${token}`
 					}
 				})
-				.success(function(data){
-					$scope.team = data
+				.then(response => {
+					$scope.team = response.data
 				})
-				.error(function(err) {
-					console.log(err)
+				.catch(response => {
+					console.log(response.data)
 				})
 			}
 
@@ -45,21 +45,21 @@
 							'Authorization': `Bearer ${token}`
 						}
 					})
-					.success(function(data) {
+					.then(response => {
 						$http.put('/api/teams/' + $stateParams.id + '/removeUser', user, {
 								headers: {
 									'Authorization': `Bearer ${token}`
 								}
 							})
-							.success(function(data) {
-								$scope.team = data
+							.then(response => {
+								$scope.team = response.data
 							})
-							.error(function(err) {
-								console.log(err)
+							.catch(response => {
+								console.log(response.data)
 						})
 					})
-					.error(function(err) {
-						console.log(err)
+					.catch(reponse => {
+						console.log(response.data)
 				})
 			}
 
@@ -74,20 +74,20 @@
 				  confirmButtonColor: "#DD6B55",
 				  confirmButtonText: "Yes, delete it!",
 				  html: false
-				}).then(function(){
+				}).then(response => {
 					$http.delete('/api/teams/' + $stateParams['id'],
 					 {
 						headers: {
 							'Authorization': `Bearer ${token}`
 						}
 					})
-					.success(function(data){
+					.then(response => {
 						$state.go('main')
 					})
-					.error(function(err) {
-						console.log(err)
+					.catch(response => {
+						console.log(response.data)
 					})
-				}).catch(function(){
+				}).catch(response => {
 					return
 				})
 			}
@@ -118,10 +118,10 @@
 						'Authorization': `Bearer ${token}`
 					}
 				})
-				.success(function(data){
+				.then(response => {
 					$state.reload()
 				})
-				.error(function(err) {
+				.catch(response => {
 					console.log(err)
 				})
 
@@ -131,39 +131,39 @@
 
 			function getTeam(){
 				$http.get('/api/teams/' + $stateParams['id'])
-					.success(function(data) {
-						$scope.team = data
+					.then(response => {
+						$scope.team = response.data
 					})
-					.error(function(err) {
-						console.log(err);
+					.catch(response => {
+						console.log(response.data);
 					})
 			}
 
 			function getTeams() {
 				$http.get('api/teams')
-					.success(function(data) {
+					.then(response => {
 						$scope.nameArr = []
-						data.forEach(function(team){
+						response.data.forEach(function(team){
 							$scope.nameArr.push(team.name)
 						})
 
 					})
-					.error(function(err) {
-						console.log(err);
+					.catch(response => {
+						console.log(response.data);
 					})
 			}
 
 			function getUsers() {
 				$http.get('api/users')
-					.success(function(data) {
+					.then(response => {
 						$scope.users = []
-						data.forEach(function(){
-							$scope.users.push({name: data.firstName + ' ' + data.lastName})
+						response.data.forEach(function(){
+							$scope.users.push({name: response.data.firstName + ' ' + response.data.lastName})
 						})
 
 					})
-					.error(function(err) {
-						console.log(err)
+					.catch(response => {
+						console.log(response.data)
 					})
 			}
 

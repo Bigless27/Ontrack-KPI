@@ -15,11 +15,11 @@
 						'Authorization': `Bearer ${token}`
 					}
 				})
-				.success(function(data) {
+				.then(function(response) {
 					$state.reload()
 				})
-				.error(function(err) {
-					console.log(err)
+				.catch(function(response) {
+					console.log(response.data)
 				}) 
 			}
 
@@ -47,10 +47,10 @@
 
 			function getTeam() {
 				$http.get('api/teams/' + $stateParams.id)
-					.success(function(data) {
-						$scope.team = data
+					.then(function(response) {
+						$scope.team = response.data
 
-						data.admins.forEach(function(user){
+						response.data.admins.forEach(function(user){
 							if(user){
 								if (user.email !== $scope.team.owner[0].email){
 									$scope.optionsList.push(
@@ -68,8 +68,8 @@
 						}
 						// getUsers()
 					})
-					.error(function(err) {
-						console.log(err)
+					.catch(function(response) {
+						console.log(response.data)
 					})
 			}
 

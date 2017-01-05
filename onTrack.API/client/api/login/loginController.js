@@ -12,14 +12,15 @@
 				$scope.err = true
 
 				$http.post('auth/signin', user)
-					.success(function(data) {
+					.then((response) => {
+
 						$scope.err = false
-						$window.sessionStorage.jwt = data['token']
+						$window.sessionStorage.jwt = response.data['token']
 						$state.go('main')
 					})
-					.error(function(error) {
+					.catch((response) => {
 						$scope.err = true
-						$scope.errMessage = error
+						$scope.errMessage = response.data
 					})
 			}
 

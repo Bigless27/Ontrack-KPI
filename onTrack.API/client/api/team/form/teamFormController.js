@@ -27,21 +27,21 @@
 							'Authorization': `Bearer ${token}`
 						}
 					})
-					.success(function(data){
-						var teamId = {'id': data._id + ''}
+					.then(function onSuccess(response){
+						var teamId = {'id': response.data._id + ''}
 						$state.go('team',teamId )
 					})
-					.error(function(err) {
+					.catch(function onError(response) {
 						$scope.errorDisplay = true
-						$scope.oops = err.message
+						$scope.oops = response.data.message
 					})
 				}
 			}
 
 			function getAllUsers() {
 				$http.get('/api/users')
-					.success(function(users){
-						users.forEach(function(user){
+					.then(function onSuccess(response){
+						response.data.forEach(function(user){
 							if(user){
 								$scope.optionsList.push(
 										{firstName: user.firstName, lastName: user.lastName, 
@@ -53,18 +53,18 @@
 							}
 						})
 					})
-					.error(function(err){
-						console.log(err)
+					.catch(function onError(response){
+						console.log(response.data)
 					})
 			}
 
 			function getPromotions() {
 				$http.get('api/promotions')
-					.success( data => {
-						$scope.promotions = data
+					.then( response => {
+						$scope.promotions = response.data
 					})
-					.error( err => {
-						console.log(err)
+					.catch( response => {
+						console.log(response.data)
 					})
 			}
 

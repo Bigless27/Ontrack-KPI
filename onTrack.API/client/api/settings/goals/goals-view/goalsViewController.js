@@ -9,16 +9,16 @@
 
 		function getGoal() {
 			$http.get('api/goals/' + $stateParams.id)
-				.success(data => {
-					var kvObj = submitFormat.generateKVObj(data.any)
+				.then(response => {
+					var kvObj = submitFormat.generateKVObj(response.data.any)
 				
-					var combinedFormatted = Object.assign(kvObj, {'gsfName': data.gsfName})
+					var combinedFormatted = Object.assign(kvObj, {'gsfName': response.data.gsfName})
 
 					$scope.goal = combinedFormatted
 
 				})
-				.error(err => {
-					console.log(err)
+				.catch(response => {
+					console.log(response.data)
 				})
 		} 
 
@@ -40,11 +40,11 @@
 			updatedGoal = Object.assign(newGoal, arrToObject.create(addedGoals), name)
 			
 			$http.put('api/goals/' + $stateParams.id, updatedGoal)	
-				.success(data => {
+				.then(response => {
 					$state.reload()
 				})
-				.error(err => {	
-					console.log(err)
+				.catch(response => {	
+					console.log(response.data)
 				})
 		}
 
@@ -62,13 +62,13 @@
 				confirmButtonColor: "#DD6B55",
 				confirmButtonText: "Yes, delete it!",
 				html: false
-			}).then(function() {
+			}).then(function(response) {
 				$http.delete('api/goals/' + $stateParams.id)
-				.success(function(data) {
+				.then(function(data) {
 					$state.go('goals')
 				})
-				.error(function(err) {
-					console.log(err)
+				.catch(function(response) {
+					console.log(response.data)
 				})
 			}).catch(e => {})
 		}

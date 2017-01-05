@@ -41,18 +41,18 @@
 						'Authorization': `Bearer ${token}`
 					}
 				})
-				.success(function(data) {
+				.then(function(response) {
 					$state.reload() //look into making this two way bound
 
 				})
-				.error(function(err) {
-					console.log(err)
+				.catch(function(response) {
+					console.log(response.data)
 				})
 		}
 
 		function getUsers(){
 			$http.get('/api/users')
-				.success(function(users) {
+				.then(function(users) {
 					users.forEach(function(user){
 						if(user){
 							var userEmails = $scope.team.admins.map(x => x.email)
@@ -68,7 +68,7 @@
 						}
 					})
 				})
-				.error(function(err) {
+				.catch(function(err) {
 					console.log(err);
 				})
 		}

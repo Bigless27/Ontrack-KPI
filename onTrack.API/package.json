@@ -6,7 +6,8 @@
     "test": "NODE_ENV='testing' mocha test/unit/**/*.js"
   },
   "dependencies": {
-    "angular": "*",
+    "angular": "^1.6.1",
+    "angular-multiple-select": "^1.1.2",
     "angular-sanitize": "*",
     "angular-ui-router": "^0.3.2",
     "bcrypt": "^1.0.2",

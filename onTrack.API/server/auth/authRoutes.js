@@ -9,12 +9,12 @@ var passport = require('passport')
 router.post('/signin', verifyUser(), controller.signin);
 
 
+
 router.get('/google', passport.authenticate('google', {scope: ['profile', 'email']}));
 
 router.get('/google/callback', function(req, res, next) {
 	passport.authenticate('google', function(err, user, info) {
 		if (err) {return next(err)}
-
 		if(user) {
 			var token = createToken(user._id)
 			return res.redirect('/#/main?access_token=' + token)

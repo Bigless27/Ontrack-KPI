@@ -12,11 +12,11 @@
 
 			function getGoals(){
 				$http.get('api/goals')
-					.success(data => {
-						$scope.goals = data
+					.then(response => {
+						$scope.goals = response.data
 					})	
-					.error(err => {
-						console.log(err)
+					.catch(response => {
+						console.log(response.data)
 					})
 			} 
 
@@ -24,11 +24,11 @@
 
 			function getRewards() {
 				$http.get('api/rewards')
-					.success(data => {
-						$scope.rewards = data
+					.then(response => {
+						$scope.rewards = response.data
 					})
-					.error(err => {
-						console.log(err)
+					.catch(response => {
+						console.log(response.data)
 					})
 			}
 
@@ -78,11 +78,11 @@
 						"Authorization": `Bearer ${token}`
 					}
 				})
-				.success(function(data){
+				.then(function(resposne){
 						$state.reload()
 				})
-				.error(function(err){
-					console.log(err)
+				.catch(function(response){
+					console.log(response.data)
 				})
 			}
 	}])

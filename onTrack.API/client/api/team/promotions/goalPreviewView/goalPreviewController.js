@@ -9,13 +9,13 @@
 
 			function getGoal(id) {
 				$http.get(`/api/goals/${id}`)
-					.success(data => {
-						var kvObj = submitFormat.generateKVObj(data.any)
+					.then(response => {
+						var kvObj = submitFormat.generateKVObj(response.data.any)
 						
-						$scope.goal = Object.assign(kvObj, {'gsfName': data.gsfName})
+						$scope.goal = Object.assign(kvObj, {'gsfName': response.data.gsfName})
 					})
-					.error(err => {
-						console.log(err)
+					.catch(response => {
+						console.log(response.data)
 					})
 			}
 

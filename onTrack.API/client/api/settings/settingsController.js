@@ -18,8 +18,8 @@
 
 	 	function getUsers(){
 			$http.get('/api/users')
-				.success(function(users) {
-					users.forEach(function(user){
+				.then(function onSucces(response) {
+					response.data.forEach(function(user){
 						if(user){
 							$scope.optionsList.push(
 									{firstName: user.firstName, lastName: user.lastName, 
@@ -31,28 +31,28 @@
 						}
 					})
 				})
-				.error(function(err) {
-					console.log(err);
+				.catch(function onError(response) {
+					console.log(response.data);
 				})
 		}
 
 	 	function loadTypeSettings(){
 		 	 $http.get('api/type-settings')
-		 		.success(function(data) {
-		 			$scope.typeSettings = data
+		 		.then(function onSucces(response) {
+		 			$scope.typeSettings = response.data
 		 		})
-		 		.error(function(err) {
-		 			console.log(err)
+		 		.catch(function onError(response) {
+		 			console.log(response.data)
 		 		})
 	 	}
 
 	 	function loadProgressSettings(){
 	 		$http.get('api/progress-settings')
-	 			.success(function(data) {
-	 				$scope.progressSettings = data
+	 			.then(function onSucces(response) {
+	 				$scope.progressSettings = response.data
 	 			})
-	 			.error(function(err) {
-	 				console.log(err)
+	 			.catch(function onError(response) {
+	 				console.log(response.data)
 	 			})
 	 	}
 
