@@ -111,8 +111,6 @@ exports.removeUsersTeam = function(req, res, next) {
 
 function removePromotion(team, update) {
   var i = team.promotions.length
-  console.log(team)
-  console.log(update)
 
   while(i--){
     var ad = team.promotions[i]

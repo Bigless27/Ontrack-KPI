@@ -37,7 +37,6 @@
 					}
 				})
 
-
 				$http.put('/api/teams/' + $stateParams['id'], team, {
 					headers: {
 						'Authorization': `Bearer ${token}`

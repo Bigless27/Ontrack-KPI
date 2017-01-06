@@ -6,11 +6,16 @@
 			$scope.add = function(promotion) {
 				var token = $window.sessionStorage['jwt']
 
-				var promo = {promotion: []}
+				var team = {promotions: []}
 
-				promotion.forEach( p => {promo.promotion.push({name: p.name, promoId: p._id})})
+				$scope.team.promotions.forEach( promo => {
+					team.promotions.push({name: promo.name, promoId: promo._id})
+				})
 
-				$http.put('api/teams/' + $stateParams.id,  promo, {
+				promotion.forEach( p => {team.promotions.push({name: p.name, promoId: p._id})})
+
+
+				$http.put('api/teams/' + $stateParams.id,  team, {
 					headers: {
 						'Authorization': `Bearer ${token}`
 					}
