@@ -3,6 +3,8 @@
 	.controller('AdminController', ['$scope', '$state', '$http', '$window', '$stateParams',
 		function($scope, $state, $http, $window, $stateParams) {
 		
+		$scope.admins = true
+
 		$scope.user = {
 
 		  };
