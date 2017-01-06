@@ -42,7 +42,7 @@
 							}
 						})
 						.catch(response => {
-							console.log(response.data)
+							console.log(response)
 						})
 					}
 				})
@@ -121,7 +121,7 @@
 					$state.reload()
 				})
 				.catch(response => {
-					console.log(response.data)
+					console.log(response)
 				})
 			}
 
@@ -132,7 +132,7 @@
 						getTeams()
 					})
 					.catch(response => {
-						console.log(response.data)
+						console.log(response)
 					})
 			}
 
@@ -147,7 +147,7 @@
 						$scope.typeList = [...new Set(unUniqueTypes)]
 					})
 					.catch(response => {
-						console.log(response.data)
+						console.log(response)
 					})
 			}
 
@@ -163,7 +163,7 @@
 						}
 					})
 					.catch(response => {
-						console.log(response.data)
+						console.log(response)
 					})
 			}
 			populateTypes()

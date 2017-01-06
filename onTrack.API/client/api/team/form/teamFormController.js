@@ -39,7 +39,7 @@
 					})
 					.catch(function onError(response) {
 						$scope.errorDisplay = true
-						$scope.oops = response.data.message
+						$scope.oops = response.message
 					})
 				}
 			}
@@ -60,7 +60,7 @@
 						})
 					})
 					.catch(function onError(response){
-						console.log(response.data)
+						console.log(response)
 					})
 			}
 
@@ -70,7 +70,7 @@
 						$scope.promotions = response.data
 					})
 					.catch( response => {
-						console.log(response.data)
+						console.log(response)
 					})
 			}
 

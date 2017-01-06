@@ -22,7 +22,7 @@
 					$state.reload()
 				})
 				.catch(function onError(response) {
-					console.log(err.data)
+					console.log(response)
 				})
 		}
 	}])

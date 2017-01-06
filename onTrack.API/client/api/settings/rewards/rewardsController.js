@@ -9,7 +9,7 @@
 						$scope.rewards = response.data
 					})
 					.catch(response => {
-						console.log(response.data)
+						console.log(response)
 					})
 			}
 

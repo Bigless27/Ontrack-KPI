@@ -19,7 +19,7 @@
 					$state.reload()
 				})
 				.catch(function(response) {
-					console.log(response.data)
+					console.log(response)
 				}) 
 			}
 
@@ -69,7 +69,7 @@
 						// getUsers()
 					})
 					.catch(function(response) {
-						console.log(response.data)
+						console.log(response)
 					})
 			}
 

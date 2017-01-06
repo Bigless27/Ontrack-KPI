@@ -32,7 +32,7 @@
 					})
 				})
 				.catch(function onError(response) {
-					console.log(response.data);
+					console.log(response)
 				})
 		}
 
@@ -42,7 +42,7 @@
 		 			$scope.typeSettings = response.data
 		 		})
 		 		.catch(function onError(response) {
-		 			console.log(response.data)
+		 			console.log(response)
 		 		})
 	 	}
 
@@ -52,7 +52,7 @@
 	 				$scope.progressSettings = response.data
 	 			})
 	 			.catch(function onError(response) {
-	 				console.log(response.data)
+	 				console.log(response)
 	 			})
 	 	}
 

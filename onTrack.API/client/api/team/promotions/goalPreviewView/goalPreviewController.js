@@ -15,7 +15,7 @@
 						$scope.goal = Object.assign(kvObj, {'gsfName': response.data.gsfName})
 					})
 					.catch(response => {
-						console.log(response.data)
+						console.log(response)
 					})
 			}
 

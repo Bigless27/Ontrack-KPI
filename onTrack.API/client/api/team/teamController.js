@@ -15,7 +15,7 @@
 					$scope.team = response.data
 				})
 				.catch( response => {
-					console.log(response.data)
+					console.log(response)
 				})
 
 			}
@@ -32,7 +32,7 @@
 					$scope.team = response.data
 				})
 				.catch(response => {
-					console.log(response.data)
+					console.log(response)
 				})
 			}
 
@@ -55,11 +55,11 @@
 								$scope.team = response.data
 							})
 							.catch(response => {
-								console.log(response.data)
+								console.log(response)
 						})
 					})
 					.catch(reponse => {
-						console.log(response.data)
+						console.log(response)
 				})
 			}
 
@@ -85,7 +85,7 @@
 						$state.go('main')
 					})
 					.catch(response => {
-						console.log(response.data)
+						console.log(response)
 					})
 				}).catch(response => {
 					return
@@ -122,7 +122,7 @@
 					$state.reload()
 				})
 				.catch(response => {
-					console.log(err)
+					console.log(response)
 				})
 
 			}
@@ -135,7 +135,7 @@
 						$scope.team = response.data
 					})
 					.catch(response => {
-						console.log(response.data);
+						console.log(response)
 					})
 			}
 
@@ -149,7 +149,7 @@
 
 					})
 					.catch(response => {
-						console.log(response.data);
+						console.log(response);
 					})
 			}
 
@@ -163,7 +163,7 @@
 
 					})
 					.catch(response => {
-						console.log(response.data)
+						console.log(response)
 					})
 			}
 

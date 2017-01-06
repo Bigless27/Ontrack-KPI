@@ -30,7 +30,7 @@
 
 			})
 			.catch(function(response) {
-				console.log(response.data)
+				console.log(response)
 			})
 		}
 
@@ -43,7 +43,7 @@
 					getUsers()
 				})
 				.catch(function onError(reponse) {
-					console.log(response.data)
+					console.log(response)
 				})
 		}
 
@@ -66,7 +66,7 @@
 					})
 				})
 				.catch(function onError(response) {
-					console.log(respose.data);
+					console.log(respose);
 				})
 		}
 

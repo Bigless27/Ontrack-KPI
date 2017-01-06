@@ -9,7 +9,7 @@
 						$state.go('rewards')
 					})
 					.catch( response => {
-						console.log(response.data)
+						console.log(response)
 					})
 			}
 		}])

@@ -18,7 +18,7 @@
 
 				})
 				.catch(response => {
-					console.log(response.data)
+					console.log(response)
 				})
 		} 
 
@@ -44,7 +44,7 @@
 					$state.reload()
 				})
 				.catch(response => {	
-					console.log(response.data)
+					console.log(response)
 				})
 		}
 
@@ -68,7 +68,7 @@
 					$state.go('goals')
 				})
 				.catch(function(response) {
-					console.log(response.data)
+					console.log(response)
 				})
 			}).catch(e => {})
 		}

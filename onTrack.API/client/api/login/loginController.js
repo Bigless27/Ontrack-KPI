@@ -20,7 +20,7 @@
 					})
 					.catch((response) => {
 						$scope.err = true
-						$scope.errMessage = response.data
+						$scope.errMessage = response
 					})
 			}
 

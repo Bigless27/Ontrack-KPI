@@ -33,7 +33,7 @@
 						$state.reload()
 					})
 					.catch(response => {
-						console.log(err)
+						console.log(response)
 					})
 			}
 
@@ -45,7 +45,7 @@
 						$scope.reward = response.data
 					})
 					.catch(response => {
-						console.log(response.data)
+						console.log(response)
 					})
 			}
 

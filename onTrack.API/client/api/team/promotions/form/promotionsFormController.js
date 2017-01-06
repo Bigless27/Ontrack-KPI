@@ -16,7 +16,7 @@
 						$scope.goals = response.data
 					})	
 					.catch(response => {
-						console.log(response.data)
+						console.log(response)
 					})
 			} 
 
@@ -28,7 +28,7 @@
 						$scope.rewards = response.data
 					})
 					.catch(response => {
-						console.log(response.data)
+						console.log(response)
 					})
 			}
 
@@ -79,7 +79,7 @@
 						$state.reload()
 				})
 				.catch(function(response){
-					console.log(response.data)
+					console.log(response)
 				})
 			}
 	}])

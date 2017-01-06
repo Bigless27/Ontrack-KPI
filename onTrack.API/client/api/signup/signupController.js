@@ -15,7 +15,7 @@
 				})
 				.catch(function(reponse) {
 					$scope.err = true
-					$scope.errMessage = response.data.message
+					$scope.errMessage = response.message
 				})
 		}
 	}])

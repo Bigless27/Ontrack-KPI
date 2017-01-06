@@ -8,7 +8,7 @@
 					$scope.goals = response.data
 				})
 				.catch(function onError(response) {
-					console.log(response.data)
+					console.log(response)
 				})
 		}
 

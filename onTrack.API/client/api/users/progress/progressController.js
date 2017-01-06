@@ -15,8 +15,8 @@
 								console.log(err)
 							})
 					})
-					.catch(function(err) {
-						console.log(err)
+					.catch(reponse => {
+						console.log(response)
 					})
 			}
 
@@ -32,8 +32,8 @@
 				$scope.progress['value'] = data
 
 				$http.put('api/users/' + $stateParams.id + '/progress/' + $stateParams.progressId, $scope.progress)
-					.error(function(err) {
-						console.log(err)
+					.catch( response => {
+						console.log(response)
 					})
 
 			}

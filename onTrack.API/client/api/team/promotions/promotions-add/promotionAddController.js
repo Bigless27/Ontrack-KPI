@@ -32,10 +32,18 @@
 			function getPromotions() {
 				$http.get('api/promotions')
 					.then(response => {
-						$scope.promotions = response.data
+						response.data.filter( promo => {
+							if(promo){
+								 var found = $scope.team.promotions.find(promo)
+								 console.log(found)
+							}
+							else {
+								$scope.promotions = [{name: 'No Promotions'}]
+							}
+						})
 					})
 					.catch(response => {
-						console.log(response.data)
+						console.log(response)
 					})
 			}
 

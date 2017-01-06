@@ -8,8 +8,8 @@
 					.then(function onSuccess(response) {
 						$scope.teams = response.data
 					})
-					.catch(function onError(err) {
-						console.log(err);
+					.catch(function onError(response) {
+						console.log(response);
 					})
 			}
 
@@ -19,7 +19,7 @@
 						$scope.users = response.data
 					})
 					.catch(function onError(response) {
-						console.log(response.data)
+						console.log(response)
 					})
 			}
 

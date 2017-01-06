@@ -95,7 +95,7 @@
 					}
 				})
 				.catch(function onError(response) {
-					console.log(response.data)
+					console.log(response)
 				})
 
 			}
@@ -123,10 +123,10 @@
 						$state.go('team',teamId )
 					})
 					.catch(function onError(response) {
-						console.log(response.data)
+						console.log(response)
 					})
 				}).catch(function onError(response) {
-					console.log(response.data)
+					console.log(response)
 					return
 				})
 			}
@@ -184,7 +184,7 @@
 								getTypes()
 							})
 							.catch(function onError(response) {
-								console.log(response.data);
+								console.log(response);
 							})
 			}
 
@@ -202,7 +202,7 @@
 						getUniqueSubtypes()
 					})
 					.catch(function onError(response){
-						console.log(response.data)
+						console.log(response)
 					})
 			}
 
@@ -226,7 +226,7 @@
 						var usersQuery = theUsers.reduce((x,y) => {x.concat(y)})
 					})
 					.catch(function onError(response){
-						console.log(response.data)
+						console.log(response)
 					})
 			}
 
@@ -236,7 +236,7 @@
 						$scope.matchingUsers = matchProgressToPromotion(response.data)
 					})
 					.catch(function onError(response) {
-						console.log(reponse.data)
+						console.log(reponse)
 					})
 			}
 
@@ -246,7 +246,7 @@
 						findUsers()
 					})
 					.catch(function onError(response) {
-						console.log(response.data)
+						console.log(response)
 					})
 			}
 
