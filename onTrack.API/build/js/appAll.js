@@ -576,6 +576,181 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('TeamController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
+		function($scope, $state, $http, $window, $stateParams, $q) {
+			
+			$scope.removePromotion = function(promo) {
+				var token = $window.sessionStorage['jwt']
+
+				$http.put('/api/teams/' + $stateParams.id + '/removePromotion', promo, {
+					headers: {
+						'Authorization': `Bearer ${token}`
+					}
+				})
+				.then( response => {
+					$scope.team = response.data
+				})
+				.catch( response => {
+					console.log(response)
+				})
+
+			}
+
+			$scope.removeAdmin = function(admin) {
+				var token = $window.sessionStorage['jwt']
+
+				$http.put('/api/teams/' + $stateParams['id'] + '/removeAdmin', admin, {
+					headers: {
+						'Authorization': `Bearer ${token}`
+					}
+				})
+				.then(response => {
+					$scope.team = response.data
+				})
+				.catch(response => {
+					console.log(response)
+				})
+			}
+
+			$scope.removeUser = function(user) {
+				//this automatically makes two requests. Check to see if you need to remove admin as well. If not then only issue one update
+				var token = $window.sessionStorage['jwt']
+
+				$http.put('/api/teams/' + $stateParams.id + '/removeAdmin', user , {
+						headers: {
+							'Authorization': `Bearer ${token}`
+						}
+					})
+					.then(response => {
+						$http.put('/api/teams/' + $stateParams.id + '/removeUser', user, {
+								headers: {
+									'Authorization': `Bearer ${token}`
+								}
+							})
+							.then(response => {
+								$scope.team = response.data
+							})
+							.catch(response => {
+								console.log(response)
+						})
+					})
+					.catch(reponse => {
+						console.log(response)
+				})
+			}
+
+			$scope.deleteTeam = function() {
+				var token = $window.sessionStorage['jwt']
+
+				swal({
+				  title: "Are you sure?",
+				  text: "You will not be able to recover this team!",
+				  type: "warning",
+				  showCancelButton: true,
+				  confirmButtonColor: "#DD6B55",
+				  confirmButtonText: "Yes, delete it!",
+				  html: false
+				}).then(response => {
+					$http.delete('/api/teams/' + $stateParams['id'],
+					 {
+						headers: {
+							'Authorization': `Bearer ${token}`
+						}
+					})
+					.then(response => {
+						$state.go('main')
+					})
+					.catch(response => {
+						console.log(response)
+					})
+				}).catch(response => {
+					return
+				})
+			}
+
+			$scope.logout = function() {
+				$window.sessionStorage.clear()
+				$state.go('login')
+			}
+
+			$scope.updateName = function(data) {
+				if (data === ''){
+					return 'Name is required'
+				}
+			
+				if($scope.nameArr.includes(data)){
+					return 'Name is already taken'
+				}
+				return updateTeam(data, 'name')
+			}
+
+			function updateTeam(data, field) {
+				var d = $q.defer();
+				var token = $window.sessionStorage['jwt']
+				$scope.team[field] = data
+
+				$http.put('/api/teams/' + $stateParams['id'], $scope.team,{
+					headers: {
+						'Authorization': `Bearer ${token}`
+					}
+				})
+				.then(response => {
+					$state.reload()
+				})
+				.catch(response => {
+					console.log(response)
+				})
+
+			}
+
+
+
+			function getTeam(){
+				$http.get('/api/teams/' + $stateParams['id'])
+					.then(response => {
+						$scope.team = response.data
+					})
+					.catch(response => {
+						console.log(response)
+					})
+			}
+
+			function getTeams() {
+				$http.get('api/teams')
+					.then(response => {
+						$scope.nameArr = []
+						response.data.forEach(function(team){
+							$scope.nameArr.push(team.name)
+						})
+
+					})
+					.catch(response => {
+						console.log(response);
+					})
+			}
+
+			function getUsers() {
+				$http.get('api/users')
+					.then(response => {
+						$scope.users = []
+						response.data.forEach(function(){
+							$scope.users.push({name: response.data.firstName + ' ' + response.data.lastName})
+						})
+
+					})
+					.catch(response => {
+						console.log(response)
+					})
+			}
+
+			getTeams()
+			getTeam()
+
+		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('AddUserController', ['$scope', '$state', '$http', '$window', '$stateParams',
 		function($scope, $state, $http, $window, $stateParams) {
 
@@ -827,181 +1002,6 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('TeamController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
-		function($scope, $state, $http, $window, $stateParams, $q) {
-			
-			$scope.removePromotion = function(promo) {
-				var token = $window.sessionStorage['jwt']
-
-				$http.put('/api/teams/' + $stateParams.id + '/removePromotion', promo, {
-					headers: {
-						'Authorization': `Bearer ${token}`
-					}
-				})
-				.then( response => {
-					$scope.team = response.data
-				})
-				.catch( response => {
-					console.log(response)
-				})
-
-			}
-
-			$scope.removeAdmin = function(admin) {
-				var token = $window.sessionStorage['jwt']
-
-				$http.put('/api/teams/' + $stateParams['id'] + '/removeAdmin', admin, {
-					headers: {
-						'Authorization': `Bearer ${token}`
-					}
-				})
-				.then(response => {
-					$scope.team = response.data
-				})
-				.catch(response => {
-					console.log(response)
-				})
-			}
-
-			$scope.removeUser = function(user) {
-				//this automatically makes two requests. Check to see if you need to remove admin as well. If not then only issue one update
-				var token = $window.sessionStorage['jwt']
-
-				$http.put('/api/teams/' + $stateParams.id + '/removeAdmin', user , {
-						headers: {
-							'Authorization': `Bearer ${token}`
-						}
-					})
-					.then(response => {
-						$http.put('/api/teams/' + $stateParams.id + '/removeUser', user, {
-								headers: {
-									'Authorization': `Bearer ${token}`
-								}
-							})
-							.then(response => {
-								$scope.team = response.data
-							})
-							.catch(response => {
-								console.log(response)
-						})
-					})
-					.catch(reponse => {
-						console.log(response)
-				})
-			}
-
-			$scope.deleteTeam = function() {
-				var token = $window.sessionStorage['jwt']
-
-				swal({
-				  title: "Are you sure?",
-				  text: "You will not be able to recover this team!",
-				  type: "warning",
-				  showCancelButton: true,
-				  confirmButtonColor: "#DD6B55",
-				  confirmButtonText: "Yes, delete it!",
-				  html: false
-				}).then(response => {
-					$http.delete('/api/teams/' + $stateParams['id'],
-					 {
-						headers: {
-							'Authorization': `Bearer ${token}`
-						}
-					})
-					.then(response => {
-						$state.go('main')
-					})
-					.catch(response => {
-						console.log(response)
-					})
-				}).catch(response => {
-					return
-				})
-			}
-
-			$scope.logout = function() {
-				$window.sessionStorage.clear()
-				$state.go('login')
-			}
-
-			$scope.updateName = function(data) {
-				if (data === ''){
-					return 'Name is required'
-				}
-			
-				if($scope.nameArr.includes(data)){
-					return 'Name is already taken'
-				}
-				return updateTeam(data, 'name')
-			}
-
-			function updateTeam(data, field) {
-				var d = $q.defer();
-				var token = $window.sessionStorage['jwt']
-				$scope.team[field] = data
-
-				$http.put('/api/teams/' + $stateParams['id'], $scope.team,{
-					headers: {
-						'Authorization': `Bearer ${token}`
-					}
-				})
-				.then(response => {
-					$state.reload()
-				})
-				.catch(response => {
-					console.log(response)
-				})
-
-			}
-
-
-
-			function getTeam(){
-				$http.get('/api/teams/' + $stateParams['id'])
-					.then(response => {
-						$scope.team = response.data
-					})
-					.catch(response => {
-						console.log(response)
-					})
-			}
-
-			function getTeams() {
-				$http.get('api/teams')
-					.then(response => {
-						$scope.nameArr = []
-						response.data.forEach(function(team){
-							$scope.nameArr.push(team.name)
-						})
-
-					})
-					.catch(response => {
-						console.log(response);
-					})
-			}
-
-			function getUsers() {
-				$http.get('api/users')
-					.then(response => {
-						$scope.users = []
-						response.data.forEach(function(){
-							$scope.users.push({name: response.data.firstName + ' ' + response.data.lastName})
-						})
-
-					})
-					.catch(response => {
-						console.log(response)
-					})
-			}
-
-			getTeams()
-			getTeam()
-
-		
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('GoalsController', ['$scope', '$state', '$window', '$http', '$stateParams',
 	function($scope, $state, $window, $http, $stateParams) {
 		function getGoals() {
@@ -1034,40 +1034,6 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 			}
 
 			getRewards()
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('UserFormController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
-
-			$scope.errorDisplay = false
-
-			$scope.createUser = function(user) {
-				$scope.$broadcast('show-errors-check-validity');
-
-				if($scope.userForm.$invalid){return;}
-				
-				var duplicate = $scope.users.filter(function(x){
-					return x.email == user.email
-				})
-
-				if (duplicate.length > 0){
-					$scope.oops = 'Email is already taken!'
-					$scope.errorDisplay = true
-					return
-				}
-				else{
-					$http.post('api/users', user)
-						.then(response => {
-							$state.reload()
-
-						})
-						.catch(response => {
-							console.log(response)
-						})
-				}
-			}
 	}])
 }());
 (function() {
@@ -1232,51 +1198,6 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 			getAllUsers()
 
 			$scope.optionsList = [];
-
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('ProgressController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
-		function($scope, $state, $http, $window, $stateParams, $q) {
-			
-			function getProgress() {
-				$http.get('api/users/' + $stateParams.id + '/progress/' + $stateParams.progressId)
-					.then(response => {
-						$scope.progress = response.data
-						$http.get('api/progress-settings/' + response.data.settingId)
-							.then(response => {
-								$scope.setting = response.data
-							})
-							.catch(function(err) {
-								console.log(err)
-							})
-					})
-					.catch(reponse => {
-						console.log(response)
-					})
-			}
-
-
-			$scope.updateValue = function(data) {
-				if (data < 0) {
-					return "Value can't be negative"
-				}
-				updateProgress(data)
-			}
-
-			function updateProgress(data) {
-				$scope.progress['value'] = data
-
-				$http.put('api/users/' + $stateParams.id + '/progress/' + $stateParams.progressId, $scope.progress)
-					.catch( response => {
-						console.log(response)
-					})
-
-			}
-
-			getProgress()
-
 
 	}])
 }());
@@ -1662,6 +1583,85 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('UserFormController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+
+			$scope.errorDisplay = false
+
+			$scope.createUser = function(user) {
+				$scope.$broadcast('show-errors-check-validity');
+
+				if($scope.userForm.$invalid){return;}
+				
+				var duplicate = $scope.users.filter(function(x){
+					return x.email == user.email
+				})
+
+				if (duplicate.length > 0){
+					$scope.oops = 'Email is already taken!'
+					$scope.errorDisplay = true
+					return
+				}
+				else{
+					$http.post('api/users', user)
+						.then(response => {
+							$state.reload()
+
+						})
+						.catch(response => {
+							console.log(response)
+						})
+				}
+			}
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('ProgressController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
+		function($scope, $state, $http, $window, $stateParams, $q) {
+			
+			function getProgress() {
+				$http.get('api/users/' + $stateParams.id + '/progress/' + $stateParams.progressId)
+					.then(response => {
+						$scope.progress = response.data
+						$http.get('api/progress-settings/' + response.data.settingId)
+							.then(response => {
+								$scope.setting = response.data
+							})
+							.catch(function(err) {
+								console.log(err)
+							})
+					})
+					.catch(reponse => {
+						console.log(response)
+					})
+			}
+
+
+			$scope.updateValue = function(data) {
+				if (data < 0) {
+					return "Value can't be negative"
+				}
+				updateProgress(data)
+			}
+
+			function updateProgress(data) {
+				$scope.progress['value'] = data
+
+				$http.put('api/users/' + $stateParams.id + '/progress/' + $stateParams.progressId, $scope.progress)
+					.catch( response => {
+						console.log(response)
+					})
+
+			}
+
+			getProgress()
+
+
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 		.directive('addGoal', function() {
 			return{
 				restrict: 'E',
@@ -1802,6 +1802,36 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('GoalsFormController', ['$scope', '$state', '$window', '$http', 'arrToObject',
+	function($scope, $state, $window, $http, arrToObject) {
+
+		$scope.tracker = 0;
+
+		$scope.submit = function(data) {
+			$scope.$broadcast('show-errors-check-validity');
+
+			if($scope.goalForm.$invalid){return;}
+
+			var named = {'gsfName': data.name}
+			delete data.name
+
+			var data = arrToObject.create(Object.values(data))
+			
+			var dataJson = Object.assign(data, named)
+
+			$http.post('api/goals', dataJson)
+				.then(function onSuccess(response) {
+					$state.reload()
+				})
+				.catch(function onError(response) {
+					console.log(response)
+				})
+		}
+	}])
+
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('GoalsViewController', ['$scope', '$state', '$http', '$stateParams', 'arrToObject', 'submitFormat',
 	function($scope, $state, $http, $stateParams, arrToObject, submitFormat) {
 
@@ -1873,36 +1903,6 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 					console.log(response)
 				})
 			}).catch(e => {})
-		}
-	}])
-
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('GoalsFormController', ['$scope', '$state', '$window', '$http', 'arrToObject',
-	function($scope, $state, $window, $http, arrToObject) {
-
-		$scope.tracker = 0;
-
-		$scope.submit = function(data) {
-			$scope.$broadcast('show-errors-check-validity');
-
-			if($scope.goalForm.$invalid){return;}
-
-			var named = {'gsfName': data.name}
-			delete data.name
-
-			var data = arrToObject.create(Object.values(data))
-			
-			var dataJson = Object.assign(data, named)
-
-			$http.post('api/goals', dataJson)
-				.then(function onSuccess(response) {
-					$state.reload()
-				})
-				.catch(function onError(response) {
-					console.log(response)
-				})
 		}
 	}])
 
@@ -2107,6 +2107,8 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 	.controller('PromotionAddController',['$scope', '$state', '$http', '$stateParams', '$window',
 		function($scope, $state, $http, $stateParams, $window) {
 
+			$scope.promotions = []
+
 			$scope.add = function(promotion) {
 				var token = $window.sessionStorage['jwt']
 
@@ -2136,14 +2138,18 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 			function getPromotions() {
 				$http.get('api/promotions')
 					.then(response => {
-						response.data.filter( promo => {
-							if(promo){
-								 var found = $scope.team.promotions.find(promo)
-								 console.log(found)
+						response.data.forEach(function(promo) {
+							if(promo) {
+								var promoIds = $scope.team.promotions.map(p => p.promoId)
+								if (!promoIds.includes(promo.promoId)) {
+									$scope.promotions.push(
+											{name: promo.name, promoId: promo.promId}
+										)
+								}
 							}
 							else {
-								$scope.promotions = [{name: 'No Promotions'}]
-							}
+								$scope.promotions = [{name: 'No Promotinos available'}]
+							}							
 						})
 					})
 					.catch(response => {

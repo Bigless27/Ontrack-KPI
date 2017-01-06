@@ -118,6 +118,8 @@ function removePromotion(team, update) {
       ad.remove()
     }
   }
+
+  return team
 }
 
 function removeAdminsUsers(param, team, update) {

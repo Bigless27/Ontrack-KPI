@@ -3,6 +3,8 @@
 	.controller('PromotionAddController',['$scope', '$state', '$http', '$stateParams', '$window',
 		function($scope, $state, $http, $stateParams, $window) {
 
+			$scope.promotions = []
+
 			$scope.add = function(promotion) {
 				var token = $window.sessionStorage['jwt']
 
@@ -32,14 +34,18 @@
 			function getPromotions() {
 				$http.get('api/promotions')
 					.then(response => {
-						response.data.filter( promo => {
-							if(promo){
-								 var found = $scope.team.promotions.find(promo)
-								 console.log(found)
+						response.data.forEach(function(promo) {
+							if(promo) {
+								var promoIds = $scope.team.promotions.map(p => p.promoId)
+								if (!promoIds.includes(promo.promoId)) {
+									$scope.promotions.push(
+											{name: promo.name, promoId: promo.promId}
+										)
+								}
 							}
 							else {
-								$scope.promotions = [{name: 'No Promotions'}]
-							}
+								$scope.promotions = [{name: 'No Promotinos available'}]
+							}							
 						})
 					})
 					.catch(response => {
