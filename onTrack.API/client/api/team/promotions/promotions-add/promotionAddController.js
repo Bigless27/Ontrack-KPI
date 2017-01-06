@@ -14,7 +14,7 @@
 					team.promotions.push({name: promo.name, promoId: promo._id})
 				})
 
-				promotion.forEach( p => {team.promotions.push({name: p.name, promoId: p._id})})
+				promotion.forEach( p => {team.promotions.push({name: p.name, promoId: p.promoId})})
 
 
 				$http.put('api/teams/' + $stateParams.id,  team, {
@@ -37,9 +37,9 @@
 						response.data.forEach(function(promo) {
 							if(promo) {
 								var promoIds = $scope.team.promotions.map(p => p.promoId)
-								if (!promoIds.includes(promo.promoId)) {
+								if (!promoIds.includes(promo._id)) {
 									$scope.promotions.push(
-											{name: promo.name, promoId: promo.promId}
+											{name: promo.name, promoId: promo._id}
 										)
 								}
 							}
