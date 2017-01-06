@@ -6,7 +6,7 @@
     "test": "NODE_ENV='testing' mocha test/unit/**/*.js"
   },
   "dependencies": {
-    "angular": "^1.6.1",
+    "angular": "~1.6.1",
     "angular-multiple-select": "^1.1.2",
     "angular-sanitize": "*",
     "angular-ui-router": "^0.3.2",
@@ -31,7 +31,7 @@
     "ng-tags-input": "*",
     "passport": "*",
     "passport-facebook": "*",
-    "passport-google-oauth": "*",
+    "passport-google-oauth": "^1.0.0",
     "request": "^2.78.0",
     "sweetalert2": "^6.0.1",
     "ui-select": "^0.20.0"
