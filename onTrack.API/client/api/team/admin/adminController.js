@@ -52,8 +52,8 @@
 
 		function getUsers(){
 			$http.get('/api/users')
-				.then(function(users) {
-					users.forEach(function(user){
+				.then(response => {
+					response.data.forEach(function(user){
 						if(user){
 							var userEmails = $scope.team.admins.map(x => x.email)
 							if(!userEmails.includes(user.email)) {
@@ -68,8 +68,8 @@
 						}
 					})
 				})
-				.catch(function(err) {
-					console.log(err);
+				.catch(response => {
+					console.log(response.data);
 				})
 		}
 

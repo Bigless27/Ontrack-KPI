@@ -427,6 +427,34 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('LoginController', ['$scope', '$state', '$window', '$http',
+	 function($scope, $state, $window, $http) {
+
+			$scope.logUserIn = function(user) {
+				$scope.$broadcast('show-errors-check-validity');
+
+
+				if($scope.userForm.$invalid){return;}
+
+				$scope.err = true
+
+				$http.post('auth/signin', user)
+					.then((response) => {
+
+						$scope.err = false
+						$window.sessionStorage.jwt = response.data['token']
+						$state.go('main')
+					})
+					.catch((response) => {
+						$scope.err = true
+						$scope.errMessage = response.data
+					})
+			}
+
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('MainController', ['$scope', '$state', '$http', '$window', 
 		function($scope, $state, $http, $window) {
 
@@ -457,34 +485,6 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 		
 			getUsers() 
 			getTeams()
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('LoginController', ['$scope', '$state', '$window', '$http',
-	 function($scope, $state, $window, $http) {
-
-			$scope.logUserIn = function(user) {
-				$scope.$broadcast('show-errors-check-validity');
-
-
-				if($scope.userForm.$invalid){return;}
-
-				$scope.err = true
-
-				$http.post('auth/signin', user)
-					.then((response) => {
-
-						$scope.err = false
-						$window.sessionStorage.jwt = response.data['token']
-						$state.go('main')
-					})
-					.catch((response) => {
-						$scope.err = true
-						$scope.errMessage = response.data
-					})
-			}
-
 	}])
 }());
 (function() {
@@ -776,12 +776,12 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 					'Authorization': `Bearer ${token}`
 				}
 			})
-			.then(function(data) {
+			.then(function(response) {
 				$state.reload() //look into making this two way bound
 
 			})
-			.catch(function(err) {
-				console.log(err)
+			.catch(function(response) {
+				console.log(response.data)
 			})
 		}
 
@@ -789,19 +789,19 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 
 		function getTeam() {
 			$http.get('/api/teams/' + $stateParams.id)
-				.then(function(data) {
-					$scope.team = data	
+				.then(function onSuccess(response) {
+					$scope.team = response.data	
 					getUsers()
 				})
-				.catch(function(err) {
-					console.log(err)
+				.catch(function onError(reponse) {
+					console.log(response.data)
 				})
 		}
 
 		function getUsers(){
 			$http.get('/api/users')
-				.then(function(users) {
-					users.forEach(function(user){
+				.then(function onSuccess(response) {
+					response.data.forEach(function(user){
 						if(user){
 							var userEmails = $scope.team.users.map(x => x.email)
 							if(!userEmails.includes(user.email)) {
@@ -816,8 +816,8 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 						}
 					})
 				})
-				.catch(function(err) {
-					console.log(err);
+				.catch(function onError(response) {
+					console.log(respose.data);
 				})
 		}
 
@@ -1090,8 +1090,8 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 
 		function getUsers(){
 			$http.get('/api/users')
-				.then(function(users) {
-					users.forEach(function(user){
+				.then(response => {
+					response.data.forEach(function(user){
 						if(user){
 							var userEmails = $scope.team.admins.map(x => x.email)
 							if(!userEmails.includes(user.email)) {
@@ -1106,8 +1106,8 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 						}
 					})
 				})
-				.catch(function(err) {
-					console.log(err);
+				.catch(response => {
+					console.log(response.data);
 				})
 		}
 
@@ -1125,6 +1125,10 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 			$scope.errorDisplay = false
 
 			$scope.createTeam = function(data){
+				data.promotions.map( promo => {
+					promo.promoId = promo._id
+				})
+
 				$scope.$broadcast('show-errors-check-validity');
 
 				if($scope.teamForm.$invalid){return;}
@@ -1134,6 +1138,8 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 				var names = $scope.teams.filter(function(team) {
 					return team.name == data.name
 				})
+
+
 
 				if(names.length > 0){
 					$scope.errorDisplay = true
@@ -1380,15 +1386,14 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 
 				swal({
 				  title: "Are you sure?",
-				  text: "You will not be able to recover this team!",
+				  text: "You will not be able to recover this Promotion!",
 				  type: "warning",
 				  showCancelButton: true,
 				  confirmButtonColor: "#DD6B55",
 				  confirmButtonText: "Yes, delete it!",
 				  html: false
 				}).then(function onSuccess(response){
-					$http.delete('/api/teams/' + $stateParams.id
-					 + '/promotions/' + $stateParams.promoId, {
+					$http.delete('/api/promotions/' + $stateParams.promoId, {
 						headers: {
 							'Authorization': `Bearer ${token}`
 						}
@@ -1585,7 +1590,7 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 			$scope.createUser = function(user) {
 				$scope.$broadcast('show-errors-check-validity');
 
-				if($scope.goalForm.$invalid){return;}
+				if($scope.userForm.$invalid){return;}
 				
 				var duplicate = $scope.users.filter(function(x){
 					return x.email == user.email
@@ -1598,12 +1603,12 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 				}
 				else{
 					$http.post('api/users', user)
-						.then(function(data){
+						.then(response => {
 							$state.reload()
 
 						})
-						.catch(function(err) {
-							console.log(err)
+						.catch(response => {
+							console.log(response.data)
 						})
 				}
 			}
@@ -1616,11 +1621,11 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 			
 			function getProgress() {
 				$http.get('api/users/' + $stateParams.id + '/progress/' + $stateParams.progressId)
-					.then(function(data) {
-						$scope.progress = data
-						$http.get('api/progress-settings/' + data.settingId)
-							.then(function(data){
-								$scope.setting = data
+					.then(response => {
+						$scope.progress = response.data
+						$http.get('api/progress-settings/' + response.data.settingId)
+							.then(response => {
+								$scope.setting = response.data
 							})
 							.catch(function(err) {
 								console.log(err)
@@ -1796,36 +1801,6 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('GoalsFormController', ['$scope', '$state', '$window', '$http', 'arrToObject',
-	function($scope, $state, $window, $http, arrToObject) {
-
-		$scope.tracker = 0;
-
-		$scope.submit = function(data) {
-			$scope.$broadcast('show-errors-check-validity');
-
-			if($scope.goalForm.$invalid){return;}
-
-			var named = {'gsfName': data.name}
-			delete data.name
-
-			var data = arrToObject.create(Object.values(data))
-			
-			var dataJson = Object.assign(data, named)
-
-			$http.post('api/goals', dataJson)
-				.then(function onSuccess(response) {
-					$state.reload()
-				})
-				.catch(function onError(response) {
-					console.log(err.data)
-				})
-		}
-	}])
-
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('GoalsViewController', ['$scope', '$state', '$http', '$stateParams', 'arrToObject', 'submitFormat',
 	function($scope, $state, $http, $stateParams, arrToObject, submitFormat) {
 
@@ -1897,6 +1872,36 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 					console.log(response.data)
 				})
 			}).catch(e => {})
+		}
+	}])
+
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('GoalsFormController', ['$scope', '$state', '$window', '$http', 'arrToObject',
+	function($scope, $state, $window, $http, arrToObject) {
+
+		$scope.tracker = 0;
+
+		$scope.submit = function(data) {
+			$scope.$broadcast('show-errors-check-validity');
+
+			if($scope.goalForm.$invalid){return;}
+
+			var named = {'gsfName': data.name}
+			delete data.name
+
+			var data = arrToObject.create(Object.values(data))
+			
+			var dataJson = Object.assign(data, named)
+
+			$http.post('api/goals', dataJson)
+				.then(function onSuccess(response) {
+					$state.reload()
+				})
+				.catch(function onError(response) {
+					console.log(err.data)
+				})
 		}
 	}])
 
@@ -2035,9 +2040,6 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 				$state.go('promotionCreate')
 			}
 
-			$scope.afterSelectItem = function(item) {
-				
-			}
 			
 			$scope.submitPromotion = function(promotion) {
 				$scope.$broadcast('show-errors-check-validity');

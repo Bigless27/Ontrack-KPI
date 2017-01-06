@@ -5,11 +5,11 @@
 			
 			function getProgress() {
 				$http.get('api/users/' + $stateParams.id + '/progress/' + $stateParams.progressId)
-					.then(function(data) {
-						$scope.progress = data
-						$http.get('api/progress-settings/' + data.settingId)
-							.then(function(data){
-								$scope.setting = data
+					.then(response => {
+						$scope.progress = response.data
+						$http.get('api/progress-settings/' + response.data.settingId)
+							.then(response => {
+								$scope.setting = response.data
 							})
 							.catch(function(err) {
 								console.log(err)

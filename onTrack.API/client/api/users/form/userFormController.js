@@ -8,7 +8,7 @@
 			$scope.createUser = function(user) {
 				$scope.$broadcast('show-errors-check-validity');
 
-				if($scope.goalForm.$invalid){return;}
+				if($scope.userForm.$invalid){return;}
 				
 				var duplicate = $scope.users.filter(function(x){
 					return x.email == user.email
@@ -21,12 +21,12 @@
 				}
 				else{
 					$http.post('api/users', user)
-						.then(function(data){
+						.then(response => {
 							$state.reload()
 
 						})
-						.catch(function(err) {
-							console.log(err)
+						.catch(response => {
+							console.log(response.data)
 						})
 				}
 			}

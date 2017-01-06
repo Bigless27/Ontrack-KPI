@@ -70,7 +70,7 @@ TeamSchema.pre('save', function(next) {
 
 TeamSchema.pre('remove', function(next){
 	//this require here is a patch!!!!! look to refactor better in future from circular dependency
-	var Promotions = require('./promotions/promotionModel'),
+	var Promotions = require('../promotions/promotionModel'),
 		promotionIds = this.promotions.map(p => p._id),
 		teamId = this.teamId,
 		userEmails = this.users.map(x => x.email)

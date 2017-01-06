@@ -25,12 +25,12 @@
 					'Authorization': `Bearer ${token}`
 				}
 			})
-			.then(function(data) {
+			.then(function(response) {
 				$state.reload() //look into making this two way bound
 
 			})
-			.catch(function(err) {
-				console.log(err)
+			.catch(function(response) {
+				console.log(response.data)
 			})
 		}
 
@@ -38,19 +38,19 @@
 
 		function getTeam() {
 			$http.get('/api/teams/' + $stateParams.id)
-				.then(function(data) {
-					$scope.team = data	
+				.then(function onSuccess(response) {
+					$scope.team = response.data	
 					getUsers()
 				})
-				.catch(function(err) {
-					console.log(err)
+				.catch(function onError(reponse) {
+					console.log(response.data)
 				})
 		}
 
 		function getUsers(){
 			$http.get('/api/users')
-				.then(function(users) {
-					users.forEach(function(user){
+				.then(function onSuccess(response) {
+					response.data.forEach(function(user){
 						if(user){
 							var userEmails = $scope.team.users.map(x => x.email)
 							if(!userEmails.includes(user.email)) {
@@ -65,8 +65,8 @@
 						}
 					})
 				})
-				.catch(function(err) {
-					console.log(err);
+				.catch(function onError(response) {
+					console.log(respose.data);
 				})
 		}
 

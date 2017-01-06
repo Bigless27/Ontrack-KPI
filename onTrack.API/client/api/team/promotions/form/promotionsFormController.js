@@ -61,9 +61,6 @@
 				$state.go('promotionCreate')
 			}
 
-			$scope.afterSelectItem = function(item) {
-				
-			}
 			
 			$scope.submitPromotion = function(promotion) {
 				$scope.$broadcast('show-errors-check-validity');

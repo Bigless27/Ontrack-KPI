@@ -21,7 +21,7 @@ h1 {
   padding-left: 10px;
   height: auto;
   max-height: 120px;
-  overflow-y: scroll;  }
+  overflow-x: hidden; }
   #usersList ul {
     list-style: none; }
 

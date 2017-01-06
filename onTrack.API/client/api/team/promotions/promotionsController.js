@@ -106,15 +106,14 @@
 
 				swal({
 				  title: "Are you sure?",
-				  text: "You will not be able to recover this team!",
+				  text: "You will not be able to recover this Promotion!",
 				  type: "warning",
 				  showCancelButton: true,
 				  confirmButtonColor: "#DD6B55",
 				  confirmButtonText: "Yes, delete it!",
 				  html: false
 				}).then(function onSuccess(response){
-					$http.delete('/api/teams/' + $stateParams.id
-					 + '/promotions/' + $stateParams.promoId, {
+					$http.delete('/api/promotions/' + $stateParams.promoId, {
 						headers: {
 							'Authorization': `Bearer ${token}`
 						}

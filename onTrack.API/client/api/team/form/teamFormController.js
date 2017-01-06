@@ -6,6 +6,10 @@
 			$scope.errorDisplay = false
 
 			$scope.createTeam = function(data){
+				data.promotions.map( promo => {
+					promo.promoId = promo._id
+				})
+
 				$scope.$broadcast('show-errors-check-validity');
 
 				if($scope.teamForm.$invalid){return;}
@@ -15,6 +19,8 @@
 				var names = $scope.teams.filter(function(team) {
 					return team.name == data.name
 				})
+
+
 
 				if(names.length > 0){
 					$scope.errorDisplay = true
