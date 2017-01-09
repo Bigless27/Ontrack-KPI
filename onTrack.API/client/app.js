@@ -42,12 +42,12 @@
 					})
 					.state('promotionCreate', {
 						url: '/team/promotionCreate',
-						templateUrl: 'client/api/team/promotions/form/promotions-form-partial.html',
+						templateUrl: 'client/api/promotions/form/promotions-form-partial.html',
 						controller: 'PromotionFormController'
 					})
 					.state('promotionCreate.goalPreview', {
 						url: '/team/promotionCreate/goalView',
-						templateUrl: 'client/api/team/promotions/goalPreviewView/goal-preview-view.html',
+						templateUrl: 'client/api/promotions/goalPreviewView/goal-preview-view.html',
 						controller: 'GoalPreviewController'
 					})
 					.state('team', {
@@ -69,7 +69,7 @@
 						controller: 'AdminController'
 					})
 					.state('team.addPromotion', {
-						templateUrl: 'client/api/team/promotions/promotions-add/promotions-add-partial.html',
+						templateUrl: 'client/api/promotions/promotions-add/promotions-add-partial.html',
 						controller: 'PromotionAddController'
 					})
 					.state('team.switchOwner', {
@@ -78,7 +78,7 @@
 					})
 					.state('promotion', {
 						url: '/team/:id/promotions/:promoId',
-						templateUrl: 'client/api/team/promotions/promotions-partial.html',
+						templateUrl: 'client/api/promotions/promotions-partial.html',
 						controller: 'PromotionController'
 					})
 					.state('user', {

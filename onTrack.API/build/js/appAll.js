@@ -42,12 +42,12 @@
 					})
 					.state('promotionCreate', {
 						url: '/team/promotionCreate',
-						templateUrl: 'client/api/team/promotions/form/promotions-form-partial.html',
+						templateUrl: 'client/api/promotions/form/promotions-form-partial.html',
 						controller: 'PromotionFormController'
 					})
 					.state('promotionCreate.goalPreview', {
 						url: '/team/promotionCreate/goalView',
-						templateUrl: 'client/api/team/promotions/goalPreviewView/goal-preview-view.html',
+						templateUrl: 'client/api/promotions/goalPreviewView/goal-preview-view.html',
 						controller: 'GoalPreviewController'
 					})
 					.state('team', {
@@ -69,7 +69,7 @@
 						controller: 'AdminController'
 					})
 					.state('team.addPromotion', {
-						templateUrl: 'client/api/team/promotions/promotions-add/promotions-add-partial.html',
+						templateUrl: 'client/api/promotions/promotions-add/promotions-add-partial.html',
 						controller: 'PromotionAddController'
 					})
 					.state('team.switchOwner', {
@@ -78,7 +78,7 @@
 					})
 					.state('promotion', {
 						url: '/team/:id/promotions/:promoId',
-						templateUrl: 'client/api/team/promotions/promotions-partial.html',
+						templateUrl: 'client/api/promotions/promotions-partial.html',
 						controller: 'PromotionController'
 					})
 					.state('user', {
@@ -451,6 +451,308 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 					})
 			}
 
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('PromotionController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
+		function($scope, $state, $http, $window, $stateParams, $q) {
+
+			//have type show on edit click
+			$(document).on('click','.promotion-startDate-edit-button', function(){
+				$('#promotion-startDate-edit')[0].click()
+			})
+			.on('click','.promotion-endDate-edit-button', function(){
+				$('#promotion-endDate-edit')[0].click()
+			})
+			.on('click', '.promotion-edit-type-button', function(){
+				$('#promotion-type-edit')[0].click()
+			})
+
+
+			$scope.updateName = function(data) {
+				if (data === ''){
+					return 'Name is Required'
+				}
+				else if (data.length < 2){
+					return 'Name must be more than one character'
+				}
+				return updatePromotion(data, 'name')
+			}
+
+
+			$scope.updateType = function(data) {
+				if (data === ''){
+					return 'Type is required'
+				}
+				else if (($scope.promotion.type == data)) {
+					return 
+				}
+				return updatePromotion(data, 'type')
+			}
+
+			$scope.updateSubtypes = function(data) {
+				return updatePromotion(data,'subTypes')			
+			}
+
+			$scope.updateCompletionValue = function(data) {
+				var reg = new RegExp('^\\d+$')
+
+				if (data === ''){
+					return 'Value is required'
+				}
+				else if (!reg.test(data)){
+					return 'Value must be an integer'
+				}
+				data['completionValue'] = parseInt(data['completionValue'])
+				return updatePromotion(data, 'completionValue')
+			}
+
+			$scope.updateDescription = function(data) {
+				if (data === '') {
+					return 'Description is required'
+				}
+				return updatePromotion(data, 'description')
+			}
+
+			$scope.updateStartDate = function(data) {
+				var today = new Date();
+				  if (data < today.toISOString()) {
+				  	return "Start Date can't be in the past"
+				  }
+				  return updatePromotion(data, 'startDate')
+			}
+
+			$scope.updateEndDate = function(data) {
+				if ($scope.promotion.startDate.toISOString() > data){
+					return 'End date must come after start date'
+				}
+				return updatePromotion(data, 'endDate')
+			}
+
+			function updatePromotion(data, field){
+				var d = $q.defer();
+				var token = $window.sessionStorage['jwt']
+				$scope.promotion[field] = data
+
+				$http.put('/api/teams/' + $stateParams.id
+				 + '/promotions/' + $stateParams.promoId, $scope.promotion,{
+					headers: {
+						'Authorization': `Bearer ${token}`
+					}
+				})
+				.then(function onSuccess(response){
+					if (field == 'type') {
+						$scope.updateSubtypes([])
+					}
+					else {
+						$state.reload()
+					}
+				})
+				.catch(function onError(response) {
+					console.log(response)
+				})
+
+			}
+
+
+			$scope.deletePromotion = function() {
+				var token = $window.sessionStorage['jwt']
+
+				swal({
+				  title: "Are you sure?",
+				  text: "You will not be able to recover this Promotion!",
+				  type: "warning",
+				  showCancelButton: true,
+				  confirmButtonColor: "#DD6B55",
+				  confirmButtonText: "Yes, delete it!",
+				  html: false
+				}).then(function onSuccess(response){
+					$http.delete('/api/promotions/' + $stateParams.promoId, {
+						headers: {
+							'Authorization': `Bearer ${token}`
+						}
+					})
+					.then(function onSuccess(response){
+						var teamId = {'id': $stateParams['id'] + ''}
+						$state.go('team',teamId )
+					})
+					.catch(function onError(response) {
+						console.log(response)
+					})
+				}).catch(function onError(response) {
+					console.log(response)
+					return
+				})
+			}
+
+			function getUniqueTypes() {
+		 		var typeCopy = $scope.settings
+		 		var unUniqueTypes = typeCopy.map(function(x){
+					return x.type
+				})
+				$scope.typeList = [...new Set(unUniqueTypes)]
+	 		}
+
+		 	function getUniqueSubtypes() {
+		 		var unSetSubtypes = $scope.settings.filter(function(set) {
+		 			return set.type === $scope.promotion.type
+		 		})
+		 		var subTypeStrings = $scope.promotion.subTypes.map(x => x.name)
+		 		var subArr = []
+		 		unSetSubtypes[0].subTypes.forEach(function(sub) {
+		 				if (!subTypeStrings.includes(sub.text)){
+			 				subArr.push({name: sub.text})
+		 				}
+		 		})
+		 		$scope.subTypes = subArr
+		 	}
+
+		 	$scope.afterRemoveItem = function(item) {
+		 		var subStrings = $scope.subTypes.map(x => x.name)
+		 		if (subStrings.includes(item.name)) {
+		 			return
+		 		}
+		 		else{
+			 		$scope.subTypes.push({name: item.name})
+		 		}
+		 	}
+
+			$scope.subTags = false
+
+			$scope.toggleEdit = function() {
+				if($scope.subTags){
+					$scope.subTags = false
+				}
+				else{
+					$scope.subTags = true
+				}
+			}
+
+			function getPromotions(){
+				$http.get('api/teams/' + $stateParams.id 
+						+ '/promotions/' + $stateParams.promoId)
+							.then(function onSuccess(response) {
+								$scope.promotion = response.data;
+								$scope.promotion['startDate'] = new Date($scope.promotion.startDate) 
+								$scope.promotion['endDate'] =  new Date($scope.promotion.endDate)
+								getTypes()
+							})
+							.catch(function onError(response) {
+								console.log(response);
+							})
+			}
+
+			function getTypes(){
+				$http.get('api/type-settings')
+					.then(function onSuccess(response){
+						$scope.typeList = response.data.map(x => x.type)
+						$scope.noSubtypes = false
+						if ($scope.promotion.subTypes.length === 0){
+							$scope.noSubtypes = true
+						}
+						$scope.settings = response.data
+						getProgresses()
+						getUniqueTypes()
+						getUniqueSubtypes()
+					})
+					.catch(function onError(response){
+						console.log(response)
+					})
+			}
+
+
+			//this below needs to be refactored to grab the users from the team!
+
+			function getTeams(matches) {
+				//you have the setting Id
+				$http.get('api/teams/' + $stateParams.id)
+					.then(function onSuccess(response) {
+						var theUsers = []
+						response.data.users.forEach(function(user) {
+							//match the user's email to the mathcing progress email
+							matches.forEach(function(prog) {
+								if (prog.users.map(x => x.email).includes(user.email)) {
+									theUsers.push(prog.users)
+								}
+							})
+								
+						})
+						var usersQuery = theUsers.reduce((x,y) => {x.concat(y)})
+					})
+					.catch(function onError(response){
+						console.log(response)
+					})
+			}
+
+			function findUsers() {
+				$http.get('api/users/findUsers/' + $stateParams.id)
+					.then(function onSuccess(response) {
+						$scope.matchingUsers = matchProgressToPromotion(response.data)
+					})
+					.catch(function onError(response) {
+						console.log(reponse)
+					})
+			}
+
+			function getProgresses() {
+				$http.get('api/progress-settings')
+					.then(function onSuccess(response) {
+						findUsers()
+					})
+					.catch(function onError(response) {
+						console.log(response)
+					})
+			}
+
+			// This grabs progress of matching types and subtypes. The subtypes are only
+			// matched if there is an exact match on them
+			function matchProgressToPromotion(users) {
+
+				var subMatchArr = []
+
+				var matchedTypesUsers = users.filter((user) => {return user.settingProgress.filter(prog =>  prog.type == $scope.promotion.type)})
+				matchedTypesUsers.forEach(function(user) {
+					user['settingProgress'] = user.settingProgress.filter(set => set.type === $scope.promotion.type)
+					if (user.settingProgress.length > 0) {
+						subMatchArr.push(user)
+					}
+				})
+				
+				// var matchedTypesUsers = users.filter((user) => {return user.settingProgress.filter(prog =>  prog.type == $scope.promotion.type)})
+				// // The above filters the users the have a progress of a matched type!
+				var theProgresses = []
+
+				subMatchArr.forEach(function(user) {
+					if (!$scope.noSubtypes) {
+						user.settingProgress[0].subTypes.forEach(function(sub){
+							if (sub) {
+								if ($scope.promotion.subTypes.includes(sub.name)) {
+									theProgresses.push(user)
+								}
+							}
+						})
+					}
+					else {
+						var matchedProg = user.progress.filter(prog => prog.settingId === user.settingProgress[0]._id)
+						user['progress'] = matchedProg
+						theProgresses.push(user)
+						
+					}
+				})
+				return theProgresses
+			}
+
+			$scope.getPercentage = function(x,y) {
+				if (x === 0) {
+					return 0
+				}
+				else {
+				return (x/y * 100).toFixed(2)
+				}
+			}
+
+			getPromotions()		
 	}])
 }());
 (function() {
@@ -1002,6 +1304,188 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('PromotionFormController', ['$scope', '$state', '$http', '$window', '$stateParams', 'goalPreview', '$rootScope',
+		function($scope, $state, $http, $window, $stateParams, goalPreview, $rootScope) {
+			
+			$scope.teamId = $stateParams['id']
+
+			$scope.showGoal = false
+
+			var today = new Date();
+			$scope.minDate = today.toISOString();
+
+			function getGoals(){
+				$http.get('api/goals')
+					.then(response => {
+						$scope.goals = response.data
+					})	
+					.catch(response => {
+						console.log(response)
+					})
+			} 
+
+			getGoals()
+
+			function getRewards() {
+				$http.get('api/rewards')
+					.then(response => {
+						$scope.rewards = response.data
+					})
+					.catch(response => {
+						console.log(response)
+					})
+			}
+
+			getRewards()
+
+			$scope.setRewards = function() {
+				if(!$scope.reward) return
+				else {
+					$scope.typeChecker = false
+					$scope.filterdRewards = $scope.rewards.filter( x => {return x.type == $scope.reward.type})
+				}
+			}
+
+			$scope.typeChecker = false
+
+			$scope.checkType = function() {
+				if (!$scope.reward) {
+					$scope.typeChecker = true
+				}
+			}
+
+			$scope.$on('highlight', function(event, data) {
+				$state.go('promotionCreate.goalPreview')
+				$scope.goalShow = true
+				goalPreview.updateValue(data._id)
+			})
+
+			$scope.hideGoalPreview = function() {
+				$scope.goalShow = false
+				$state.go('promotionCreate')
+			}
+
+			
+			$scope.submitPromotion = function(promotion) {
+				$scope.$broadcast('show-errors-check-validity');
+
+				if($scope.promotionForm.$invalid){return;}
+				var token = $window.sessionStorage['jwt']
+
+				promotion.goals = promotion.goals.map(x => x._id)
+
+				$http.post('api/promotions', promotion ,{
+					headers: {
+						"Authorization": `Bearer ${token}`
+					}
+				})
+				.then(function(resposne){
+						$state.reload()
+				})
+				.catch(function(response){
+					console.log(response)
+				})
+			}
+	}])
+	.service('goalPreview', function() {
+		var model = {}
+
+		return {
+
+			getValue: function() {
+				return model.value
+			},
+			updateValue: function(value) {
+				model.value = value;
+			}
+		}
+	})
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('GoalPreviewController', ['$scope', '$http', '$state', 'goalPreview', 'submitFormat',
+		function($scope, $http, $state, goalPreview, submitFormat) {
+
+			$scope.$watch(function() {return goalPreview.getValue()}, function(newValue, oldValue) {
+				!newValue ? $state.go('promotionCreate') : getGoal(newValue)
+			})
+
+			function getGoal(id) {
+				$http.get(`/api/goals/${id}`)
+					.then(response => {
+						var kvObj = submitFormat.generateKVObj(response.data.any)
+						
+						$scope.goal = Object.assign(kvObj, {'gsfName': response.data.gsfName})
+					})
+					.catch(response => {
+						console.log(response)
+					})
+			}
+
+			getGoal(goalPreview.getValue())
+			
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('PromotionAddController',['$scope', '$state', '$http', '$stateParams', '$window',
+		function($scope, $state, $http, $stateParams, $window) {
+
+			$scope.promotions = []
+
+			$scope.add = function(promotion) {
+				var token = $window.sessionStorage['jwt']
+
+				var team = {promotions: []}
+
+				$scope.team.promotions.forEach( promo => {
+					team.promotions.push({name: promo.name, promoId: promo._id})
+				})
+
+				promotion.forEach( p => {team.promotions.push({name: p.name, promoId: p.promoId})})
+
+
+				$http.put('api/teams/' + $stateParams.id,  team, {
+					headers: {
+						'Authorization': `Bearer ${token}`
+					}
+				})
+					.then( response => {
+						$state.reload()
+					})
+					.catch( response => {
+						console.log(response)
+					})
+
+			}
+
+			function getPromotions() {
+				$http.get('api/promotions')
+					.then(response => {
+						response.data.forEach(function(promo) {
+							if(promo) {
+								var promoIds = $scope.team.promotions.map(p => p.promoId)
+								if (!promoIds.includes(promo._id)) {
+									$scope.promotions.push(
+											{name: promo.name, promoId: promo._id}
+										)
+								}
+							}
+							else {
+								$scope.promotions = [{name: 'No Promotinos available'}]
+							}							
+						})
+					})
+					.catch(response => {
+						console.log(response)
+					})
+			}
+
+			getPromotions()
+		}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('GoalsController', ['$scope', '$state', '$window', '$http', '$stateParams',
 	function($scope, $state, $window, $http, $stateParams) {
 		function getGoals() {
@@ -1120,386 +1604,6 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('OwnerController', ['$scope', '$state', '$http', '$window', '$stateParams', 
-		function($scope, $state, $http, $window, $stateParams) {
-
-			$scope.optionsList = []
-			$scope.success = false
-
-			$scope.transfer = function(data) {
-				var token = $window.sessionStorage['jwt']
-				$scope.team['owner'] = [data]
-
-				$http.put('api/teams/' + $stateParams.id, $scope.team, {
-					headers: {
-						'Authorization': `Bearer ${token}`
-					}
-				})
-				.then(function(response) {
-					$state.reload()
-				})
-				.catch(function(response) {
-					console.log(response)
-				}) 
-			}
-
-			// function getUsers() {
-			// 	$http.get('api/users')
-			// 		.success(function(users) {
-			// 			users.forEach(function(user){
-			// 				if(user){
-			// 					if (user.email !== $scope.team.owner[0].email){
-			// 						$scope.optionsList.push(
-			// 								{firstName: user.firstName, lastName: user.lastName, userId: user._id, 
-			// 									email: user.email, fullName: user.firstName + ' ' + user.lastName}
-			// 						)
-			// 					}
-			// 				}
-			// 				else{
-			// 					$scope.optionsList = [{name: 'No users'}]
-			// 				}
-			// 			})
-			// 		})
-			// 		.error(function(err) {
-			// 			console.log(err)
-			// 		})
-			// }
-
-			function getTeam() {
-				$http.get('api/teams/' + $stateParams.id)
-					.then(function(response) {
-						$scope.team = response.data
-
-						response.data.admins.forEach(function(user){
-							if(user){
-								if (user.email !== $scope.team.owner[0].email){
-									$scope.optionsList.push(
-											{firstName: user.firstName, lastName: user.lastName, userId: user._id, 
-												email: user.email, fullName: user.firstName + ' ' + user.lastName}
-									)
-								}
-							}
-							else{
-								$scope.optionsList = [{fullName: 'No Users, only admins can be owners'}]
-							}
-						})
-						if ($scope.optionsList.length == 0) {
-							$scope.optionsList = [{fullName: 'No Users, only admins can be owners'}]	
-						}
-						// getUsers()
-					})
-					.catch(function(response) {
-						console.log(response)
-					})
-			}
-
-			getTeam()
-		}])
-} ());
-(function() {
-	angular.module('onTrack')
-	.controller('PromotionController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
-		function($scope, $state, $http, $window, $stateParams, $q) {
-
-			//have type show on edit click
-			$(document).on('click','.promotion-startDate-edit-button', function(){
-				$('#promotion-startDate-edit')[0].click()
-			})
-			.on('click','.promotion-endDate-edit-button', function(){
-				$('#promotion-endDate-edit')[0].click()
-			})
-			.on('click', '.promotion-edit-type-button', function(){
-				$('#promotion-type-edit')[0].click()
-			})
-
-
-			$scope.updateName = function(data) {
-				if (data === ''){
-					return 'Name is Required'
-				}
-				else if (data.length < 2){
-					return 'Name must be more than one character'
-				}
-				return updatePromotion(data, 'name')
-			}
-
-
-			$scope.updateType = function(data) {
-				if (data === ''){
-					return 'Type is required'
-				}
-				else if (($scope.promotion.type == data)) {
-					return 
-				}
-				return updatePromotion(data, 'type')
-			}
-
-			$scope.updateSubtypes = function(data) {
-				return updatePromotion(data,'subTypes')			
-			}
-
-			$scope.updateCompletionValue = function(data) {
-				var reg = new RegExp('^\\d+$')
-
-				if (data === ''){
-					return 'Value is required'
-				}
-				else if (!reg.test(data)){
-					return 'Value must be an integer'
-				}
-				data['completionValue'] = parseInt(data['completionValue'])
-				return updatePromotion(data, 'completionValue')
-			}
-
-			$scope.updateDescription = function(data) {
-				if (data === '') {
-					return 'Description is required'
-				}
-				return updatePromotion(data, 'description')
-			}
-
-			$scope.updateStartDate = function(data) {
-				var today = new Date();
-				  if (data < today.toISOString()) {
-				  	return "Start Date can't be in the past"
-				  }
-				  return updatePromotion(data, 'startDate')
-			}
-
-			$scope.updateEndDate = function(data) {
-				if ($scope.promotion.startDate.toISOString() > data){
-					return 'End date must come after start date'
-				}
-				return updatePromotion(data, 'endDate')
-			}
-
-			function updatePromotion(data, field){
-				var d = $q.defer();
-				var token = $window.sessionStorage['jwt']
-				$scope.promotion[field] = data
-
-				$http.put('/api/teams/' + $stateParams.id
-				 + '/promotions/' + $stateParams.promoId, $scope.promotion,{
-					headers: {
-						'Authorization': `Bearer ${token}`
-					}
-				})
-				.then(function onSuccess(response){
-					if (field == 'type') {
-						$scope.updateSubtypes([])
-					}
-					else {
-						$state.reload()
-					}
-				})
-				.catch(function onError(response) {
-					console.log(response)
-				})
-
-			}
-
-
-			$scope.deletePromotion = function() {
-				var token = $window.sessionStorage['jwt']
-
-				swal({
-				  title: "Are you sure?",
-				  text: "You will not be able to recover this Promotion!",
-				  type: "warning",
-				  showCancelButton: true,
-				  confirmButtonColor: "#DD6B55",
-				  confirmButtonText: "Yes, delete it!",
-				  html: false
-				}).then(function onSuccess(response){
-					$http.delete('/api/promotions/' + $stateParams.promoId, {
-						headers: {
-							'Authorization': `Bearer ${token}`
-						}
-					})
-					.then(function onSuccess(response){
-						var teamId = {'id': $stateParams['id'] + ''}
-						$state.go('team',teamId )
-					})
-					.catch(function onError(response) {
-						console.log(response)
-					})
-				}).catch(function onError(response) {
-					console.log(response)
-					return
-				})
-			}
-
-			function getUniqueTypes() {
-		 		var typeCopy = $scope.settings
-		 		var unUniqueTypes = typeCopy.map(function(x){
-					return x.type
-				})
-				$scope.typeList = [...new Set(unUniqueTypes)]
-	 		}
-
-		 	function getUniqueSubtypes() {
-		 		var unSetSubtypes = $scope.settings.filter(function(set) {
-		 			return set.type === $scope.promotion.type
-		 		})
-		 		var subTypeStrings = $scope.promotion.subTypes.map(x => x.name)
-		 		var subArr = []
-		 		unSetSubtypes[0].subTypes.forEach(function(sub) {
-		 				if (!subTypeStrings.includes(sub.text)){
-			 				subArr.push({name: sub.text})
-		 				}
-		 		})
-		 		$scope.subTypes = subArr
-		 	}
-
-		 	$scope.afterRemoveItem = function(item) {
-		 		var subStrings = $scope.subTypes.map(x => x.name)
-		 		if (subStrings.includes(item.name)) {
-		 			return
-		 		}
-		 		else{
-			 		$scope.subTypes.push({name: item.name})
-		 		}
-		 	}
-
-			$scope.subTags = false
-
-			$scope.toggleEdit = function() {
-				if($scope.subTags){
-					$scope.subTags = false
-				}
-				else{
-					$scope.subTags = true
-				}
-			}
-
-			function getPromotions(){
-				$http.get('api/teams/' + $stateParams.id 
-						+ '/promotions/' + $stateParams.promoId)
-							.then(function onSuccess(response) {
-								$scope.promotion = response.data;
-								$scope.promotion['startDate'] = new Date($scope.promotion.startDate) 
-								$scope.promotion['endDate'] =  new Date($scope.promotion.endDate)
-								getTypes()
-							})
-							.catch(function onError(response) {
-								console.log(response);
-							})
-			}
-
-			function getTypes(){
-				$http.get('api/type-settings')
-					.then(function onSuccess(response){
-						$scope.typeList = response.data.map(x => x.type)
-						$scope.noSubtypes = false
-						if ($scope.promotion.subTypes.length === 0){
-							$scope.noSubtypes = true
-						}
-						$scope.settings = response.data
-						getProgresses()
-						getUniqueTypes()
-						getUniqueSubtypes()
-					})
-					.catch(function onError(response){
-						console.log(response)
-					})
-			}
-
-
-			//this below needs to be refactored to grab the users from the team!
-
-			function getTeams(matches) {
-				//you have the setting Id
-				$http.get('api/teams/' + $stateParams.id)
-					.then(function onSuccess(response) {
-						var theUsers = []
-						response.data.users.forEach(function(user) {
-							//match the user's email to the mathcing progress email
-							matches.forEach(function(prog) {
-								if (prog.users.map(x => x.email).includes(user.email)) {
-									theUsers.push(prog.users)
-								}
-							})
-								
-						})
-						var usersQuery = theUsers.reduce((x,y) => {x.concat(y)})
-					})
-					.catch(function onError(response){
-						console.log(response)
-					})
-			}
-
-			function findUsers() {
-				$http.get('api/users/findUsers/' + $stateParams.id)
-					.then(function onSuccess(response) {
-						$scope.matchingUsers = matchProgressToPromotion(response.data)
-					})
-					.catch(function onError(response) {
-						console.log(reponse)
-					})
-			}
-
-			function getProgresses() {
-				$http.get('api/progress-settings')
-					.then(function onSuccess(response) {
-						findUsers()
-					})
-					.catch(function onError(response) {
-						console.log(response)
-					})
-			}
-
-			// This grabs progress of matching types and subtypes. The subtypes are only
-			// matched if there is an exact match on them
-			function matchProgressToPromotion(users) {
-
-				var subMatchArr = []
-
-				var matchedTypesUsers = users.filter((user) => {return user.settingProgress.filter(prog =>  prog.type == $scope.promotion.type)})
-				matchedTypesUsers.forEach(function(user) {
-					user['settingProgress'] = user.settingProgress.filter(set => set.type === $scope.promotion.type)
-					if (user.settingProgress.length > 0) {
-						subMatchArr.push(user)
-					}
-				})
-				
-				// var matchedTypesUsers = users.filter((user) => {return user.settingProgress.filter(prog =>  prog.type == $scope.promotion.type)})
-				// // The above filters the users the have a progress of a matched type!
-				var theProgresses = []
-
-				subMatchArr.forEach(function(user) {
-					if (!$scope.noSubtypes) {
-						user.settingProgress[0].subTypes.forEach(function(sub){
-							if (sub) {
-								if ($scope.promotion.subTypes.includes(sub.name)) {
-									theProgresses.push(user)
-								}
-							}
-						})
-					}
-					else {
-						var matchedProg = user.progress.filter(prog => prog.settingId === user.settingProgress[0]._id)
-						user['progress'] = matchedProg
-						theProgresses.push(user)
-						
-					}
-				})
-				return theProgresses
-			}
-
-			$scope.getPercentage = function(x,y) {
-				if (x === 0) {
-					return 0
-				}
-				else {
-				return (x/y * 100).toFixed(2)
-				}
-			}
-
-			getPromotions()		
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('TeamFormController', ['$scope', '$state', '$http', '$window', 
 		function($scope, $state, $http, $window) {
 
@@ -1581,6 +1685,84 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 
 	}])
 }());
+(function() {
+	angular.module('onTrack')
+	.controller('OwnerController', ['$scope', '$state', '$http', '$window', '$stateParams', 
+		function($scope, $state, $http, $window, $stateParams) {
+
+			$scope.optionsList = []
+			$scope.success = false
+
+			$scope.transfer = function(data) {
+				var token = $window.sessionStorage['jwt']
+				$scope.team['owner'] = [data]
+
+				$http.put('api/teams/' + $stateParams.id, $scope.team, {
+					headers: {
+						'Authorization': `Bearer ${token}`
+					}
+				})
+				.then(function(response) {
+					$state.reload()
+				})
+				.catch(function(response) {
+					console.log(response)
+				}) 
+			}
+
+			// function getUsers() {
+			// 	$http.get('api/users')
+			// 		.success(function(users) {
+			// 			users.forEach(function(user){
+			// 				if(user){
+			// 					if (user.email !== $scope.team.owner[0].email){
+			// 						$scope.optionsList.push(
+			// 								{firstName: user.firstName, lastName: user.lastName, userId: user._id, 
+			// 									email: user.email, fullName: user.firstName + ' ' + user.lastName}
+			// 						)
+			// 					}
+			// 				}
+			// 				else{
+			// 					$scope.optionsList = [{name: 'No users'}]
+			// 				}
+			// 			})
+			// 		})
+			// 		.error(function(err) {
+			// 			console.log(err)
+			// 		})
+			// }
+
+			function getTeam() {
+				$http.get('api/teams/' + $stateParams.id)
+					.then(function(response) {
+						$scope.team = response.data
+
+						response.data.admins.forEach(function(user){
+							if(user){
+								if (user.email !== $scope.team.owner[0].email){
+									$scope.optionsList.push(
+											{firstName: user.firstName, lastName: user.lastName, userId: user._id, 
+												email: user.email, fullName: user.firstName + ' ' + user.lastName}
+									)
+								}
+							}
+							else{
+								$scope.optionsList = [{fullName: 'No Users, only admins can be owners'}]
+							}
+						})
+						if ($scope.optionsList.length == 0) {
+							$scope.optionsList = [{fullName: 'No Users, only admins can be owners'}]	
+						}
+						// getUsers()
+					})
+					.catch(function(response) {
+						console.log(response)
+					})
+			}
+
+			getTeam()
+		}])
+} ());
 (function() {
 	angular.module('onTrack')
 	.controller('UserFormController', ['$scope', '$state', '$http', '$window', 
@@ -1832,22 +2014,6 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('RewardsFromController', ['$scope', '$http', '$state',
-		function($scope, $http, $state) {
-
-			$scope.submit = function(reward) {
-				$http.post('/api/rewards', reward)
-					.then(response => {
-						$state.go('rewards')
-					})
-					.catch( response => {
-						console.log(response)
-					})
-			}
-		}])
-});
-(function() {
-	angular.module('onTrack')
 	.controller('GoalsViewController', ['$scope', '$state', '$http', '$stateParams', 'arrToObject', 'submitFormat',
 	function($scope, $state, $http, $stateParams, arrToObject, submitFormat) {
 
@@ -1924,6 +2090,22 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 
 }());
 (function() {
+	angular.module('onTrack')
+	.controller('RewardsFromController', ['$scope', '$http', '$state',
+		function($scope, $http, $state) {
+
+			$scope.submit = function(reward) {
+				$http.post('/api/rewards', reward)
+					.then(response => {
+						$state.go('rewards')
+					})
+					.catch( response => {
+						console.log(response)
+					})
+			}
+		}])
+});
+(function() {
 	angular.module('onTrack') 
 	.controller('RewardsViewController', ['$scope', '$http', '$state', '$stateParams', 
 		function($scope, $http, $state, $stateParams) {
@@ -1977,186 +2159,4 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 			getReward()
 
 		}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('PromotionFormController', ['$scope', '$state', '$http', '$window', '$stateParams', 'goalPreview', '$rootScope',
-		function($scope, $state, $http, $window, $stateParams, goalPreview, $rootScope) {
-			
-			$scope.teamId = $stateParams['id']
-
-			$scope.showGoal = false
-
-			var today = new Date();
-			$scope.minDate = today.toISOString();
-
-			function getGoals(){
-				$http.get('api/goals')
-					.then(response => {
-						$scope.goals = response.data
-					})	
-					.catch(response => {
-						console.log(response)
-					})
-			} 
-
-			getGoals()
-
-			function getRewards() {
-				$http.get('api/rewards')
-					.then(response => {
-						$scope.rewards = response.data
-					})
-					.catch(response => {
-						console.log(response)
-					})
-			}
-
-			getRewards()
-
-			$scope.setRewards = function() {
-				if(!$scope.reward) return
-				else {
-					$scope.typeChecker = false
-					$scope.filterdRewards = $scope.rewards.filter( x => {return x.type == $scope.reward.type})
-				}
-			}
-
-			$scope.typeChecker = false
-
-			$scope.checkType = function() {
-				if (!$scope.reward) {
-					$scope.typeChecker = true
-				}
-			}
-
-			$scope.$on('highlight', function(event, data) {
-				$state.go('promotionCreate.goalPreview')
-				$scope.goalShow = true
-				goalPreview.updateValue(data._id)
-			})
-
-			$scope.hideGoalPreview = function() {
-				$scope.goalShow = false
-				$state.go('promotionCreate')
-			}
-
-			
-			$scope.submitPromotion = function(promotion) {
-				$scope.$broadcast('show-errors-check-validity');
-
-				if($scope.promotionForm.$invalid){return;}
-				var token = $window.sessionStorage['jwt']
-
-				promotion.goals = promotion.goals.map(x => x._id)
-
-				$http.post('api/promotions', promotion ,{
-					headers: {
-						"Authorization": `Bearer ${token}`
-					}
-				})
-				.then(function(resposne){
-						$state.reload()
-				})
-				.catch(function(response){
-					console.log(response)
-				})
-			}
-	}])
-	.service('goalPreview', function() {
-		var model = {}
-
-		return {
-
-			getValue: function() {
-				return model.value
-			},
-			updateValue: function(value) {
-				model.value = value;
-			}
-		}
-	})
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('PromotionAddController',['$scope', '$state', '$http', '$stateParams', '$window',
-		function($scope, $state, $http, $stateParams, $window) {
-
-			$scope.promotions = []
-
-			$scope.add = function(promotion) {
-				var token = $window.sessionStorage['jwt']
-
-				var team = {promotions: []}
-
-				$scope.team.promotions.forEach( promo => {
-					team.promotions.push({name: promo.name, promoId: promo._id})
-				})
-
-				promotion.forEach( p => {team.promotions.push({name: p.name, promoId: p.promoId})})
-
-
-				$http.put('api/teams/' + $stateParams.id,  team, {
-					headers: {
-						'Authorization': `Bearer ${token}`
-					}
-				})
-					.then( response => {
-						$state.reload()
-					})
-					.catch( response => {
-						console.log(response)
-					})
-
-			}
-
-			function getPromotions() {
-				$http.get('api/promotions')
-					.then(response => {
-						response.data.forEach(function(promo) {
-							if(promo) {
-								var promoIds = $scope.team.promotions.map(p => p.promoId)
-								if (!promoIds.includes(promo._id)) {
-									$scope.promotions.push(
-											{name: promo.name, promoId: promo._id}
-										)
-								}
-							}
-							else {
-								$scope.promotions = [{name: 'No Promotinos available'}]
-							}							
-						})
-					})
-					.catch(response => {
-						console.log(response)
-					})
-			}
-
-			getPromotions()
-		}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('GoalPreviewController', ['$scope', '$http', '$state', 'goalPreview', 'submitFormat',
-		function($scope, $http, $state, goalPreview, submitFormat) {
-
-			$scope.$watch(function() {return goalPreview.getValue()}, function(newValue, oldValue) {
-				!newValue ? $state.go('promotionCreate') : getGoal(newValue)
-			})
-
-			function getGoal(id) {
-				$http.get(`/api/goals/${id}`)
-					.then(response => {
-						var kvObj = submitFormat.generateKVObj(response.data.any)
-						
-						$scope.goal = Object.assign(kvObj, {'gsfName': response.data.gsfName})
-					})
-					.catch(response => {
-						console.log(response)
-					})
-			}
-
-			getGoal(goalPreview.getValue())
-			
-	}])
 }());
