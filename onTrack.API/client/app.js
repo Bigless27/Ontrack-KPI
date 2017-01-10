@@ -77,9 +77,9 @@
 						controller: 'OwnerController'
 					})
 					.state('promotion', {
-						url: '/team/:id/promotions/:promoId',
+						url: '/promotions',
 						templateUrl: 'client/api/promotions/promotions-partial.html',
-						controller: 'PromotionController'
+						controller: 'PromotionsController'
 					})
 					.state('user', {
 						url: '/user/:id',

@@ -20,14 +20,12 @@ exports.params = function(req, res, next, id) {
 
 exports.get = function(req, res, next) {
 	Promotion.find({})
-			.populate('promotions')
-			.exec(function(err, promotion) {
-				if (err) {
-					res.status(401).send('Error finding team')
-				} else {
-					res.json(promotion)
-			}
-		})
+			.then(function(promo) {
+				res.json(promo)
+			}, function(err) {
+				console.log(err)
+				next(err)
+			})
 };
 
 

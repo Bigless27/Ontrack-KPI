@@ -8,7 +8,7 @@ var checkUser = [auth.decodeToken(), auth.getFreshUser()];
 router.param('promoId', controller.params);
 
 router.route('/')
-	.get(team.getTeamPromo(),  controller.get)
+	.get(controller.get)
 	.post(controller.post)
 
 router.route('/:promoId')
