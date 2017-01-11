@@ -148,14 +148,13 @@
 					})
 					.then(function onSuccess(response){
 						var teamId = {'id': $stateParams['id'] + ''}
-						$state.go('team',teamId )
+						$state.go('promotion')
 					})
 					.catch(function onError(response) {
 						console.log(response)
 					})
 				}).catch(function onError(response) {
 					console.log(response)
-					return
 				})
 			}
 
