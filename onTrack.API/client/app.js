@@ -81,6 +81,11 @@
 						templateUrl: 'client/api/promotions/promotions-partial.html',
 						controller: 'PromotionsController'
 					})
+					.state('promotionView', {
+						url: '/promotions/:id',
+						templateUrl: 'client/api/promotions/promotion-view/promotion-view-partial.html',
+						controller: 'PromotionViewController'
+					})
 					.state('user', {
 						url: '/user/:id',
 						templateUrl: 'client/api/users/user-partial.html',
@@ -114,7 +119,7 @@
 					.state('rewards.create', {
 						url: '/create',
 						templateUrl: 'client/api/settings/rewards/rewards-form/rewards-form-partial.html',
-						controller: 'RewardsFromController'
+						controller: 'RewardsFormController'
 					})
 					.state('rewardsView', {
 						url: '/rewards/:id',
