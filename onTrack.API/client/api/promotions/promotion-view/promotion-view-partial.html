@@ -168,7 +168,8 @@
 	</div>
 	<div class = 'row'>
 		<div class = 'col-md-8 col-md-offset-2'>
-			<div class = "btn btn-danger" ui-sref = 'promotion'>Back</div>
+			<div ng-if = '!team' class = "btn btn-danger" ui-sref = 'promotion'>Back</div>
+			<div ng-if = 'team' class = 'btn btn-danger' ui-sref = 'team({id: teamId})'>Back</div>
 			<div class = "btn btn-default" ng-click = 'deletePromotion()'>Delete</div>
 		</div>
 	</div>

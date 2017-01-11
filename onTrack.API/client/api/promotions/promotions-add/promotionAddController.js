@@ -31,6 +31,7 @@
 
 			}
 
+			// there may be a little bug with this on duplicates showing up after they are added
 			function getPromotions() {
 				$http.get('api/promotions')
 					.then(response => {

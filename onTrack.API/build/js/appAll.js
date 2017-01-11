@@ -84,7 +84,10 @@
 					.state('promotionView', {
 						url: '/promotions/:id',
 						templateUrl: 'client/api/promotions/promotion-view/promotion-view-partial.html',
-						controller: 'PromotionViewController'
+						controller: 'PromotionViewController',
+						params: {
+							teamId: null
+						}
 					})
 					.state('user', {
 						url: '/user/:id',
@@ -458,6 +461,25 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 
 	}])
 }());
+(function(){
+	angular.module('onTrack')
+	.controller('PromotionsController', ['$scope', '$state', '$http', 
+		function($scope, $state, $http){
+
+			function getPromotions() {
+				$http.get('api/promotions')
+					.then( response => {
+						$scope.promotions = response.data
+					})
+					.catch( response => {
+						console.log(response)
+					})
+			}
+
+
+			getPromotions()
+		}])
+}());
 (function() {
 	angular.module('onTrack')
 	.controller('MainController', ['$scope', '$state', '$http', '$window', 
@@ -491,25 +513,6 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 			getUsers() 
 			getTeams()
 	}])
-}());
-(function(){
-	angular.module('onTrack')
-	.controller('PromotionsController', ['$scope', '$state', '$http', 
-		function($scope, $state, $http){
-
-			function getPromotions() {
-				$http.get('api/promotions')
-					.then( response => {
-						$scope.promotions = response.data
-					})
-					.catch( response => {
-						console.log(response)
-					})
-			}
-
-
-			getPromotions()
-		}])
 }());
 (function() {
 	angular.module('onTrack')
@@ -1164,6 +1167,20 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 				$('#promotion-type-edit')[0].click()
 			})
 
+			function setTeam() {
+				console.log($stateParams)
+				if ($stateParams.teamId) {
+					$scope.team = true
+					$scope.teamId = $stateParams.teamId
+				}
+				else {
+					console.log('hey')
+					$scope.team = false
+				}
+
+			}
+			setTeam()
+
 
 			$scope.updateName = function(data) {
 				if (data === ''){
@@ -1333,6 +1350,7 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 				$http.get('api/promotions/' + $stateParams.id)
 							.then(function onSuccess(response) {
 								$scope.promotion = response.data;
+								console.log($stateParams)
 								$scope.promotion['startDate'] = new Date($scope.promotion.startDate) 
 								$scope.promotion['endDate'] =  new Date($scope.promotion.endDate)
 								// getTypes()
@@ -1471,6 +1489,7 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 
 			}
 
+			// there may be a little bug with this on duplicates showing up after they are added
 			function getPromotions() {
 				$http.get('api/promotions')
 					.then(response => {
@@ -2026,24 +2045,6 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('RewardsFormController', ['$scope', '$http', '$state',
-		function($scope, $http, $state) {
-
-			$scope.submit = function(reward) {
-				$http.post('/api/rewards', reward)
-					.then( response => {
-						$state.reload()
-					})
-					.catch( response => {
-						console.log(response)
-					})
-			}
-
-			
-		}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('GoalsViewController', ['$scope', '$state', '$http', '$stateParams', 'arrToObject', 'submitFormat',
 	function($scope, $state, $http, $stateParams, arrToObject, submitFormat) {
 
@@ -2118,6 +2119,24 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 		}
 	}])
 
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('RewardsFormController', ['$scope', '$http', '$state',
+		function($scope, $http, $state) {
+
+			$scope.submit = function(reward) {
+				$http.post('/api/rewards', reward)
+					.then( response => {
+						$state.reload()
+					})
+					.catch( response => {
+						console.log(response)
+					})
+			}
+
+			
+		}])
 }());
 (function() {
 	angular.module('onTrack') 

@@ -55,7 +55,7 @@
 		 		</thead>
 		 		<tbody ng-repeat = 'promo in team.promotions'>
 		 			<tr class = 'info'>
-		 				<td>{{promo.name}}
+		 				<td><a ui-sref = 'promotionView({id: promo.promoId, teamId: team._id})'>{{promo.name}}</a>
 		  					<span class = 'btn btn-danger' ng-click = "removePromotion(promo)" style = 'float: right;'>X</span>
 		 				</td>
 
