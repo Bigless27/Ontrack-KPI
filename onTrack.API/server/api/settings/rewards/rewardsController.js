@@ -45,8 +45,6 @@ exports.put = function(req, res, next) {// works
 exports.post = function(req, res, next) { //works
 	var newReward = req.body;
 
-	console.log(newReward)
-
 	Rewards.create(newReward)
 		.then(function(reward) {
 			res.json(reward)

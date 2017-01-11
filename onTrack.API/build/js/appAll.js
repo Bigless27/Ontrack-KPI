@@ -430,68 +430,6 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 		}
 	})
 }());
-(function() {
-	angular.module('onTrack')
-	.controller('LoginController', ['$scope', '$state', '$window', '$http',
-	 function($scope, $state, $window, $http) {
-
-			$scope.logUserIn = function(user) {
-				$scope.$broadcast('show-errors-check-validity');
-
-
-				if($scope.userForm.$invalid){return;}
-
-				$scope.err = true
-
-				$http.post('auth/signin', user)
-					.then((response) => {
-
-						$scope.err = false
-						$window.sessionStorage.jwt = response.data['token']
-						$state.go('main')
-					})
-					.catch((response) => {
-						$scope.err = true
-						$scope.errMessage = response
-					})
-			}
-
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('MainController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
-
-			function getTeams() {
-				$http.get('api/teams')
-					.then(function onSuccess(response) {
-						$scope.teams = response.data
-					})
-					.catch(function onError(response) {
-						console.log(response);
-					})
-			}
-
-			function getUsers() {
-				$http.get('api/users')
-					.then(function onSuccess(response) {
-						$scope.users = response.data
-					})
-					.catch(function onError(response) {
-						console.log(response)
-					})
-			}
-
-			$scope.logout = function() {
-				$window.sessionStorage.clear()
-				$state.go('login')
-			}
-		
-			getUsers() 
-			getTeams()
-	}])
-}());
 (function(){
 	angular.module('onTrack')
 	.controller('PromotionsController', ['$scope', '$state', '$http', 
@@ -573,6 +511,68 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 	 	getUsers()
 	 	loadTypeSettings()
 	 	loadProgressSettings()
+
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('MainController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+
+			function getTeams() {
+				$http.get('api/teams')
+					.then(function onSuccess(response) {
+						$scope.teams = response.data
+					})
+					.catch(function onError(response) {
+						console.log(response);
+					})
+			}
+
+			function getUsers() {
+				$http.get('api/users')
+					.then(function onSuccess(response) {
+						$scope.users = response.data
+					})
+					.catch(function onError(response) {
+						console.log(response)
+					})
+			}
+
+			$scope.logout = function() {
+				$window.sessionStorage.clear()
+				$state.go('login')
+			}
+		
+			getUsers() 
+			getTeams()
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('LoginController', ['$scope', '$state', '$window', '$http',
+	 function($scope, $state, $window, $http) {
+
+			$scope.logUserIn = function(user) {
+				$scope.$broadcast('show-errors-check-validity');
+
+
+				if($scope.userForm.$invalid){return;}
+
+				$scope.err = true
+
+				$http.post('auth/signin', user)
+					.then((response) => {
+
+						$scope.err = false
+						$window.sessionStorage.jwt = response.data['token']
+						$state.go('main')
+					})
+					.catch((response) => {
+						$scope.err = true
+						$scope.errMessage = response
+					})
+			}
 
 	}])
 }());
@@ -1245,8 +1245,6 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 				$scope.promotion[field] = []
 				
 				data.forEach(x => $scope.promotion[field].push(x))
-				console.log(data)
-				return
 
 				$http.put('api/promotions/' + $stateParams.id + '/updateRefs', $scope.promotion, {
 					headers: {
@@ -1429,7 +1427,7 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 			function getRewards() {
 				$http.get('api/rewards')
 					.then(response => {
-						$scope.rewardList = response.data
+						$scope.rewardsList = response.data
 					})
 					.catch(response => {
 						console.log(response)
@@ -2112,7 +2110,7 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 			$scope.submit = function(reward) {
 				$http.post('/api/rewards', reward)
 					.then( response => {
-						$state.go('rewards')
+						$state.reload()
 					})
 					.catch( response => {
 						console.log(response)

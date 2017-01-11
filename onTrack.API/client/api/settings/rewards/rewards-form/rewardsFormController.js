@@ -6,7 +6,7 @@
 			$scope.submit = function(reward) {
 				$http.post('/api/rewards', reward)
 					.then( response => {
-						$state.go('rewards')
+						$state.reload()
 					})
 					.catch( response => {
 						console.log(response)

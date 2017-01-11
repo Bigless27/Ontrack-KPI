@@ -95,8 +95,6 @@
 				$scope.promotion[field] = []
 				
 				data.forEach(x => $scope.promotion[field].push(x))
-				console.log(data)
-				return
 
 				$http.put('api/promotions/' + $stateParams.id + '/updateRefs', $scope.promotion, {
 					headers: {
@@ -279,7 +277,7 @@
 			function getRewards() {
 				$http.get('api/rewards')
 					.then(response => {
-						$scope.rewardList = response.data
+						$scope.rewardsList = response.data
 					})
 					.catch(response => {
 						console.log(response)
