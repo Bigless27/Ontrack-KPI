@@ -12,5 +12,7 @@
 						console.log(response)
 					})
 			}
+
+			
 		}])
 }());
