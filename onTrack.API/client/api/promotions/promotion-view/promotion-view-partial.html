@@ -18,24 +18,57 @@
 						</td>
 					</tr>
 					<tr>
-						<th>Type</th>
+						<th>Goals</th>
 						<td>
-							<span 
-								id = 'promotion-type-edit'  
-								style = 'color:black; border: none;'
-								editable-select="promotion.type" 
-								e-ng-options="s for s in typeList" onbeforesave = 'updateType($data)'
-							>
-								{{promotion.type || 'empty'}}
+							<span ng-show = '!promo'>
+								<ul ng-repeat = 'g in promotion.goals'>
+									<li>{{g.gsfName}}</li>
+								</ul>
+								<!-- <span ng-show = 'noSubtypes' class ='label label-danger'>Empty!</span> -->
 							</span>
+							<span ng-show ='promo' style = 'width: 200px;'>
+								<multiple-autocomplete 
+									ng-model="promotion.goals"
+				     				object-property = "gsfName"
+				     				suggestions-arr= "promoList"
+				     				>
+								</multiple-autocomplete>
+								<span class = 'btn btn-info' ng-click = 'updateGoals(promotion.goals)'><i class = 'glyphicon glyphicon-ok' aria-hidden = 'true'></i></span>
+								<span class = 'btn btn-danger' ng-click= 'toggleEditPromo()'><i class = 'glyphicon glyphicon-remove'></i></span>
+							</span>
+
 						</td>
 						<td>
-							<a style = 'cursor: pointer;' class = 'promotion-edit-type-button'>
-								Edit
-							</a>
+							<a ng-click = 'toggleEditPromo()' ng-show = '!promo'>Edit</a>
 						</td>
 					</tr>
 					<tr>
+						<th>Rewards</th>
+						<td>
+							<span ng-show = '!reward'>
+								<ul ng-repeat = 'r in promotion.rewards'>
+									<li>{{r.name}}</li>
+								</ul>
+								<!-- <span ng-show = 'noSubtypes' class ='label label-danger'>Empty!</span> -->
+							</span>
+							<span ng-show ='reward' style = 'width: 200px;'>
+								<multiple-autocomplete 
+									ng-model="promotion.rewards"
+				     				object-property = "name"
+				     				suggestions-arr= "rewardsList"
+				     				>
+								</multiple-autocomplete>
+								<span class = 'btn btn-info' ng-click = 'updateRewards(promotion.rewards)'><i class = 'glyphicon glyphicon-ok' aria-hidden = 'true'></i></span>
+								<span class = 'btn btn-danger' ng-click= 'toggleEditReward()'><i class = 'glyphicon glyphicon-remove'></i></span>
+							</span>
+
+						</td>
+						<td>
+							<a ng-click = 'toggleEditReward()' ng-show = '!reward'>Edit</a>
+						</td>
+					</tr>
+					
+					<!-- <tr>
 						<th>Subtypes</th>
 						<td>
 							<span ng-show = '!subTags'>
@@ -63,7 +96,7 @@
 							Edit
 							</a>
 						</td>
-					</tr>
+					</tr> -->
 					<tr>
 						<th>Completion Value</th>
 						<td>
@@ -135,7 +168,7 @@
 	</div>
 	<div class = 'row'>
 		<div class = 'col-md-8 col-md-offset-2'>
-			<div class = "btn btn-danger" ui-sref = 'team({id: promotion.teamId})'>Back</div>
+			<div class = "btn btn-danger" ui-sref = 'promotion'>Back</div>
 			<div class = "btn btn-default" ng-click = 'deletePromotion()'>Delete</div>
 		</div>
 	</div>

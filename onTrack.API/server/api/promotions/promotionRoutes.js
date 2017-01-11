@@ -11,9 +11,12 @@ router.route('/')
 	.get(controller.get)
 	.post(controller.post)
 
+router.route('/:promoId/updateRefs')
+	.put(controller.updateRefs)
+
 router.route('/:promoId')
 	.get(controller.getOne)
-	.put(team.getTeam(),controller.put)
-	.delete(team.getTeam(),controller.delete)
+	.put(controller.put)
+	.delete(controller.delete)
 
 module.exports = router;

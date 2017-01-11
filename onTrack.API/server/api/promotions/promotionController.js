@@ -1,4 +1,6 @@
 var Promotion = require('./promotionModel');
+var mongoose = require('mongoose')
+var ObjectId = mongoose.Types.ObjectId;
 var Progress = require('../users/progress/progressModel')
 var Team = require('../teams/teamModel')
 var _ = require('lodash');
@@ -6,16 +8,13 @@ var customizer = require('../updateCustomizer')
 
 exports.params = function(req, res, next, id) {
 	Promotion.findById(id)
-		.then(function(promotion) {
-			if (!promotion) {
-				next(new Error('No Promotion with that ID'));
-			} else {
-				req.promotion = promotion;
-				next();
-			}
-		}, function(err) {
-			next(err);
-	});
+		.populate('goals')
+		.populate('rewards')
+		.exec(function(err, promotion) {
+			if(err) return next(err);
+			req.promotion = promotion
+			next()
+		})
 };
 
 exports.get = function(req, res, next) {
@@ -47,8 +46,6 @@ exports.post = function(req, res, next) { //yup
 };
 
 exports.put = function(req, res, next) {// works
-	
-  
   	var promotion = req.promotion;
 
 	var update = req.body;
@@ -63,6 +60,23 @@ exports.put = function(req, res, next) {// works
 	}
 	})
 };
+
+exports.updateRefs = function(req, res, next) {
+	var promotion = req.promotion;
+
+	var update = req.body;
+
+	promotion.goals = update.goals.map(x => new ObjectId(x))
+	promotion.rewards = update.rewards.map(x => new ObjectId(x))
+
+	promotion.save(function(err, saved) {
+		if(err) {
+			next(err);
+		} else {
+			res.json(saved)
+		}
+	})
+}
 
 exports.delete = function(req, res, next) { //works
 	
