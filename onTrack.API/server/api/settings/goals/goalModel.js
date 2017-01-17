@@ -15,15 +15,20 @@ GoalSchema.pre('remove', function(next) {
 		.then(promos => {
 			var holder = promos;
 			promos.forEach(function(promo, i) {
-				var ids = promo.goals.map(x => x._id)
-				if (!ids.includes(goal._id)) {
+				if (!promo.goals.includes(goal._id)) {
 					holder.splice(i,1)
 				}
 			})
-			console.log(holder)
-			return
+			holder.forEach(g => {
+				g.goals = g.goals.filter(x => {return x != goal._id})
+				g.save(function(err, saved) {
+					if (err) next(err)
+				})
+			})
+			next()
+		}, function(err) {
+			next(err)
 		})
-
 })
 
 module.exports = mongoose.model('goal', GoalSchema)
