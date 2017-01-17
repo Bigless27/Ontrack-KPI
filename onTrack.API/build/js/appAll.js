@@ -461,25 +461,6 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 
 	}])
 }());
-(function(){
-	angular.module('onTrack')
-	.controller('PromotionsController', ['$scope', '$state', '$http', 
-		function($scope, $state, $http){
-
-			function getPromotions() {
-				$http.get('api/promotions')
-					.then( response => {
-						$scope.promotions = response.data
-					})
-					.catch( response => {
-						console.log(response)
-					})
-			}
-
-
-			getPromotions()
-		}])
-}());
 (function() {
 	angular.module('onTrack')
 	.controller('MainController', ['$scope', '$state', '$http', '$window', 
@@ -513,6 +494,25 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 			getUsers() 
 			getTeams()
 	}])
+}());
+(function(){
+	angular.module('onTrack')
+	.controller('PromotionsController', ['$scope', '$state', '$http', 
+		function($scope, $state, $http){
+
+			function getPromotions() {
+				$http.get('api/promotions')
+					.then( response => {
+						$scope.promotions = response.data
+					})
+					.catch( response => {
+						console.log(response)
+					})
+			}
+
+
+			getPromotions()
+		}])
 }());
 (function() {
 	angular.module('onTrack')
@@ -1168,13 +1168,11 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 			})
 
 			function setTeam() {
-				console.log($stateParams)
 				if ($stateParams.teamId) {
 					$scope.team = true
 					$scope.teamId = $stateParams.teamId
 				}
 				else {
-					console.log('hey')
 					$scope.team = false
 				}
 
@@ -1350,7 +1348,6 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 				$http.get('api/promotions/' + $stateParams.id)
 							.then(function onSuccess(response) {
 								$scope.promotion = response.data;
-								console.log($stateParams)
 								$scope.promotion['startDate'] = new Date($scope.promotion.startDate) 
 								$scope.promotion['endDate'] =  new Date($scope.promotion.endDate)
 								// getTypes()

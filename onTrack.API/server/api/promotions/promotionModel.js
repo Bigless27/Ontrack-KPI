@@ -18,7 +18,27 @@ var PromotionSchema = new Schema({
 })
 
 
-PromotionSchema.post('remove', function(doc) {
+PromotionSchema.pre('remove', function(next) {
+	var promo = this
+	Team.find({})
+		.then(teams => {
+			var holder = teams
+			teams.forEach(function(team, i) {
+				var ids = team.promotions.map(x => x.promoId)
+				if (!ids.includes(promo._id)) {
+					holder.splice(i,1)
+				}
+			})
+			holder.forEach(p => {
+				p.promotions = p.promotions.filter(x => {return x.promoId != promo._id})
+				p.save(function(err, saved) {
+					if (err) next(err)
+				})
+			})
+			next()
+		}, function(err) {
+		 next(err)
+		})
 	// Team.findById(doc.teamId)
 	// 	.then(function(team) {
 	// 		if(!team) {

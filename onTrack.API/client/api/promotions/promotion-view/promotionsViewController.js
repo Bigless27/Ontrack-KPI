@@ -15,13 +15,11 @@
 			})
 
 			function setTeam() {
-				console.log($stateParams)
 				if ($stateParams.teamId) {
 					$scope.team = true
 					$scope.teamId = $stateParams.teamId
 				}
 				else {
-					console.log('hey')
 					$scope.team = false
 				}
 
@@ -197,7 +195,6 @@
 				$http.get('api/promotions/' + $stateParams.id)
 							.then(function onSuccess(response) {
 								$scope.promotion = response.data;
-								console.log($stateParams)
 								$scope.promotion['startDate'] = new Date($scope.promotion.startDate) 
 								$scope.promotion['endDate'] =  new Date($scope.promotion.endDate)
 								// getTypes()
