@@ -12,12 +12,18 @@
 			<div>
 				<table id = 'add-goal' class = 'table table-bordered' ng-repeat = 'goal in goals'>
 					<tr>
-						<th>Key</th>
-						<th>
-							Value 
+						<th>Name</th>
+						<td>{{goal.gsfName}}
 							<div style ='margin: 0px 5px' ui-sref = 'goalsView({id: goal._id})' class = 'btn btn-default'>
 								View
 							</div>
+						</td>
+
+					</tr>
+					<tr>
+						<th>Key</th>
+						<th>
+							Value 
 						</th>
 					</tr>
 					<tr ng-repeat = '(key, value) in goal.any'>

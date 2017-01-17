@@ -19,7 +19,7 @@ var PromotionSchema = new Schema({
 
 
 PromotionSchema.pre('remove', function(next) {
-	var promo = this
+	var promo = this;
 	Team.find({})
 		.then(teams => {
 			var holder = teams
@@ -39,25 +39,6 @@ PromotionSchema.pre('remove', function(next) {
 		}, function(err) {
 		 next(err)
 		})
-	// Team.findById(doc.teamId)
-	// 	.then(function(team) {
-	// 		if(!team) {
-	// 			console.log('association not deleted')
-	// 		} else {
-	// 			var update = team
-				
-	// 			update.promotions.splice(update.promotions.indexOf(doc._id),1);
-	// 			_.merge(team, update)
-
-	// 			team.save(function(err, saved) {
-	// 				if (err) {
-	// 					console.log('not saved')
-	// 				} else {
-	// 					console.log('association deleted and saved')
-	// 				}
-	// 			})
-	// 		}
-	// 	})
 })
 
 module.exports = mongoose.model('promotion', PromotionSchema)
