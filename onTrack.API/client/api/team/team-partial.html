@@ -34,7 +34,7 @@
 		 		</thead>
 		 		<tbody ng-repeat = 'admin in team.admins'>
 		 			<tr class = 'info'>
-		 				<td>{{admin.firstName}} {{admin.lastName}}
+		 				<td><a ui-sref = 'user({id: admin.userId, teamId: team._id})'>{{admin.firstName}} {{admin.lastName}}</a>
 		  					<span class = 'btn btn-danger' ng-click = "removeAdmin(admin)" style = 'float: right;'>X</span>
 		 				</td>
 
@@ -77,7 +77,7 @@
 		 		<tbody ng-repeat = 'user in team.users'>
 		 			<tr class = 'info'>
 		 				<td>
-		 					{{user.firstName}} {{user.lastName}}
+		 					<a ui-sref = 'user({id: user.userId, teamId: team._id})'>{{user.firstName}} {{user.lastName}}</a>
 		 					<span class = 'btn btn-danger' ng-click = "removeUser(user)" style = 'float: right;'>X</span>
 		 				</td>
 		 			</tr>

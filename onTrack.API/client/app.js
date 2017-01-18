@@ -92,7 +92,10 @@
 					.state('user', {
 						url: '/user/:id',
 						templateUrl: 'client/api/users/user-partial.html',
-						controller: 'UserController'
+						controller: 'UserController',
+						params: {
+							teamId: null
+						}
 					})
 					.state('setting', {
 						url: '/settings',

@@ -44,7 +44,8 @@
 		</table>
 	</div>
 	<div class = 'row'>
-		<button class = 'btn btn-default' ui-sref = 'main'>Back</button>
+		<button ng-if = '!team' class = 'btn btn-default' ui-sref = 'main'>Back</button>
+		<button ng-if = 'team' class="btn btn-default" ui-sref = 'team({id: teamId})'>Back</button>
 		<button class = 'btn btn-danger' ng-click = 'deleteUser()'>Delete</button>
 	</div>
 	<div class = 'row'>

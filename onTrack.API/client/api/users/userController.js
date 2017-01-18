@@ -151,6 +151,20 @@
 					})
 			}
 
+			function setTeam() {
+				if ($stateParams.teamId) {
+						$scope.team = true
+						$scope.teamId = $stateParams.teamId
+					}
+				else {
+					$scope.team = false
+				}
+			}
+			
+			setTeam()
+
+
+
 			function getTeams() {
 				$http.get('api/teams/findTeams/' + $scope.user.email)
 					.then(response => {
