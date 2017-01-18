@@ -1,45 +1,45 @@
-(function() {
-	angular.module('onTrack')
-	.controller('ProgressController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
-		function($scope, $state, $http, $window, $stateParams, $q) {
+// (function() {
+// 	angular.module('onTrack')
+// 	.controller('ProgressController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
+// 		function($scope, $state, $http, $window, $stateParams, $q) {
 			
-			function getProgress() {
-				$http.get('api/users/' + $stateParams.id + '/progress/' + $stateParams.progressId)
-					.then(response => {
-						$scope.progress = response.data
-						$http.get('api/progress-settings/' + response.data.settingId)
-							.then(response => {
-								$scope.setting = response.data
-							})
-							.catch(function(err) {
-								console.log(err)
-							})
-					})
-					.catch(reponse => {
-						console.log(response)
-					})
-			}
+// 			function getProgress() {
+// 				$http.get('api/users/' + $stateParams.id + '/progress/' + $stateParams.progressId)
+// 					.then(response => {
+// 						$scope.progress = response.data
+// 						$http.get('api/progress-settings/' + response.data.settingId)
+// 							.then(response => {
+// 								$scope.setting = response.data
+// 							})
+// 							.catch(function(err) {
+// 								console.log(err)
+// 							})
+// 					})
+// 					.catch(reponse => {
+// 						console.log(response)
+// 					})
+// 			}
 
 
-			$scope.updateValue = function(data) {
-				if (data < 0) {
-					return "Value can't be negative"
-				}
-				updateProgress(data)
-			}
+// 			$scope.updateValue = function(data) {
+// 				if (data < 0) {
+// 					return "Value can't be negative"
+// 				}
+// 				updateProgress(data)
+// 			}
 
-			function updateProgress(data) {
-				$scope.progress['value'] = data
+// 			function updateProgress(data) {
+// 				$scope.progress['value'] = data
 
-				$http.put('api/users/' + $stateParams.id + '/progress/' + $stateParams.progressId, $scope.progress)
-					.catch( response => {
-						console.log(response)
-					})
+// 				$http.put('api/users/' + $stateParams.id + '/progress/' + $stateParams.progressId, $scope.progress)
+// 					.catch( response => {
+// 						console.log(response)
+// 					})
 
-			}
+// 			}
 
-			getProgress()
+// 			getProgress()
 
 
-	}])
-}());
+// 	}])
+// }());

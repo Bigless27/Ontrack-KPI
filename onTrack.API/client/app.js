@@ -132,7 +132,21 @@
 						templateUrl: 'client/api/settings/rewards/rewards-view/rewards-view-partial.html',
 						controller: 'RewardsViewController'
 					})
-
+					.state('progress', {
+						url: '/progress',
+						templateUrl: 'client/api/settings/progress/progress-partial.html',
+						controller: 'ProgressController'
+					})
+					.state('progress.create', {
+						url: '/create', 
+						templateUrl: 'client/api/settings/progress/progress-form/progress-form-partial.html',
+						controller: 'ProgressFormController'
+					})
+					.state('progressView', {
+						url: '/progress/:id',
+						templateUrl: 'client/api/settings/progress/progress-view/progress-view-partial.html',
+						controller: 'ProgressViewController'
+					})
 					// .state('activity', {
 					// 	url: '/activity',
 					// 	templateUrl: 'client/api/activity/activity-partial.html',

@@ -1,0 +1,57 @@
+<div class = 'container'>
+	<div class = 'col-md-8 col-md-offset-2'>
+		<table class = 'table table-striped'>
+			<tr>
+				<th>Name</th>
+				<td>
+					<span
+						editable-text = 'progress.name'
+						e-form = 'name'
+						onbeforesave = 'updateName($data)'
+						>
+						{{progress.name}}
+					</span>
+				</td>
+				<td>
+					<a href ="" ng-click = 'name.$show()' ng-hide = 'name.$visable'>Edit</a>
+				</td>
+			</tr>
+			<tr>
+				<th>Type</th>
+				<td>
+					<span
+							editable-text = 'progress.type'
+							e-form = 'type'
+							onbeforesave = 'updateType($data)'
+							>
+							{{progress.type}}
+						</span>
+				</td>
+				<td>
+					<a href ="" ng-click = 'type.$show()' ng-hide = 'type.$visable'>Edit</a>
+				</td>
+			</tr>
+			<tr>
+				<th>Description</th>
+				<td>
+					<span
+							editable-textarea = 'progress.description'
+							e-rows = '5'
+							e-cols = '30'
+							e-form = 'description'
+							onbeforesave = 'updateDescription($data)'
+							>
+							{{progress.description}}
+						</span>
+				</td>
+				<td>
+					<a href ="" ng-click = 'description.$show()' ng-hide = 'description.$visable'>Edit</a>
+				</td>
+			</tr>
+		</table>
+		<div class = 'row'>
+			<div class = 'btn btn-default' ui-sref = 'progress'>Back</div>
+			<div class="btn btn-default" ng-click = 'deleteProgress()'>Delete</div>
+		</div>
+	</div>
+</div>

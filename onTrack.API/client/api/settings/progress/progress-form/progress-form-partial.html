@@ -1,0 +1,34 @@
+<div id = 'edit'>
+	<h1>Create A Progress</h1>
+
+	<form name = 'progressForm'>
+		<div class = 'form-group' show-errors>
+			<label for = 'name' class = 'control-label'>Name</label>
+			<div class = 'input-group'>
+				<span class = 'input-group-addon'><i class = 'glyphicon glyphicon-user'></i></span>
+				<input name = 'name' type = 'text' ng-model = 'progress.name' class = 'form-control' placeholder = 'enter a name' required>
+			</div>
+				<p class = 'help-block' ng-if = 'progressForm.name.$error.required'>Name is required</p>
+		</div>
+		<div class = 'form-group' show-errors>
+			<label for = 'type' class = 'control-label'>Type</label>
+			<div class = 'input-group'>
+				<span class = 'input-group-addon'><i class = 'glyphicon glyphicon-user'></i></span>
+				<input name = 'type' ng-model = 'progress.type' class = 'form-control' placeholder = 'enter a type' required>
+			</div>
+				<p class = 'help-block' ng-if = 'progressForm.type.$error.required'>Type is required</p>
+		</div>
+		<div class = 'form-group' show-errors>
+			<label for = 'description' class = 'control-label'>Description</label>
+			<div class = 'input-group'>
+				<span class = 'input-group-addon'><i class = 'glyphicon glyphicon-user'></i></span>
+				<textarea name = 'description' ng-model = 'progress.description' class = 'form-control' placeholder = 'enter a description' required>
+				</textarea>
+			</div>
+				<p class = 'help-block' ng-if = 'progressForm.description.$error.required'>Description is required</p>
+		</div>
+	</form>
+	
+	<div class = 'btn btn-default' style = 'margin: 5px 0px' ui-sref = 'progress'>Close</div>
+	<div class = 'btn btn-default' ng-click = 'submit(progress)' style = 'display:block; width:100px; margin-top:10px;'>Submit</div>
+</div>
