@@ -1,69 +1,19 @@
 <div class = 'container'>
-	<div class = 'row'>
-		<h1>User</h1>
-		<table class = 'table table-striped'>
-			<tr>
-				<th>First Name</th>
-				<td editable-text = 'user.firstName' e-form = 'firstName' onbeforesave = 'updateFirstName($data)'>{{user.firstName || 'empty'}}</td>
-				<td>
-					<a href="" ng-click="firstName.$show()" ng-hide="firstName.$visible">Edit</a>
-				</td>
-			</tr>
-			<tr>
-				<th>Last Name</th>
-				<td editable-text = 'user.lastName' e-form = 'lastName' onbeforesave = 'updateLastName($data)'>{{user.lastName || 'empty'}}</td>
-				<td>
-					<a href="" ng-click="lastName.$show()" ng-hide="lastName.$visible">Edit</a>
-				</td>
-			</tr>
-			<tr>
-				<th>Email</th>
-				<td id = 'user-email-edit' style = 'color:black;' editable-email='user.email' onbeforesave = 'updateEmail($data)'>{{user.email || 'empty'}}</td>
-				<td>
-					<a style = 'cursor: pointer;' class = 'user-email-edit-button'>Edit</a>
-				</td>
-			</tr>
-			<tr>
-				<th>Date Joined</th>
-				<td>
-					<span
-						id = 'user-dateJoined-edit'
-						e-min-year = '2016'
-						e-max-year = '2025'
-						editable-combodate = 'user.dateJoined' 
-						style = 'color:black; border-bottom:none;'
-						onbeforesave = 'updateDateJoined($data)'
-						>
-						{{(user.dateJoined | date: 'medium') || 'empty'}}
-					</span>
-				</td>
-				<td>
-					<a class = 'user-dateJoined-edit-button' href="">Edit</a>
-				</td>
-			</tr>
-		</table>
-	</div>
-	<div class = 'row'>
-		<button ng-if = '!team' class = 'btn btn-default' ui-sref = 'main'>Back</button>
-		<button ng-if = 'team' class="btn btn-default" ui-sref = 'team({id: teamId})'>Back</button>
-		<button class = 'btn btn-danger' ng-click = 'deleteUser()'>Delete</button>
-	</div>
-	<div class = 'row'>
-		<div class = 'col-md-6'>
-			<h2 style = 'display: inline-block'>Progress</h2>	
-			<div ng-repeat = 'prog in user.progress'>
-				<table class = 'table table-bordered' style = 'width:300px;'>
-					<tr>
-						<th>Name</th>
-						<td>{{getSettingName(prog.settingId)}}</td>
-					</tr>
-					<tr>
-						<th>Type</th>
-						<td>{{getSettingType(prog.settingId)}}</td>
-					</tr>
-				</table>
-				<span class = 'btn btn-default' ui-sref = 'progress({id: user._id, progressId: prog._id})' style = 'margin-bottom: 20px;'>View</span>
-			</div>
-		</div>
+	<div class = 'col-sm-4 col-md-4'>
+	 	<h2 class = 'card-title'>All Users</h2>
+	 	<input ng-model = 'query' type = 'text' placeholder = 'Search Users'>
+	 	<span class = 'btn btn-default' ui-sref = 'user.createUser'> Create User</span>
+	 	<div>
+	 		<div ui-view></div>
+	 	</div>
+	 	<hr>
+	 	<div id = 'usersList'>
+		 	<ul ng-repeat = "user in users | filter: query | orderBy: sortField: reverse" >
+		 		<li>
+		 			<a ui-sref = 'userView({id: user._id})'>{{user.firstName}} {{user.lastName}}</a>
+		 		</li>
+		 	</ul>
+	 	</div>
+	 	<p style = 'font-size: 11px;'>*Scroll down to see more users</p>
 	</div>
 </div>

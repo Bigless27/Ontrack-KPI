@@ -35,11 +35,6 @@
 						templateUrl: 'client/api/team/form/team-form-partial.html',
 						controller: 'TeamFormController'
 					})
-					.state('main.createUser', {
-						url: '/createUser',
-						templateUrl: 'client/api/users/form/user-form-partial.html',
-						controller: 'UserFormController'
-					})
 					.state('promotionCreate', {
 						url: '/team/promotionCreate',
 						templateUrl: 'client/api/promotions/form/promotions-form-partial.html',
@@ -90,9 +85,19 @@
 						}
 					})
 					.state('user', {
-						url: '/user/:id',
+						url: '/user',
 						templateUrl: 'client/api/users/user-partial.html',
-						controller: 'UserController',
+						controller: 'UserController'
+					})
+					.state('user.createUser', {
+						url: '/createUser',
+						templateUrl: 'client/api/users/form/user-form-partial.html',
+						controller: 'UserFormController'
+					})
+					.state('userView', {
+						url: '/user/:id',
+						templateUrl: 'client/api/users/user-view/user-view-partial.html',
+						controller: 'UserViewController',
 						params: {
 							teamId: null
 						}

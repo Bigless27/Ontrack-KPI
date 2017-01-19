@@ -6,6 +6,7 @@
 <div class = "container">
 	<div class = 'btn btn-default' ui-sref = 'setting'>Settings</div>
 	<div class = 'btn btn-default' ui-sref = 'promotion'>Promotion</div>
+	<div class = 'btn btn-default' ui-sref = 'user'>User</div>
 
 	 <div ui-view></div>
 
@@ -18,20 +19,6 @@
 		 		</li>
 		 	</ul>
 		 	<div ui-sref = 'main.createTeam' class = 'btn btn-default'> Create Team</div>
-	 	</div>
-
-	 	<div  class = 'col-sm-4 col-md-4'>
-		 	<h2 class = 'card-title'>All Users</h2>
-		 	<input ng-model = 'query' type = 'text' placeholder = 'Search Users'>
-		 	<span class = 'btn btn-default' ui-sref = 'main.createUser'> Create User</span>
-		 	<div id = 'usersList'>
-			 	<ul ng-repeat = "user in users | filter: query | orderBy: sortField: reverse" >
-			 		<li>
-			 			<a ui-sref = 'user({id: user._id})'>{{user.firstName}} {{user.lastName}}</a>
-			 		</li>
-			 	</ul>
-		 	</div>
-		 	<p style = 'font-size: 11px;'>*Scroll down to see more users</p>
 	 	</div>
 	 </div>
 </div>
