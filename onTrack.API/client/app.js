@@ -94,6 +94,9 @@
 						templateUrl: 'client/api/users/form/user-form-partial.html',
 						controller: 'UserFormController'
 					})
+					.state('user.assignProgress', {
+						url: '/progress'
+					})
 					.state('userView', {
 						url: '/user/:id',
 						templateUrl: 'client/api/users/user-view/user-view-partial.html',

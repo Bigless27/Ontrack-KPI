@@ -1,12 +1,16 @@
 <div class = 'container'>
+	<div class = 'row'>
+		<div class="btn btn-default" ui-sref = 'main'>Back</div>
+	</div>
 	<div class = 'col-sm-4 col-md-4'>
 	 	<h2 class = 'card-title'>All Users</h2>
-	 	<input ng-model = 'query' type = 'text' placeholder = 'Search Users'>
 	 	<span class = 'btn btn-default' ui-sref = 'user.createUser'> Create User</span>
+	 	<span class = 'btn btn-default'>Assign Progress</span>
 	 	<div>
 	 		<div ui-view></div>
 	 	</div>
 	 	<hr>
+	 	<input ng-model = 'query' style = 'margin-bottom: 15px;' type = 'text' placeholder = 'Search Users'>
 	 	<div id = 'usersList'>
 		 	<ul ng-repeat = "user in users | filter: query | orderBy: sortField: reverse" >
 		 		<li>
