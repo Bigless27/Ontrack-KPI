@@ -1,0 +1,57 @@
+<div id="edit" class = 'container'>
+	<form name = 'assign-progress-form'>
+		<h4 style = 'text-align: center;'>Select Rewards</h4>
+			<div class = 'form-group'>
+				<label for = 'type' class = 'control-label'>Type</label>
+				<div class = 'input-group'>
+					<span class = 'input-group-addon'><i class = 'glyphicon glyphicon-user'></i></span>
+					<span>
+						<select
+							name = 'progress'
+							ng-model = "progType" 
+							ng-blur = 'setProgress()'
+							class = "form-control"
+							placeholder = "select a type" 
+							ng-options = 'p.type for p in progress'
+							style = 'width: 400px'
+						>
+						</select>
+				</span>
+			</div>
+
+			<div class = 'form-group'>
+				<label for = 'progress' class = 'control-label'>Progress</label>
+				<div class = 'input-group'>
+					<span class = 'input-group-addon'><i class = 'glyphicon glyphicon-user'></i></span>
+					<multiple-autocomplete
+						ng-model = 'assign.progress'
+						object-property = 'name'
+						suggestions-arr = 'filterdProgress'
+						ng-click = 'checkType()'
+					>
+					</multiple-autocomplete>
+				</div>
+				<p class = 'alert alert-danger' ng-if = 'typeChecker'>Please select a type first</p>
+			</div>
+
+			<div class = 'form-group'>
+				<label for = 'users' class = 'control-label'>Users</label>
+				<div class = 'input-group'>
+					<span class = 'input-group-addon'><i class = 'glyphicon glyphicon-user'></i></span>
+					<multiple-autocomplete
+							ng-model = 'assign.users'
+							object-property = 'fullName'
+							suggestions-arr = 'optionsList'
+						>
+						</multiple-autocomplete>
+				</div>
+
+			</div>
+
+
+
+
+	</form>
+	<div class = 'btn btn-info' ng-click = 'submit(assign)'>Submit</div>
+	<div class = 'btn btn-default' ui-sref = 'user'>Close</div>
+</div>

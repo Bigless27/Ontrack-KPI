@@ -20,7 +20,7 @@ h1 {
 #usersList {
   padding-left: 10px;
   height: auto;
-  max-height: 400px;
+  max-height: 120px;
   overflow-x: hidden; }
   #usersList ul {
     list-style: none; }

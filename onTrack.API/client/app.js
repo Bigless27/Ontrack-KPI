@@ -50,11 +50,6 @@
 						templateUrl: 'client/api/team/team-partial.html',
 						controller: 'TeamController'
 					})
-					// .state('team.promotionCreate', {
-					// 	url: '/team/:id',
-					// 	templateUrl: 'client/api/team/promotions/form/promotions-form-partial.html',
-					// 	controller: 'PromotionFormController'
-					// })
 					.state('team.addUser', {
 						templateUrl:'client/api/team/admin/admin-add-partial.html',
 						controller: 'AddUserController'
@@ -95,7 +90,9 @@
 						controller: 'UserFormController'
 					})
 					.state('user.assignProgress', {
-						url: '/progress'
+						url: '/progress',
+						templateUrl: 'client/api/settings/progress/assign-progress/assign-progress-partial.html',
+						controller: 'AssignProgressController'
 					})
 					.state('userView', {
 						url: '/user/:id',

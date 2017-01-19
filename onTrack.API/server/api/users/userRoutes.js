@@ -20,6 +20,9 @@ router.route('/')
   .get(controller.get)// tested
   .post(controller.post)// tested
 
+router.route('/:id/updateRefs')
+	.put(controller.updateRefs)
+
 router.route('/:id')
   .get(controller.getOne)// tested
   .put(controller.put)// tested

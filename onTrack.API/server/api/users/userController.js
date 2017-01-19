@@ -1,5 +1,7 @@
 var User = require('./userModel');
 var _ = require('lodash');
+var mongoose = require('mongoose')
+var ObjectId = mongoose.Types.ObjectId;
 var signToken = require('../../auth/auth').signToken;
 var customizer = require('../updateCustomizer')
 
@@ -13,7 +15,7 @@ exports.params = function(req, res, next, id) {
 			if (!user) {
 				next(new Error('No user with that id'));
 			} else {
-				req.userParam = user;
+				req.user = user;
 				next();
 			}
 		}, function(err) {
@@ -53,17 +55,34 @@ exports.get = function(req, res, next) {
 
 
 exports.getOne = function(req, res, next) {
-	var user = req.userParam.toJson();
+	var user = req.user.toJson();
 	res.json(user);
 };
 
+exports.updateRefs = function(req, res, next) {
+  var user = req.user;
+
+  var update = req.body;
+
+  user.progress = update.progress.map(x => typeof x === 'string' ? new ObjectId(x) : x)
+
+  user.save(function(err, saved) {
+    if(err) {
+      next(err);
+    } else {
+      res.json(saved)
+    }
+  })
+}
+
 
 exports.put = function(req, res, next) {
-  var user = req.userParam;
+  var user = req.user;
 
   var update = req.body;
 
   _.mergeWith(user, update, customizer.custom);
+
 
   user.save(function(err, saved) {
     if (err) {
@@ -91,7 +110,7 @@ exports.post = function(req, res, next) {
 };
 
 exports.delete = function(req, res, next) {
-  req.userParam.remove(function(err, removed) {
+  req.user.remove(function(err, removed) {
     if (err) {
       next(err);
     } else {
@@ -101,5 +120,5 @@ exports.delete = function(req, res, next) {
 };
 
 exports.me = function(req, res) {
-   res.json(req.userParam.toJson());
+   res.json(req.user.toJson());
 };
