@@ -150,7 +150,10 @@
 					.state('progressView', {
 						url: '/progress/:id',
 						templateUrl: 'client/api/settings/progress/progress-view/progress-view-partial.html',
-						controller: 'ProgressViewController'
+						controller: 'ProgressViewController',
+						params: {
+							userId: null
+						}
 					})
 					// .state('activity', {
 					// 	url: '/activity',
@@ -1401,6 +1404,24 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('RewardsController', ['$scope', '$http', '$state', 
+		function($scope, $http, $state) {
+
+			function getRewards() {
+				$http.get('api/rewards')
+					.then(response => {
+						$scope.rewards = response.data
+					})
+					.catch(response => {
+						console.log(response)
+					})
+			}
+
+			getRewards()
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('ProgressController', ['$scope', '$http', '$stateParams', 
 		function($scope, $http, $stateParams) {
 
@@ -1416,24 +1437,6 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 
 			getProgresses()
 
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('RewardsController', ['$scope', '$http', '$state', 
-		function($scope, $http, $state) {
-
-			function getRewards() {
-				$http.get('api/rewards')
-					.then(response => {
-						$scope.rewards = response.data
-					})
-					.catch(response => {
-						console.log(response)
-					})
-			}
-
-			getRewards()
 	}])
 }());
 (function() {
@@ -1875,7 +1878,6 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 				$http.get('/api/users/' + $stateParams.id)
 					.then(response => {
 						$scope.user = response.data
-						console.log($scope.user)
 					})
 					.catch(response => {
 						console.log(response)
@@ -2164,6 +2166,114 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('RewardsFormController', ['$scope', '$http', '$state',
+		function($scope, $http, $state) {
+
+			$scope.submit = function(reward) {
+				$scope.$broadcast('show-errors-check-validity');
+
+				if($scope.rewardForm.$invalid){return;}
+
+				console.log(reward)
+				return
+
+				$http.post('/api/rewards', reward)
+					.then( response => {
+						$state.reload()
+					})
+					.catch( response => {
+						console.log(response)
+					})
+			}
+
+			
+		}])
+}());
+(function() {
+	angular.module('onTrack') 
+	.controller('RewardsViewController', ['$scope', '$http', '$state', '$stateParams', '$window',
+		function($scope, $http, $state, $stateParams, $window) {
+
+
+			$scope.updateName = function(name) {
+				if (!name) {
+					return 'Name is required'
+				}
+				updateReward('name', name)
+			}
+
+			$scope.updateType = function(type) {
+				if (!type) {
+					return 'Type is required'
+				}
+				updateReward('type', type)
+			}
+
+			$scope.updateDescription = function(description) {
+				if (!description) {
+					return 'Description is required'
+				}
+				updateReward('description', description)
+			}
+
+			function updateReward(param, name) {
+				$scope.reward[param] = name
+
+				$http.put('api/rewards/' + $stateParams.id, $scope.reward)
+					.then(response => {
+						$state.reload()
+					})
+					.catch(response => {
+						console.log(response)
+					})
+			}
+
+
+
+			function getReward() {
+				$http.get('api/rewards/' + $stateParams.id)
+					.then(response => {
+						$scope.reward = response.data
+					})
+					.catch(response => {
+						console.log(response)
+					})
+			}
+
+			$scope.deleteReward = function() {
+				var token = $window.sessionStorage['jwt']
+
+				swal({
+				  title: "Are you sure?",
+				  text: "You will not be able to recover this Reward!",
+				  type: "warning",
+				  showCancelButton: true,
+				  confirmButtonColor: "#DD6B55",
+				  confirmButtonText: "Yes, delete it!",
+				  html: false
+				}).then(function onSuccess(response){
+					$http.delete('/api/rewards/' + $stateParams.id, {
+						headers: {
+							'Authorization': `Bearer ${token}`
+						}
+					})
+					.then(function onSuccess(response){
+						$state.go('rewards')
+					})
+					.catch(function onError(response) {
+						console.log(response)
+					})
+				}).catch(function onError(response) {
+					console.log(response)
+				})
+			}
+
+			getReward()
+
+		}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('AssignProgressController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
 		function($scope, $state, $http, $window, $stateParams, $q) {
 
@@ -2202,9 +2312,7 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 							user.progress = []
 						}
 						user.progress.push(prog._id)
-
-						console.log(user)
-
+						
 						$http.put(`api/users/${user.userId}/updateRefs`, user)
 							.then(response => {
 								console.log(response.data)
@@ -2344,115 +2452,17 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 					})
 			}
 
+			function setUser() {
+				if ($stateParams.userId) {
+					$scope.user = true
+					$scope.userId = $stateParams.userId
+				}
+				else {
+					$scope.user = false
+				}
+			}
+
+			setUser()
 			getProgress()
-			
 	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('RewardsFormController', ['$scope', '$http', '$state',
-		function($scope, $http, $state) {
-
-			$scope.submit = function(reward) {
-				$scope.$broadcast('show-errors-check-validity');
-
-				if($scope.rewardForm.$invalid){return;}
-
-				console.log(reward)
-				return
-
-				$http.post('/api/rewards', reward)
-					.then( response => {
-						$state.reload()
-					})
-					.catch( response => {
-						console.log(response)
-					})
-			}
-
-			
-		}])
-}());
-(function() {
-	angular.module('onTrack') 
-	.controller('RewardsViewController', ['$scope', '$http', '$state', '$stateParams', '$window',
-		function($scope, $http, $state, $stateParams, $window) {
-
-
-			$scope.updateName = function(name) {
-				if (!name) {
-					return 'Name is required'
-				}
-				updateReward('name', name)
-			}
-
-			$scope.updateType = function(type) {
-				if (!type) {
-					return 'Type is required'
-				}
-				updateReward('type', type)
-			}
-
-			$scope.updateDescription = function(description) {
-				if (!description) {
-					return 'Description is required'
-				}
-				updateReward('description', description)
-			}
-
-			function updateReward(param, name) {
-				$scope.reward[param] = name
-
-				$http.put('api/rewards/' + $stateParams.id, $scope.reward)
-					.then(response => {
-						$state.reload()
-					})
-					.catch(response => {
-						console.log(response)
-					})
-			}
-
-
-
-			function getReward() {
-				$http.get('api/rewards/' + $stateParams.id)
-					.then(response => {
-						$scope.reward = response.data
-					})
-					.catch(response => {
-						console.log(response)
-					})
-			}
-
-			$scope.deleteReward = function() {
-				var token = $window.sessionStorage['jwt']
-
-				swal({
-				  title: "Are you sure?",
-				  text: "You will not be able to recover this Reward!",
-				  type: "warning",
-				  showCancelButton: true,
-				  confirmButtonColor: "#DD6B55",
-				  confirmButtonText: "Yes, delete it!",
-				  html: false
-				}).then(function onSuccess(response){
-					$http.delete('/api/rewards/' + $stateParams.id, {
-						headers: {
-							'Authorization': `Bearer ${token}`
-						}
-					})
-					.then(function onSuccess(response){
-						$state.go('rewards')
-					})
-					.catch(function onError(response) {
-						console.log(response)
-					})
-				}).catch(function onError(response) {
-					console.log(response)
-				})
-			}
-
-			getReward()
-
-		}])
 }());

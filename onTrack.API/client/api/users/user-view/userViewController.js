@@ -115,7 +115,6 @@
 				$http.get('/api/users/' + $stateParams.id)
 					.then(response => {
 						$scope.user = response.data
-						console.log($scope.user)
 					})
 					.catch(response => {
 						console.log(response)

@@ -75,7 +75,17 @@
 					})
 			}
 
+			function setUser() {
+				if ($stateParams.userId) {
+					$scope.user = true
+					$scope.userId = $stateParams.userId
+				}
+				else {
+					$scope.user = false
+				}
+			}
+
+			setUser()
 			getProgress()
-			
 	}])
 }());

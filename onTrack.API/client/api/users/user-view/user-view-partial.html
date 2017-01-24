@@ -24,17 +24,6 @@
 				</td>
 			</tr>
 			<tr>
-				<th>Progress</th>
-				<td>
-					<ul ng-repeat = 'p in user'>
-						<li>{{p}}</li>
-					</ul>
-				</td>
-				<td>
-					<a href="">Edit</a>
-				</td>
-			</tr>
-			<tr>
 				<th>Date Joined</th>
 				<td>
 					<span
@@ -66,14 +55,14 @@
 				<table class = 'table table-bordered' style = 'width:300px;'>
 					<tr>
 						<th>Name</th>
-						<td>{{getSettingName(prog.settingId)}}</td>
+						<td>{{prog.name}}</td>
 					</tr>
 					<tr>
 						<th>Type</th>
-						<td>{{getSettingType(prog.settingId)}}</td>
+						<td>{{prog.type}}</td>
 					</tr>
 				</table>
-				<span class = 'btn btn-default' ui-sref = 'progress({id: user._id, progressId: prog._id})' style = 'margin-bottom: 20px;'>View</span>
+				<span class = 'btn btn-default' ui-sref = 'progressView({id: prog._id, userId: user._id})' style = 'margin-bottom: 20px;'>View</span>
 			</div>
 		</div>
 	</div>

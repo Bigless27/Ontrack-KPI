@@ -150,7 +150,10 @@
 					.state('progressView', {
 						url: '/progress/:id',
 						templateUrl: 'client/api/settings/progress/progress-view/progress-view-partial.html',
-						controller: 'ProgressViewController'
+						controller: 'ProgressViewController',
+						params: {
+							userId: null
+						}
 					})
 					// .state('activity', {
 					// 	url: '/activity',

@@ -50,7 +50,8 @@
 			</tr>
 		</table>
 		<div class = 'row'>
-			<div class = 'btn btn-default' ui-sref = 'progress'>Back</div>
+			<div ng-if = '!user' class = 'btn btn-default' ui-sref = 'progress'>Back</div>
+			<div ng-if = 'user' class = 'btn btn-default' ui-sref = 'userView({id: userId})'>Back</div>
 			<div class="btn btn-default" ng-click = 'deleteProgress()'>Delete</div>
 		</div>
 	</div>

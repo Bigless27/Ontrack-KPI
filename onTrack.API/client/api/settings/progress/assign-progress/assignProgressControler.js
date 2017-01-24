@@ -38,9 +38,7 @@
 							user.progress = []
 						}
 						user.progress.push(prog._id)
-
-						console.log(user)
-
+						
 						$http.put(`api/users/${user.userId}/updateRefs`, user)
 							.then(response => {
 								console.log(response.data)
