@@ -51,6 +51,7 @@
 			}
 
 			$scope.$on('highlight', function(event, data) {
+				if ($scope.goals.length == 0) return
 				$state.go('promotionCreate.goalPreview')
 				$scope.goalShow = true
 				goalPreview.updateValue(data._id)

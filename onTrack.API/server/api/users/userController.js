@@ -7,9 +7,8 @@ var customizer = require('../updateCustomizer')
 
 exports.params = function(req, res, next, id) {
 	User.findById(id)
-		.select('-password') // doesn't grab it
     .populate('progress')
-    .populate('settingProgress')
+    .select('-password') // doesn't grab it
 		.exec()
 		.then(function(user) {
 			if (!user) {
@@ -42,8 +41,8 @@ exports.findUsers = function(req, res, next) {
 
 exports.get = function(req, res, next) {
 	User.find({})
-		.select('-password')
     .populate('progress')
+    .select('-password')
 		.exec()
 		.then(function(users){
 			res.json(users)

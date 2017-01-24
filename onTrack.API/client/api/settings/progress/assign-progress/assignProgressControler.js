@@ -40,6 +40,9 @@
 						user.progress.push(prog._id)
 
 						$http.put(`api/users/${user.userId}/updateRefs`, user)
+							.then(response => {
+								console.log(response.data)
+							})
 							.catch(response => {
 								console.log(response)
 							})

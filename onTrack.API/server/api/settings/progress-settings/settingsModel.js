@@ -2,20 +2,20 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var _ = require('lodash');
 var User = require('../../users/userModel')
-var Progress = require('../../users/progress/progressModel')
 
-var usersSchema = new Schema({
-	firstName: {type: String},
-	lastName: {type: String},
-	email: {type: String},
-	userId: {type: String} //may need to change type to objectId in the future
-})
 
-var subTypesSchema = new Schema({
-	name: {type: String}
-})
+// var usersSchema = new Schema({
+// 	firstName: {type: String},
+// 	lastName: {type: String},
+// 	email: {type: String},
+// 	userId: {type: String} //may need to change type to objectId in the future
+// })
 
-var SettingsSchema = new Schema({
+// var subTypesSchema = new Schema({
+// 	name: {type: String}
+// })
+
+var ProgressSchema = new Schema({
 	name: {type: String, required: true},
 	type: {type: String, required: true},
 	description: {type: String}
@@ -81,4 +81,4 @@ var SettingsSchema = new Schema({
 // })
 
 
-module.exports = mongoose.model('progresssetting', SettingsSchema);
+module.exports = mongoose.model('progress', ProgressSchema);

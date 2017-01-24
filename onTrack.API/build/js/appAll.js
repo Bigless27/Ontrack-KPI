@@ -483,25 +483,6 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 
 	}])
 }());
-(function(){
-	angular.module('onTrack')
-	.controller('PromotionsController', ['$scope', '$state', '$http', 
-		function($scope, $state, $http){
-
-			function getPromotions() {
-				$http.get('api/promotions')
-					.then( response => {
-						$scope.promotions = response.data
-					})
-					.catch( response => {
-						console.log(response)
-					})
-			}
-
-
-			getPromotions()
-		}])
-}());
 (function() {
 	angular.module('onTrack')
 	.controller('MainController', ['$scope', '$state', '$http', '$window', 
@@ -534,6 +515,47 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 		
 			getUsers() 
 			getTeams()
+	}])
+}());
+(function(){
+	angular.module('onTrack')
+	.controller('PromotionsController', ['$scope', '$state', '$http', 
+		function($scope, $state, $http){
+
+			function getPromotions() {
+				$http.get('api/promotions')
+					.then( response => {
+						$scope.promotions = response.data
+					})
+					.catch( response => {
+						console.log(response)
+					})
+			}
+
+
+			getPromotions()
+		}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+		$scope.signUp = function(user) {
+			$scope.$broadcast('show-errors-check-validity')
+
+			if ($scope.userForm.$invalid){return;}
+			$scope.err = false
+			$http.post('api/users', user)
+				.then(function(response) {
+					$scope.err = false
+					$window.sessionStorage.jwt = response.data['token']
+					$state.go('main')
+				})
+				.catch(function(reponse) {
+					$scope.err = true
+					$scope.errMessage = response.message
+				})
+		}
 	}])
 }());
 (function() {
@@ -599,125 +621,6 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 	 	loadTypeSettings()
 	 	loadProgressSettings()
 
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
-		$scope.signUp = function(user) {
-			$scope.$broadcast('show-errors-check-validity')
-
-			if ($scope.userForm.$invalid){return;}
-			$scope.err = false
-			$http.post('api/users', user)
-				.then(function(response) {
-					$scope.err = false
-					$window.sessionStorage.jwt = response.data['token']
-					$state.go('main')
-				})
-				.catch(function(reponse) {
-					$scope.err = true
-					$scope.errMessage = response.message
-				})
-		}
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('AddUserController', ['$scope', '$state', '$http', '$window', '$stateParams',
-		function($scope, $state, $http, $window, $stateParams) {
-
-		$scope.add = function(data){
-			var token = $window.sessionStorage['jwt']
-
-			var team = {users:[]}
-
-			// push users active back in
-			$scope.team.users.forEach(function(user) {
-				team.users.push({id: user._id, email: user.email, firstName: user.firstName, lastName: user.lastName})
-			})
-
-			// check duplicates
-			data.users.forEach(function(user){
-				if (team.users.filter(function(e){return e.email == user.email}).length === 0) {
-				 	team.users.push({id:user._id, email: user.email, firstName: user.firstName, lastName: user.lastName})
-				}
-			})
-
-			$http.put('/api/teams/' + $stateParams['id'], team, {
-				headers: {
-					'Authorization': `Bearer ${token}`
-				}
-			})
-			.then(function(response) {
-				$state.reload() //look into making this two way bound
-
-			})
-			.catch(function(response) {
-				console.log(response)
-			})
-		}
-
-
-
-		function getTeam() {
-			$http.get('/api/teams/' + $stateParams.id)
-				.then(function onSuccess(response) {
-					$scope.team = response.data	
-					getUsers()
-				})
-				.catch(function onError(reponse) {
-					console.log(response)
-				})
-		}
-
-		function getUsers(){
-			$http.get('/api/users')
-				.then(function onSuccess(response) {
-					response.data.forEach(function(user){
-						if(user){
-							var userEmails = $scope.team.users.map(x => x.email)
-							if(!userEmails.includes(user.email)) {
-								$scope.optionsList.push(
-										{firstName: user.firstName, lastName: user.lastName, 
-											email: user.email, fullName: user.firstName + ' ' + user.lastName}
-									)
-							}
-						}
-						else{
-							$scope.optionsList = [{name: 'No users'}]
-						}
-					})
-				})
-				.catch(function onError(response) {
-					console.log(respose);
-				})
-		}
-
-		$scope.optionsList = []
-
-		getTeam()
-		
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('UserController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
-		function($scope, $state, $http, $window, $stateParams, $q) {
-
-			function getUsers() {
-				$http.get('api/users')
-					.then(response => {
-						$scope.users = response.data
-					})
-					.catch(response => {
-						console.log(response)
-					})
-			}
-
-			getUsers()
-		
 	}])
 }());
 (function() {
@@ -897,6 +800,103 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('AddUserController', ['$scope', '$state', '$http', '$window', '$stateParams',
+		function($scope, $state, $http, $window, $stateParams) {
+
+		$scope.add = function(data){
+			var token = $window.sessionStorage['jwt']
+
+			var team = {users:[]}
+
+			// push users active back in
+			$scope.team.users.forEach(function(user) {
+				team.users.push({id: user._id, email: user.email, firstName: user.firstName, lastName: user.lastName})
+			})
+
+			// check duplicates
+			data.users.forEach(function(user){
+				if (team.users.filter(function(e){return e.email == user.email}).length === 0) {
+				 	team.users.push({id:user._id, email: user.email, firstName: user.firstName, lastName: user.lastName})
+				}
+			})
+
+			$http.put('/api/teams/' + $stateParams['id'], team, {
+				headers: {
+					'Authorization': `Bearer ${token}`
+				}
+			})
+			.then(function(response) {
+				$state.reload() //look into making this two way bound
+
+			})
+			.catch(function(response) {
+				console.log(response)
+			})
+		}
+
+
+
+		function getTeam() {
+			$http.get('/api/teams/' + $stateParams.id)
+				.then(function onSuccess(response) {
+					$scope.team = response.data	
+					getUsers()
+				})
+				.catch(function onError(reponse) {
+					console.log(response)
+				})
+		}
+
+		function getUsers(){
+			$http.get('/api/users')
+				.then(function onSuccess(response) {
+					response.data.forEach(function(user){
+						if(user){
+							var userEmails = $scope.team.users.map(x => x.email)
+							if(!userEmails.includes(user.email)) {
+								$scope.optionsList.push(
+										{firstName: user.firstName, lastName: user.lastName, 
+											email: user.email, fullName: user.firstName + ' ' + user.lastName}
+									)
+							}
+						}
+						else{
+							$scope.optionsList = [{name: 'No users'}]
+						}
+					})
+				})
+				.catch(function onError(response) {
+					console.log(respose);
+				})
+		}
+
+		$scope.optionsList = []
+
+		getTeam()
+		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('UserController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
+		function($scope, $state, $http, $window, $stateParams, $q) {
+
+			function getUsers() {
+				$http.get('api/users')
+					.then(response => {
+						$scope.users = response.data
+					})
+					.catch(response => {
+						console.log(response)
+					})
+			}
+
+			getUsers()
+		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('PromotionFormController', ['$scope', '$state', '$http', '$window', '$stateParams', 'goalPreview', '$rootScope',
 		function($scope, $state, $http, $window, $stateParams, goalPreview, $rootScope) {
 			
@@ -948,6 +948,7 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 			}
 
 			$scope.$on('highlight', function(event, data) {
+				if ($scope.goals.length == 0) return
 				$state.go('promotionCreate.goalPreview')
 				$scope.goalShow = true
 				goalPreview.updateValue(data._id)
@@ -1400,24 +1401,6 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('RewardsController', ['$scope', '$http', '$state', 
-		function($scope, $http, $state) {
-
-			function getRewards() {
-				$http.get('api/rewards')
-					.then(response => {
-						$scope.rewards = response.data
-					})
-					.catch(response => {
-						console.log(response)
-					})
-			}
-
-			getRewards()
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('ProgressController', ['$scope', '$http', '$stateParams', 
 		function($scope, $http, $stateParams) {
 
@@ -1437,267 +1420,20 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('UserFormController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
+	.controller('RewardsController', ['$scope', '$http', '$state', 
+		function($scope, $http, $state) {
 
-			$scope.errorDisplay = false
-
-			$scope.createUser = function(user) {
-				$scope.$broadcast('show-errors-check-validity');
-
-				if($scope.userForm.$invalid){return;}
-				
-				var duplicate = $scope.users.filter(function(x){
-					return x.email == user.email
-				})
-
-				if (duplicate.length > 0){
-					$scope.oops = 'Email is already taken!'
-					$scope.errorDisplay = true
-					return
-				}
-				else{
-					$http.post('api/users', user)
-						.then(response => {
-							$state.reload()
-
-						})
-						.catch(response => {
-							console.log(response)
-						})
-				}
-			}
-	}])
-}());
-// (function() {
-// 	angular.module('onTrack')
-// 	.controller('ProgressController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
-// 		function($scope, $state, $http, $window, $stateParams, $q) {
-			
-// 			function getProgress() {
-// 				$http.get('api/users/' + $stateParams.id + '/progress/' + $stateParams.progressId)
-// 					.then(response => {
-// 						$scope.progress = response.data
-// 						$http.get('api/progress-settings/' + response.data.settingId)
-// 							.then(response => {
-// 								$scope.setting = response.data
-// 							})
-// 							.catch(function(err) {
-// 								console.log(err)
-// 							})
-// 					})
-// 					.catch(reponse => {
-// 						console.log(response)
-// 					})
-// 			}
-
-
-// 			$scope.updateValue = function(data) {
-// 				if (data < 0) {
-// 					return "Value can't be negative"
-// 				}
-// 				updateProgress(data)
-// 			}
-
-// 			function updateProgress(data) {
-// 				$scope.progress['value'] = data
-
-// 				$http.put('api/users/' + $stateParams.id + '/progress/' + $stateParams.progressId, $scope.progress)
-// 					.catch( response => {
-// 						console.log(response)
-// 					})
-
-// 			}
-
-// 			getProgress()
-
-
-// 	}])
-// }());
-(function() {
-	angular.module('onTrack')
-	.controller('UserViewController', ['$scope', '$state', '$http', '$window', '$stateParams',
-		function($scope, $state, $http, $window, $stateParams) {
-
-			$scope.deleteUser = function() {
-				swal({
-				  title: "Are you sure?",
-				  text: "You will not be able to recover this user!",
-				  type: "warning",
-				  showCancelButton: true,
-				  confirmButtonColor: "#DD6B55",
-				  confirmButtonText: "Yes, delete it!",
-				  html: false
-				}).then(() => {
-					if ($scope.teamOwners.indexOf($scope.user.email) >= 0) {
-						swal({
-								title: 'User is an owner of a team!',
-								text: 'Please transfer ownership of team before deleting user!',
-								type: 'error'
-							})
-						return
-					}
-					else {
-						var token = $window.sessionStorage['jwt']
-						$http.delete('/api/users/' + $stateParams.id, {
-							headers: {
-								'Authorization' : `Bearer ${token}`
-							}
-						})
-						.then(response => {
-							swal({
-									title: 'User Deleted',
-									type: 'success'
-								})
-							if (response.data) {
-								$window.sessionStorage.clear()
-								$state.go('login')
-							}
-							else {	
-								$state.go('main')
-							}
-						})
-						.catch(response => {
-							console.log(response)
-						})
-					}
-				})
-				.catch(response =>{
-					return
-				})
-			}
-
-
-			$(document).on('click','.user-email-edit-button', function(){
-				$('#user-email-edit')[0].click()
-			})
-			.on('click', '.user-dateJoined-edit-button', function() {
-				$('#user-dateJoined-edit')[0].click()
-			})
-
-			$scope.updateFirstName = function(data) {
-				if (data === ''){
-					return 'Name is Required'
-				}
-				else if (data.length < 2){
-					return 'Name must be more than one character'
-				}
-				return updateUser(data, 'firstName')
-			}
-
-			$scope.updateLastName = function(data) {
-				if (data === ''){
-					return 'Name is Required'
-				}
-				else if (data.length < 2){
-					return 'Name must be more than one character'
-				}
-				return updateUser(data, 'lastName')
-			}
-
-			$scope.updateEmail = function(data) {
-				if(data === ''){
-					return 'Email is required'
-				}
-				return updateUser(data, 'email')
-			}
-
-			$scope.updateDateJoined = function(data) {
-				if (data === '') {
-					return 'Date Joined is required'
-				}
-				return updateUser(data, 'dateJoined')
-			}
-
-			$scope.getSettingName = function(id) {
-				var matchSetting = $scope.user.settingProgress.filter(function(set) {
-					return set._id === id
-				})
-				return matchSetting[0].name
-			}
-
-			$scope.getSettingType = function(id) {
-				var matchSetting = $scope.user.settingProgress.filter(function(set) {
-					return set._id === id
-				})
-				return matchSetting[0].type
-			}
-
-			function updateUser(data, field){
-				var d = $q.defer();
-				var token = $window.sessionStorage['jwt']
-				$scope.user[field] = data
-
-				$http.put('/api/users/' + $stateParams['id'], $scope.user,{
-					headers: {
-						'Authorization': `Bearer ${token}`
-					}
-				})
-				.then(response => {
-					$state.reload()
-				})
-				.catch(response => {
-					console.log(response)
-				})
-			}
-
-			function getUser() {
-				$http.get('/api/users/' + $stateParams.id)
+			function getRewards() {
+				$http.get('api/rewards')
 					.then(response => {
-						$scope.user = response.data
-						getTeams()
+						$scope.rewards = response.data
 					})
 					.catch(response => {
 						console.log(response)
 					})
 			}
 
-			//ui-select
-			function populateTypes() {
-				$http.get('api/type-settings')
-					.then(response => {
-						$scope.settings = response.data
-						var unUniqueTypes = $scope.settings.map(function(x){
-							return x.type
-						})
-						$scope.typeList = [...new Set(unUniqueTypes)]
-					})
-					.catch(response => {
-						console.log(response)
-					})
-			}
-
-			function setTeam() {
-				if ($stateParams.teamId) {
-						$scope.team = true
-						$scope.teamId = $stateParams.teamId
-					}
-				else {
-					$scope.team = false
-				}
-			}
-			
-			setTeam()
-
-
-
-			function getTeams() {
-				$http.get('api/teams/findTeams/' + $scope.user.email)
-					.then(response => {
-						if (response.data.length > 0) {
-							var owners = response.data.map(x => x.owner).reduce((a, b) => a.concat(b))
-							$scope.teamOwners = owners.map(x => x.email)
-						}
-						else {
-							$scope.teamOwners = []
-						}
-					})
-					.catch(response => {
-						console.log(response)
-					})
-			}
-			populateTypes()
-			getUser()
+			getRewards()
 	}])
 }());
 (function() {
@@ -1943,6 +1679,242 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 			getTeam()
 		}])
 } ());
+(function() {
+	angular.module('onTrack')
+	.controller('UserFormController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+
+			$scope.errorDisplay = false
+
+			$scope.createUser = function(user) {
+				$scope.$broadcast('show-errors-check-validity');
+
+				if($scope.userForm.$invalid){return;}
+				
+				var duplicate = $scope.users.filter(function(x){
+					return x.email == user.email
+				})
+
+				if (duplicate.length > 0){
+					$scope.oops = 'Email is already taken!'
+					$scope.errorDisplay = true
+					return
+				}
+				else{
+					$http.post('api/users', user)
+						.then(response => {
+							$state.reload()
+
+						})
+						.catch(response => {
+							console.log(response)
+						})
+				}
+			}
+	}])
+}());
+// (function() {
+// 	angular.module('onTrack')
+// 	.controller('ProgressController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
+// 		function($scope, $state, $http, $window, $stateParams, $q) {
+			
+// 			function getProgress() {
+// 				$http.get('api/users/' + $stateParams.id + '/progress/' + $stateParams.progressId)
+// 					.then(response => {
+// 						$scope.progress = response.data
+// 						$http.get('api/progress-settings/' + response.data.settingId)
+// 							.then(response => {
+// 								$scope.setting = response.data
+// 							})
+// 							.catch(function(err) {
+// 								console.log(err)
+// 							})
+// 					})
+// 					.catch(reponse => {
+// 						console.log(response)
+// 					})
+// 			}
+
+
+// 			$scope.updateValue = function(data) {
+// 				if (data < 0) {
+// 					return "Value can't be negative"
+// 				}
+// 				updateProgress(data)
+// 			}
+
+// 			function updateProgress(data) {
+// 				$scope.progress['value'] = data
+
+// 				$http.put('api/users/' + $stateParams.id + '/progress/' + $stateParams.progressId, $scope.progress)
+// 					.catch( response => {
+// 						console.log(response)
+// 					})
+
+// 			}
+
+// 			getProgress()
+
+
+// 	}])
+// }());
+(function() {
+	angular.module('onTrack')
+	.controller('UserViewController', ['$scope', '$state', '$http', '$window', '$stateParams',
+		function($scope, $state, $http, $window, $stateParams) {
+
+			$scope.deleteUser = function() {
+				swal({
+				  title: "Are you sure?",
+				  text: "You will not be able to recover this user!",
+				  type: "warning",
+				  showCancelButton: true,
+				  confirmButtonColor: "#DD6B55",
+				  confirmButtonText: "Yes, delete it!",
+				  html: false
+				}).then(() => {
+					if ($scope.teamOwners.indexOf($scope.user.email) >= 0) {
+						swal({
+								title: 'User is an owner of a team!',
+								text: 'Please transfer ownership of team before deleting user!',
+								type: 'error'
+							})
+						return
+					}
+					else {
+						var token = $window.sessionStorage['jwt']
+						$http.delete('/api/users/' + $stateParams.id, {
+							headers: {
+								'Authorization' : `Bearer ${token}`
+							}
+						})
+						.then(response => {
+							swal({
+									title: 'User Deleted',
+									type: 'success'
+								})
+							if (response.data) {
+								$window.sessionStorage.clear()
+								$state.go('login')
+							}
+							else {	
+								$state.go('main')
+							}
+						})
+						.catch(response => {
+							console.log(response)
+						})
+					}
+				})
+				.catch(response =>{
+					return
+				})
+			}
+
+
+			$(document).on('click','.user-email-edit-button', function(){
+				$('#user-email-edit')[0].click()
+			})
+			.on('click', '.user-dateJoined-edit-button', function() {
+				$('#user-dateJoined-edit')[0].click()
+			})
+
+			$scope.updateFirstName = function(data) {
+				if (data === ''){
+					return 'Name is Required'
+				}
+				else if (data.length < 2){
+					return 'Name must be more than one character'
+				}
+				return updateUser(data, 'firstName')
+			}
+
+			$scope.updateLastName = function(data) {
+				if (data === ''){
+					return 'Name is Required'
+				}
+				else if (data.length < 2){
+					return 'Name must be more than one character'
+				}
+				return updateUser(data, 'lastName')
+			}
+
+			$scope.updateEmail = function(data) {
+				if(data === ''){
+					return 'Email is required'
+				}
+				return updateUser(data, 'email')
+			}
+
+			$scope.updateDateJoined = function(data) {
+				if (data === '') {
+					return 'Date Joined is required'
+				}
+				return updateUser(data, 'dateJoined')
+			}
+
+			function updateUser(data, field){
+				var d = $q.defer();
+				var token = $window.sessionStorage['jwt']
+				$scope.user[field] = data
+
+				$http.put('/api/users/' + $stateParams['id'], $scope.user,{
+					headers: {
+						'Authorization': `Bearer ${token}`
+					}
+				})
+				.then(response => {
+					$state.reload()
+				})
+				.catch(response => {
+					console.log(response)
+				})
+			}
+
+			function getUser() {
+				$http.get('/api/users/' + $stateParams.id)
+					.then(response => {
+						$scope.user = response.data
+						console.log($scope.user)
+					})
+					.catch(response => {
+						console.log(response)
+					})
+			}
+
+			//ui-select
+			function populateTypes() {
+				$http.get('api/type-settings')
+					.then(response => {
+						$scope.settings = response.data
+						var unUniqueTypes = $scope.settings.map(function(x){
+							return x.type
+						})
+						$scope.typeList = [...new Set(unUniqueTypes)]
+					})
+					.catch(response => {
+						console.log(response)
+					})
+			}
+
+			function getTeams() {
+				$http.get('api/teams/findTeams/' + $scope.user.email)
+					.then(response => {
+						if (response.data.length > 0) {
+							var owners = response.data.map(x => x.owner).reduce((a, b) => a.concat(b))
+							$scope.teamOwners = owners.map(x => x.email)
+						}
+						else {
+							$scope.teamOwners = []
+						}
+					})
+					.catch(response => {
+						console.log(response)
+					})
+			}
+			getUser()
+	}])
+}());
 (function() {
 	angular.module('onTrack')
 		.directive('addGoal', function() {
@@ -2191,129 +2163,6 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 
 }());
 (function() {
-	angular.module('onTrack') 
-	.controller('RewardsViewController', ['$scope', '$http', '$state', '$stateParams', '$window',
-		function($scope, $http, $state, $stateParams, $window) {
-
-
-			$scope.updateName = function(name) {
-				if (!name) {
-					return 'Name is required'
-				}
-				updateReward('name', name)
-			}
-
-			$scope.updateType = function(type) {
-				if (!type) {
-					return 'Type is required'
-				}
-				updateReward('type', type)
-			}
-
-			$scope.updateDescription = function(description) {
-				if (!description) {
-					return 'Description is required'
-				}
-				updateReward('description', description)
-			}
-
-			function updateReward(param, name) {
-				$scope.reward[param] = name
-
-				$http.put('api/rewards/' + $stateParams.id, $scope.reward)
-					.then(response => {
-						$state.reload()
-					})
-					.catch(response => {
-						console.log(response)
-					})
-			}
-
-
-
-			function getReward() {
-				$http.get('api/rewards/' + $stateParams.id)
-					.then(response => {
-						$scope.reward = response.data
-					})
-					.catch(response => {
-						console.log(response)
-					})
-			}
-
-			$scope.deleteReward = function() {
-				var token = $window.sessionStorage['jwt']
-
-				swal({
-				  title: "Are you sure?",
-				  text: "You will not be able to recover this Reward!",
-				  type: "warning",
-				  showCancelButton: true,
-				  confirmButtonColor: "#DD6B55",
-				  confirmButtonText: "Yes, delete it!",
-				  html: false
-				}).then(function onSuccess(response){
-					$http.delete('/api/rewards/' + $stateParams.id, {
-						headers: {
-							'Authorization': `Bearer ${token}`
-						}
-					})
-					.then(function onSuccess(response){
-						$state.go('rewards')
-					})
-					.catch(function onError(response) {
-						console.log(response)
-					})
-				}).catch(function onError(response) {
-					console.log(response)
-				})
-			}
-
-			getReward()
-
-		}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('RewardsFormController', ['$scope', '$http', '$state',
-		function($scope, $http, $state) {
-
-			$scope.submit = function(reward) {
-				$http.post('/api/rewards', reward)
-					.then( response => {
-						$state.reload()
-					})
-					.catch( response => {
-						console.log(response)
-					})
-			}
-
-			
-		}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('ProgressFormController', ['$scope', '$http', '$stateParams', '$window', '$state',
-		function($scope, $http, $stateParams, $window, $state) {
-
-			$scope.submit = function(data) {
-				$scope.$broadcast('show-errors-check-validity');
-
-				if($scope.progressForm.$invalid){return;}
-				var token = $window.sessionStorage['jwt']
-				
-
-				$http.post('api/progress-settings', data) 
-				 .then(response => {
-				 	$state.reload()
-				 })
-				 .catch(response => {
-				 	console.log(response)
-				 })
-			}
-	}])
-}());
-(function() {
 	angular.module('onTrack')
 	.controller('AssignProgressController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
 		function($scope, $state, $http, $window, $stateParams, $q) {
@@ -2355,6 +2204,9 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 						user.progress.push(prog._id)
 
 						$http.put(`api/users/${user.userId}/updateRefs`, user)
+							.then(response => {
+								console.log(response.data)
+							})
 							.catch(response => {
 								console.log(response)
 							})
@@ -2386,6 +2238,31 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 			getProgress()
 			getUsers()
 		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('ProgressFormController', ['$scope', '$http', '$stateParams', '$window', '$state',
+		function($scope, $http, $stateParams, $window, $state) {
+
+			$scope.submit = function(data) {
+				$scope.$broadcast('show-errors-check-validity');
+
+				if($scope.progressForm.$invalid){return;}
+				var token = $window.sessionStorage['jwt']
+				
+
+				var progress = Object.assign({}, data)
+				
+				$http.post('api/progress-settings', progress) 
+				 .then(response => {
+				 	console.log(response.data)
+				 	$state.reload()
+				 })
+				 .catch(response => {
+				 	console.log(response)
+				 })
+			}
 	}])
 }());
 (function() {
@@ -2468,4 +2345,112 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 			getProgress()
 			
 	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('RewardsFormController', ['$scope', '$http', '$state',
+		function($scope, $http, $state) {
+
+			$scope.submit = function(reward) {
+				$scope.$broadcast('show-errors-check-validity');
+
+				if($scope.rewardForm.$invalid){return;}
+
+				console.log(reward)
+				return
+
+				$http.post('/api/rewards', reward)
+					.then( response => {
+						$state.reload()
+					})
+					.catch( response => {
+						console.log(response)
+					})
+			}
+
+			
+		}])
+}());
+(function() {
+	angular.module('onTrack') 
+	.controller('RewardsViewController', ['$scope', '$http', '$state', '$stateParams', '$window',
+		function($scope, $http, $state, $stateParams, $window) {
+
+
+			$scope.updateName = function(name) {
+				if (!name) {
+					return 'Name is required'
+				}
+				updateReward('name', name)
+			}
+
+			$scope.updateType = function(type) {
+				if (!type) {
+					return 'Type is required'
+				}
+				updateReward('type', type)
+			}
+
+			$scope.updateDescription = function(description) {
+				if (!description) {
+					return 'Description is required'
+				}
+				updateReward('description', description)
+			}
+
+			function updateReward(param, name) {
+				$scope.reward[param] = name
+
+				$http.put('api/rewards/' + $stateParams.id, $scope.reward)
+					.then(response => {
+						$state.reload()
+					})
+					.catch(response => {
+						console.log(response)
+					})
+			}
+
+
+
+			function getReward() {
+				$http.get('api/rewards/' + $stateParams.id)
+					.then(response => {
+						$scope.reward = response.data
+					})
+					.catch(response => {
+						console.log(response)
+					})
+			}
+
+			$scope.deleteReward = function() {
+				var token = $window.sessionStorage['jwt']
+
+				swal({
+				  title: "Are you sure?",
+				  text: "You will not be able to recover this Reward!",
+				  type: "warning",
+				  showCancelButton: true,
+				  confirmButtonColor: "#DD6B55",
+				  confirmButtonText: "Yes, delete it!",
+				  html: false
+				}).then(function onSuccess(response){
+					$http.delete('/api/rewards/' + $stateParams.id, {
+						headers: {
+							'Authorization': `Bearer ${token}`
+						}
+					})
+					.then(function onSuccess(response){
+						$state.go('rewards')
+					})
+					.catch(function onError(response) {
+						console.log(response)
+					})
+				}).catch(function onError(response) {
+					console.log(response)
+				})
+			}
+
+			getReward()
+
+		}])
 }());

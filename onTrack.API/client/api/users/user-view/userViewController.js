@@ -93,20 +93,6 @@
 				return updateUser(data, 'dateJoined')
 			}
 
-			$scope.getSettingName = function(id) {
-				var matchSetting = $scope.user.settingProgress.filter(function(set) {
-					return set._id === id
-				})
-				return matchSetting[0].name
-			}
-
-			$scope.getSettingType = function(id) {
-				var matchSetting = $scope.user.settingProgress.filter(function(set) {
-					return set._id === id
-				})
-				return matchSetting[0].type
-			}
-
 			function updateUser(data, field){
 				var d = $q.defer();
 				var token = $window.sessionStorage['jwt']
@@ -129,7 +115,7 @@
 				$http.get('/api/users/' + $stateParams.id)
 					.then(response => {
 						$scope.user = response.data
-						getTeams()
+						console.log($scope.user)
 					})
 					.catch(response => {
 						console.log(response)
@@ -151,20 +137,6 @@
 					})
 			}
 
-			function setTeam() {
-				if ($stateParams.teamId) {
-						$scope.team = true
-						$scope.teamId = $stateParams.teamId
-					}
-				else {
-					$scope.team = false
-				}
-			}
-			
-			setTeam()
-
-
-
 			function getTeams() {
 				$http.get('api/teams/findTeams/' + $scope.user.email)
 					.then(response => {
@@ -180,7 +152,6 @@
 						console.log(response)
 					})
 			}
-			populateTypes()
 			getUser()
 	}])
 }());

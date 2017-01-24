@@ -13,7 +13,7 @@ var UserSchema = new Schema({
     dateJoined: { type: Date, default: Date.now },
     state: { type: String },
     activity : [{type: Schema.Types.ObjectId, ref: 'activity'}],
-    progress : [{type: Schema.Types.ObjectId, ref: 'progresssetting'}],
+    progress : [{type: Schema.Types.ObjectId, ref: 'progress'}],
     facebook: {
         id: String,
         token: String,

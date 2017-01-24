@@ -10,8 +10,11 @@
 				var token = $window.sessionStorage['jwt']
 				
 
-				$http.post('api/progress-settings', data) 
+				var progress = Object.assign({}, data)
+				
+				$http.post('api/progress-settings', progress) 
 				 .then(response => {
+				 	console.log(response.data)
 				 	$state.reload()
 				 })
 				 .catch(response => {

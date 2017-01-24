@@ -20,7 +20,7 @@ router.route('/')
   .get(controller.get)// tested
   .post(controller.post)// tested
 
-router.route('/:id/updateRefs')
+router.route('/:userId/updateRefs')
 	.put(controller.updateRefs)
 
 router.route('/:id')
