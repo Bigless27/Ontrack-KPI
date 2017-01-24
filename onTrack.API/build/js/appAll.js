@@ -538,28 +538,6 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
-		$scope.signUp = function(user) {
-			$scope.$broadcast('show-errors-check-validity')
-
-			if ($scope.userForm.$invalid){return;}
-			$scope.err = false
-			$http.post('api/users', user)
-				.then(function(response) {
-					$scope.err = false
-					$window.sessionStorage.jwt = response.data['token']
-					$state.go('main')
-				})
-				.catch(function(reponse) {
-					$scope.err = true
-					$scope.errMessage = response.message
-				})
-		}
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('MainSettingsController', ['$scope', '$state', '$window', '$http',
 	 function($scope, $state, $window, $http) {
 
@@ -621,6 +599,28 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 	 	loadTypeSettings()
 	 	loadProgressSettings()
 
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+		$scope.signUp = function(user) {
+			$scope.$broadcast('show-errors-check-validity')
+
+			if ($scope.userForm.$invalid){return;}
+			$scope.err = false
+			$http.post('api/users', user)
+				.then(function(response) {
+					$scope.err = false
+					$window.sessionStorage.jwt = response.data['token']
+					$state.go('main')
+				})
+				.catch(function(reponse) {
+					$scope.err = true
+					$scope.errMessage = response.message
+				})
+		}
 	}])
 }());
 (function() {
@@ -2186,7 +2186,7 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 			}
 
 			function getProgress() {
-				$http.get('api/rewards')
+				$http.get('api/progress-settings')
 					.then(response => {
 						$scope.progress = response.data
 					})
@@ -2202,6 +2202,8 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 							user.progress = []
 						}
 						user.progress.push(prog._id)
+
+						console.log(user)
 
 						$http.put(`api/users/${user.userId}/updateRefs`, user)
 							.then(response => {

@@ -22,7 +22,7 @@
 			}
 
 			function getProgress() {
-				$http.get('api/rewards')
+				$http.get('api/progress-settings')
 					.then(response => {
 						$scope.progress = response.data
 					})
@@ -38,6 +38,8 @@
 							user.progress = []
 						}
 						user.progress.push(prog._id)
+
+						console.log(user)
 
 						$http.put(`api/users/${user.userId}/updateRefs`, user)
 							.then(response => {

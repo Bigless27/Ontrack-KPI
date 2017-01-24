@@ -1,6 +1,6 @@
 <div id="edit" class = 'container'>
 	<form name = 'assign-progress-form'>
-		<h4 style = 'text-align: center;'>Select Rewards</h4>
+		<h4 style = 'text-align: center;'>Select Progress</h4>
 			<div class = 'form-group'>
 				<label for = 'type' class = 'control-label'>Type</label>
 				<div class = 'input-group'>
@@ -11,7 +11,6 @@
 							ng-model = "progType" 
 							ng-blur = 'setProgress()'
 							class = "form-control"
-							placeholder = "select a type" 
 							ng-options = 'p.type for p in progress'
 							style = 'width: 400px'
 						>
