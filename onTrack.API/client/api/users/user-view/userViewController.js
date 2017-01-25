@@ -159,15 +159,11 @@
 				$http.put('api/users/' + $stateParams.id, $scope.user)
 					.then(response => {
 						$state.reload()
+						
 					})
 					.catch(response => {
 						console.log(response)
 					})
-
-
-
-
-
 			}
 
 			getUser()

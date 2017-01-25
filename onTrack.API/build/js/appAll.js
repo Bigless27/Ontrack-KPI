@@ -486,25 +486,6 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 
 	}])
 }());
-(function(){
-	angular.module('onTrack')
-	.controller('PromotionsController', ['$scope', '$state', '$http', 
-		function($scope, $state, $http){
-
-			function getPromotions() {
-				$http.get('api/promotions')
-					.then( response => {
-						$scope.promotions = response.data
-					})
-					.catch( response => {
-						console.log(response)
-					})
-			}
-
-
-			getPromotions()
-		}])
-}());
 (function() {
 	angular.module('onTrack')
 	.controller('MainController', ['$scope', '$state', '$http', '$window', 
@@ -538,6 +519,25 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 			getUsers() 
 			getTeams()
 	}])
+}());
+(function(){
+	angular.module('onTrack')
+	.controller('PromotionsController', ['$scope', '$state', '$http', 
+		function($scope, $state, $http){
+
+			function getPromotions() {
+				$http.get('api/promotions')
+					.then( response => {
+						$scope.promotions = response.data
+					})
+					.catch( response => {
+						console.log(response)
+					})
+			}
+
+
+			getPromotions()
+		}])
 }());
 (function() {
 	angular.module('onTrack')
@@ -990,6 +990,90 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('GoalPreviewController', ['$scope', '$http', '$state', 'goalPreview', 'submitFormat',
+		function($scope, $http, $state, goalPreview, submitFormat) {
+
+			$scope.$watch(function() {return goalPreview.getValue()}, function(newValue, oldValue) {
+				!newValue ? $state.go('promotionCreate') : getGoal(newValue)
+			})
+
+			function getGoal(id) {
+				$http.get(`/api/goals/${id}`)
+					.then(response => {
+						var kvObj = submitFormat.generateKVObj(response.data.any)
+						
+						$scope.goal = Object.assign(kvObj, {'gsfName': response.data.gsfName})
+					})
+					.catch(response => {
+						console.log(response)
+					})
+			}
+
+			getGoal(goalPreview.getValue())
+			
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('PromotionAddController',['$scope', '$state', '$http', '$stateParams', '$window',
+		function($scope, $state, $http, $stateParams, $window) {
+
+			$scope.promotions = []
+
+			$scope.add = function(promotion) {
+				var token = $window.sessionStorage['jwt']
+
+				var team = {promotions: []}
+
+				$scope.team.promotions.forEach( promo => {
+					team.promotions.push({name: promo.name, promoId: promo._id})
+				})
+
+				promotion.forEach( p => {team.promotions.push({name: p.name, promoId: p.promoId})})
+
+
+				$http.put('api/teams/' + $stateParams.id,  team, {
+					headers: {
+						'Authorization': `Bearer ${token}`
+					}
+				})
+					.then( response => {
+						$state.reload()
+					})
+					.catch( response => {
+						console.log(response)
+					})
+
+			}
+
+			// there may be a little bug with this on duplicates showing up after they are added
+			function getPromotions() {
+				$http.get('api/promotions')
+					.then(response => {
+						response.data.forEach(function(promo) {
+							if(promo) {
+								var promoIds = $scope.team.promotions.map(p => p.promoId)
+								if (!promoIds.includes(promo._id)) {
+									$scope.promotions.push(
+											{name: promo.name, promoId: promo._id}
+										)
+								}
+							}
+							else {
+								$scope.promotions = [{name: 'No Promotinos available'}]
+							}							
+						})
+					})
+					.catch(response => {
+						console.log(response)
+					})
+			}
+
+			getPromotions()
+		}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('PromotionViewController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
 		function($scope, $state, $http, $window, $stateParams, $q) {
 
@@ -1289,90 +1373,6 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 			getGoals()	
 			getRewards()	
 	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('GoalPreviewController', ['$scope', '$http', '$state', 'goalPreview', 'submitFormat',
-		function($scope, $http, $state, goalPreview, submitFormat) {
-
-			$scope.$watch(function() {return goalPreview.getValue()}, function(newValue, oldValue) {
-				!newValue ? $state.go('promotionCreate') : getGoal(newValue)
-			})
-
-			function getGoal(id) {
-				$http.get(`/api/goals/${id}`)
-					.then(response => {
-						var kvObj = submitFormat.generateKVObj(response.data.any)
-						
-						$scope.goal = Object.assign(kvObj, {'gsfName': response.data.gsfName})
-					})
-					.catch(response => {
-						console.log(response)
-					})
-			}
-
-			getGoal(goalPreview.getValue())
-			
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('PromotionAddController',['$scope', '$state', '$http', '$stateParams', '$window',
-		function($scope, $state, $http, $stateParams, $window) {
-
-			$scope.promotions = []
-
-			$scope.add = function(promotion) {
-				var token = $window.sessionStorage['jwt']
-
-				var team = {promotions: []}
-
-				$scope.team.promotions.forEach( promo => {
-					team.promotions.push({name: promo.name, promoId: promo._id})
-				})
-
-				promotion.forEach( p => {team.promotions.push({name: p.name, promoId: p.promoId})})
-
-
-				$http.put('api/teams/' + $stateParams.id,  team, {
-					headers: {
-						'Authorization': `Bearer ${token}`
-					}
-				})
-					.then( response => {
-						$state.reload()
-					})
-					.catch( response => {
-						console.log(response)
-					})
-
-			}
-
-			// there may be a little bug with this on duplicates showing up after they are added
-			function getPromotions() {
-				$http.get('api/promotions')
-					.then(response => {
-						response.data.forEach(function(promo) {
-							if(promo) {
-								var promoIds = $scope.team.promotions.map(p => p.promoId)
-								if (!promoIds.includes(promo._id)) {
-									$scope.promotions.push(
-											{name: promo.name, promoId: promo._id}
-										)
-								}
-							}
-							else {
-								$scope.promotions = [{name: 'No Promotinos available'}]
-							}							
-						})
-					})
-					.catch(response => {
-						console.log(response)
-					})
-			}
-
-			getPromotions()
-		}])
 }());
 (function() {
 	angular.module('onTrack')
@@ -1912,15 +1912,11 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 				$http.put('api/users/' + $stateParams.id, $scope.user)
 					.then(response => {
 						$state.reload()
+						
 					})
 					.catch(response => {
 						console.log(response)
 					})
-
-
-
-
-
 			}
 
 			getUser()
@@ -2175,30 +2171,6 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('ProgressFormController', ['$scope', '$http', '$stateParams', '$window', '$state',
-		function($scope, $http, $stateParams, $window, $state) {
-
-			$scope.submit = function(data) {
-				$scope.$broadcast('show-errors-check-validity');
-
-				if($scope.progressForm.$invalid){return;}
-				var token = $window.sessionStorage['jwt']
-				
-
-				var progress = Object.assign({}, data)
-				
-				$http.post('api/progress-settings', progress) 
-				 .then(response => {
-				 	$state.reload()
-				 })
-				 .catch(response => {
-				 	console.log(response)
-				 })
-			}
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('AssignProgressController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
 		function($scope, $state, $http, $window, $stateParams, $q) {
 
@@ -2230,6 +2202,19 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 					})
 			}
 
+			function createUserProgress(data) {
+				data.progress.forEach(progress => {
+
+					var userProgress = {value: 0, userId: data._id,
+										 progressId: progress }
+
+					$http.post('api/user-progress', userProgress)
+						.catch(response => {
+							console.log(response)
+						})
+				})
+			}
+
 			$scope.submit = function(data) {
 				data.progress.forEach(function(prog){
 					data.users.forEach(function(user) {
@@ -2238,7 +2223,7 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 							user.progress = []
 						}
 
-						// acount for adding duplicates
+						// account for adding duplicates
 						var dups = user.progress.map(x => x._id)
 						if (!dups.includes(prog._id)) {
 							user.progress.push(prog._id)
@@ -2248,6 +2233,7 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 						$http.put(`api/users/${user.userId}/updateRefs`, user)
 							.then(response => {
 								$state.reload()
+								createUserProgress(response.data)
 							})
 							.catch(response => {
 								console.log(response)
@@ -2281,6 +2267,30 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 			getProgress()
 			getUsers()
 		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('ProgressFormController', ['$scope', '$http', '$stateParams', '$window', '$state',
+		function($scope, $http, $stateParams, $window, $state) {
+
+			$scope.submit = function(data) {
+				$scope.$broadcast('show-errors-check-validity');
+
+				if($scope.progressForm.$invalid){return;}
+				var token = $window.sessionStorage['jwt']
+				
+
+				var progress = Object.assign({}, data)
+				
+				$http.post('api/progress-settings', progress) 
+				 .then(response => {
+				 	$state.reload()
+				 })
+				 .catch(response => {
+				 	console.log(response)
+				 })
+			}
 	}])
 }());
 (function() {
@@ -2361,14 +2371,27 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 			}
 
 			function setUser() {
+				console.log($stateParams)
 				if ($stateParams.userId) {
 					$scope.user = true
 					$scope.userId = $stateParams.userId
+					getUser()
 				}
 				else {
 					$scope.user = false
 				}
 			}
+
+			function getUser() {
+				$http.get(`api/users/${$stateParams.userId}`)
+					.then(response => {
+						$scope.userProgress = response.data.userProgress.filter(x => {return $stateParams.id == x.progressId})
+					})
+					.catch(response => {
+						console.log(response)
+					})
+			}
+
 
 			setUser()
 			getProgress()

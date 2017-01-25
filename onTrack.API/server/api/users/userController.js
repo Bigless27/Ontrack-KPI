@@ -8,6 +8,7 @@ var customizer = require('../updateCustomizer')
 exports.params = function(req, res, next, id) {
 	User.findById(id)
     .populate('progress')
+    .populate('userProgress')
     .select('-password') // doesn't grab it
 		.exec()
 		.then(function(user) {

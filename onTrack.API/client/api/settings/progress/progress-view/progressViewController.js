@@ -76,14 +76,27 @@
 			}
 
 			function setUser() {
+				console.log($stateParams)
 				if ($stateParams.userId) {
 					$scope.user = true
 					$scope.userId = $stateParams.userId
+					getUser()
 				}
 				else {
 					$scope.user = false
 				}
 			}
+
+			function getUser() {
+				$http.get(`api/users/${$stateParams.userId}`)
+					.then(response => {
+						$scope.userProgress = response.data.userProgress.filter(x => {return $stateParams.id == x.progressId})
+					})
+					.catch(response => {
+						console.log(response)
+					})
+			}
+
 
 			setUser()
 			getProgress()

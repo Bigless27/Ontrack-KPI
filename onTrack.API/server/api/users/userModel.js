@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema
-var bcrypt = require('bcrypt') 
+var bcrypt = require('bcrypt'); 
 var jwt = require('express-jwt');
 
 var UserSchema = new Schema({
@@ -14,6 +14,7 @@ var UserSchema = new Schema({
     state: { type: String },
     activity : [{type: Schema.Types.ObjectId, ref: 'activity'}],
     progress : [{type: Schema.Types.ObjectId, ref: 'progress'}],
+    userProgress : [{type: Schema.Types.ObjectId, ref: 'userprogress'}],
     facebook: {
         id: String,
         token: String,
@@ -31,8 +32,6 @@ UserSchema.pre('save', function(next) {
     if (!this.isModified('password')) return next();
 
     this.password = this.encryptPassword(this.password);
-    
-    console.log(this)
     next()
 })
 

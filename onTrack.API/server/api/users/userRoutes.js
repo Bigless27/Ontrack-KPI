@@ -9,10 +9,6 @@ var checkUser = [auth.decodeToken(), auth.getFreshUser()];
 router.param('id', controller.params); // tested
 router.get('/me', checkUser, controller.me);
 
-//nested routes not in use anymore
-	router.use('/:id/progress', require('./progress/progressRoutes'))
-//
-
 router.route('/findUsers/:teamId')
 	.get(controller.findUsers)
 

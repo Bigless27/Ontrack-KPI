@@ -31,6 +31,19 @@
 					})
 			}
 
+			function createUserProgress(data) {
+				data.progress.forEach(progress => {
+
+					var userProgress = {value: 0, userId: data._id,
+										 progressId: progress }
+
+					$http.post('api/user-progress', userProgress)
+						.catch(response => {
+							console.log(response)
+						})
+				})
+			}
+
 			$scope.submit = function(data) {
 				data.progress.forEach(function(prog){
 					data.users.forEach(function(user) {
@@ -39,7 +52,7 @@
 							user.progress = []
 						}
 
-						// acount for adding duplicates
+						// account for adding duplicates
 						var dups = user.progress.map(x => x._id)
 						if (!dups.includes(prog._id)) {
 							user.progress.push(prog._id)
@@ -49,6 +62,7 @@
 						$http.put(`api/users/${user.userId}/updateRefs`, user)
 							.then(response => {
 								$state.reload()
+								createUserProgress(response.data)
 							})
 							.catch(response => {
 								console.log(response)

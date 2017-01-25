@@ -49,6 +49,19 @@
 				</td>
 			</tr>
 		</table>
+		<div ng-if = 'user' class = 'row'>
+			<h3>Progress</h3>
+			<div class = 'col-sm-2'>
+				<table class =  'table table-bordered'>
+					<tr>
+						<th>Value</th>
+						<td>{{userProgress[0].value}}</td>
+					</tr>
+					
+				</table>
+			</div>
+		</div>
+
 		<div class = 'row'>
 			<div ng-if = '!user' class = 'btn btn-default' ui-sref = 'progress'>Back</div>
 			<div ng-if = 'user' class = 'btn btn-default' ui-sref = 'userView({id: userId})'>Back</div>
