@@ -21,7 +21,7 @@ var ProgressSchema = new Schema({
 	description: {type: String}
 })
 
-// SettingsSchema.pre('save', function(next) {
+// ProgressSchema.pre('save', function(next) {
 // 	var progSetting = this
 // 	if (this.users.length === 0) {
 // 		next()
