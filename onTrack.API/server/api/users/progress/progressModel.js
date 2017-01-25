@@ -6,7 +6,7 @@ var User = require('../userModel')
 var UserProgressSchema = new Schema({
 	value: {type: Number, default: 0},
 	userId: {type: Schema.Types.ObjectId, ref: 'user', required: true},
-	settingId: {type: Schema.Types.ObjectId, ref: 'progresssetting', required: true}
+	progressId: {type: Schema.Types.ObjectId, ref: 'progress', required: true}
 });
 
 UserProgressSchema.post('save', function(doc) {
