@@ -36,15 +36,6 @@
 				})
 		}
 
-	 	function loadTypeSettings(){
-		 	 $http.get('api/type-settings')
-		 		.then(function onSucces(response) {
-		 			$scope.typeSettings = response.data
-		 		})
-		 		.catch(function onError(response) {
-		 			console.log(response)
-		 		})
-	 	}
 
 	 	function loadProgressSettings(){
 	 		$http.get('api/progress-settings')
@@ -58,7 +49,6 @@
 
 
 	 	getUsers()
-	 	loadTypeSettings()
 	 	loadProgressSettings()
 
 	}])

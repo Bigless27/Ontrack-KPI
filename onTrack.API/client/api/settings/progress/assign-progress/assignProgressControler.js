@@ -34,14 +34,21 @@
 			$scope.submit = function(data) {
 				data.progress.forEach(function(prog){
 					data.users.forEach(function(user) {
-						if(!user.progress) {
+						
+						if(!user.progress.length) {
 							user.progress = []
 						}
-						user.progress.push(prog._id)
+
+						// acount for adding duplicates
+						var dups = user.progress.map(x => x._id)
+						if (!dups.includes(prog._id)) {
+							user.progress.push(prog._id)
+						}
+
 						
 						$http.put(`api/users/${user.userId}/updateRefs`, user)
 							.then(response => {
-								console.log(response.data)
+								$state.reload()
 							})
 							.catch(response => {
 								console.log(response)
@@ -57,8 +64,9 @@
 							if(user){
 								$scope.optionsList.push(
 										{firstName: user.firstName, lastName: user.lastName, userId: user._id,
-											email: user.email, fullName: user.firstName + ' ' + user.lastName}
-									)
+											email: user.email, fullName: user.firstName + ' ' + user.lastName, 
+											progress: user.progress}
+								)
 							}
 							else{
 								$scope.optionsList = [{name: 'No users'}]

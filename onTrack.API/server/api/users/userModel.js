@@ -31,6 +31,8 @@ UserSchema.pre('save', function(next) {
     if (!this.isModified('password')) return next();
 
     this.password = this.encryptPassword(this.password);
+    
+    console.log(this)
     next()
 })
 

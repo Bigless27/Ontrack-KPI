@@ -151,6 +151,25 @@
 						console.log(response)
 					})
 			}
+
+			$scope.remove = function(progId) {
+				var index = $scope.user.progress.findIndex(x => x._id === progId)
+				$scope.user.progress.splice(index, 1)
+
+				$http.put('api/users/' + $stateParams.id, $scope.user)
+					.then(response => {
+						$state.reload()
+					})
+					.catch(response => {
+						console.log(response)
+					})
+
+
+
+
+
+			}
+
 			getUser()
 	}])
 }());
