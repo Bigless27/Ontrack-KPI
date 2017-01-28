@@ -97,10 +97,12 @@
 					.state('userView', {
 						url: '/user/:id',
 						templateUrl: 'client/api/users/user-view/user-view-partial.html',
-						controller: 'UserViewController',
-						params: {
-							teamId: null
-						}
+						controller: 'UserViewController'
+					})
+					.state('userViewTeam', {
+						url: '/user/:id/:teamId',
+						templateUrl: 'client/api/users/user-view/user-view-partial.html',
+						controller: 'UserViewController'
 					})
 					.state('setting', {
 						url: '/settings',
@@ -150,10 +152,12 @@
 					.state('progressView', {
 						url: '/progress/:id',
 						templateUrl: 'client/api/settings/progress/progress-view/progress-view-partial.html',
+						controller: 'ProgressViewController'
+					})
+					.state('progressViewUser', {
+						url: '/progress/:id/:userId',
+						templateUrl: 'client/api/settings/progress/progress-view/progress-view-partial.html',
 						controller: 'ProgressViewController',
-						params: {
-							userId: null
-						}
 					})
 					// .state('activity', {
 					// 	url: '/activity',
@@ -173,7 +177,21 @@
 					// })
 
 			}])
-			.run(function(editableOptions) {
+			.run(function(editableOptions, $rootScope, $state, $stateParams) {
 			  editableOptions.theme = 'bs3'; // bootstrap3 theme. Can be also 'bs2', 'default'
+
 			})
+		// 	.factory('scopeService', function() {
+
+		// 	var model = {}
+
+		// 	return {
+		// 		getValue: function() {
+		// 			return model.value
+		// 		},
+		// 		updateValue: function(value) {
+		// 			model.value = value;
+		// 		}
+		// 	}
+		// })
 }());

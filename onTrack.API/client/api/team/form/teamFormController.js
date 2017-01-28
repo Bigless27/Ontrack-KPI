@@ -6,13 +6,13 @@
 			$scope.errorDisplay = false
 
 			$scope.createTeam = function(data){
-				data.promotions.map( promo => {
-					promo.promoId = promo._id
-				})
-
 				$scope.$broadcast('show-errors-check-validity');
 
 				if($scope.teamForm.$invalid){return;}
+
+				data.promotions.map( promo => {
+					promo.promoId = promo._id
+				})
 				
 				var token = $window.sessionStorage['jwt']
 
@@ -20,6 +20,7 @@
 					return team.name == data.name
 				})
 
+				console.log(data)
 
 
 				if(names.length > 0){

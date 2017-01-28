@@ -132,6 +132,7 @@
 			function getTeam(){
 				$http.get('/api/teams/' + $stateParams['id'])
 					.then(response => {
+						console.log(response.data)
 						$scope.team = response.data
 					})
 					.catch(response => {

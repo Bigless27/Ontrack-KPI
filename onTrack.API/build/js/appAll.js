@@ -97,10 +97,12 @@
 					.state('userView', {
 						url: '/user/:id',
 						templateUrl: 'client/api/users/user-view/user-view-partial.html',
-						controller: 'UserViewController',
-						params: {
-							teamId: null
-						}
+						controller: 'UserViewController'
+					})
+					.state('userViewTeam', {
+						url: '/user/:id/:teamId',
+						templateUrl: 'client/api/users/user-view/user-view-partial.html',
+						controller: 'UserViewController'
 					})
 					.state('setting', {
 						url: '/settings',
@@ -150,10 +152,12 @@
 					.state('progressView', {
 						url: '/progress/:id',
 						templateUrl: 'client/api/settings/progress/progress-view/progress-view-partial.html',
+						controller: 'ProgressViewController'
+					})
+					.state('progressViewUser', {
+						url: '/progress/:id/:userId',
+						templateUrl: 'client/api/settings/progress/progress-view/progress-view-partial.html',
 						controller: 'ProgressViewController',
-						params: {
-							userId: null
-						}
 					})
 					// .state('activity', {
 					// 	url: '/activity',
@@ -173,9 +177,23 @@
 					// })
 
 			}])
-			.run(function(editableOptions) {
+			.run(function(editableOptions, $rootScope, $state, $stateParams) {
 			  editableOptions.theme = 'bs3'; // bootstrap3 theme. Can be also 'bs2', 'default'
+
 			})
+		// 	.factory('scopeService', function() {
+
+		// 	var model = {}
+
+		// 	return {
+		// 		getValue: function() {
+		// 			return model.value
+		// 		},
+		// 		updateValue: function(value) {
+		// 			model.value = value;
+		// 		}
+		// 	}
+		// })
 }());
 angular.module("templates", []).run(["$templateCache", function($templateCache) {$templateCache.put("multiple-autocomplete-tpl.html","<div class=\"ng-ms form-item-container\">\r\n    <ul class=\"list-inline\">\r\n        <li ng-repeat=\"item in modelArr\">\r\n			<span ng-if=\"objectProperty == undefined || objectProperty == \'\'\">\r\n				{{item}} <span class=\"remove\" ng-click=\"removeAddedValues(item)\">\r\n                <i class=\"glyphicon glyphicon-remove\"></i></span>&nbsp;\r\n			</span>\r\n            <span ng-if=\"objectProperty != undefined && objectProperty != \'\'\">\r\n				{{item[objectProperty]}} <span class=\"remove\" ng-click=\"removeAddedValues(item)\">\r\n                <i class=\"glyphicon glyphicon-remove\"></i></span>&nbsp;\r\n			</span>\r\n        </li>\r\n        <li>\r\n            <input name=\"{{name}}\" ng-model=\"inputValue\" placeholder=\"\" ng-keydown=\"keyParser($event)\"\r\n                   err-msg-required=\"{{errMsgRequired}}\"\r\n                   ng-focus=\"onFocus()\" ng-blur=\"onBlur()\" ng-required=\"!modelArr.length && isRequired\"\r\n                    ng-change=\"onChange()\">\r\n        </li>\r\n    </ul>\r\n</div>\r\n<div class=\"autocomplete-list\" ng-show=\"isFocused || isHover\" ng-mouseenter=\"onMouseEnter()\" ng-mouseleave=\"onMouseLeave()\">\r\n    <ul ng-if=\"objectProperty == undefined || objectProperty == \'\'\">\r\n        <li ng-class=\"{\'autocomplete-active\' : selectedItemIndex == $index}\"\r\n            ng-repeat=\"suggestion in suggestionsArr | filter : inputValue | filter : alreadyAddedValues\"\r\n            ng-click=\"onSuggestedItemsClick(suggestion)\" ng-mouseenter=\"mouseEnterOnItem($index)\">\r\n            {{suggestion}}\r\n        </li>\r\n    </ul>\r\n    <ul ng-if=\"objectProperty != undefined && objectProperty != \'\'\">\r\n        <li ng-class=\"{\'autocomplete-active\' : selectedItemIndex == $index}\"\r\n            ng-repeat=\"suggestion in suggestionsArr | filter : inputValue | filter : alreadyAddedValues\"\r\n            ng-click=\"onSuggestedItemsClick(suggestion)\" ng-mouseenter=\"mouseEnterOnItem($index)\">\r\n            {{suggestion[objectProperty]}}\r\n        </li>\r\n    </ul>\r\n</div>");}]);
 (function () {
@@ -750,6 +768,7 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 			function getTeam(){
 				$http.get('/api/teams/' + $stateParams['id'])
 					.then(response => {
+						console.log(response.data)
 						$scope.team = response.data
 					})
 					.catch(response => {
@@ -1519,13 +1538,13 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 			$scope.errorDisplay = false
 
 			$scope.createTeam = function(data){
-				data.promotions.map( promo => {
-					promo.promoId = promo._id
-				})
-
 				$scope.$broadcast('show-errors-check-validity');
 
 				if($scope.teamForm.$invalid){return;}
+
+				data.promotions.map( promo => {
+					promo.promoId = promo._id
+				})
 				
 				var token = $window.sessionStorage['jwt']
 
@@ -1533,6 +1552,7 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 					return team.name == data.name
 				})
 
+				console.log(data)
 
 
 				if(names.length > 0){
@@ -2045,22 +2065,6 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 
 			return service
 		})
-
-		// .factory('scopeService', function() {
-
-		// 	var model = {}
-		// 	var counter = 0
-
-		// 	return {
-		// 		getValue: function() {
-		// 			return model.value
-		// 		},
-		// 		updateValue: function(value) {
-		// 			model.value = value;
-		// 		}
-		// 	}
-		// })
-
 }());
 (function() {
 	angular.module('onTrack')
@@ -2371,7 +2375,6 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 			}
 
 			function setUser() {
-				console.log($stateParams)
 				if ($stateParams.userId) {
 					$scope.user = true
 					$scope.userId = $stateParams.userId

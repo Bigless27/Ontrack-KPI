@@ -76,7 +76,6 @@
 			}
 
 			function setUser() {
-				console.log($stateParams)
 				if ($stateParams.userId) {
 					$scope.user = true
 					$scope.userId = $stateParams.userId
