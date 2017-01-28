@@ -158,12 +158,21 @@ exports.put = function(req, res, next) {
 };
 
 exports.post = function(req, res, next) {
-  var newteam = req.body;
-  newteam.owner = req.user
-  newteam.admins.push(req.user)
-  newteam.users.push(req.user)
+  var newTeam = req.body;
 
-  Team.create(newteam)
+  var holder = {}
+
+  holder.firstName = req.user.firstName
+  holder.lastName = req.user.lastName
+  holder.email = req.user.email
+  holder.userId = req.user._id
+
+
+  newTeam.admins.push(holder)
+  newTeam.users.push(holder)
+
+
+  Team.create(newTeam)
     .then(function(team) {
       res.json(team);
     }, function(err) {

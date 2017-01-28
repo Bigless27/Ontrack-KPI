@@ -20,9 +20,6 @@
 					return team.name == data.name
 				})
 
-				console.log(data)
-
-
 				if(names.length > 0){
 					$scope.errorDisplay = true
 					$scope.oops = 'Name is already taken!'
@@ -51,7 +48,7 @@
 						response.data.forEach(function(user){
 							if(user){
 								$scope.optionsList.push(
-										{firstName: user.firstName, lastName: user.lastName, 
+										{firstName: user.firstName, lastName: user.lastName, userId: user._id,
 											email: user.email, fullName: user.firstName + ' ' + user.lastName}
 									)
 							}
