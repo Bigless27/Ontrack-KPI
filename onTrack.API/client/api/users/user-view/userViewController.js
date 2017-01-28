@@ -166,6 +166,17 @@
 					})
 			}
 
+			function setTeam() {
+				if ($stateParams.teamId) {
+					$scope.team = true
+					$scope.teamId = $stateParams.teamId
+				}
+				else {
+					$scope.team = false
+				}
+			}
+
+			setTeam()
 			getUser()
 	}])
 }());
