@@ -74,10 +74,12 @@
 					.state('promotionView', {
 						url: '/promotions/:id',
 						templateUrl: 'client/api/promotions/promotion-view/promotion-view-partial.html',
-						controller: 'PromotionViewController',
-						params: {
-							teamId: null
-						}
+						controller: 'PromotionViewController'
+					})
+					.state('promotionViewTeam', {
+						url: '/promotions/:id/:teamId',
+						templateUrl: 'client/api/promotions/promotion-view/promotion-view-partial.html',
+						controller: 'PromotionViewController'
 					})
 					.state('user', {
 						url: '/user',

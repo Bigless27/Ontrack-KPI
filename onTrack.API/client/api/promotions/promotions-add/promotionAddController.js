@@ -31,6 +31,17 @@
 
 			}
 
+			function getTeam() {
+				$http.get('api/teams')
+					.then(response => {
+						$scope.team = response.data[0]
+						getPromotions()
+					})
+					.catch(response => {
+						console.log(response)
+					})
+			}
+
 			// there may be a little bug with this on duplicates showing up after they are added
 			function getPromotions() {
 				$http.get('api/promotions')
@@ -45,7 +56,7 @@
 								}
 							}
 							else {
-								$scope.promotions = [{name: 'No Promotinos available'}]
+								$scope.promotions = [{name: 'No Promotions available'}]
 							}							
 						})
 					})
@@ -54,6 +65,6 @@
 					})
 			}
 
-			getPromotions()
+			getTeam()
 		}])
 }());
