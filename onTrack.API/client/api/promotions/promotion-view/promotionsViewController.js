@@ -7,12 +7,17 @@
 			$(document).on('click','.promotion-startDate-edit-button', function(){
 				$('#promotion-startDate-edit')[0].click()
 			})
-			.on('click','.promotion-endDate-edit-button', function(){
+			.on('click','.promotion-endDate-edit-button', function() {
 				$('#promotion-endDate-edit')[0].click()
 			})
-			.on('click', '.promotion-edit-type-button', function(){
+			.on('click', '.promotion-edit-type-button', function() {
 				$('#promotion-type-edit')[0].click()
 			})
+			.on('click', '.promotion-rule-edit-button', function() {
+				$('#promotion-rule-edit')[0].click()
+			})
+
+			$scope.achievementRules = ['inclusive', 'exclusive']
 
 			function setTeam() {
 				if ($stateParams.teamId) {
@@ -52,17 +57,11 @@
 				return updatePromotion(data,'subTypes')			
 			}
 
-			$scope.updateCompletionValue = function(data) {
-				var reg = new RegExp('^\\d+$')
-
+			$scope.updateAchievementRule = function(data) {
 				if (data === ''){
 					return 'Value is required'
 				}
-				else if (!reg.test(data)){
-					return 'Value must be an integer'
-				}
-				data['completionValue'] = parseInt(data['completionValue'])
-				return updatePromotion(data, 'completionValue')
+				return updatePromotion(data, 'achievementRule')
 			}
 
 			$scope.updateDescription = function(data) {

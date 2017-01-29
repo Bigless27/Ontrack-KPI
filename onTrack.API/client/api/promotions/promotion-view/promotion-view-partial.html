@@ -99,15 +99,16 @@
 					<tr>
 						<th>Achievement Rule</th>
 						<td>
-							<span 
-								editable-text = "promotion.achievementRule" 
-								e-form = 'achievementRule' 
-								onbeforesave = 'updateAchievementRule($data)'> 
-								{{promotion.achievementRule}}
+							<span id = 'promotion-rule-edit'
+								 onbeforesave = 'updateAchievementRule($data)'
+								 style = 'color: black; border: none;' 
+								 editable-select="promotion.achievementRule"
+								 e-ng-options="s for s in achievementRules">
+							    {{promotion.achievementRule}}
 							</span>
 						</td>
 						<td>
-							<a href="" ng-click="achievementRule.$show()" ng-hide="achievementRule.$visible">Edit</a>
+							<a href="" class = 'promotion-rule-edit-button'>Edit</a>
 						</td>
 					</tr>
 					<tr>
