@@ -160,16 +160,16 @@ exports.put = function(req, res, next) {
 exports.post = function(req, res, next) {
   var newTeam = req.body;
 
-  var holder = {}
+  var user = {}
 
-  holder.firstName = req.user.firstName
-  holder.lastName = req.user.lastName
-  holder.email = req.user.email
-  holder.userId = req.user._id
+  user.firstName = req.user.firstName
+  user.lastName = req.user.lastName
+  user.email = req.user.email
+  user.userId = req.user._id
 
-
-  newTeam.admins.push(holder)
-  newTeam.users.push(holder)
+  newTeam.owner = user
+  newTeam.admins.push(user)
+  newTeam.users.push(user)
 
 
   Team.create(newTeam)

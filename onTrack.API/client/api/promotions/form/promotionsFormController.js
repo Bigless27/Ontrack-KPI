@@ -7,6 +7,8 @@
 
 			$scope.showGoal = false
 
+			$scope.achievementRules = ['inclusive', 'exclusive']
+
 			var today = new Date();
 			$scope.minDate = today.toISOString();
 
@@ -76,8 +78,8 @@
 						"Authorization": `Bearer ${token}`
 					}
 				})
-				.then(function(resposne){
-						$state.reload()
+				.then(function(response){
+						$state.go('promotion')
 				})
 				.catch(function(response){
 					console.log(response)

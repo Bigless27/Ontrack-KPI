@@ -49,7 +49,7 @@
 				$http.get('api/teams/' + $stateParams.id)
 					.then(function(response) {
 						$scope.team = response.data
-
+						console.log(response.data)
 						response.data.admins.forEach(function(user){
 							if(user){
 								if (user.email !== $scope.team.owner[0].email){

@@ -8,9 +8,6 @@
 
 				if($scope.rewardForm.$invalid){return;}
 
-				console.log(reward)
-				return
-
 				$http.post('/api/rewards', reward)
 					.then( response => {
 						$state.reload()
