@@ -13,7 +13,6 @@
 					})
 			}
 
-
 			getPromotions()
 		}])
 }());

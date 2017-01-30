@@ -1,0 +1,63 @@
+<div class="container">
+	<form name = 'activityForm' role = 'form' data-toggle = 'validator'>
+
+		<h1>Activity Create From</h1>
+
+		<div class="form-group" show-errors>
+			<label for = 'name' class = 'control-label'>Name</label>
+			<div class="input-group">
+				<span class = 'input-group-addon'><i class = 'glyphicon glyphicon-user'></i></span>
+				<input
+					name = 'name'
+					type = 'text'
+					ng-model = 'activity.name'
+					class = 'form-control'
+					value = 'name'
+					placeholder = 'enter name'
+					required
+				>
+			</div>
+			<p class = 'help-block' ng-if = 'activityForm.value.$error.required'>Name is required</p>
+		</div>
+
+		<div class="form-group" show-errors>
+			<label for = 'name' class = 'control-label'>Team</label>
+			<div class="input-group">
+				<span class = 'input-group-addon'><i class = 'glyphicon glyphicon-user'></i></span>
+				<select
+					name =  'Team'
+					type = 'text'
+					ng-blur = 'setUsers()'
+					ng-model = 'activity.team'
+					class = 'form-control'
+					value = 'name'
+					placeholder = 'select a team'
+					ng-options = 't.name for t in teams'
+					required
+				>
+				</select>
+			</div>
+			<p class = 'help-block' ng-if = 'activityForm.value.$error.required'>Name is required</p>
+		</div>
+
+		<div class = 'form-group'>
+					<label for = 'rewards' class = 'control-label'>Users</label>
+					<div class = 'input-group'>
+						<span class = 'input-group-addon'><i class = 'glyphicon glyphicon-user'></i></span>
+						<multiple-autocomplete
+							ng-model = 'promotion.users'
+							object-property = 'name'
+							suggestions-arr = 'filterdUsers'
+							ng-click = 'checkTeam()'
+						>
+						</multiple-autocomplete>
+					</div>
+					<p class = 'alert alert-danger' ng-if = 'typeChecker'>Please select a team first</p>
+				</div>
+			</div>
+
+	</form>
+
+	<div class = 'btn btn-default' ui-sref = 'activity'>Close</div>
+
+</div>

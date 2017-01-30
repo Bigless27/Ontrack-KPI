@@ -161,16 +161,16 @@
 						templateUrl: 'client/api/settings/progress/progress-view/progress-view-partial.html',
 						controller: 'ProgressViewController',
 					})
-					// .state('activity', {
-					// 	url: '/activity',
-					// 	templateUrl: 'client/api/activity/activity-partial.html',
-					// 	controller: 'ActivityController'
-					// })
-					// .state('activity.create', {
-					// 	url: '/createActivity',
-					// 	templateUrl: 'client/api/activity/form/activity-form-partial.html',
-					// 	controller: 'ActivityFormController'
-					// })
+					.state('activity', {
+						url: '/activity',
+						templateUrl: 'client/api/activity/activity-partial.html',
+						controller: 'ActivityController'
+					})
+					.state('activity.create', {
+						url: '/createActivity',
+						templateUrl: 'client/api/activity/form/activity-form-partial.html',
+						controller: 'ActivityFormController'
+					})
 					// // look to rename this state to something a little more Restful
 					// .state('activityView', {
 					// 	url: '/activity/:id',
@@ -480,38 +480,21 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('ActivityController', '$scope', '$state', '$http', '$stateParams',
+	.controller('ActivityController', ['$scope', '$state', '$http', '$stateParams',
 		function($scope, $state, $http, $stateParams) {
-			
-		})
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('LoginController', ['$scope', '$state', '$window', '$http',
-	 function($scope, $state, $window, $http) {
 
-			$scope.logUserIn = function(user) {
-				$scope.$broadcast('show-errors-check-validity');
+			function getRecentActivity() {
+				$http.get('api/activity')
+					.then(response => {
 
-
-				if($scope.userForm.$invalid){return;}
-
-				$scope.err = true
-
-				$http.post('auth/signin', user)
-					.then((response) => {
-
-						$scope.err = false
-						$window.sessionStorage.jwt = response.data['token']
-						$state.go('main')
 					})
-					.catch((response) => {
-						$scope.err = true
-						$scope.errMessage = response
+					.catch(response => {
+						console.log(response)
 					})
 			}
 
-	}])
+			// getRecentActivity()
+		}])
 }());
 (function() {
 	angular.module('onTrack')
@@ -547,6 +530,34 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 			getTeams()
 	}])
 }());
+(function() {
+	angular.module('onTrack')
+	.controller('LoginController', ['$scope', '$state', '$window', '$http',
+	 function($scope, $state, $window, $http) {
+
+			$scope.logUserIn = function(user) {
+				$scope.$broadcast('show-errors-check-validity');
+
+
+				if($scope.userForm.$invalid){return;}
+
+				$scope.err = true
+
+				$http.post('auth/signin', user)
+					.then((response) => {
+
+						$scope.err = false
+						$window.sessionStorage.jwt = response.data['token']
+						$state.go('main')
+					})
+					.catch((response) => {
+						$scope.err = true
+						$scope.errMessage = response
+					})
+			}
+
+	}])
+}());
 (function(){
 	angular.module('onTrack')
 	.controller('PromotionsController', ['$scope', '$state', '$http', 
@@ -562,9 +573,30 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 					})
 			}
 
-
 			getPromotions()
 		}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+		$scope.signUp = function(user) {
+			$scope.$broadcast('show-errors-check-validity')
+
+			if ($scope.userForm.$invalid){return;}
+			$scope.err = false
+			$http.post('api/users', user)
+				.then(function(response) {
+					$scope.err = false
+					$window.sessionStorage.jwt = response.data['token']
+					$state.go('main')
+				})
+				.catch(function(reponse) {
+					$scope.err = true
+					$scope.errMessage = response.message
+				})
+		}
+	}])
 }());
 (function() {
 	angular.module('onTrack')
@@ -619,28 +651,6 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 	 	getUsers()
 	 	loadProgressSettings()
 
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
-		$scope.signUp = function(user) {
-			$scope.$broadcast('show-errors-check-validity')
-
-			if ($scope.userForm.$invalid){return;}
-			$scope.err = false
-			$http.post('api/users', user)
-				.then(function(response) {
-					$scope.err = false
-					$window.sessionStorage.jwt = response.data['token']
-					$state.go('main')
-				})
-				.catch(function(reponse) {
-					$scope.err = true
-					$scope.errMessage = response.message
-				})
-		}
 	}])
 }());
 (function() {
@@ -914,6 +924,51 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 			getUsers()
 		
 	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('ActivityFormController', ['$scope', '$state', '$http', '$stateParams',
+		function($scope, $state, $http, $stateParams) {
+
+			$scope.teamChecker = false
+
+			$scope.setUsers = function() {
+				if(!$scope.teams) return
+				else {
+					$scope.teamChecker = false
+					$scope.filterdUsers = $scope.users.filter( x => {return x.teamId})
+				}
+			}
+
+			$scope.checkTeam = function() {
+				if (!$scope.teams) {
+					$scope.teamChecker = true
+				}
+			}
+
+			function getTeams() {
+				$http.get('api/teams')
+					.then(response => {
+						$scope.teams = response.data
+					})
+					.catch(response => {
+						console.log(response)
+					})
+			}
+
+			function getUsers() {
+				$http.get('api/users')
+					.then(response => {
+						$scope.users = response.data
+					})
+					.catch(response => {
+						console.log(response)
+					})
+			}
+
+			getUsers()
+			getTeams()
+		}])
 }());
 (function() {
 	angular.module('onTrack')
@@ -1415,24 +1470,6 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('GoalsController', ['$scope', '$state', '$window', '$http', '$stateParams',
-	function($scope, $state, $window, $http, $stateParams) {
-		function getGoals() {
-			$http.get('api/goals')
-				.then(function onSuccess(response) {
-					$scope.goals = response.data
-				})
-				.catch(function onError(response) {
-					console.log(response)
-				})
-		}
-
-		getGoals()
-	}])
-
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('ProgressController', ['$scope', '$http', '$stateParams', 
 		function($scope, $http, $stateParams) {
 
@@ -1449,6 +1486,24 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 			getProgresses()
 
 	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('GoalsController', ['$scope', '$state', '$window', '$http', '$stateParams',
+	function($scope, $state, $window, $http, $stateParams) {
+		function getGoals() {
+			$http.get('api/goals')
+				.then(function onSuccess(response) {
+					$scope.goals = response.data
+				})
+				.catch(function onError(response) {
+					console.log(response)
+				})
+		}
+
+		getGoals()
+	}])
+
 }());
 (function() {
 	angular.module('onTrack')
@@ -1972,6 +2027,233 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('AssignProgressController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
+		function($scope, $state, $http, $window, $stateParams, $q) {
+
+			$scope.typeChecker = false
+
+
+			$scope.setProgress = function() {
+				if(!$scope.progType) return
+				else {
+					$scope.typeChecker = false
+					$scope.filterdProgress = $scope.progress.filter( x => {return x.type == $scope.progType.type})
+				}
+			}
+
+
+			$scope.checkType = function() {
+				if (!$scope.progType) {
+					$scope.typeChecker = true
+				}
+			}
+
+			function getProgress() {
+				$http.get('api/progress-settings')
+					.then(response => {
+						$scope.progress = response.data
+					})
+					.catch(response => {
+						console.log(response)
+					})
+			}
+
+			function createUserProgress(data) {
+				data.progress.forEach(progress => {
+
+					var userProgress = {value: 0, userId: data._id,
+										 progressId: progress }
+
+					$http.post('api/user-progress', userProgress)
+						.catch(response => {
+							console.log(response)
+						})
+				})
+			}
+
+			$scope.submit = function(data) {
+				data.progress.forEach(function(prog){
+					data.users.forEach(function(user) {
+						
+						if(!user.progress.length) {
+							user.progress = []
+						}
+
+						// account for adding duplicates
+						var dups = user.progress.map(x => x._id)
+						if (!dups.includes(prog._id)) {
+							user.progress.push(prog._id)
+						}
+
+						
+						$http.put(`api/users/${user.userId}/updateRefs`, user)
+							.then(response => {
+								$state.reload()
+								createUserProgress(response.data)
+							})
+							.catch(response => {
+								console.log(response)
+							})
+					})
+				})
+			}
+
+			function getUsers() {
+				$http.get('api/users')
+					.then(response => {
+						response.data.forEach(function(user){
+							if(user){
+								$scope.optionsList.push(
+										{firstName: user.firstName, lastName: user.lastName, userId: user._id,
+											email: user.email, fullName: user.firstName + ' ' + user.lastName, 
+											progress: user.progress}
+								)
+							}
+							else{
+								$scope.optionsList = [{name: 'No users'}]
+							}
+						})
+					})
+					.catch(response => {
+						console.log(response)
+					})
+			}
+
+			$scope.optionsList = [];
+			getProgress()
+			getUsers()
+		
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('ProgressFormController', ['$scope', '$http', '$stateParams', '$window', '$state',
+		function($scope, $http, $stateParams, $window, $state) {
+
+			$scope.submit = function(data) {
+				$scope.$broadcast('show-errors-check-validity');
+
+				if($scope.progressForm.$invalid){return;}
+				var token = $window.sessionStorage['jwt']
+				
+
+				var progress = Object.assign({}, data)
+				
+				$http.post('api/progress-settings', progress) 
+				 .then(response => {
+				 	$state.reload()
+				 })
+				 .catch(response => {
+				 	console.log(response)
+				 })
+			}
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('ProgressViewController', ['$scope', '$http', '$stateParams', '$state', '$window',
+		function($scope, $http, $stateParams, $state, $window) {
+
+			$scope.updateName = function(name) {
+				if (!name) {
+					return 'Name is required'
+				}
+				updateProgress('name', name)
+			}
+
+			$scope.updateType = function(type) {
+				if (!type) {
+					return 'Type is required'
+				}
+				updateProgress('type', type)
+			}
+
+			$scope.updateDescription = function(description) {
+				if (!description) {
+					return 'Description is required'
+				}
+				updateProgress('description', description)
+			}
+
+			$scope.deleteProgress = function() {
+				var token = $window.sessionStorage['jwt']
+
+				swal({
+				  title: "Are you sure?",
+				  text: "You will not be able to recover this Progress!",
+				  type: "warning",
+				  showCancelButton: true,
+				  confirmButtonColor: "#DD6B55",
+				  confirmButtonText: "Yes, delete it!",
+				  html: false
+				}).then(function onSuccess(response){
+					$http.delete('/api/progress-settings/' + $stateParams.id, {
+						headers: {
+							'Authorization': `Bearer ${token}`
+						}
+					})
+					.then(function onSuccess(response){
+						$state.go('progress')
+					})
+					.catch(function onError(response) {
+						console.log(response)
+					})
+				}).catch(function onError(response) {
+					console.log(response)
+				})
+			}
+
+			function updateProgress(param, name) {
+				$scope.progress[param] = name
+
+				$http.put('api/progress-settings/' + $stateParams.id, $scope.progress)
+					.then(response => {
+						$state.reload()
+					})
+					.catch(response => {
+						console.log(response)
+					})
+			}
+
+			
+			function getProgress() {
+				$http.get(`api/progress-settings/${$stateParams.id}` )
+					.then(response => {
+						$scope.progress = response.data
+					})
+					.catch(response => {
+						console.log(response)
+					})
+			}
+
+			function setUser() {
+				if ($stateParams.userId) {
+					$scope.user = true
+					$scope.userId = $stateParams.userId
+					getUser()
+				}
+				else {
+					$scope.user = false
+				}
+			}
+
+			function getUser() {
+				$http.get(`api/users/${$stateParams.userId}`)
+					.then(response => {
+						$scope.userProgress = response.data.userProgress.filter(x => {return $stateParams.id == x.progressId})
+					})
+					.catch(response => {
+						console.log(response)
+					})
+			}
+
+
+			setUser()
+			getProgress()
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 		.directive('addGoal', function() {
 			return{
 				restrict: 'E',
@@ -2200,233 +2482,6 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 		}
 	}])
 
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('AssignProgressController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
-		function($scope, $state, $http, $window, $stateParams, $q) {
-
-			$scope.typeChecker = false
-
-
-			$scope.setProgress = function() {
-				if(!$scope.progType) return
-				else {
-					$scope.typeChecker = false
-					$scope.filterdProgress = $scope.progress.filter( x => {return x.type == $scope.progType.type})
-				}
-			}
-
-
-			$scope.checkType = function() {
-				if (!$scope.progType) {
-					$scope.typeChecker = true
-				}
-			}
-
-			function getProgress() {
-				$http.get('api/progress-settings')
-					.then(response => {
-						$scope.progress = response.data
-					})
-					.catch(response => {
-						console.log(response)
-					})
-			}
-
-			function createUserProgress(data) {
-				data.progress.forEach(progress => {
-
-					var userProgress = {value: 0, userId: data._id,
-										 progressId: progress }
-
-					$http.post('api/user-progress', userProgress)
-						.catch(response => {
-							console.log(response)
-						})
-				})
-			}
-
-			$scope.submit = function(data) {
-				data.progress.forEach(function(prog){
-					data.users.forEach(function(user) {
-						
-						if(!user.progress.length) {
-							user.progress = []
-						}
-
-						// account for adding duplicates
-						var dups = user.progress.map(x => x._id)
-						if (!dups.includes(prog._id)) {
-							user.progress.push(prog._id)
-						}
-
-						
-						$http.put(`api/users/${user.userId}/updateRefs`, user)
-							.then(response => {
-								$state.reload()
-								createUserProgress(response.data)
-							})
-							.catch(response => {
-								console.log(response)
-							})
-					})
-				})
-			}
-
-			function getUsers() {
-				$http.get('api/users')
-					.then(response => {
-						response.data.forEach(function(user){
-							if(user){
-								$scope.optionsList.push(
-										{firstName: user.firstName, lastName: user.lastName, userId: user._id,
-											email: user.email, fullName: user.firstName + ' ' + user.lastName, 
-											progress: user.progress}
-								)
-							}
-							else{
-								$scope.optionsList = [{name: 'No users'}]
-							}
-						})
-					})
-					.catch(response => {
-						console.log(response)
-					})
-			}
-
-			$scope.optionsList = [];
-			getProgress()
-			getUsers()
-		
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('ProgressFormController', ['$scope', '$http', '$stateParams', '$window', '$state',
-		function($scope, $http, $stateParams, $window, $state) {
-
-			$scope.submit = function(data) {
-				$scope.$broadcast('show-errors-check-validity');
-
-				if($scope.progressForm.$invalid){return;}
-				var token = $window.sessionStorage['jwt']
-				
-
-				var progress = Object.assign({}, data)
-				
-				$http.post('api/progress-settings', progress) 
-				 .then(response => {
-				 	$state.reload()
-				 })
-				 .catch(response => {
-				 	console.log(response)
-				 })
-			}
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('ProgressViewController', ['$scope', '$http', '$stateParams', '$state', '$window',
-		function($scope, $http, $stateParams, $state, $window) {
-
-			$scope.updateName = function(name) {
-				if (!name) {
-					return 'Name is required'
-				}
-				updateProgress('name', name)
-			}
-
-			$scope.updateType = function(type) {
-				if (!type) {
-					return 'Type is required'
-				}
-				updateProgress('type', type)
-			}
-
-			$scope.updateDescription = function(description) {
-				if (!description) {
-					return 'Description is required'
-				}
-				updateProgress('description', description)
-			}
-
-			$scope.deleteProgress = function() {
-				var token = $window.sessionStorage['jwt']
-
-				swal({
-				  title: "Are you sure?",
-				  text: "You will not be able to recover this Progress!",
-				  type: "warning",
-				  showCancelButton: true,
-				  confirmButtonColor: "#DD6B55",
-				  confirmButtonText: "Yes, delete it!",
-				  html: false
-				}).then(function onSuccess(response){
-					$http.delete('/api/progress-settings/' + $stateParams.id, {
-						headers: {
-							'Authorization': `Bearer ${token}`
-						}
-					})
-					.then(function onSuccess(response){
-						$state.go('progress')
-					})
-					.catch(function onError(response) {
-						console.log(response)
-					})
-				}).catch(function onError(response) {
-					console.log(response)
-				})
-			}
-
-			function updateProgress(param, name) {
-				$scope.progress[param] = name
-
-				$http.put('api/progress-settings/' + $stateParams.id, $scope.progress)
-					.then(response => {
-						$state.reload()
-					})
-					.catch(response => {
-						console.log(response)
-					})
-			}
-
-			
-			function getProgress() {
-				$http.get(`api/progress-settings/${$stateParams.id}` )
-					.then(response => {
-						$scope.progress = response.data
-					})
-					.catch(response => {
-						console.log(response)
-					})
-			}
-
-			function setUser() {
-				if ($stateParams.userId) {
-					$scope.user = true
-					$scope.userId = $stateParams.userId
-					getUser()
-				}
-				else {
-					$scope.user = false
-				}
-			}
-
-			function getUser() {
-				$http.get(`api/users/${$stateParams.userId}`)
-					.then(response => {
-						$scope.userProgress = response.data.userProgress.filter(x => {return $stateParams.id == x.progressId})
-					})
-					.catch(response => {
-						console.log(response)
-					})
-			}
-
-
-			setUser()
-			getProgress()
-	}])
 }());
 (function() {
 	angular.module('onTrack')

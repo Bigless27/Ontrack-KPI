@@ -161,16 +161,16 @@
 						templateUrl: 'client/api/settings/progress/progress-view/progress-view-partial.html',
 						controller: 'ProgressViewController',
 					})
-					// .state('activity', {
-					// 	url: '/activity',
-					// 	templateUrl: 'client/api/activity/activity-partial.html',
-					// 	controller: 'ActivityController'
-					// })
-					// .state('activity.create', {
-					// 	url: '/createActivity',
-					// 	templateUrl: 'client/api/activity/form/activity-form-partial.html',
-					// 	controller: 'ActivityFormController'
-					// })
+					.state('activity', {
+						url: '/activity',
+						templateUrl: 'client/api/activity/activity-partial.html',
+						controller: 'ActivityController'
+					})
+					.state('activity.create', {
+						url: '/createActivity',
+						templateUrl: 'client/api/activity/form/activity-form-partial.html',
+						controller: 'ActivityFormController'
+					})
 					// // look to rename this state to something a little more Restful
 					// .state('activityView', {
 					// 	url: '/activity/:id',
