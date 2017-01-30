@@ -4,4 +4,4 @@
 		function($scope, $state, $http, $stateParams) {
 			
 		})
-}())
+}());

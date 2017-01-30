@@ -480,6 +480,13 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('ActivityController', '$scope', '$state', '$http', '$stateParams',
+		function($scope, $state, $http, $stateParams) {
+			
+		})
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('LoginController', ['$scope', '$state', '$window', '$http',
 	 function($scope, $state, $window, $http) {
 
@@ -1037,76 +1044,6 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('PromotionAddController',['$scope', '$state', '$http', '$stateParams', '$window',
-		function($scope, $state, $http, $stateParams, $window) {
-
-			$scope.promotions = []
-
-			$scope.add = function(promotion) {
-				var token = $window.sessionStorage['jwt']
-
-				var team = {promotions: []}
-
-				$scope.team.promotions.forEach( promo => {
-					team.promotions.push({name: promo.name, promoId: promo._id})
-				})
-
-				promotion.forEach( p => {team.promotions.push({name: p.name, promoId: p.promoId})})
-
-
-				$http.put('api/teams/' + $stateParams.id,  team, {
-					headers: {
-						'Authorization': `Bearer ${token}`
-					}
-				})
-					.then( response => {
-						$state.reload()
-					})
-					.catch( response => {
-						console.log(response)
-					})
-
-			}
-
-			function getTeam() {
-				$http.get('api/teams')
-					.then(response => {
-						$scope.team = response.data[0]
-						getPromotions()
-					})
-					.catch(response => {
-						console.log(response)
-					})
-			}
-
-			// there may be a little bug with this on duplicates showing up after they are added
-			function getPromotions() {
-				$http.get('api/promotions')
-					.then(response => {
-						response.data.forEach(function(promo) {
-							if(promo) {
-								var promoIds = $scope.team.promotions.map(p => p.promoId)
-								if (!promoIds.includes(promo._id)) {
-									$scope.promotions.push(
-											{name: promo.name, promoId: promo._id}
-										)
-								}
-							}
-							else {
-								$scope.promotions = [{name: 'No Promotions available'}]
-							}							
-						})
-					})
-					.catch(response => {
-						console.log(response)
-					})
-			}
-
-			getTeam()
-		}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('PromotionViewController', ['$scope', '$state', '$http', '$window', '$stateParams', '$q',
 		function($scope, $state, $http, $window, $stateParams, $q) {
 
@@ -1405,6 +1342,76 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 			getGoals()	
 			getRewards()	
 	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('PromotionAddController',['$scope', '$state', '$http', '$stateParams', '$window',
+		function($scope, $state, $http, $stateParams, $window) {
+
+			$scope.promotions = []
+
+			$scope.add = function(promotion) {
+				var token = $window.sessionStorage['jwt']
+
+				var team = {promotions: []}
+
+				$scope.team.promotions.forEach( promo => {
+					team.promotions.push({name: promo.name, promoId: promo._id})
+				})
+
+				promotion.forEach( p => {team.promotions.push({name: p.name, promoId: p.promoId})})
+
+
+				$http.put('api/teams/' + $stateParams.id,  team, {
+					headers: {
+						'Authorization': `Bearer ${token}`
+					}
+				})
+					.then( response => {
+						$state.reload()
+					})
+					.catch( response => {
+						console.log(response)
+					})
+
+			}
+
+			function getTeam() {
+				$http.get('api/teams')
+					.then(response => {
+						$scope.team = response.data[0]
+						getPromotions()
+					})
+					.catch(response => {
+						console.log(response)
+					})
+			}
+
+			// there may be a little bug with this on duplicates showing up after they are added
+			function getPromotions() {
+				$http.get('api/promotions')
+					.then(response => {
+						response.data.forEach(function(promo) {
+							if(promo) {
+								var promoIds = $scope.team.promotions.map(p => p.promoId)
+								if (!promoIds.includes(promo._id)) {
+									$scope.promotions.push(
+											{name: promo.name, promoId: promo._id}
+										)
+								}
+							}
+							else {
+								$scope.promotions = [{name: 'No Promotions available'}]
+							}							
+						})
+					})
+					.catch(response => {
+						console.log(response)
+					})
+			}
+
+			getTeam()
+		}])
 }());
 (function() {
 	angular.module('onTrack')
@@ -2296,6 +2303,30 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('ProgressFormController', ['$scope', '$http', '$stateParams', '$window', '$state',
+		function($scope, $http, $stateParams, $window, $state) {
+
+			$scope.submit = function(data) {
+				$scope.$broadcast('show-errors-check-validity');
+
+				if($scope.progressForm.$invalid){return;}
+				var token = $window.sessionStorage['jwt']
+				
+
+				var progress = Object.assign({}, data)
+				
+				$http.post('api/progress-settings', progress) 
+				 .then(response => {
+				 	$state.reload()
+				 })
+				 .catch(response => {
+				 	console.log(response)
+				 })
+			}
+	}])
+}());
+(function() {
+	angular.module('onTrack')
 	.controller('ProgressViewController', ['$scope', '$http', '$stateParams', '$state', '$window',
 		function($scope, $http, $stateParams, $state, $window) {
 
@@ -2395,30 +2426,6 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 
 			setUser()
 			getProgress()
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('ProgressFormController', ['$scope', '$http', '$stateParams', '$window', '$state',
-		function($scope, $http, $stateParams, $window, $state) {
-
-			$scope.submit = function(data) {
-				$scope.$broadcast('show-errors-check-validity');
-
-				if($scope.progressForm.$invalid){return;}
-				var token = $window.sessionStorage['jwt']
-				
-
-				var progress = Object.assign({}, data)
-				
-				$http.post('api/progress-settings', progress) 
-				 .then(response => {
-				 	$state.reload()
-				 })
-				 .catch(response => {
-				 	console.log(response)
-				 })
-			}
 	}])
 }());
 (function() {
