@@ -9,7 +9,9 @@
 				if(!$scope.teams) return
 				else {
 					$scope.teamChecker = false
-					$scope.filterdUsers = $scope.users.filter( x => {return x.teamId})
+					var usersFiltered = $scope.users.filter( x => {return x.teamId.includes($scope.activity.team._id)})
+					usersFiltered.forEach(x => {x.fullName = `${x.firstName} ${x.lastName}`})
+					$scope.filteredUsers = usersFiltered
 				}
 			}
 
