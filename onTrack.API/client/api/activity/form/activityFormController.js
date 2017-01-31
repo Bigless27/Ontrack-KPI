@@ -1,12 +1,39 @@
 (function() {
 	angular.module('onTrack')
-	.controller('ActivityFormController', ['$scope', '$state', '$http', '$stateParams',
-		function($scope, $state, $http, $stateParams) {
+	.controller('ActivityFormController', ['$scope', '$state', '$http', '$stateParams', 'arrToObject',
+		function($scope, $state, $http, $stateParams, arrToObject) {
 
 			$scope.teamChecker = false
 
+			$scope.tracker = 0;
+
+			$scope.submit = function(data) {
+				$scope.$broadcast('show-errors-check-validity');
+
+				if($scope.activityForm.$invalid){return;}
+
+				var props = {'asfName': data.name, 'team': data.team, 
+					'user': data.users}
+				delete data.name
+				delete data.team
+				delete data.users
+
+				var data = arrToObject.create(Object.values(data))
+			
+				var dataJson = Object.assign(data, props)
+
+
+				$http.post('api/activity', dataJson)
+				.then(function onSuccess(response) {
+					$state.reload()
+				})
+				.catch(function onError(response) {
+					console.log(response)
+				})
+			}
+
 			$scope.setUsers = function() {
-				if(!$scope.teams) return
+				if(!$scope.activity.team) return
 				else {
 					$scope.teamChecker = false
 					var usersFiltered = $scope.users.filter( x => {return x.teamId.includes($scope.activity.team._id)})

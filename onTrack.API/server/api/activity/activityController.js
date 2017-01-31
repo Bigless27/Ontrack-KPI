@@ -32,10 +32,18 @@ exports.getOne = function(req, res, next) {
 }
 
 exports.post = function(req, res, next) { //yup
+	var newActivity = req.body;
 
-	var newactivity= req.body;
+	var name = {'asfName': newActivity.asfName, 'team': newActivity.team, 
+					'user': newActivity.users}
+	delete newActivity.asfName
+	delete newActivity.team
+	delete newActivity.users
+
+	var data = Object.assign({any: newActivity}, name)
+
 	
-	Activity.create(newactivity)
+	Activity.create(data)
 		.then(function(activity) {
 			res.json(activity)
 		}, function(err) {

@@ -1,5 +1,5 @@
 <div class="container" id = 'edit'>
-	<form name = 'activityForm' role = 'form' data-toggle = 'validator'>
+	<form name = 'activityForm'>
 
 		<h1>Activity Create From</h1>
 
@@ -37,7 +37,7 @@
 				>
 				</select>
 			</div>
-			<p class = 'help-block' ng-if = 'activityForm.value.$error.required'>Name is required</p>
+			<p class = 'help-block' ng-if = 'activityForm.value.$error.required'>Team is required</p>
 		</div>
 
 		<div class = 'form-group'>
@@ -55,9 +55,15 @@
 					<p class = 'alert alert-danger' ng-if = 'typeChecker'>Please select a team first</p>
 				</div>
 			</div>
-
 	</form>
+	<div id="space-for-buttons"></div>
+	<add-button-activity></add-button-activity>
+	<remove-one-activity></remove-one-activity>
+	<div style = 'margin:8px;'></div>
 
-	<div class = 'btn btn-default' ui-sref = 'activity'>Close</div>
+	<div class = 'col-sm-6' style = 'width: 200px'>
+		<div class = 'btn btn-default' ng-click = 'submit(activity)'>Submit</div>
+		<div class = 'btn btn-default' ui-sref = 'activity'>Close</div>
+	</div>
 
 </div>

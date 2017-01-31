@@ -11,12 +11,10 @@
 			if($scope.goalForm.$invalid){return;}
 
 			var named = {'gsfName': data.name}
-			delete data.name
-
+	
 			var data = arrToObject.create(Object.values(data))
 			
 			var dataJson = Object.assign(data, named)
-
 			$http.post('api/goals', dataJson)
 				.then(function onSuccess(response) {
 					$state.reload()

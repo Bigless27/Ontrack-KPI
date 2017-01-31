@@ -10,4 +10,4 @@ var ActivitySchema = new Schema({
 	any: {}
 })
 
-module.exports = mongoose.model('acitivty', ActivitySchema)
+module.exports = mongoose.model('activity', ActivitySchema)

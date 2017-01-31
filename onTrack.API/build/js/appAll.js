@@ -197,6 +197,56 @@
 		// 	}
 		// })
 }());
+(function() {
+	angular.module('onTrack')
+		.factory('arrToObject', function() {
+			var service = {};
+			service.create = function(values) {
+				var obj = {}
+				while (values.length) {
+					var kv = values.splice(0,2)
+					obj[kv[0]] = kv[1]
+				}
+				return obj
+			}
+			return service
+		})
+
+		.factory('submitFormat', function() {
+			var service = {}
+
+			service.addGoalFormat = function(obj) {
+				var goalArr = Object.values(obj).filter(x => {return typeof(x) === 'string'})
+				if (goalArr) {
+					return goalArr
+				}
+				else{
+					return {}
+				}
+			}
+
+			service.generateKVObj = function(obj) {
+				var keys = Object.keys(obj)
+				var values = Object.values(obj)
+
+				var solution = keys.map((x,i) => {return {'key': x, 'value': values[i]}})
+
+				return solution
+			}
+
+			service.nestedObj = function(obj) {
+				 return obj.filter(x => {return typeof(x) === 'object'})
+			}
+
+			service.kvPair = function(obj) {
+				service.newGoal = {}
+				obj.forEach(x => { return service.newGoal[x.key] = x.value})
+				return service.newGoal
+			}
+
+			return service
+		})
+}());
 angular.module("templates", []).run(["$templateCache", function($templateCache) {$templateCache.put("multiple-autocomplete-tpl.html","<div class=\"ng-ms form-item-container\">\r\n    <ul class=\"list-inline\">\r\n        <li ng-repeat=\"item in modelArr\">\r\n			<span ng-if=\"objectProperty == undefined || objectProperty == \'\'\">\r\n				{{item}} <span class=\"remove\" ng-click=\"removeAddedValues(item)\">\r\n                <i class=\"glyphicon glyphicon-remove\"></i></span>&nbsp;\r\n			</span>\r\n            <span ng-if=\"objectProperty != undefined && objectProperty != \'\'\">\r\n				{{item[objectProperty]}} <span class=\"remove\" ng-click=\"removeAddedValues(item)\">\r\n                <i class=\"glyphicon glyphicon-remove\"></i></span>&nbsp;\r\n			</span>\r\n        </li>\r\n        <li>\r\n            <input name=\"{{name}}\" ng-model=\"inputValue\" placeholder=\"\" ng-keydown=\"keyParser($event)\"\r\n                   err-msg-required=\"{{errMsgRequired}}\"\r\n                   ng-focus=\"onFocus()\" ng-blur=\"onBlur()\" ng-required=\"!modelArr.length && isRequired\"\r\n                    ng-change=\"onChange()\">\r\n        </li>\r\n    </ul>\r\n</div>\r\n<div class=\"autocomplete-list\" ng-show=\"isFocused || isHover\" ng-mouseenter=\"onMouseEnter()\" ng-mouseleave=\"onMouseLeave()\">\r\n    <ul ng-if=\"objectProperty == undefined || objectProperty == \'\'\">\r\n        <li ng-class=\"{\'autocomplete-active\' : selectedItemIndex == $index}\"\r\n            ng-repeat=\"suggestion in suggestionsArr | filter : inputValue | filter : alreadyAddedValues\"\r\n            ng-click=\"onSuggestedItemsClick(suggestion)\" ng-mouseenter=\"mouseEnterOnItem($index)\">\r\n            {{suggestion}}\r\n        </li>\r\n    </ul>\r\n    <ul ng-if=\"objectProperty != undefined && objectProperty != \'\'\">\r\n        <li ng-class=\"{\'autocomplete-active\' : selectedItemIndex == $index}\"\r\n            ng-repeat=\"suggestion in suggestionsArr | filter : inputValue | filter : alreadyAddedValues\"\r\n            ng-click=\"onSuggestedItemsClick(suggestion)\" ng-mouseenter=\"mouseEnterOnItem($index)\">\r\n            {{suggestion[objectProperty]}}\r\n        </li>\r\n    </ul>\r\n</div>");}]);
 (function () {
     //declare all modules and their dependencies.
@@ -477,56 +527,6 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 			}
 		}
 	})
-}());
-(function() {
-	angular.module('onTrack')
-		.factory('arrToObject', function() {
-			var service = {};
-			service.create = function(values) {
-				var obj = {}
-				while (values.length) {
-					var kv = values.splice(0,2)
-					obj[kv[0]] = kv[1]
-				}
-				return obj
-			}
-			return service
-		})
-
-		.factory('submitFormat', function() {
-			var service = {}
-
-			service.addGoalFormat = function(obj) {
-				var goalArr = Object.values(obj).filter(x => {return typeof(x) === 'string'})
-				if (goalArr) {
-					return goalArr
-				}
-				else{
-					return {}
-				}
-			}
-
-			service.generateKVObj = function(obj) {
-				var keys = Object.keys(obj)
-				var values = Object.values(obj)
-
-				var solution = keys.map((x,i) => {return {'key': x, 'value': values[i]}})
-
-				return solution
-			}
-
-			service.nestedObj = function(obj) {
-				 return obj.filter(x => {return typeof(x) === 'object'})
-			}
-
-			service.kvPair = function(obj) {
-				service.newGoal = {}
-				obj.forEach(x => { return service.newGoal[x.key] = x.value})
-				return service.newGoal
-			}
-
-			return service
-		})
 }());
 (function() {
 	angular.module('onTrack')
@@ -977,13 +977,40 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('ActivityFormController', ['$scope', '$state', '$http', '$stateParams',
-		function($scope, $state, $http, $stateParams) {
+	.controller('ActivityFormController', ['$scope', '$state', '$http', '$stateParams', 'arrToObject',
+		function($scope, $state, $http, $stateParams, arrToObject) {
 
 			$scope.teamChecker = false
 
+			$scope.tracker = 0;
+
+			$scope.submit = function(data) {
+				$scope.$broadcast('show-errors-check-validity');
+
+				if($scope.activityForm.$invalid){return;}
+
+				var props = {'asfName': data.name, 'team': data.team, 
+					'user': data.users}
+				delete data.name
+				delete data.team
+				delete data.users
+
+				var data = arrToObject.create(Object.values(data))
+			
+				var dataJson = Object.assign(data, props)
+
+
+				$http.post('api/activity', dataJson)
+				.then(function onSuccess(response) {
+					$state.reload()
+				})
+				.catch(function onError(response) {
+					console.log(response)
+				})
+			}
+
 			$scope.setUsers = function() {
-				if(!$scope.teams) return
+				if(!$scope.activity.team) return
 				else {
 					$scope.teamChecker = false
 					var usersFiltered = $scope.users.filter( x => {return x.teamId.includes($scope.activity.team._id)})
@@ -1021,6 +1048,80 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 			getUsers()
 			getTeams()
 		}])
+}());
+(function() {
+	angular.module('onTrack')
+		.directive('addActivity', function() {
+			return{
+				restrict: 'E',
+				template: '<div add-fields-table class = "btn btn-default">Click to add key-value pair</div>'
+			}
+		})
+
+		.directive('addButtonActivity', function() {
+				return{
+					restrict: 'E',
+					template: '<div add-fields-activity class = "btn btn-default">Click to add key-value pair</div>'
+				}
+		})
+
+		.directive('removeOneActivity', function() {
+			return {
+				restrict: 'E',
+				template: '<div class = "btn btn-default">remove a pair</div>',
+				link: function(scope, element, attrs) {
+					element.bind('click', function() {
+						if (!$('#space-for-buttons').children().length) {
+							$('.table-removable').last().remove()
+							if(scope.goal) {
+								scope.goal.pop()
+							}
+						}
+						$('#space-for-buttons').children().last().remove()
+					})
+				}
+			}
+		})
+
+		.directive('addFieldsActivity', function($compile) {
+			return function(scope, element, attrs) {
+
+				function activityFormField(i) {
+					return "<div class = 'fieldForm'>"+
+					"<hr>" +
+					"<form id = 'edit' name = 'activityForm' role = 'form' data-toggle = 'validator'>" +
+						"<div class = 'form-group' show-errors>" +
+							"<lable for = 'key' class = 'control-label'>Key</label>" +
+							"<div class = 'input-group'>" +
+								"<span class = 'input-group-addon'><i class = 'glyphicon glyphicon-user'></i></span>" +
+								"<input name = 'key' type = 'text' ng-model = activity.key" + scope.tracker + ' ' + "class = 'form-control' placeholder = 'enter a key' required>" +
+							"</div>"+
+							"<p class= 'help-block' ng-if = 'activityForm.key.$error.required'>Key is required</p>" +
+						"</div>" +
+						"<div class = 'form-group' show-errors>" +
+							"<lable for = 'value' class = control-label'>Value</label>" +
+							"<div class = 'input-group'>" +
+								"<span class = 'input-group-addon'><i class = 'glyphicon glyphicon-user'></i></span>" +
+								"<input name = 'value' type = 'text' ng-model = activity.value" + scope.tracker + ' ' + "class = 'form-control' placeholder = 'enter a value' required>" + 
+							"</div>" +
+							"<p class = 'help-block' ng-if = 'activityForm.value.$error.required'>Value is required</p>" +
+						"</div>" +
+					"</form>" +
+					"</div>"
+				}
+				
+				if(scope.tracker < 1) {
+					angular.element(document.getElementById('space-for-buttons'))
+						.append($compile(activityFormField(scope.tracker))(scope))
+				}
+
+				element.bind("click", function(){
+					scope.tracker++;
+					angular.element(document.getElementById('space-for-buttons'))
+						.append($compile(activityFormField(scope.tracker))(scope))
+				})
+			}
+		})
 }());
 (function() {
 	angular.module('onTrack')
@@ -1577,6 +1678,84 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 }());
 (function() {
 	angular.module('onTrack')
+	.controller('OwnerController', ['$scope', '$state', '$http', '$window', '$stateParams', 
+		function($scope, $state, $http, $window, $stateParams) {
+
+			$scope.optionsList = []
+			$scope.success = false
+
+			$scope.transfer = function(data) {
+				var token = $window.sessionStorage['jwt']
+				$scope.team['owner'] = [data]
+
+				$http.put('api/teams/' + $stateParams.id, $scope.team, {
+					headers: {
+						'Authorization': `Bearer ${token}`
+					}
+				})
+				.then(function(response) {
+					$state.reload()
+				})
+				.catch(function(response) {
+					console.log(response)
+				}) 
+			}
+
+			// function getUsers() {
+			// 	$http.get('api/users')
+			// 		.success(function(users) {
+			// 			users.forEach(function(user){
+			// 				if(user){
+			// 					if (user.email !== $scope.team.owner[0].email){
+			// 						$scope.optionsList.push(
+			// 								{firstName: user.firstName, lastName: user.lastName, userId: user._id, 
+			// 									email: user.email, fullName: user.firstName + ' ' + user.lastName}
+			// 						)
+			// 					}
+			// 				}
+			// 				else{
+			// 					$scope.optionsList = [{name: 'No users'}]
+			// 				}
+			// 			})
+			// 		})
+			// 		.error(function(err) {
+			// 			console.log(err)
+			// 		})
+			// }
+
+			function getTeam() {
+				$http.get('api/teams/' + $stateParams.id)
+					.then(function(response) {
+						$scope.team = response.data
+						console.log(response.data)
+						response.data.admins.forEach(function(user){
+							if(user){
+								if (user.email !== $scope.team.owner[0].email){
+									$scope.optionsList.push(
+											{firstName: user.firstName, lastName: user.lastName, userId: user._id, 
+												email: user.email, fullName: user.firstName + ' ' + user.lastName}
+									)
+								}
+							}
+							else{
+								$scope.optionsList = [{fullName: 'No Users, only admins can be owners'}]
+							}
+						})
+						if ($scope.optionsList.length == 0) {
+							$scope.optionsList = [{fullName: 'No Users, only admins can be owners'}]	
+						}
+						// getUsers()
+					})
+					.catch(function(response) {
+						console.log(response)
+					})
+			}
+
+			getTeam()
+		}])
+} ());
+(function() {
+	angular.module('onTrack')
 	.controller('AdminController', ['$scope', '$state', '$http', '$window', '$stateParams',
 		function($scope, $state, $http, $window, $stateParams) {
 		
@@ -1738,84 +1917,6 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 
 	}])
 }());
-(function() {
-	angular.module('onTrack')
-	.controller('OwnerController', ['$scope', '$state', '$http', '$window', '$stateParams', 
-		function($scope, $state, $http, $window, $stateParams) {
-
-			$scope.optionsList = []
-			$scope.success = false
-
-			$scope.transfer = function(data) {
-				var token = $window.sessionStorage['jwt']
-				$scope.team['owner'] = [data]
-
-				$http.put('api/teams/' + $stateParams.id, $scope.team, {
-					headers: {
-						'Authorization': `Bearer ${token}`
-					}
-				})
-				.then(function(response) {
-					$state.reload()
-				})
-				.catch(function(response) {
-					console.log(response)
-				}) 
-			}
-
-			// function getUsers() {
-			// 	$http.get('api/users')
-			// 		.success(function(users) {
-			// 			users.forEach(function(user){
-			// 				if(user){
-			// 					if (user.email !== $scope.team.owner[0].email){
-			// 						$scope.optionsList.push(
-			// 								{firstName: user.firstName, lastName: user.lastName, userId: user._id, 
-			// 									email: user.email, fullName: user.firstName + ' ' + user.lastName}
-			// 						)
-			// 					}
-			// 				}
-			// 				else{
-			// 					$scope.optionsList = [{name: 'No users'}]
-			// 				}
-			// 			})
-			// 		})
-			// 		.error(function(err) {
-			// 			console.log(err)
-			// 		})
-			// }
-
-			function getTeam() {
-				$http.get('api/teams/' + $stateParams.id)
-					.then(function(response) {
-						$scope.team = response.data
-						console.log(response.data)
-						response.data.admins.forEach(function(user){
-							if(user){
-								if (user.email !== $scope.team.owner[0].email){
-									$scope.optionsList.push(
-											{firstName: user.firstName, lastName: user.lastName, userId: user._id, 
-												email: user.email, fullName: user.firstName + ' ' + user.lastName}
-									)
-								}
-							}
-							else{
-								$scope.optionsList = [{fullName: 'No Users, only admins can be owners'}]
-							}
-						})
-						if ($scope.optionsList.length == 0) {
-							$scope.optionsList = [{fullName: 'No Users, only admins can be owners'}]	
-						}
-						// getUsers()
-					})
-					.catch(function(response) {
-						console.log(response)
-					})
-			}
-
-			getTeam()
-		}])
-} ());
 (function() {
 	angular.module('onTrack')
 	.controller('UserFormController', ['$scope', '$state', '$http', '$window', 
@@ -2164,12 +2265,10 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 			if($scope.goalForm.$invalid){return;}
 
 			var named = {'gsfName': data.name}
-			delete data.name
-
+	
 			var data = arrToObject.create(Object.values(data))
 			
 			var dataJson = Object.assign(data, named)
-
 			$http.post('api/goals', dataJson)
 				.then(function onSuccess(response) {
 					$state.reload()
