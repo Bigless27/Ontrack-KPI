@@ -13,7 +13,7 @@
 				if($scope.activityForm.$invalid){return;}
 
 				var props = {'asfName': data.name, 'team': data.team, 
-					'user': data.users}
+					'users': data.users}
 				delete data.name
 				delete data.team
 				delete data.users

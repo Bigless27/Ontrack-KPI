@@ -8,6 +8,8 @@ var customizer = require('../updateCustomizer')
 
 exports.params = function(req, res, next, id) {
 	Activity.findById(id)
+		.populate('team')
+		.populate('users')
 		.exec(function(err, activity) {
 			if(err) return next(err);
 			req.activity = activity
@@ -35,7 +37,7 @@ exports.post = function(req, res, next) { //yup
 	var newActivity = req.body;
 
 	var name = {'asfName': newActivity.asfName, 'team': newActivity.team, 
-					'user': newActivity.users}
+					'users': newActivity.users}
 	delete newActivity.asfName
 	delete newActivity.team
 	delete newActivity.users

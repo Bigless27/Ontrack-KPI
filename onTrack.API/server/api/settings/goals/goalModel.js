@@ -5,6 +5,7 @@ var Promotion = require('../../promotions/promotionModel');
 
 // you can pass any string into the goal schema
 var GoalSchema = new Schema({
+	//we use gsfName here and in activity to make sure there are no clahes with the any field
 	gsfName: {type: String, required: true},
 	any: {}
 })

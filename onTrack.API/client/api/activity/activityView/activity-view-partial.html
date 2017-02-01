@@ -1,1 +1,64 @@
-<h1>Hello</h1>
+<h1>View Activity</h1>
+<div class = 'container'>
+	<div class = 'col col-lg-6'>
+		<div class = 'row'>
+			<div class = 'btn btn-default' ng-click = 'editActivity()'>Edit</div>
+			<div class = 'btn btn-default' ng-click = "deleteActivity()">Delete</div>
+			<div class = 'btn btn-default' ui-sref = 'activity'>Back</div>
+		</div>
+		<div class = 'row' ng-if = 'box' style = 'padding: 5px 0px'>
+			<div class = 'btn btn-info' ng-click = 'submit(activity)'><i class = 'glyphicon glyphicon-ok'></i></div>
+			<div class = 'btn btn-danger' ng-click = 'cancel()'><i class = 'glyphicon glyphicon-remove'></i></div>
+			<add-button></add-button>
+			<remove-one></remove-one>
+		</div>
+		<div class = 'row'>
+			<div>
+				<table id = 'add-goal' class = 'table table-bordered'>
+					<tr>
+						<th>Name</th>
+						<td>
+							<span ng-if = '!box'>{{activity.asfName}}</span>
+							<input ng-if = 'box' ng-model = 'activity.asfName'>
+						</td>
+					</tr>
+					<tr>
+						<th>Team</th>
+						<td>
+							<span ng-if = '!box'>{{activity.team.name}}</span>
+							<input ng-if = 'box' ng-model = 'activity.team'>
+						</td>
+					</tr>
+					<tr>
+						<th>Users</th>
+						<td>
+							<span ng-if = '!box'>
+								<ul ng-repeat = 'u in activity.users'>
+									<li>{{u.fullName}}</li>
+								</ul>
+
+							</span>
+
+							<input ng-if = 'box' ng-model = 'activity.team'>
+						</td>
+					</tr>
+					<tr>
+						<th>Key</th>
+						<th>Value</th>
+					</tr>
+					<tr class = 'table-removable' ng-repeat = 'a in activity'>
+						<td>
+							<span ng-if = '!box'>{{a.key}}</span>
+							<input ng-if = 'box' ng-model = "a.key">
+						</td>
+						<td>
+							<span ng-if = '!box'>{{a.value}}</span>
+							<input ng-if = 'box' ng-model = "a.value">
+						</td>
+					</tr>
+				</table>
+			</div>
+			<div  id = 'space-for-buttons'></div>
+		</div>
+	</div>
+</div>
