@@ -34,6 +34,7 @@ exports.getOne = function(req, res, next) {
 }
 
 exports.post = function(req, res, next) { //yup
+	//please come back and refactor
 	var newActivity = req.body;
 
 	var name = {'asfName': newActivity.asfName, 'team': newActivity.team, 
@@ -43,7 +44,6 @@ exports.post = function(req, res, next) { //yup
 	delete newActivity.users
 
 	var data = Object.assign({any: newActivity}, name)
-
 	
 	Activity.create(data)
 		.then(function(activity) {
@@ -54,11 +54,19 @@ exports.post = function(req, res, next) { //yup
 };
 
 exports.put = function(req, res, next) {// works
-  	var activity = req.activity;
+  	var activity = req.activity
 
-	var update = req.body;
+	activity.asfName = req.body.asfName
+	activity.team = req.body.team
+	activity.users = req.body.users
 
-	_.mergeWith(activity, update, customizer.custom);
+
+	delete req.body.asfName
+	delete req.body.team
+	delete req.body.users
+
+
+	activity.any = req.body
 
 	activity.save(function(err, saved) {
 	if (err) {

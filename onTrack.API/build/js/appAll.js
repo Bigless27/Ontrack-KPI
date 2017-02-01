@@ -598,34 +598,6 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('LoginController', ['$scope', '$state', '$window', '$http',
-	 function($scope, $state, $window, $http) {
-
-			$scope.logUserIn = function(user) {
-				$scope.$broadcast('show-errors-check-validity');
-
-
-				if($scope.userForm.$invalid){return;}
-
-				$scope.err = true
-
-				$http.post('auth/signin', user)
-					.then((response) => {
-
-						$scope.err = false
-						$window.sessionStorage.jwt = response.data['token']
-						$state.go('main')
-					})
-					.catch((response) => {
-						$scope.err = true
-						$scope.errMessage = response
-					})
-			}
-
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 	.controller('MainController', ['$scope', '$state', '$http', '$window', 
 		function($scope, $state, $http, $window) {
 
@@ -657,6 +629,24 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 			getUsers() 
 			getTeams()
 	}])
+}());
+(function(){
+	angular.module('onTrack')
+	.controller('PromotionsController', ['$scope', '$state', '$http', 
+		function($scope, $state, $http){
+
+			function getPromotions() {
+				$http.get('api/promotions')
+					.then( response => {
+						$scope.promotions = response.data
+					})
+					.catch( response => {
+						console.log(response)
+					})
+			}
+
+			getPromotions()
+		}])
 }());
 (function() {
 	angular.module('onTrack')
@@ -713,23 +703,55 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 
 	}])
 }());
-(function(){
+(function() {
 	angular.module('onTrack')
-	.controller('PromotionsController', ['$scope', '$state', '$http', 
-		function($scope, $state, $http){
+	.controller('LoginController', ['$scope', '$state', '$window', '$http',
+	 function($scope, $state, $window, $http) {
 
-			function getPromotions() {
-				$http.get('api/promotions')
-					.then( response => {
-						$scope.promotions = response.data
+			$scope.logUserIn = function(user) {
+				$scope.$broadcast('show-errors-check-validity');
+
+
+				if($scope.userForm.$invalid){return;}
+
+				$scope.err = true
+
+				$http.post('auth/signin', user)
+					.then((response) => {
+
+						$scope.err = false
+						$window.sessionStorage.jwt = response.data['token']
+						$state.go('main')
 					})
-					.catch( response => {
-						console.log(response)
+					.catch((response) => {
+						$scope.err = true
+						$scope.errMessage = response
 					})
 			}
 
-			getPromotions()
-		}])
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
+		function($scope, $state, $http, $window) {
+		$scope.signUp = function(user) {
+			$scope.$broadcast('show-errors-check-validity')
+
+			if ($scope.userForm.$invalid){return;}
+			$scope.err = false
+			$http.post('api/users', user)
+				.then(function(response) {
+					$scope.err = false
+					$window.sessionStorage.jwt = response.data['token']
+					$state.go('main')
+				})
+				.catch(function(reponse) {
+					$scope.err = true
+					$scope.errMessage = response.message
+				})
+		}
+	}])
 }());
 (function() {
 	angular.module('onTrack')
@@ -1005,28 +1027,6 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 }());
 (function() {
 	angular.module('onTrack')
-	.controller('SignupController', ['$scope', '$state', '$http', '$window', 
-		function($scope, $state, $http, $window) {
-		$scope.signUp = function(user) {
-			$scope.$broadcast('show-errors-check-validity')
-
-			if ($scope.userForm.$invalid){return;}
-			$scope.err = false
-			$http.post('api/users', user)
-				.then(function(response) {
-					$scope.err = false
-					$window.sessionStorage.jwt = response.data['token']
-					$state.go('main')
-				})
-				.catch(function(reponse) {
-					$scope.err = true
-					$scope.errMessage = response.message
-				})
-		}
-	}])
-}());
-(function() {
-	angular.module('onTrack')
 		.directive('addActivity', function() {
 			return{
 				restrict: 'E',
@@ -1211,6 +1211,28 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 					})
 			}
 
+			$scope.submit = function(activity) {
+				var name = {'asfName': activity.asfName, 'team': activity.team, 'users': activity.users}
+				delete activity.gsfName
+				delete activity.team
+				delete activity.asfName
+
+
+				var newActivity = submitFormat.kvPair(activity)
+
+				var addedActivitys = submitFormat.addGoalFormat(activity)
+
+				updatedActivity = Object.assign(newActivity, arrToObject.create(addedActivitys), name)
+				
+				$http.put('api/activity/' + $stateParams.id, updatedActivity)	
+					.then(response => {
+						$state.reload()
+					})
+					.catch(response => {	
+						console.log(response)
+					})
+			}
+
 			function getTeams() {
 				$http.get('api/teams')
 					.then(response => {
@@ -1235,61 +1257,6 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 			getTeams()
 			getActivity()
 		}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('GoalsController', ['$scope', '$state', '$window', '$http', '$stateParams',
-	function($scope, $state, $window, $http, $stateParams) {
-		function getGoals() {
-			$http.get('api/goals')
-				.then(function onSuccess(response) {
-					$scope.goals = response.data
-				})
-				.catch(function onError(response) {
-					console.log(response)
-				})
-		}
-
-		getGoals()
-	}])
-
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('ProgressController', ['$scope', '$http', '$stateParams', 
-		function($scope, $http, $stateParams) {
-
-			function getProgresses() {
-				$http.get('api/progress-settings')
-					.then(response => {
-						$scope.progress = response.data
-					})
-					.catch(response => {
-						console.log(response)
-					})
-			}
-
-			getProgresses()
-
-	}])
-}());
-(function() {
-	angular.module('onTrack')
-	.controller('RewardsController', ['$scope', '$http', '$state', 
-		function($scope, $http, $state) {
-
-			function getRewards() {
-				$http.get('api/rewards')
-					.then(response => {
-						$scope.rewards = response.data
-					})
-					.catch(response => {
-						console.log(response)
-					})
-			}
-
-			getRewards()
-	}])
 }());
 (function() {
 	angular.module('onTrack')
@@ -1788,6 +1755,61 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
 
 			getTeam()
 		}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('GoalsController', ['$scope', '$state', '$window', '$http', '$stateParams',
+	function($scope, $state, $window, $http, $stateParams) {
+		function getGoals() {
+			$http.get('api/goals')
+				.then(function onSuccess(response) {
+					$scope.goals = response.data
+				})
+				.catch(function onError(response) {
+					console.log(response)
+				})
+		}
+
+		getGoals()
+	}])
+
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('ProgressController', ['$scope', '$http', '$stateParams', 
+		function($scope, $http, $stateParams) {
+
+			function getProgresses() {
+				$http.get('api/progress-settings')
+					.then(response => {
+						$scope.progress = response.data
+					})
+					.catch(response => {
+						console.log(response)
+					})
+			}
+
+			getProgresses()
+
+	}])
+}());
+(function() {
+	angular.module('onTrack')
+	.controller('RewardsController', ['$scope', '$http', '$state', 
+		function($scope, $http, $state) {
+
+			function getRewards() {
+				$http.get('api/rewards')
+					.then(response => {
+						$scope.rewards = response.data
+					})
+					.catch(response => {
+						console.log(response)
+					})
+			}
+
+			getRewards()
+	}])
 }());
 (function() {
 	angular.module('onTrack')

@@ -36,6 +36,28 @@
 					})
 			}
 
+			$scope.submit = function(activity) {
+				var name = {'asfName': activity.asfName, 'team': activity.team, 'users': activity.users}
+				delete activity.gsfName
+				delete activity.team
+				delete activity.asfName
+
+
+				var newActivity = submitFormat.kvPair(activity)
+
+				var addedActivitys = submitFormat.addGoalFormat(activity)
+
+				updatedActivity = Object.assign(newActivity, arrToObject.create(addedActivitys), name)
+				
+				$http.put('api/activity/' + $stateParams.id, updatedActivity)	
+					.then(response => {
+						$state.reload()
+					})
+					.catch(response => {	
+						console.log(response)
+					})
+			}
+
 			function getTeams() {
 				$http.get('api/teams')
 					.then(response => {
