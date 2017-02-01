@@ -29,7 +29,7 @@
 			</select>
 
 			<ul ng-if = 'filteredTeam' ng-repeat = 'a in filterdActivityTeam'>
-				<li><a href="">{{a.asfName}}</a></li>
+				<li><a href="" ui-sref = 'activityView({id: a._id})'>{{a.asfName}}</a></li>
 			</ul>
 		</div>
 	</div>

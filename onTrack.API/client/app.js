@@ -171,6 +171,11 @@
 						templateUrl: 'client/api/activity/form/activity-form-partial.html',
 						controller: 'ActivityFormController'
 					})
+					.state('activityView', {
+						url: '/activity/:id',
+						templateUrl: 'client/api/activity/activityView/activity-view-partial.html',
+						controller: 'ActivityViewController'
+					})
 					// // look to rename this state to something a little more Restful
 					// .state('activityView', {
 					// 	url: '/activity/:id',
