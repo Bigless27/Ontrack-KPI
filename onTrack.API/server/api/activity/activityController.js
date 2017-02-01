@@ -16,7 +16,7 @@ exports.params = function(req, res, next, id) {
 };
 
 exports.get = function(req, res, next) {
-	activity.find({})
+	Activity.find({})
 			.then(function(act) {
 				res.json(act)
 			}, function(err) {

@@ -1,6 +1,6 @@
 <div class = 'container'>
 	<h1>Activity</h1>
-	<div class = 'btn btn-default' ui-sref = 'activity.create'>Create Promotion</div>
+	<div class = 'btn btn-default' ui-sref = 'activity.create'>Create Activity</div>
 	<div class = 'btn btn-default' ui-sref = 'main'>Back</div>
 
 	<div class="row">
@@ -18,6 +18,19 @@
 	<div class = "row">
 		<div class = 'col-sm-6'>
 			<h4>Search By Team</h4>
+			<select
+				name = 'Team'
+				type = 'text'
+				ng-model = 'team'
+				ng-options = 't.name for t in teams'
+				required
+						>
+						<option value="" disabled selected>Select a Team</option>
+			</select>
+
+			<ul ng-if = 'filteredTeam' ng-repeat = 'a in filterdActivityTeam'>
+				<li><a href="">{{a.asfName}}</a></li>
+			</ul>
 		</div>
 	</div>
 	<div class="row">
@@ -25,7 +38,4 @@
 			<h4>Search By Users</h4>
 		</div>
 	</div>
-
-
-
 </div>
