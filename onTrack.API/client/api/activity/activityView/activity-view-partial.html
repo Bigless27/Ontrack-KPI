@@ -26,12 +26,13 @@
 						<th>Team</th>
 						<td>
 							<span ng-if = '!box'>{{activity.team.name}}</span>
-							<span ng-if = 'box' id = 'activity-team-edit'
-								 onbeforesave = 'updateActivityTeam($data)'
-								 style = 'color: black; border: none;' 
-								 editable-select = "activity.team"
-								 e-ng-options="s.name for s in teams">
-							</span>
+							<select
+									ng-if = 'box'
+									ng-model = "activity.team"
+									ng-options = 't.name for t in teams'
+								>
+								<option value="" disabled selected>Select a Team</option>
+							</select>
 						</td>
 					</tr>
 					<tr>
@@ -41,10 +42,14 @@
 								<ul ng-repeat = 'u in activity.users'>
 									<li>{{u.fullName}}</li>
 								</ul>
-
 							</span>
-
-							<input ng-if = 'box' ng-model = 'activity.team'>
+							<multiple-autocomplete 
+									ng-model="activity.users"
+				     				object-property = "fullName"
+				     				suggestions-arr= "users"
+				     				ng-if = 'box'
+				     				>
+							</multiple-autocomplete>
 						</td>
 					</tr>
 					<tr>

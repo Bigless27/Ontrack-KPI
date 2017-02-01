@@ -9,9 +9,6 @@
 
 			$scope.editActivity = function() {
 				$scope.box = true
-				$(document).on('click', '.activity-edit', function() {
-					$('#activity-team-edit')[0].click()
-				})
 			}
 
 			$scope.cancel = function() {
@@ -49,6 +46,17 @@
 					})
 			}
 
+			function getUsers() {
+				$http.get('api/users')
+					.then(response => {
+						response.data.forEach(x => {x.fullName = `${x.firstName} ${x.lastName}`})
+					})
+					.catch(response => {
+						console.log(response)
+					})
+			}
+
+			getUsers()
 			getTeams()
 			getActivity()
 		}])
