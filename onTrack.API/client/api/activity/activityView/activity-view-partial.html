@@ -2,7 +2,7 @@
 <div class = 'container'>
 	<div class = 'col col-lg-6'>
 		<div class = 'row'>
-			<div class = 'btn btn-default' ng-click = 'editActivity()'>Edit</div>
+			<div class = 'btn btn-default activity-edit' ng-click = 'editActivity()'>Edit</div>
 			<div class = 'btn btn-default' ng-click = "deleteActivity()">Delete</div>
 			<div class = 'btn btn-default' ui-sref = 'activity'>Back</div>
 		</div>
@@ -26,7 +26,12 @@
 						<th>Team</th>
 						<td>
 							<span ng-if = '!box'>{{activity.team.name}}</span>
-							<input ng-if = 'box' ng-model = 'activity.team'>
+							<span ng-if = 'box' id = 'activity-team-edit'
+								 onbeforesave = 'updateActivityTeam($data)'
+								 style = 'color: black; border: none;' 
+								 editable-select = "activity.team"
+								 e-ng-options="s.name for s in teams">
+							</span>
 						</td>
 					</tr>
 					<tr>
