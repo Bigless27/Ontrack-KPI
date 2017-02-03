@@ -23,6 +23,27 @@
 					}
 				})
 					.then( response => {
+						var team = response.data
+						response.data.promotions.forEach(promo => {
+							$http.get('api/promotions/' + promo.promoId)
+								.then( response => {
+									var promo = response.data
+									if (!promo.teamId) {
+										promo.teamId = []
+									}
+									console.log(team)
+
+									promo.teamId.push(team._id)
+
+									$http.put('api/promotions/' + promo._id + '/updateRefs', promo)
+										.catch(response => {
+											console.log(response)
+										})
+								})
+								.catch( response => {
+									console.log(response)
+								})
+						})
 						$state.reload()
 					})
 					.catch( response => {

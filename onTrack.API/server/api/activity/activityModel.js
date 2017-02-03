@@ -2,7 +2,9 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var _ = require('lodash');
 var User = require('../users/userModel')
+var Team = require('../teams/teamModel')
 var Promotion = require('../promotions/promotionModel')
+var Goals = require('../settings/goals/goalModel')
 
 var ActivitySchema = new Schema({
 	asfName: {type: String, required: true},
@@ -13,12 +15,19 @@ var ActivitySchema = new Schema({
 })
 
 ActivitySchema.pre('save', function(next) {
-	
-	this.users.forEach(userId => {
+	var activity = this
+
+	activity.users.forEach(userId => {
 		User.findById(userId)
 			.exec(function(err, user) {
 				if (err) next(err)
-				console.log(user)
+				
+
+				Promotion.find({'teamId': {$in : [activity.team]}})
+					.exec(function(err, promo) {
+						console.log(promo)
+					})
+
 			})
 	})
 

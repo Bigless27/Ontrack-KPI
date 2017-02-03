@@ -9,7 +9,7 @@ var PromotionSchema = new Schema({
 	rewards: [{type: Schema.Types.ObjectId, ref: 'reward'}],
 	achievementRule: {type: String, default: 'inclusive'},
 	goals: [{type: Schema.Types.ObjectId, ref: 'goal'}],
-	teamId: {type: Schema.Types.ObjectId, ref: 'team'},
+	teamId: [{type: Schema.Types.ObjectId, ref: 'team'}],
 	owner: {type: Schema.Types.ObjectId, ref: 'user'},
 	description: {type: String, required: true},
 	startDate: {type: Date, default: Date.now, required: true},

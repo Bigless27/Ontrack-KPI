@@ -10,7 +10,8 @@
 			$scope.submit = function(data) {
 				$scope.$broadcast('show-errors-check-validity');
 
-				if($scope.activityForm.$invalid){return;}
+				//not working for some reason
+				// if($scope.activityForm.$invalid){return;}
 
 				var props = {'asfName': data.name, 'team': data.team, 
 					'users': data.users}

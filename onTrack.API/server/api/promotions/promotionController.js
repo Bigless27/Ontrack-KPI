@@ -68,6 +68,7 @@ exports.updateRefs = function(req, res, next) {
 
 	promotion.goals = update.goals.map(x => typeof x === 'string' ? new ObjectId(x) : x)
 	promotion.rewards = update.rewards.map(x => typeof x === 'string' ? new ObjectId(x) : x)
+	promotion.teamId = update.teamId.map(x => typeof x === 'string' ? new ObjectId(x) : x)
 
 	promotion.save(function(err, saved) {
 		if(err) {
