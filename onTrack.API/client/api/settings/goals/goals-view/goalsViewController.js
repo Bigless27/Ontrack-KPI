@@ -7,12 +7,25 @@
 
 		$scope.tracker = 1
 
+		function getProgress() {
+			$http.get('api/progress-settings')
+				.then(response => {
+					$scope.progress = response.data
+				})
+				.catch(response => {
+					console.log(response)
+				})
+		}
+
+		getProgress()
+
 		function getGoal() {
 			$http.get('api/goals/' + $stateParams.id)
 				.then(response => {
 					var kvObj = submitFormat.generateKVObj(response.data.any)
 				
-					var combinedFormatted = Object.assign(kvObj, {'gsfName': response.data.gsfName})
+					var combinedFormatted = Object.assign(kvObj, {'gsfName': response.data.gsfName,
+					 'progress': response.data.progress})
 
 					$scope.goal = combinedFormatted
 
@@ -30,8 +43,11 @@
 
 		$scope.submit = function(goal) {
 
-			var name = {'gsfName': goal.gsfName}
+			//bug in submitting progress from the ng-select
+
+			var name = {'gsfName': goal.gsfName, 'progress': goal.progress.name._id}
 			delete goal.gsfName
+			delete goal.progress
 
 			var newGoal = submitFormat.kvPair(goal)
 
@@ -39,6 +55,7 @@
 
 			updatedGoal = Object.assign(newGoal, arrToObject.create(addedGoals), name)
 			
+
 			$http.put('api/goals/' + $stateParams.id, updatedGoal)	
 				.then(response => {
 					$state.reload()

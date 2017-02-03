@@ -16,10 +16,12 @@ var User = require('../../users/userModel')
 // })
 
 var ProgressSchema = new Schema({
-	name: {type: String, required: true},
+	name: {type: String, unique: true, required: true},
 	type: {type: String, required: true},
 	description: {type: String}
 })
+
+
 
 // ProgressSchema.pre('save', function(next) {
 // 	var progSetting = this

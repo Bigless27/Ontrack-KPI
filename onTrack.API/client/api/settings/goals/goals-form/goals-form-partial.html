@@ -11,6 +11,25 @@
 			</div>
 			<p class = 'help-block' ng-if = 'goalForm.name.$error.required'></p>
 		</div>
+		<div class = 'form-group'>
+			<label for = 'name' class = 'control-label'>
+				Progress <span style = 'font-size: 10px'>*one is created by default</span>
+			</label>
+			<div ng-if = '!prog' class = 'input-group'>
+				<div class = 'btn btn-default' ng-click = 'toggleProg()'>Add Existing Progress</div>
+			</div>
+			<div ng-if = 'prog' class="input-group">
+				<select
+						ng-model = 'goal.progress'
+						ng-options = 'p.name for p in progress'
+					>
+					<option value="" disabled selected>Select a progress</option>
+				</select>
+				<span style = 'margin: 5px;' class = 'btn btn-danger' ng-click = 'toggleProg()'>Cancel</span>
+			</div>
+
+						
+		</div>
 	</form>
 	<div id = 'space-for-buttons'></div>
 	<remove-one></remove-one>

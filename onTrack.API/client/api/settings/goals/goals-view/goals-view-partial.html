@@ -23,6 +23,19 @@
 						</td>
 					</tr>
 					<tr>
+						<th>Progress</th>
+						<td>
+							<span ng-if = '!box'>{{goal.progress.name}}</span>
+							<select 
+								ng-if = 'box' 
+								ng-model = 'goal.progress.name'
+								ng-options = 'p.name for p in progress'
+							>
+							<option value="" disabled selected>Select a progress</option>
+						</select>
+						</td>
+					</tr>
+					<tr>
 						<th>Key</th>
 						<th>Value</th>
 					</tr>
