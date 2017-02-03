@@ -39,7 +39,13 @@
 			</div>
 			<p class = 'help-block' ng-if = 'activityForm.value.$error.required'>Team is required</p>
 		</div>
-
+		<div class = 'form-group'>
+			<label for = 'js Object' class = 'control-label'>Js object</label>
+			<div class = 'input-group'>
+				<span class = 'input-group-addon'><i class = 'glyphicon glyphicon-user'></i></span>
+				<input name = 'object' type = 'text'  class = 'form-control' placeholder = 'insert JS Object' required>
+			</div>
+		</div>
 		<div class = 'form-group'>
 					<label for = 'rewards' class = 'control-label'>Users</label>
 					<div class = 'input-group'>
@@ -54,7 +60,7 @@
 					</div>
 					<p class = 'alert alert-danger' ng-if = 'typeChecker'>Please select a team first</p>
 				</div>
-			</div>
+		</div>
 	</form>
 	<div id="space-for-buttons"></div>
 	<add-button-activity></add-button-activity>
