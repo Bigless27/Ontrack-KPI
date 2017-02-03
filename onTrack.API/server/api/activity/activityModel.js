@@ -32,6 +32,7 @@ ActivitySchema.pre('save', function(next) {
 									.populate('progress')
 									.exec(function(err, goal){
 										if(err) next(err)
+										console.log('hey')
 										
 										if(!goal.any.kpi) {
 											next(new Error('Goal does not have Kpi value'))
@@ -40,6 +41,11 @@ ActivitySchema.pre('save', function(next) {
 										if (!eval(goal.any.kpi)){
 											next(new Error('No matches with goal and activity'))
 										}
+										console.log(goal)
+										console.log(user)
+										console.log(user.userProgress[0].progressId)
+										console.log(goal.progress._id)
+
 										// Know we know that goal is a match
 										user.userProgress.forEach(userProg => {
 											if (userProg.progressId.toString() === goal.progress._id.toString()) {
@@ -54,9 +60,8 @@ ActivitySchema.pre('save', function(next) {
 													.exec(function(err, userProg) {
 														userProg.value += parseInt(activity.any.value)
 
-														userProg.save(function(err, saved) {
+														userProg.save(function(err) {
 															if(err) next(err)
-															console.log(saved)
 														})
 													})
 												

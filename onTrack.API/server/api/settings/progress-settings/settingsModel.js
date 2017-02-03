@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var _ = require('lodash');
 var User = require('../../users/userModel')
+var user
 
 
 // var usersSchema = new Schema({
@@ -20,6 +21,7 @@ var ProgressSchema = new Schema({
 	type: {type: String, required: true},
 	description: {type: String}
 })
+
 
 
 
