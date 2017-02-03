@@ -73,7 +73,8 @@
 
 				promotion.goals = promotion.goals.map(x => x._id)
 
-				$http.post('api/promotions', promotion ,{
+
+				$http.post('api/promotions', promotion, {
 					headers: {
 						"Authorization": `Bearer ${token}`
 					}

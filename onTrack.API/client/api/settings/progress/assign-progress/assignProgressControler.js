@@ -33,7 +33,6 @@
 
 			function createUserProgress(data) {
 				data.progress.forEach(progress => {
-
 					var userProgress = {value: 0, userId: data._id,
 										 progressId: progress }
 

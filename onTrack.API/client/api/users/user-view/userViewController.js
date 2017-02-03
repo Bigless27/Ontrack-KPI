@@ -153,10 +153,9 @@
 			}
 
 			$scope.remove = function(progId) {
-				var index = $scope.user.progress.findIndex(x => x._id === progId)
-				$scope.user.progress.splice(index, 1)
+				var userProgId = $scope.user.userProgress.find(x => x.progressId === progId)
 
-				$http.put('api/users/' + $stateParams.id, $scope.user)
+				$http.delete('api/user-progress/' + userProgId._id )
 					.then(response => {
 						$state.reload()
 						

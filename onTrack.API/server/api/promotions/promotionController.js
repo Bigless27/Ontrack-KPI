@@ -36,6 +36,7 @@ exports.getOne = function(req, res, next) {
 exports.post = function(req, res, next) { //yup
 
 	var newpromotion = req.body;
+	console.log(newpromotion)
 	
 	Promotion.create(newpromotion)
 		.then(function(team) {

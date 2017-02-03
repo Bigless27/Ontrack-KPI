@@ -44,8 +44,19 @@
 		$scope.submit = function(goal) {
 
 			//bug in submitting progress from the ng-select
+			//fix this logic below, refactor. wont retain value on submit
+			var holder;
+			if (!goal.progress) {
+				if($scope.goal.progress) {
+					holder = $scope.goal.progress._id
+				}
+			}
+			else{
+				holder = goal.progress.name._id
+			}
+			
 
-			var name = {'gsfName': goal.gsfName, 'progress': goal.progress.name._id}
+			var name = {'gsfName': goal.gsfName, 'progress': holder}
 			delete goal.gsfName
 			delete goal.progress
 
