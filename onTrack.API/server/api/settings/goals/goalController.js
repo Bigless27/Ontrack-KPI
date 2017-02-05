@@ -38,7 +38,10 @@ exports.post = function(req, res, next) { //yup
 	delete newGoal.gsfName
 	delete newGoal.progress
 
+	console.log(newGoal)
+	console.log(name)
 	var data = Object.assign({any: newGoal}, name)
+	console.log(data)
 
 	Goal.create(data) 
 		.then(function(goal) {
