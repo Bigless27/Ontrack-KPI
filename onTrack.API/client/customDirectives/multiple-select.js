@@ -105,7 +105,6 @@ angular.module("templates", []).run(["$templateCache", function($templateCache) 
                         if(scope.afterSelectItem && typeof(scope.afterSelectItem) == 'function')
                             scope.afterSelectItem(selectedValue);
                         scope.inputValue = ""; 
-
                         // var newRenderIndex = scope.suggestionsArr.findIndex(sug => {return scope.alreadyAddedValues(sug)})
                     };
 

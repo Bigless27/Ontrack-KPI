@@ -8,6 +8,7 @@
 			})
 
 			function getGoal(id) {
+				if (!id) return 
 				$http.get(`/api/goals/${id}`)
 					.then(response => {
 						var kvObj = submitFormat.generateKVObj(response.data.any)
