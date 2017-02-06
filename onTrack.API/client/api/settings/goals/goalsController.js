@@ -5,6 +5,7 @@
 		function getGoals() {
 			$http.get('api/goals')
 				.then(function onSuccess(response) {
+					console.log(response.data)
 					$scope.goals = response.data
 				})
 				.catch(function onError(response) {

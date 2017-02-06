@@ -47,4 +47,34 @@
 
 			return service
 		})
+
+		//add one that attaches web token for authorization later
+		//Doesn't really save a lot of typing. Only a tiny bit more modular
+		// .factory('http', ['$http', function($http) {
+		// 	var request = {}
+
+		// 	request.get = function(param) {
+		// 		$http.get(param)
+		// 			.then(response => {
+		// 				return response.data
+		// 			})
+		// 			.error(response => {
+		// 				return 
+		// 			})
+		// 	}
+
+		// 	request.post = function(param) {
+
+		// 	}
+
+		// 	request.put = function(param) {
+
+		// 	}
+
+		// 	request.delete = function(param) {
+
+		// 	}
+
+
+		// }])
 }());

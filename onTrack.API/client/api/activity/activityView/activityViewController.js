@@ -1,11 +1,41 @@
 (function() {
 	angular.module('onTrack')
-	.controller('ActivityViewController', ['$scope', '$state', '$http', '$stateParams', 'arrToObject', 'submitFormat',
-		function($scope, $state, $http, $stateParams, arrToObject, submitFormat) {
+	.controller('ActivityViewController', ['$scope', '$state', '$http', '$stateParams', 'arrToObject', 'submitFormat', '$window',
+		function($scope, $state, $http, $stateParams, arrToObject, submitFormat, $window) {
 
 			$scope.box = false;
 
 			$scope.tracker = 1
+
+			$scope.deleteActivity = function() {
+				var token = $window.sessionStorage['jwt']
+
+				swal({
+				  title: "Are you sure?",
+				  text: "You will not be able to recover this Activity!",
+				  type: "warning",
+				  showCancelButton: true,
+				  confirmButtonColor: "#DD6B55",
+				  confirmButtonText: "Yes, delete it!",
+				  html: false
+				}).then(response => {
+					$http.delete('/api/activity/' + $stateParams.id, {
+						headers: {
+							'Authorization': `Bearer ${token}`
+						}
+					})
+					.then(response => {
+						$state.go('activity')
+					})
+					.catch(response => {
+						console.log(response)
+					})
+				}).catch(response => {
+					console.log(response)
+				})
+			}
+
+
 
 			$scope.editActivity = function() {
 				$scope.box = true
@@ -15,9 +45,6 @@
 				$scope.box = false
 				$state.reload()
 			}
-
-
-
 
 			function getActivity(){
 				$http.get('api/activity/' + $stateParams.id)

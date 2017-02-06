@@ -43,6 +43,7 @@ exports.post = function(req, res, next) { //yup
 	delete newActivity.team
 	delete newActivity.users
 
+
 	var data = Object.assign({any: newActivity}, name)
 	
 	Activity.create(data)

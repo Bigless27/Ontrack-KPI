@@ -40,6 +40,7 @@
 		
 			var dataJson = Object.assign(data, props)
 
+
 			$http.post('api/goals', dataJson)
 				.then(function onSuccess(response) {
 					var goal = response.data

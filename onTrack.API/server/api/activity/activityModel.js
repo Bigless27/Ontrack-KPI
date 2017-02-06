@@ -23,6 +23,14 @@ ActivitySchema.pre('save', function(next) {
 			.populate('userProgress')
 			.exec(function(err, user) {
 				if (err) next(err)
+				//push acitivty ref in
+				user.activity.push(activity._id)
+				user.save(function(err, saved) {
+					if (err) next(err)
+					console.log(saved)
+
+				})
+
 				Promotion.find({'teamId': {$in : [activity.team]}})
 					.exec(function(err, promo) {
 						if(err) next(err)
@@ -32,7 +40,6 @@ ActivitySchema.pre('save', function(next) {
 									.populate('progress')
 									.exec(function(err, goal){
 										if(err) next(err)
-										console.log('hey')
 										
 										if(!goal.any.kpi) {
 											next(new Error('Goal does not have Kpi value'))
@@ -41,21 +48,14 @@ ActivitySchema.pre('save', function(next) {
 										if (!eval(goal.any.kpi)){
 											next(new Error('No matches with goal and activity'))
 										}
-										console.log(goal)
-										console.log(user)
-										console.log(user.userProgress[0].progressId)
-										console.log(goal.progress._id)
 
 										// Know we know that goal is a match
 										user.userProgress.forEach(userProg => {
 											if (userProg.progressId.toString() === goal.progress._id.toString()) {
 												//check if goal has a value
-												console.log('hey')
 												if (!activity.any.value) {
 													next(new Error('no Value to update specified in activity'))
 												}
-												console.log(activity.any.value)
-
 												UserProgress.findById(userProg._id)
 													.exec(function(err, userProg) {
 														userProg.value += parseInt(activity.any.value)
@@ -64,8 +64,6 @@ ActivitySchema.pre('save', function(next) {
 															if(err) next(err)
 														})
 													})
-												
-				
 												next()
 											}
 										})
@@ -78,8 +76,23 @@ ActivitySchema.pre('save', function(next) {
 			})
 	})
 	next()
-
-
 })
+
+ActivitySchema.pre('remove', function(next) {
+	var activity = this
+	User.find({'activity': {$in : [activity._id]}})
+		.exec(function(err, users) {
+			if(err) next(err)
+			users.forEach(user => {
+				var i = user.activity.indexOf(activity._id)
+				user.activity.splice(i, 1)
+				user.save(function(err) {
+					if(err) next(err)
+				})
+			})
+		})
+	next()
+})
+
 
 module.exports = mongoose.model('activity', ActivitySchema)
